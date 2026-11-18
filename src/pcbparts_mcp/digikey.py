@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -66,6 +67,22 @@ class DigiKeyApp:
 
 def _min_qty(variation: dict[str, Any]) -> int:
     return variation.get("MinimumOrderQuantity") or 1
+
+
+# JST ends its part numbers in (LF) (lead-free) and (SN) (tin plating). JLCPCB keeps them
+# (B2B-PH-K-S(LF)(SN)); DigiKey sometimes drops them (B2B-PH-K-S, 455-1704-ND). Other bracketed
+# endings stay significant: (UMW), (TOKMAS) and (XBLW) name another maker's copy, and Hirose's
+# (51) or (50) is a different variant.
+_JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
+
+
+def _same_mpn(listed: str, asked: str, maker: str) -> bool:
+    """Whether DigiKey's ManufacturerProductNumber is the number asked for: equal ignoring case
+    and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside."""
+    listed, asked = listed.strip().casefold(), asked.strip().casefold()
+    if listed == asked:
+        return True
+    return "jst" in maker.casefold().split() and _JST_FINISH.sub("", listed) == _JST_FINISH.sub("", asked)
 
 
 def _pick_variation(variations: list[dict[str, Any]], product_number: str) -> dict[str, Any]:
@@ -413,7 +430,8 @@ class DigiKeyClient:
         # DigiKey PN exact matches can have a different MPN; trust ExactMatches in full.
         candidates = list(data.get("ExactMatches") or [])
         candidates.extend(p for p in data.get("Products") or []
-                          if (p.get("ManufacturerProductNumber") or "").strip().casefold() == product_number.casefold())
+                          if _same_mpn(p.get("ManufacturerProductNumber") or "", product_number,
+                                       (p.get("Manufacturer") or {}).get("Name") or ""))
         products = []
         seen = set()
         for candidate in candidates:

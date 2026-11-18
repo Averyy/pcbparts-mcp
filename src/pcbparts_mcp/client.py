@@ -46,6 +46,10 @@ from .config import (
     EASYEDA_COOLDOWN_BASE,
     EASYEDA_COOLDOWN_MAX,
     EASYEDA_MAX_FOOTPRINT_CHECKS,
+    EASYEDA_LAND_MAX_CHECKS,
+    EASYEDA_LAND_BUDGET,
+    EASYEDA_LAND_WINDOW,
+    EASYEDA_PADS_CACHE_MAX_SIZE,
     JLCPCB_CONCURRENT_LIMIT,
     JLCPCB_RATE_LIMIT,
     JLCPCB_RATE_JITTER,
@@ -65,6 +69,8 @@ from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
 from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
+from .land import CONNECTOR_LAND_HINT, LAND_NOTE, compare_land, first_pad, land_rank
+from .pinout import parse_easyeda_footprint
 from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type, english_package
 from .search.result import pcba_type_from_item
@@ -266,6 +272,13 @@ class JLCPCBClient:
         # marker once the part's symbol UUID stopped working, then the live answer if the store
         # couldn't take it. Only parts whose UUID stopped working, so it stays small.
         self._easyeda_overrides: dict[str, FootprintAnswer] = {}
+        # Footprint pads for land checks (land.py): footprint uuid -> (fetched at, pads; [] = none).
+        # Fetches have their own budget and pause, separate from /api/products (see config.py).
+        self._footprint_pads_cache: dict[str, tuple[float, list[dict[str, Any]]]] = {}
+        self._easyeda_pads_seed: Callable[[str], tuple[list[dict[str, Any]], float] | None] | None = None
+        self._easyeda_land_session: wafer.AsyncSession | None = None
+        self._easyeda_land_budget = SlidingWindowBudget(EASYEDA_LAND_BUDGET, EASYEDA_LAND_WINDOW)
+        self._easyeda_land_cooldown = Cooldown(EASYEDA_COOLDOWN_BASE, EASYEDA_COOLDOWN_MAX)
         # Category cache - lazily populated from API or set externally
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
@@ -404,6 +417,23 @@ class JLCPCBClient:
             )
         return self._easyeda_products_session
 
+    def _get_easyeda_land_session(self) -> wafer.AsyncSession:
+        """EasyEDA session for land-check footprint fetches (/api/components/{footprint uuid}).
+
+        One attempt per request, like the /api/products session: a 403/429 pauses land checks
+        instead of being retried and rotated, which would prolong a block.
+        """
+        if self._easyeda_land_session is None:
+            self._easyeda_land_session = wafer.AsyncSession(
+                timeout=EASYEDA_REQUEST_TIMEOUT,
+                attempt_timeout=EASYEDA_REQUEST_TIMEOUT,
+                max_retries=0,
+                max_rotations=0,
+                rate_limit=EASYEDA_RATE_LIMIT,
+                rate_jitter=EASYEDA_RATE_JITTER,
+            )
+        return self._easyeda_land_session
+
     def _get_lcsc_session(self) -> wafer.AsyncSession:
         """LCSC's product-data API (datasheet and specs when JLCPCB lists none)."""
         if self._lcsc_session is None:
@@ -435,6 +465,7 @@ class JLCPCBClient:
         self._jlcpcb_session = None
         self._easyeda_session = None
         self._easyeda_products_session = None
+        self._easyeda_land_session = None
         self._lcsc_session = None
         if self._easyeda_store is not None:
             self._easyeda_store.close()
@@ -442,6 +473,10 @@ class JLCPCBClient:
     def set_easyeda_seed(self, lookup: Callable[[str], FootprintAnswer | None]) -> None:
         """Use seeded footprint answers (ComponentDatabase.get_easyeda_seed)."""
         self._easyeda_seed = lookup
+
+    def set_easyeda_pads_seed(self, lookup: Callable[[str], tuple[list[dict[str, Any]], float] | None]) -> None:
+        """Use seeded footprint pads (ComponentDatabase.get_easyeda_pads) for land checks."""
+        self._easyeda_pads_seed = lookup
 
     def set_alternative_candidates(self, lookup: Callable[..., list[dict[str, Any]]]) -> None:
         """Use database candidates in find_alternatives (ComponentDatabase.find_alternative_candidates)."""
@@ -1431,6 +1466,138 @@ class JLCPCBClient:
         self._datasheet_links[lcsc] = (url, valid_until)
         return url
 
+    def _cache_footprint_pads(self, uuid: str, fetched_at: float, pads: list[dict[str, Any]]) -> None:
+        cache = self._footprint_pads_cache
+        cache.pop(uuid, None)  # re-insert at the end: the dict's order is oldest first
+        cache[uuid] = (fetched_at, pads)
+        while len(cache) > EASYEDA_PADS_CACHE_MAX_SIZE:
+            cache.pop(next(iter(cache)))
+
+    async def footprint_pads(self, uuid: str) -> tuple[list[dict[str, Any]] | None, str]:
+        """An EasyEDA footprint's pads for land checks, and how they were found.
+
+        Status: "cached" / "stored" / "seeded" / "fetched" (pads, possibly [] when EasyEDA has none),
+        or "budget" / "cooldown" / "blocked" / "error" / "invalid" (pads None: not compared).
+        Memory, then the newer of the store (live fetches, on the volume) and the seed (pads.csv in
+        components.db), then one /api/components request within the land budget. A footprint we
+        have is never fetched again here, whatever its age: refreshing is scripts/build_easyeda_pads.py's job.
+        """
+        if not uuid or not _UUID_PATTERN.match(uuid):
+            return None, "invalid"
+        now = time.time()
+        cached = self._footprint_pads_cache.get(uuid)
+        if cached is not None:
+            return cached[1], "cached"
+        stored = self._easyeda_store.get_pads(uuid) if self._easyeda_store is not None else None
+        seeded = None
+        if self._easyeda_pads_seed is not None:
+            try:
+                seeded = await run_db(COMPONENT_POOL, self._easyeda_pads_seed, uuid)
+            except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+                logger.warning(f"EasyEDA pads seed lookup failed for {uuid}: {type(e).__name__}: {e}")
+        if stored is not None or seeded is not None:
+            (pads, fetched_at), status = max(
+                ((answer, status) for answer, status in ((stored, "stored"), (seeded, "seeded")) if answer),
+                key=lambda pair: pair[0][1])
+            self._cache_footprint_pads(uuid, fetched_at, pads)
+            return pads, status
+        cooldown = self._easyeda_land_cooldown
+        if cooldown.active:
+            return None, "cooldown"
+        async with self._get_easyeda_semaphore():
+            if cooldown.active:  # a block may have started while this call was queued
+                return None, "cooldown"
+            if not self._easyeda_land_budget.try_acquire():
+                if self._easyeda_land_budget.report_due():
+                    logger.warning(
+                        f"EasyEDA land-check budget spent ({EASYEDA_LAND_BUDGET} footprint fetches per "
+                        f"{EASYEDA_LAND_WINDOW:.0f}s); comparing only stored footprints until it frees up.")
+                return None, "budget"
+            try:
+                response = await self._get_easyeda_land_session().get(
+                    EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe="")))
+                if response.status_code in (403, 429):
+                    pause = cooldown.trip()
+                    logger.warning(f"EasyEDA footprint fetch for {uuid} got HTTP {response.status_code}; "
+                                   f"pausing land checks for {pause:.0f}s")
+                    return None, "blocked"
+                data = response.json() if response.status_code == 200 else None
+                if response.status_code == 404 or (isinstance(data, dict) and data.get("code") == 404):
+                    pads: list[dict[str, Any]] = []  # EasyEDA has no such footprint
+                else:
+                    response.raise_for_status()
+                    if not isinstance(data, dict) or not data.get("success"):
+                        logger.warning(f"EasyEDA footprint fetch for {uuid}: unexpected reply {str(data)[:200]}")
+                        return None, "error"
+                    footprint = parse_easyeda_footprint(data.get("result") or {})
+                    pads = footprint["pads"] if footprint else []
+            except Exception as e:
+                logger.warning(f"EasyEDA footprint fetch for {uuid} failed: {type(e).__name__}: {e}")
+                return None, "error"
+        cooldown.record_success()
+        self._cache_footprint_pads(uuid, now, pads)
+        if self._easyeda_store is not None:
+            self._easyeda_store.put_pads(uuid, pads, fetched_at=now)
+        return pads, "fetched"
+
+    async def _footprint_uuid(self, part: dict[str, Any], now: float) -> str | None:
+        """A part's EasyEDA footprint UUID from the part itself, the store or the seed (never
+        /api/products: a land check must not spend that endpoint's small budget)."""
+        if uuid := part.get("easyeda_footprint_uuid"):
+            return uuid
+        lcsc = part.get("lcsc")
+        stored = await self._stored_footprint(lcsc, now) if lcsc else None
+        return (stored or {}).get("easyeda_footprint_uuid")
+
+    async def _land_checks(self, original: dict[str, Any], window: list[dict[str, Any]]
+                           ) -> tuple[dict[str, Any], str | None]:
+        """Compare each window part's footprint pads with the original's; sets part["land"].
+
+        Returns the stage report and the original's pad 1 (for land_rank). Distinct footprints are fetched in waves of the EasyEDA
+        concurrency limit; after a 403/429 the rest come back as cooldown without a request.
+        """
+        now = time.time()
+        stage: dict[str, Any] = {"requested": True, "checked": 0, "fits": 0, "fits_turned": 0,
+                                 "pin1_moved": 0, "no_fit": 0, "unknown": 0, "limit": EASYEDA_LAND_MAX_CHECKS}
+        original_uuid = await self._footprint_uuid(original, now)
+        uuids = [await self._footprint_uuid(part, now) for part in window]
+        fetched: dict[str, tuple[list[dict[str, Any]] | None, str]] = {}
+        wanted = list(dict.fromkeys(u for u in [original_uuid, *uuids] if u))
+        for i in range(0, len(wanted), EASYEDA_CONCURRENT_LIMIT):
+            wave = wanted[i:i + EASYEDA_CONCURRENT_LIMIT]
+            for uuid, answer in zip(wave, await asyncio.gather(*[self.footprint_pads(u) for u in wave])):
+                fetched[uuid] = answer
+        original_pads = fetched.get(original_uuid, (None, ""))[0] if original_uuid else None
+        if not original_pads:
+            stage["original"] = ("no known EasyEDA footprint" if not original_uuid else
+                                 "footprint has no pads" if original_pads == [] else
+                                 "footprint couldn't be fetched")
+            stage["unknown"] = len(window)
+            for part in window:
+                part["land"] = None
+            return stage, None
+        pin1 = first_pad(original_pads)
+        reasons: dict[str, int] = {}
+        for part, uuid in zip(window, uuids):
+            pads, status = fetched.get(uuid, (None, "")) if uuid else (None, "")
+            land = compare_land(original_pads, pads) if pads else None
+            if land is None:
+                reason = ("no_footprint_id" if not uuid else "no_pads" if pads == [] else
+                          "too_many_pads" if pads else status or "error")
+                reasons[reason] = reasons.get(reason, 0) + 1
+                stage["unknown"] += 1
+                part["land"] = None
+                continue
+            stage["checked"] += 1
+            rank = land_rank(land, pin1)
+            stage["no_fit" if rank == 0 else "pin1_moved" if rank == 2 else
+                  "fits_turned" if rank == 3 else "fits"] += 1
+            part["land"] = land
+        if reasons:
+            stage["unknown_reasons"] = reasons
+        stage["fetched"] = sum(1 for _, status in fetched.values() if status == "fetched")
+        return stage, pin1
+
     async def find_alternatives(
         self,
         lcsc: str,
@@ -1441,6 +1608,7 @@ class JLCPCBClient:
         limit: int = 10,
         board_quantity: int = 1,
         placements_per_board: int = 1,
+        land_compatible: bool = False,
     ) -> dict[str, Any]:
         """Find alternative parts similar to a given component.
 
@@ -1461,6 +1629,8 @@ class JLCPCBClient:
             limit: Maximum entries per verified/unverified list (default: 10, max: 50)
             board_quantity: Boards in the order for savings (default: 1)
             placements_per_board: Placements of the original per board (default: 1)
+            land_compatible: Compare the top EASYEDA_LAND_MAX_CHECKS candidates' EasyEDA footprint
+                             pads with the original's (land.py) and list the best fits first
 
         Returns:
             Dict with original part info, alternatives (verified compatible), and
@@ -1777,6 +1947,17 @@ class JLCPCBClient:
 
         unverified = [item for item in scored if item[3].get("unverified_requirements")]
         verified_scored = [item for item in scored if not item[3].get("unverified_requirements")]
+        land_stage: dict[str, Any] | None = None
+        if land_compatible:
+            # The best-ranked candidates, more than are listed: a part just past the list's cut that
+            # fits the original's pads (C225233 was 16th of 39 at limit=15) moves up
+            window = [part for _, part, _, _ in heapq.nlargest(EASYEDA_LAND_MAX_CHECKS, verified_scored, key=rank)]
+            land_stage, pin1 = await self._land_checks(original, window)
+            land_stage["not_checked_cap"] = len(verified_scored) - len(window)
+            spec_rank = rank
+
+            def rank(item):  # noqa: F811 - same order, land fit first (unchecked parts rank as unknown)
+                return (land_rank(item[1].get("land"), pin1), *spec_rank(item))
         top_scored = heapq.nlargest(effective_limit, verified_scored, key=rank)
         top_unverified = heapq.nlargest(effective_limit, unverified, key=rank)
         # A no-fee request that leaves nothing named only a count of the extended matches, so a BOM
@@ -1812,6 +1993,11 @@ class JLCPCBClient:
             "similar_parts_truncated": max(0, len(verified_scored) - len(top_scored)) if not is_supported else 0,
             "extended_examples_truncated": max(0, extended_count - len(extended_examples)) if extended_examples else 0,
         }
+        if land_stage is not None:
+            stages["land"] = land_stage
+            response["summary"]["land_note"] = LAND_NOTE
+        elif original.get("category") == "Connectors":
+            response["summary"]["land_note"] = CONNECTOR_LAND_HINT
         response["summary"]["stages"] = stages
         if footprint_filter:
             response["summary"]["footprint_filter"] = footprint_filter

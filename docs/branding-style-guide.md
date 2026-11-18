@@ -159,7 +159,7 @@ These are the building blocks of the visual language. Each maps to a real PCB fe
 - Result lines use mixed colors: copper for LCSC codes, silkscreen white for MPNs, copper-bright for prices, dim green for stock
 - **CRT power-on flicker**: `crt-on` keyframe animation with brightness flash + opacity flicker on load
 - **CRT glitch clear**: `.crt-glitch` class adds `hue-rotate`, `skewX`, and position jitter for 120ms. Triggered at the end of each terminal animation cycle to "clear" the screen
-- **Typewriter command**: The `$ claude "..."` command types character-by-character with random jitter (18-28ms per char)
+- **Typewriter command**: The `$ claude "..."` command types character-by-character with random jitter (18–46 ms per character)
 - **Search pause**: 900ms pause after "Searching for PCB components..." appears to simulate thinking
 - **Letter spacing**: `0.06em` on tablet+ for wider terminal text (mobile keeps default)
 - Terminal header title: "serial monitor" — references real embedded dev tooling
@@ -260,7 +260,7 @@ Currently using emoji for bento card icons. If replacing with custom icons, they
 
 ## Don'ts
 
-- Don't use glass morphism / frosted glass effects — this is a PCB, not iOS
+- Don't use glass morphism / frosted glass on content surfaces — this is a PCB, not iOS (the near-opaque nav bar's 10px backdrop blur is the one exception)
 - Don't use gradient orbs or blobby soft shapes — PCBs are geometric
 - Don't use rounded corners larger than 6px — components are sharp
 - Don't use blue — the entire palette is green + copper + warm white

@@ -11,6 +11,7 @@ pick_answer() decides which answer, if any, can be served without asking EasyEDA
 
 import csv
 import datetime
+import json
 import logging
 import os
 import re
@@ -134,6 +135,99 @@ _SCHEMA = """
 """
 
 
+# Footprint pads for land comparisons (land.py), by footprint UUID. Several parts often share one
+# footprint, and a footprint's pads rarely change, so a land check fetches each footprint once.
+# pads is compact JSON: [[number, x_mm, y_mm, through_hole 0/1], ...]; "[]" means EasyEDA had no
+# pads for it (also kept, so it isn't asked again until it expires).
+_PADS_SCHEMA = """
+    CREATE TABLE IF NOT EXISTS footprint_pads (
+        footprint_uuid TEXT PRIMARY KEY,
+        pads TEXT NOT NULL,
+        fetched_at REAL NOT NULL  -- unix time
+    )
+"""
+
+
+def pack_pads(pads: list[dict]) -> str:
+    """Pads as the store keeps them: number, position and whether the pad has a hole."""
+    return json.dumps([[str(p.get("number") or ""), p["x"], p["y"], int("hole" in p)] for p in pads],
+                      separators=(",", ":"))
+
+
+def unpack_pads(text: str) -> list[dict] | None:
+    """Pads from pack_pads() text, or None if the text isn't valid."""
+    try:
+        rows = json.loads(text)
+        pads = []
+        for number, x, y, hole in rows:
+            pad = {"number": str(number), "x": float(x), "y": float(y)}
+            if hole:
+                pad["hole"] = True
+            pads.append(pad)
+        return pads
+    except (ValueError, TypeError):
+        return None
+
+
+# Pads seed, relative to the data dir: footprint pads collected at home by
+# scripts/build_easyeda_pads.py and committed, loaded into components.db (easyeda_pads) at build
+# time. One row per footprint UUID, sorted; pads as pack_pads() writes them; fetched is when that
+# content was first fetched (CHECKED_FORMAT, UTC), kept while it doesn't change so a refresh only
+# rewrites the rows that changed.
+PADS_SEED_FILE = Path("easyeda") / "pads.csv"
+PADS_SEED_COLUMNS = ("footprint_uuid", "pads", "fetched")
+
+
+class PadsRow(NamedTuple):
+    footprint_uuid: str
+    pads: str  # pack_pads() JSON; "[]" when EasyEDA had no pads for it
+    fetched: str  # CHECKED_FORMAT, UTC
+
+
+def read_pads_csv(path: str | Path) -> dict[str, PadsRow]:
+    """The pads seed's rows by footprint UUID. Raises ValueError on any malformed row, so a bad file
+    fails the DB build instead of being served."""
+    rows: dict[str, PadsRow] = {}
+    with open(path, encoding="utf-8", newline="") as f:
+        reader = csv.reader(f)
+        header = next(reader, None)
+        if tuple(header or ()) != PADS_SEED_COLUMNS:
+            raise ValueError(f"{path}: expected columns {','.join(PADS_SEED_COLUMNS)}, got {header}")
+        for line, fields in enumerate(reader, 2):
+            if len(fields) != len(PADS_SEED_COLUMNS):
+                raise ValueError(f"{path} line {line}: expected {len(PADS_SEED_COLUMNS)} fields, got {len(fields)}")
+            uuid, pads, fetched = fields
+            problem = None
+            if not _UUID_RE.fullmatch(uuid):
+                problem = f"footprint_uuid {uuid!r} isn't 32 hex"
+            elif unpack_pads(pads) is None:
+                problem = f"pads for {uuid} aren't valid"
+            elif uuid in rows:
+                problem = f"{uuid} appears twice"
+            else:
+                try:
+                    seed_checked_at(fetched)
+                except ValueError:
+                    problem = f"fetched must look like 2026-11-17T14:03:22Z, got {fetched!r}"
+            if problem is not None:
+                raise ValueError(f"{path} line {line}: {problem}")
+            rows[uuid] = PadsRow(uuid, pads, fetched)
+    return rows
+
+
+def write_pads_csv(path: str | Path, rows: Iterable[PadsRow]) -> None:
+    """Write rows sorted by footprint UUID, atomically (temp file, then replace)."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, lineterminator="\n")
+        writer.writerow(PADS_SEED_COLUMNS)
+        for r in sorted(rows, key=lambda r: r.footprint_uuid):
+            writer.writerow((r.footprint_uuid, r.pads, r.fetched))
+    os.replace(tmp, path)
+
+
 class FootprintAnswer(NamedTuple):
     has_footprint: bool | None  # None marks a part to re-check
     symbol_uuid: str | None
@@ -178,6 +272,7 @@ class EasyEDAStore:
                 conn.execute("PRAGMA journal_mode=WAL")
                 conn.execute("PRAGMA synchronous=NORMAL")
                 conn.execute(_SCHEMA)
+                conn.execute(_PADS_SCHEMA)
                 conn.commit()
             except sqlite3.Error:
                 conn.close()
@@ -239,6 +334,37 @@ class EasyEDAStore:
         """Make the next lookup ask EasyEDA, overriding any older stored or seed answer. Returns
         whether the marker was written."""
         return self._write(lcsc, None, None, None, time.time() if checked_at is None else checked_at)
+
+    def get_pads(self, footprint_uuid: str) -> tuple[list[dict], float] | None:
+        """Stored pads for a footprint and when they were fetched, or None."""
+        if self._conn is None:
+            return None
+        try:
+            row = self._conn.execute(
+                "SELECT pads, fetched_at FROM footprint_pads WHERE footprint_uuid = ?", (footprint_uuid,)
+            ).fetchone()
+        except sqlite3.Error as e:
+            logger.warning(f"EasyEDA pad store read failed for {footprint_uuid}: {e}")
+            return None
+        if row is None:
+            return None
+        pads = unpack_pads(row[0])
+        return None if pads is None else (pads, row[1])
+
+    def put_pads(self, footprint_uuid: str, pads: list[dict], fetched_at: float | None = None) -> bool:
+        """Keep a footprint's pads (an empty list if it has none). Returns whether they were written."""
+        if self._conn is None or not _UUID_RE.fullmatch(footprint_uuid):
+            return False
+        try:
+            self._conn.execute(
+                "INSERT OR REPLACE INTO footprint_pads VALUES (?, ?, ?)",
+                (footprint_uuid, pack_pads(pads), time.time() if fetched_at is None else fetched_at),
+            )
+            self._conn.commit()
+            return True
+        except sqlite3.Error as e:
+            logger.warning(f"EasyEDA pad store write failed for {footprint_uuid}: {e}")
+            return False
 
     def __len__(self) -> int:
         if self._conn is None:

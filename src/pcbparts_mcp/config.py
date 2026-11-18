@@ -54,6 +54,18 @@ EASYEDA_PRODUCTS_WINDOW = 120.0  # ...per rolling window (seconds)
 EASYEDA_COOLDOWN_BASE = 120.0  # Pause after a 403; doubles on each repeat block
 EASYEDA_COOLDOWN_MAX = 1800.0  # Cap for the doubling pause (30 minutes)
 EASYEDA_MAX_FOOTPRINT_CHECKS = 15  # Footprint checks per find_alternatives(has_easyeda_footprint=...) call
+# find_alternatives(land_compatible=true) compares footprint pads (land.py). Pads come from
+# /api/components/{footprint uuid}, which isn't the rate-limited /api/products path, but its own limit
+# was never measured, so fetches are capped per call and per process and stop on the first 403/429.
+# Footprint UUIDs come from the seed/store only: a land check never asks /api/products.
+EASYEDA_LAND_MAX_CHECKS = 30  # Candidates compared per call (more than the default 10 listed)
+EASYEDA_LAND_BUDGET = 60  # Max footprint fetches for land checks...
+EASYEDA_LAND_WINDOW = 60.0  # ...per rolling window (seconds), process-wide
+# EasyEDA edits footprints in place under the same UUID. The server keeps any pads it has
+# (data/easyeda/pads.csv, then live fetches in the store); scripts/build_easyeda_pads.py --refresh-days
+# re-fetches seeded footprints older than this.
+EASYEDA_PADS_REFRESH_DAYS = 90
+EASYEDA_PADS_CACHE_MAX_SIZE = 20000  # In-memory pad lists (a few hundred bytes each)
 # Persistent footprint answers (docs/ref-easyeda-api.md). The store is a SQLite file that survives
 # restarts and redeploys when it sits on a volume (the Docker image sets /app/cache/easyeda.db);
 # unset means memory only. Only the server opens it (JLCPCBClient takes the path as an argument).

@@ -5,12 +5,28 @@
 | Endpoint | Called from | Returns |
 | --- | --- | --- |
 | `GET https://easyeda.com/api/products/{lcsc}/components` | `_check_easyeda_footprint()` (behind `check_easyeda_footprint()`): every live `get_part()`, and up to 15 times per `find_alternatives(has_easyeda_footprint=...)` call | Whether EasyEDA has a symbol/footprint, plus their UUIDs |
-| `GET https://easyeda.com/api/components/{uuid}` | `get_easyeda_component()` (`jlc_get_pinout`) | Symbol data and pins. A missing UUID is HTTP 200 with `{"success": false, "code": 404}` (`EasyEDAComponentNotFound`) |
+| `GET https://easyeda.com/api/components/{uuid}` | `get_easyeda_component()` (`jlc_get_pinout`); `footprint_pads()` for `find_alternatives(land_compatible=true)`, up to 30 candidates plus the original per call | Symbol data and pins, or a footprint's pads. A missing UUID is HTTP 200 with `{"success": false, "code": 404}` (`EasyEDAComponentNotFound`) |
 | `POST https://easyeda.com/api/components/search` | `scripts/build_easyeda_seed.py` only, never the server | Up to thousands of LCSC-library parts per request, each with its symbol and footprint UUIDs |
 
-Each has its own wafer session in `client.py`. `_get_easyeda_products_session()` sends exactly one
+The server uses separate wafer sessions in `client.py` (the seed script reuses the products session
+for library search). `_get_easyeda_products_session()` sends exactly one
 request per check (`max_retries=0, max_rotations=0`). `_get_easyeda_session()` keeps wafer's
 retries for symbol data, with `attempt_timeout` paired to its `timeout`.
+
+Land checks (0.9.5, `land.py`) fetch footprints through `_get_easyeda_land_session()`, one attempt
+per request like the products session, because `/api/components`' own limit was never measured.
+They take footprint UUIDs from the part, the store or the seed only, never `/api/products`. Each
+call compares at most `EASYEDA_LAND_MAX_CHECKS` (30) candidates; fetches are budgeted process-wide
+(`EASYEDA_LAND_BUDGET`, 60 per 60s) and a 403/429 pauses them with the same doubling cooldown.
+Pads come from memory, then the newer of the store's `footprint_pads` table (live fetches, on the
+volume) and the pads seed (`data/easyeda/pads.csv`, loaded into `components.db` as `easyeda_pads`),
+and only then one request. A footprint the server has is never fetched again on a request, whatever
+its age, so clones that share a footprint and repeat checks cost no request; refreshing is the seed
+script's job (see "The pads seed" below). Measured 2026-11-17: 120-160 ms and about 12 kB per
+footprint; the C295747 check fetched 23 footprints (5.7 s for the whole call), 1.7 s once stored.
+`/api/components` was never refused at one request per 1-2 s: the first pads seed run (from home)
+made 48,403 requests between 2026-11-17 17:18Z and 2026-11-18 11:24Z, 16,405 at one per 2 s and then
+31,998 at one per 1 s, without a single 403/429 or failure. Its real limit is still unmeasured.
 
 Where a footprint answer comes from, first match wins:
 
@@ -204,46 +220,48 @@ the total count.
   (TPS5430DDAR, a basic part with a footprint), which a direct search for its MPN returns. That's
   why basic and preferred parts get the per-part step.
 
-Trial, 2026-10-10 (20 manufacturers: the 10 largest plus 10 random, 119,626 of our parts): 133
-requests in 15 minutes, 67,337 parts recorded as "has a footprint" (6.0 MB of CSV, ~89 bytes a
-row), 49 ambiguous parts skipped. Validation: 50 of 50 search answers matched `/api/products`
-exactly (16 before the block above, 34 after a 17-minute pause at one per 15 s, no block). Of 30
-random parts the big-10 searches didn't return, 7 had a footprint (23%): all the TI ones (TI's
-"TI" keyword spans 72,524 results over 37 pages, where the order likely shifts), none of the TE
-Connectivity ones (its connectors mostly have no footprint).
-Per manufacturer: TI 64% (via "TI"), YAGEO 59%, Vishay 49%, UNI-ROYAL 68%, TE Connectivity 16%,
-FH 56%, TECH PUBLIC 53%, XKB 57%, FOJAN 44%, Murata 52%. HX(hengjiaxing) found nothing: "HX" is too
-broad and "hengjiaxing" matches nothing, so it needs a `KEYWORD_ALIASES` entry.
+### What the seed runs found (2026-10-10 to 10-12)
 
-Full `manufacturers` run, 2026-10-10 15:13-20:00Z: 1,582 manufacturers, 1,726 requests at one per
-10 s, never blocked. 291,586 of our 629,550 parts recorded as "has a footprint" (46%); validation
-50 of 50. Three gaps:
-- **Name mismatch:** 414 manufacturers had under 10% found (93,853 parts), mostly 0%, because LCSC
-  names them differently: STMicroelectronics 0 of 5,347, Analog Devices 22 of 5,743, Walsin 0 of
-  5,099, Jiangsu Changjing 0 of 3,220.
-- **Too broad:** 121 manufacturers (49,858 parts) whose every keyword was skipped, including
-  onsemi (30,564 results for 6,495 of ours), Microchip, TDK, ROHM and Infineon, and the
-  generic-word matches above.
-- **Paging:** the 13.6% repeats above.
-The `names` step and the purity rule were added for the first two, and the page size went to
-5,000 for the third.
+About 3,200 searches at one per 10 s over two days were never blocked. Every basic and preferred
+part was answered (basic 351 of 351 have a footprint, preferred 1,184 of 1,207), and 394,582 of
+629,297 extended parts were recorded as having one; the other 234,715 are checked live at runtime.
+Validation: 50 of 50 search answers matched `/api/products` exactly. 397,062 rows, 39.6 MB of CSV
+(13.4 MB gzipped), 655 ambiguous parts skipped. The first full pass found 46%; three causes, each
+now handled by the script:
 
-Second pass, 2026-10-12 05:40-09:59Z, never blocked:
-- `names`: 532 manufacturers, 1,296 requests. 371 lookups found EasyEDA's name (161 didn't, mostly
-  manufacturers with 1-3 parts whose MPNs aren't in EasyEDA at all). STMicroelectronics went from
-  0 to 79% ("ST"), Analog Devices 2% to 96% ("ADI"), Microchip 0 to 81% ("MICROCHIP"), Walsin 0 to
-  73%, Samsung Electro-Mechanics 0 to 85% ("SAMSUNG"); onsemi (63%) and TDK (69%) came in under
-  the purity rule. Chinese-only names work as keywords ("华星机电", 87%).
-- `manufacturers --redo` at 5,000 a page for the 91 manufacturers first crawled in 2,000-result
-  pages: 149 requests (Intel/Altera got the HTTP 500 above and was redone at 2,000 a page: 88%).
-- `parts`: the 26 basic/preferred parts search still hadn't answered (from 994 before the second
-  pass): 3 have a footprint, 23 don't.
-Result: every basic and preferred part answered (basic 351 of 351 have a footprint, preferred 1,184
-of 1,207), and 394,582 of 629,297 extended parts recorded as having one (234,715 unanswered,
-checked live at runtime). Validation: 50 of 50 again. 397,062 rows, 39.6 MB of CSV with
-timestamps (13.4 MB gzipped), 655 ambiguous parts skipped. The parts left under 50% are mostly connector makers whose single, complete result page
-just doesn't cover them (TE Connectivity 19%, MOLEX 30%, Samtec 31%): those parts likely have no
-EasyEDA footprint, which only `/api/products` can confirm.
+- **Name mismatch** (414 manufacturers under 10%, e.g. STMicroelectronics 0 of 5,347): LCSC names
+  them differently. The `names` step finds EasyEDA's name ("ST" 79%, "ADI" 96%, "MICROCHIP" 81%;
+  Chinese-only names work too).
+- **Too broad** (121 manufacturers, e.g. onsemi's 30,564 results for 6,495 parts): the purity rule
+  keeps a broad keyword when its first page is mostly that maker's parts (onsemi 63%, TDK 69%).
+- **Paging repeats** (13.6% at 2,000 a page): pages of 5,000, and 2,000 after a 5xx.
+
+Makers still under 50% are mostly connector makers whose parts likely have no EasyEDA footprint
+(TE Connectivity 19%, MOLEX 30%, Samtec 31%), which only `/api/products` can confirm.
+
+## The pads seed (`scripts/build_easyeda_pads.py`, 0.9.5)
+
+`data/easyeda/pads.csv` holds footprint pads for land checks, one row per footprint UUID:
+`footprint_uuid,pads,fetched`, pads as `easyeda_store.pack_pads()` writes them
+(`[[number, x_mm, y_mm, through_hole], ...]`, `[]` when EasyEDA has none). The DB build loads it into
+`components.db` as `easyeda_pads` (the Dockerfile mounts the whole `data/easyeda/` folder, so a
+missing file builds an empty table); a malformed row fails the build.
+
+- **Where it runs:** your own machine only, like the footprint seed. It uses your IP's EasyEDA limits.
+- **What it fetches:** footprint UUIDs from `components.db`'s `easyeda_footprints` (the footprint seed)
+  for the chosen categories (`--categories`, default Connectors; `all` for everything), most-stocked
+  part first, one `/api/components/{uuid}` request each through the client's one-attempt land session.
+- **Pace:** `--interval` seconds between requests (default 2, minimum 1). It stops on the first 403/429
+  (exit code 2) and resumes on the next run; it saves every `--save-every` rows (default 200) and on exit.
+- **Refresh:** `--refresh-days N` also re-fetches rows last fetched or confirmed N+ days ago. A row whose
+  pads didn't change keeps its `fetched` date, so a refresh commit only touches changed footprints; when
+  each row was last confirmed is kept in `data/easyeda/pads_state.json` (not committed).
+- **Scale (2026-11-17):** 48,403 distinct connector footprints (15.4 pins on average), about 400 bytes
+  a row, so roughly 19 MB of CSV; about 27 h at one request per 2 s. Only 44.5% of connector parts
+  (55.5% of those with 1,000+ stock) have a footprint UUID in the footprint seed; the rest can't be
+  collected until that seed knows them, and land checks report them as unknown.
+- **Library search doesn't help:** a search result's `dataStr` holds only the symbol's `head` (checked
+  2026-11-17), so there's no bulk source of pads; each footprint costs one request.
 
 ## The seed (`scripts/build_easyeda_seed.py`)
 
@@ -264,7 +282,8 @@ uv run python scripts/build_easyeda_seed.py report          # coverage and weak 
   parentheses, the full name). A keyword returning over 4 results per part of ours plus 4,000 is
   too broad and skipped (its first page is still recorded), unless its first page is mostly this
   manufacturer's parts: at least half of that page's results in our DB, judged on 20 or more.
-  Under 0.2 is narrow, so its results are kept and the next keyword is tried too. Paging stops at
+  For a manufacturer with 50 or more of our parts, under 0.2 is narrow, so its results are kept and the
+  next keyword is tried too. Paging stops at
   30 pages. `--only NAME ... --redo` searches those manufacturers again.
 - `names` takes the manufacturers whose keywords found under 10% of their parts, searches up to 3
   of their MPNs (parts known to have a footprint first, then by stock), reads the manufacturer name

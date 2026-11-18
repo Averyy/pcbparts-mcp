@@ -236,7 +236,7 @@
                 <ul>
                     <li><strong>No accounts, no sign-in, no cookies, no ads, no analytics trackers.</strong></li>
                     <li>We use what your AI assistant sends a tool (search text, part numbers, filters) to answer that call. Usage counts don't include it, and nothing we keep links it to you.</li>
-                    <li>Your IP address is used for rate limiting and abuse prevention and appears in server logs. It is never stored in our usage statistics.</li>
+                    <li>Your IP address is used for rate limiting and abuse prevention. Our logs keep it only in an hourly summary of Mouser and DigiKey lookups, and it is never stored in our usage statistics.</li>
                     <li>To answer some calls our server sends part numbers or search text, never your IP address, to JLCPCB, LCSC, EasyEDA, Mouser, DigiKey or SamacSys. Links in our answers, such as datasheet links, take whoever opens them straight to those sites.</li>
                     <li>We don't sell or share data for advertising, and we don't use it to train AI models.</li>
                 </ul>
@@ -255,6 +255,7 @@
                 <li>Distributor, JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
                 <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are stored on our server's disk and reused for up to one year (a week for a search where some parts had no model). Expired entries are deleted the next time the server starts.</li>
                 <li>EasyEDA answers about whether a part has a footprint are stored on disk with no fixed end date, since they rarely change. Each holds the part number, the answer, EasyEDA's symbol and footprint IDs, and when it was checked.</li>
+                <li>EasyEDA footprint pad positions, used to compare a replacement part's footprint with the original's, are stored on disk by footprint ID with no fixed end date, since footprints rarely change.</li>
             </ul>
             <p>Storing these answers means the same lookup doesn't have to be repeated.</p>
             <p>If a lookup fails, the error log line may include the part number or search text involved, so we can fix the problem.</p>
@@ -263,7 +264,7 @@
             <ul>
                 <li><strong>Rate limiting:</strong> we count requests per IP address over a rolling one-minute window, in memory only, so one caller can't overload the shared service.</li>
                 <li><strong>Mouser and DigiKey lookups:</strong> these use daily limits shared by every user. For each hour with lookups, the server logs how many were sent, from how many IP addresses, and the five IP addresses that sent the most with their counts, so we can spot abuse of the shared limits. The day's lookup counts, and any pause after a distributor refuses requests, are kept on disk so a restart doesn't reset them; they contain no IP addresses, queries or part numbers.</li>
-                <li><strong>Server logs:</strong> like most websites, our web server and application logs can record standard request details such as the IP address, time, and requested path (our short datasheet links put the part number in the path). The application's logs are capped at about 30 MB, with the oldest entries overwritten first, and start empty with each new release.</li>
+                <li><strong>Server logs:</strong> our web server keeps no request log. The application's log records each request's time, path and result, but sees only our proxy's address, not yours; your IP address appears in it only in the hourly Mouser and DigiKey line above (our short datasheet links put the part number in the path). The application's logs are capped at about 30 MB, with the oldest entries overwritten first, and start empty with each new release.</li>
             </ul>
 
             <h3>3. App name</h3>
@@ -304,10 +305,11 @@
                         <tr><td>Per-IP rate-limit counters</td><td>Only the last minute counts; in memory only</td></tr>
                         <tr><td>Daily caller hashes and salt</td><td>Until the first call of the next UTC day or a server restart; in memory only</td></tr>
                         <tr><td>Anonymous daily usage counts</td><td>365 days (the 30 most recent are public)</td></tr>
-                        <tr><td>Application logs (request details, hourly top-caller lines, error details)</td><td>Capped at about 30 MB, oldest entries overwritten first; cleared with each new release</td></tr>
+                        <tr><td>Application logs (request time, path and result; hourly top-caller lines; error details)</td><td>Capped at about 30 MB, oldest entries overwritten first; cleared with each new release</td></tr>
                         <tr><td>In-memory answer caches</td><td>Reused for up to 24 hours; cleared on restart</td></tr>
                         <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Reused for up to one year (a week for searches where some parts had no model); expired entries deleted at the next restart</td></tr>
                         <tr><td>On-disk EasyEDA footprint answers (part numbers, the answer, EasyEDA IDs, when checked; no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>On-disk EasyEDA footprint pads (footprint IDs and pad positions; no user identifiers)</td><td>No fixed end date</td></tr>
                         <tr><td>Mouser and DigiKey daily lookup counts and pauses (no user identifiers)</td><td>Replaced each UTC day</td></tr>
                         <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
                     </tbody>

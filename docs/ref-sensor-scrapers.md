@@ -160,9 +160,9 @@ In particular, the description length guard cannot block a curated description,
 and insertion-time measure rules cannot change a curated exact set. Excluded
 records are removed after validation. A reviewed `exclude: true` entry may remain
 after its source record disappears, so a later scrape cannot resurrect it. Other
-unknown/stale IDs, missing evidence,
-invalid review date, unsupported field or malformed value fails the build before
-the existing database is replaced. A standalone data directory without this
+unknown or stale IDs are warned about and skipped (`test_every_curated_id_is_a_catalog_record`
+rejects them in CI); missing evidence, an invalid review date, an unsupported field or a
+malformed value fails the build before the existing database is replaced. A standalone data directory without this
 optional file retains the legacy build behavior.
 
 Voltage reviews retain the source passage, record identity, other supply rails
@@ -301,7 +301,7 @@ Scraped JSONs are merged into `data/sensor.db` by `scripts/build_sensor_db.py`:
 uv run python scripts/build_sensor_db.py [--data-dir data/] [--output data/sensor.db] [--quiet]
 ```
 
-Merge pipeline: load sources in priority order → alias resolution → union multi-value fields → enrich manufacturers/types/voltages/protocols → build SQLite with FTS5.
+Merge pipeline: load sources in priority order → resolve identities (aliases) and merge fields → enrich manufacturers/types/voltages/protocols → transfer reviewed driver support → apply curated corrections and exclusions → build SQLite with FTS5.
 
 The build refuses to produce a `sensor.db` with fewer than `MIN_SENSOR_COUNT` (1200)
 sensors (guards the deploy path against a truncated dataset) and builds atomically via
@@ -309,7 +309,7 @@ sensors (guards the deploy path against a truncated dataset) and builds atomical
 
 Runtime module: `src/pcbparts_mcp/sensor_db/` exposes `sensor_recommend` MCP tool.
 
-### Reviewed merge corrections (0.8.23)
+### Description selection and identity corrections
 
 Generic MCU/platform IDs such as RP2040 are excluded from physical sensor recommendations.
 Description selection first prefers hardware facts over software prose (libraries, drivers,
@@ -326,7 +326,7 @@ reviewed operating supply is 1.8–3.3 V (3.6 V absolute maximum). The runtime r
 CCS811 v1-06, pages 1/5/6. These corrections do not establish the accuracy of every merged
 family: further capability/identity audits remain pending.
 
-### Catalog audit corrections (0.9.0)
+### Source-specific fixes from the 80-record audit
 
 An audit of 80 records against maker sources found these general causes, fixed at the source:
 

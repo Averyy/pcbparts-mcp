@@ -18,7 +18,7 @@ from typing import Any, Callable, Literal
 
 from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
-from ..easyeda_store import FootprintAnswer
+from ..easyeda_store import FootprintAnswer, unpack_pads
 from ..mounting import english_package, jlcpcb_package_spellings
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
 from ..search.query_builder import build_fts_clause
@@ -488,6 +488,23 @@ class ComponentDatabase:
         if row is None:
             return None
         return FootprintAnswer(bool(row["has_footprint"]), row["symbol_uuid"], row["footprint_uuid"], row["checked_at"])
+
+    @serialized
+    def get_easyeda_pads(self, footprint_uuid: str) -> tuple[list[dict[str, Any]], float] | None:
+        """Seeded pads for a footprint (data/easyeda/pads.csv) and when they were fetched, or None."""
+        self._ensure_db()
+        if not self._conn:
+            return None
+        try:
+            row = self._conn.execute(
+                "SELECT pads, fetched_at FROM easyeda_pads WHERE footprint_uuid = ?", (footprint_uuid,)
+            ).fetchone()
+        except sqlite3.OperationalError:  # a DB built before 0.9.4 has no pads table
+            return None
+        if row is None:
+            return None
+        pads = unpack_pads(row["pads"])
+        return None if pads is None else (pads, float(row["fetched_at"]))
 
     @serialized
     def pcba_type_loaded(self) -> bool:
