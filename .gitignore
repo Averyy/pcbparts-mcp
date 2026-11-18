@@ -89,6 +89,9 @@ data/easyeda/*.tmp
 # The committed catalog: its directory names come from JLCPCB category names, so no pattern above
 # (lib/, var/, ...) may hide a file under it. git add skips ignored files without a word.
 !/data/catalog/**
+# ...except every part's price breaks from the daily scrape (about 10 MB a day): never committed.
+# The scrape workflow hands the file to the image build as the price-tiers Actions artifact.
+/data/catalog/price_tiers.tsv.gz
 
 # Local Claude notes, never committed
 CLAUDE.local.md

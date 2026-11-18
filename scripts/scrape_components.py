@@ -3,7 +3,8 @@
 Scrape all JLCPCB components for local database.
 
 Uses concurrent workers with wafer for anti-detection HTTP to avoid rate limiting.
-Outputs a sorted catalog with separate stock and weekly price files.
+Outputs a sorted catalog with separate stock and weekly price files, plus every part's price
+breaks from this scrape (catalog/price_tiers.tsv.gz, not committed).
 
 Usage:
     python scripts/scrape_components.py [--resume] [--workers N]
@@ -14,6 +15,7 @@ import asyncio
 import gzip
 import json
 import logging
+import math
 import os
 import re
 import shutil
@@ -32,7 +34,9 @@ from wafer import ChallengeDetected, ConnectionFailed, RateLimited, WaferTimeout
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.config import DEFAULT_MIN_STOCK
-from pcbparts_mcp.catalog_files import read_catalog, read_prices, write_catalog
+from pcbparts_mcp.catalog_files import (
+    PRICE_TIERS_FILE, pack_tiers, read_catalog, read_prices, write_catalog, write_price_tiers,
+)
 
 # Configure logging for scraper output
 logging.basicConfig(
@@ -125,6 +129,23 @@ def slugify(name: str) -> str:
     return slug.strip("-")
 
 
+def price_tiers(prices: list[dict[str, Any]]) -> str | None:
+    """Every price break JLCPCB listed, by quantity, as pack_tiers text ("1:0.0228,300:0.0176"), the
+    prices rounded like the 1-piece "$" price; None without any. A malformed break (a quantity that
+    isn't a whole number from 1, a price that isn't a finite number, a quantity listed twice) also
+    gives None, so the part keeps only its 1-piece price instead of an optional file failing the scrape."""
+    breaks: dict[int, float] = {}
+    for tier in prices:
+        if not isinstance(tier, dict):
+            return None
+        qty, price = tier.get("startNumber"), tier.get("productPrice")
+        if (type(qty) is not int or qty < 1 or qty in breaks or type(price) not in (int, float)
+                or not math.isfinite(price) or price < 0):
+            return None
+        breaks[qty] = round(price, 4)
+    return pack_tiers((qty, breaks[qty]) for qty in sorted(breaks)) or None
+
+
 def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     """Transform API response to our compact schema."""
     # Get price from first tier (`or []` guards against componentPrices being null;
@@ -169,6 +190,9 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     # No datasheet of any kind on JLCPCB (about 3% of parts): only then, to keep the files small
     if not any(item.get(k) for k in ("dataManualUrl", "dataManualFileAccessIdUrl", "dataManualOfficialLink")):
         part["n"] = 1
+    # Every price break, for price_tiers.tsv.gz only: write_catalog keeps "$t" out of the part files
+    if tiers := price_tiers(prices):
+        part["$t"] = tiers
     return part
 
 
@@ -669,6 +693,19 @@ def write_scrape_outputs(
             prices[code] = stored if stored is not None else part.get("$")
     progress.category_counts = write_catalog(catalog_dir, unique_results, prices)
     progress.total_parts = sum(progress.category_counts.values())
+
+    # Today's price breaks for every part that has them, out of git (.gitignore): the scrape workflow
+    # uploads the file as an Actions artifact for the image build. Parts carried over a scrape gap
+    # have none, so replies give them the 1-piece price only.
+    tiers = {part["l"]: part["$t"] for parts in unique_results.values() for part in parts if part.get("$t")}
+    tiers_path = catalog_dir / PRICE_TIERS_FILE
+    if tiers:
+        write_price_tiers(tiers_path, tiers, now.isoformat())
+    else:
+        tiers_path.unlink(missing_ok=True)  # never an older scrape's breaks beside today's catalog
+    without = sum(1 for parts in unique_results.values() for part in parts
+                  if part.get("$") is not None and not part.get("$t"))
+    logger.info(f"Price breaks: {len(tiers):,} parts" + (f" ({without:,} priced parts without them)" if without else ""))
 
     # Generate manifest
     logger.info("")

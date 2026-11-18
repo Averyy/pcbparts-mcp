@@ -110,6 +110,9 @@ async def lifespan(app):
     _client.set_alternative_candidates(db.find_alternative_candidates)
     # and, for RF parts, at every maker's parts in the subcategory to check against the original's band
     _client.set_subcategory_parts(db.subcategory_parts)
+    tiers_as_of = db.price_tiers_as_of()
+    logger.info(f"Price tiers: scraped {tiers_as_of}" if tiers_as_of else
+                "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only")
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
     _easyeda_stored = (time.monotonic(), store_size)
@@ -2050,8 +2053,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
-    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; its prices are
-    refreshed weekly (prices_as_of). Many parts at once (a BOM): jlc_get_parts, from the snapshot.
+    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price (1 piece)
+    is refreshed weekly (prices_as_of), and prices lists the quantity tiers from the daily scrape
+    (price_tiers_as_of; null when this server has none, then prices is the 1-piece price alone).
+    Many parts at once (a BOM): jlc_get_parts, from the snapshot.
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
     jlc_stock_check with min_stock=0 without executing it.
@@ -2072,7 +2077,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             return {"error": "MPN too long (max 100 characters)"}
         db = get_db()
         match_info: dict[str, Any] = {}
-        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info)
+        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info, with_prices=True)
         if not results:
             if is_placeholder_mpn(mpn):
                 hint = (f"'{mpn.strip()}' is a BOM placeholder (part not fitted or not chosen), not a "
@@ -2094,6 +2099,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             "mpn": mpn,
             "data_as_of": db.scraped_at(),
             "prices_as_of": db.prices_as_of(),
+            "price_tiers_as_of": db.price_tiers_as_of(),
             "total": len(results),
             **_match_flags(results, match_info),
             "results": results,
@@ -2165,14 +2171,16 @@ def _get_parts_mpn_row(mpn: str, matches: list[dict[str, Any]], found: list[dict
 def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
     """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot
     (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
-    live request. For one part's live stock, every price tier and datasheet, use jlc_get_part.
-    Reply: data_as_of (stock), prices_as_of (weekly prices), counts (found, not_found, error), hint
-    once when any part isn't found, and results in input order, each with input (as given). An LCSC
-    code's row has jlc_get_part's fields: lcsc, model, manufacturer, package, stock, price, prices
-    (first tier only), library_type, preferred, pcba_type, category, subcategory, description; or
-    not_found. An MPN's row is like jlc_get_part(mpn): mpn, total, up to 10 results (most stock first,
-    same fields), exact, ambiguous and match info; or not_found, with other_manufacturers when only
-    other makers list it. An unusable input has error.
+    live request. For one part's live stock and prices and its datasheet, use jlc_get_part.
+    Reply: data_as_of (stock), prices_as_of (weekly 1-piece price), price_tiers_as_of (the daily
+    scrape's quantity tiers in prices; null when this server has none), counts (found, not_found,
+    error), hint once when any part isn't found, and results in input order, each with input (as
+    given). An LCSC code's row has jlc_get_part's fields: lcsc, model, manufacturer, package, stock,
+    price, prices (quantity tiers; the 1-piece price alone when there are none), library_type,
+    preferred, pcba_type, category, subcategory, description; or not_found. An MPN's row is like
+    jlc_get_part(mpn): mpn, total, up to 10 results (most stock first, same fields), exact,
+    ambiguous and match info; or not_found, with other_manufacturers when only other makers list it.
+    An unusable input has error.
 
     Args:
         parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
@@ -2214,7 +2222,7 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
                 codes.extend(p["lcsc"] for p in mine[:GET_PARTS_MAX_MATCHES])
             matches.append(mine)
         rows = db.get_snapshot_rows(codes)
-        data_as_of, prices_as_of = db.scraped_at(), db.prices_as_of()
+        data_as_of, prices_as_of, tiers_as_of = db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
     except (OSError, sqlite3.Error):
         logger.exception("jlc_get_parts: catalog lookup failed")
         return {"error": "Database not available"}
@@ -2234,7 +2242,8 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
             row.update(_get_parts_mpn_row(entry.mpn, mine, *found[entry.mpn], rows))
             counts["found" if mine else "not_found"] += 1
         results.append(row)
-    reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of, "total": len(results),
+    reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of,
+                             "price_tiers_as_of": tiers_as_of, "total": len(results),
                              "counts": counts, "results": results}
     if counts["not_found"]:
         reply["hint"] = _GET_PARTS_NOT_FOUND_HINT

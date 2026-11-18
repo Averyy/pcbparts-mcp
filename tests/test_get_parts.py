@@ -96,8 +96,9 @@ def outcome(reply):
 class TestCodeRows:
     async def test_fields_and_price_shape(self, db):
         reply = await get_parts(["c7950", " C1525 ", "C99999999"])
-        assert list(reply) == ["data_as_of", "prices_as_of", "total", "counts", "results", "hint"]
+        assert list(reply) == ["data_as_of", "prices_as_of", "price_tiers_as_of", "total", "counts", "results", "hint"]
         assert (reply["data_as_of"], reply["prices_as_of"]) == ("2026-11-17T22:00:00Z", "2026-11-12T20:00:00Z")
+        assert reply["price_tiers_as_of"] is None  # built without price_tiers.tsv.gz (test_price_tiers.py has them)
         amp, cap, missing = reply["results"]
         assert amp == {
             "input": "c7950", "lcsc": "C7950", "model": "LM358DR2G", "manufacturer": "onsemi", "package": "SOIC-8",

@@ -3,6 +3,7 @@
 import sqlite3
 from typing import Any
 
+from ..catalog_files import unpack_tiers
 from ..search.result import row_to_dict
 from ..search.mpn import (
     ALTERNATIVE_MANUFACTURERS, LCSC_CODE, MPN_ALIASES, MPN_KEY_SQL, PACKING_RULES,
@@ -94,7 +95,7 @@ def get_by_mpn(
             if results:
                 info = matched(results, "lcsc")[1]
                 info["note"] = (f"'{candidate}' is an LCSC code, not a part number; this is that part. "
-                                f"jlc_get_part(lcsc=\"{candidate.upper()}\") adds every price tier, "
+                                f"jlc_get_part(lcsc=\"{candidate.upper()}\") adds live stock and prices, "
                                 "the datasheet and EasyEDA footprint status.")
                 return results, info
 
@@ -191,14 +192,60 @@ def get_by_lcsc(
 MAX_BATCH_SIZE = 1000  # Prevent memory/performance issues with huge batches
 
 
+def snapshot_prices(price: float | None, tiers: str | None) -> list[dict[str, Any]] | None:
+    """A snapshot part's prices in jlc_get_part's shape ([{"qty": "100+", "price": ...}]): the daily
+    scrape's price breaks (price_tiers, pack_tiers text), less trailing breaks that only repeat the
+    price before them; without breaks, the 1-piece price as the one tier, "1+" (the weekly price,
+    as of prices_as_of); None when the part has no price at all."""
+    if tiers:
+        breaks = unpack_tiers(tiers)
+        while len(breaks) > 1 and breaks[-1][1] == breaks[-2][1]:
+            breaks.pop()
+        return [{"qty": f"{qty}+", "price": value} for qty, value in breaks]
+    if price is not None:
+        return [{"qty": "1+", "price": price}]
+    return None
+
+
+def _price_tiers(conn: sqlite3.Connection, codes: list[str]) -> dict[str, str]:
+    """price_tiers rows for these LCSC codes, in chunks under SQLite's variable limit."""
+    found: dict[str, str] = {}
+    for start in range(0, len(codes), 500):
+        chunk = codes[start:start + 500]
+        found.update(conn.execute(
+            f"SELECT lcsc, tiers FROM price_tiers WHERE lcsc IN ({','.join('?' * len(chunk))})", chunk))
+    return found
+
+
+def add_snapshot_prices(conn: sqlite3.Connection, parts: list[dict[str, Any]], with_tiers: bool) -> list[dict[str, Any]]:
+    """row_to_dict parts with prices (snapshot_prices) right after price, where the part has one.
+    with_tiers: the database has price breaks loaded (ComponentDatabase.price_tiers_as_of)."""
+    tiers = _price_tiers(conn, list(dict.fromkeys(p["lcsc"] for p in parts))) if with_tiers and parts else {}
+    priced = []
+    for part in parts:
+        prices = snapshot_prices(part.get("price"), tiers.get(part["lcsc"]))
+        if prices is None:
+            priced.append(part)
+            continue
+        with_prices: dict[str, Any] = {}
+        for key, value in part.items():
+            with_prices[key] = value
+            if key == "price":
+                with_prices["prices"] = prices
+        priced.append(with_prices)
+    return priced
+
+
 def snapshot_row(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> dict[str, Any]:
     """A part as jlc_get_parts lists it: jlc_get_part's field names and price shape for what the
     snapshot holds, without specs, datasheet links or EasyEDA status (jlc_get_part has those).
-    The snapshot keeps one price, the first tier's, so prices has that tier only."""
+    prices lists the daily scrape's price breaks when the row has them (price_tiers, joined in by
+    get_snapshot_rows), else the 1-piece price as its one tier (snapshot_prices)."""
     part = row_to_dict(row, subcategories)
     row_part = {key: part[key] for key in ("lcsc", "model", "manufacturer", "package", "stock", "price")}
-    if part["price"] is not None:
-        row_part["prices"] = [{"qty": "1+", "price": part["price"]}]
+    prices = snapshot_prices(part["price"], row["price_tiers"] if "price_tiers" in row.keys() else None)
+    if prices is not None:
+        row_part["prices"] = prices
     row_part.update((key, part[key]) for key in ("library_type", "preferred", "pcba_type", "category", "subcategory")
                     if key in part)
     row_part["description"] = row["description"]  # row_to_dict leaves it out when specs are listed
@@ -211,15 +258,22 @@ def get_snapshot_rows(
     conn: sqlite3.Connection,
     lcsc_codes: list[str],
     subcategories: dict[int, dict[str, Any]],
+    *,
+    with_tiers: bool = False,
 ) -> dict[str, dict[str, Any] | None]:
     """snapshot_row() for each LCSC code (upper-cased, de-duplicated, in order) in one query; None
-    for codes the snapshot doesn't list. Raises ValueError beyond MAX_BATCH_SIZE codes."""
+    for codes the snapshot doesn't list. with_tiers joins in the price breaks (a database with
+    price_tiers loaded). Raises ValueError beyond MAX_BATCH_SIZE codes."""
     codes = list(dict.fromkeys(code.upper() for code in lcsc_codes))
     if len(codes) > MAX_BATCH_SIZE:
         raise ValueError(f"Batch size {len(codes)} exceeds maximum of {MAX_BATCH_SIZE}. Split into smaller batches.")
     results: dict[str, dict[str, Any] | None] = dict.fromkeys(codes)
     if codes:
-        for row in conn.execute(f"SELECT * FROM components WHERE lcsc IN ({','.join('?' * len(codes))})", codes):
+        placeholders = ",".join("?" * len(codes))
+        sql = (f"SELECT c.*, t.tiers AS price_tiers FROM components c LEFT JOIN price_tiers t ON t.lcsc = c.lcsc "
+               f"WHERE c.lcsc IN ({placeholders})") if with_tiers else (
+            f"SELECT * FROM components WHERE lcsc IN ({placeholders})")
+        for row in conn.execute(sql, codes):
             results[row["lcsc"]] = snapshot_row(row, subcategories)
     return results
 

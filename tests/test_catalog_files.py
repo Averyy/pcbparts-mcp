@@ -163,7 +163,9 @@ def test_git_ignores_no_catalog_file():
     git = shutil.which("git")
     if git is None or not (root / ".git").exists():
         pytest.skip("needs a git checkout")
-    paths = [p.relative_to(root).as_posix() for p in (root / "data/catalog").rglob("*") if p.is_file()]
+    # price_tiers.tsv.gz is ignored on purpose (test_price_tiers.py): it reaches the image build as an artifact
+    paths = [p.relative_to(root).as_posix() for p in (root / "data/catalog").rglob("*")
+             if p.is_file() and p.name != "price_tiers.tsv.gz"]
     # Category directories are named after JLCPCB categories: every directory pattern in
     # .gitignore must leave a same-named category alone.
     for line in (root / ".gitignore").read_text(encoding="utf-8").splitlines():

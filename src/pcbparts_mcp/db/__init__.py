@@ -25,7 +25,7 @@ from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
-from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows
+from .lookup import add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows
 from .categories import (
     CandidateBatch,
     get_subcategory_name,
@@ -87,6 +87,7 @@ class ComponentDatabase:
         self._pcba_type_loaded: bool | None = None
         self._scraped_at: str | None = None
         self._prices_as_of: str | None = None
+        self._price_tiers_as_of: str | None = None  # None: no price breaks loaded (built without the file)
         self._english_packages = False
 
     @serialized
@@ -140,12 +141,16 @@ class ComponentDatabase:
 
             try:
                 meta = dict(self._conn.execute(
-                    "SELECT key, value FROM metadata WHERE key IN ('scraped_at', 'prices_as_of')").fetchall())
+                    "SELECT key, value FROM metadata WHERE key IN "
+                    "('scraped_at', 'prices_as_of', 'price_tiers_loaded', 'price_tiers_scraped_at')").fetchall())
             except sqlite3.OperationalError:  # built before 0.8.15
                 meta = {}
             self._scraped_at = _iso_utc(meta["scraped_at"]) if "scraped_at" in meta else None
             # Since 0.9.0 prices are refreshed weekly (stock daily); earlier data scraped both together
             self._prices_as_of = _iso_utc(meta["prices_as_of"]) if "prices_as_of" in meta else self._scraped_at
+            # Since 0.10.0 every price break from the daily scrape, when the build had the file
+            self._price_tiers_as_of = (_iso_utc(meta.get("price_tiers_scraped_at"))
+                                       if meta.get("price_tiers_loaded") == "1" else None)
 
             # Load caches
             (
@@ -187,6 +192,13 @@ class ComponentDatabase:
         since then has the price it was first scraped with. scraped_at for older data."""
         self._ensure_db()
         return self._prices_as_of
+
+    def price_tiers_as_of(self) -> str | None:
+        """When the price breaks in snapshot replies' prices were scraped (daily, since 0.10.0), or
+        None when the database has none (built without price_tiers.tsv.gz: prices is then the
+        1-piece price only, as of prices_as_of)."""
+        self._ensure_db()
+        return self._price_tiers_as_of
 
     def english_packages(self) -> bool:
         """Whether the database was built with packages in English (english_package), since 0.8.15."""
@@ -532,15 +544,20 @@ class ComponentDatabase:
             return 0
 
     @serialized
-    def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
+                   with_prices: bool = False) -> list[dict[str, Any]]:
         """Find components by manufacturer part number.
 
         Tries exact/separator/packing/alias matches, FTS, then annotated alternatives.
+        with_prices adds each part's prices (lookup.snapshot_prices) after its price.
         """
         self._ensure_db()
         if not self._conn:
             return []
-        return self._snapshot_parts(get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info))
+        parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info)
+        if with_prices:
+            parts = add_snapshot_prices(self._conn, parts, self._price_tiers_as_of is not None)
+        return self._snapshot_parts(parts)
 
     @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
@@ -557,7 +574,8 @@ class ComponentDatabase:
         self._ensure_db()
         if not self._conn:
             return {code.upper(): None for code in lcsc_codes}
-        return get_snapshot_rows(self._conn, lcsc_codes, self._subcategories)
+        return get_snapshot_rows(self._conn, lcsc_codes, self._subcategories,
+                                 with_tiers=self._price_tiers_as_of is not None)
 
     @serialized
     def find_alternative_candidates(

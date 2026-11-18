@@ -121,7 +121,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 
 ## Good to know
 
-- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_parts` reads the same snapshot for up to 50 parts at once. `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
+- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its 1-piece prices are refreshed weekly (`prices_as_of`). `jlc_get_parts` reads the same snapshot for up to 50 parts at once, with every quantity price tier from the daily scrape (`price_tiers_as_of`), as does `jlc_get_part(mpn=...)`. `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
 - The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Their answers are kept 3 days per part and lifecycle readings 90 days, so repeat lookups cost no request. Self-host with your own keys to get your own limits.
@@ -148,6 +148,13 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 `docker-compose.yml` publishes the server on `127.0.0.1:8080` for a reverse proxy on the same host. Change the mapping to `"8080:8080"` to reach it from other machines.
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
+
+Quantity price tiers come from `data/catalog/price_tiers.tsv.gz`, which isn't in git: each daily scrape publishes it as the `price-tiers` Actions artifact, kept 7 days. The GHCR image has them; a database or image built from a clone has the 1-piece prices only, unless you download the file first (it needs a GitHub login, `gh auth login`) and then build:
+
+```bash
+run=$(gh run list -R Averyy/pcbparts-mcp -w scrape-components.yml -b main -s success -L 1 --json databaseId -q '.[0].databaseId')
+gh run download "$run" -R Averyy/pcbparts-mcp -n price-tiers -D data/catalog
+```
 
 Build recorded stock history with `uv run python scripts/build_history_db.py`. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path. Only changes leaving stock at 1,000 or below are recorded; [llms.txt](https://pcbparts.dev/llms.txt) has the tool's limits.
 

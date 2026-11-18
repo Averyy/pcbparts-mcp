@@ -43,9 +43,10 @@ COPY --chown=appuser:appuser data/subcategories.json /app/data/
 # Copy database build script and parsers module
 COPY --chown=appuser:appuser scripts/build_database.py /app/scripts/
 
-# Build the SQLite databases at image build time. The catalog (data/catalog/, ~350 MB uncompressed)
-# and the EasyEDA seed CSVs (data/easyeda/: footprints.csv from scripts/build_easyeda_seed.py, pads.csv
-# from scripts/build_easyeda_pads.py; the folder, so a missing pads.csv just builds an empty table) are
+# Build the SQLite databases at image build time. The catalog (data/catalog/, ~350 MB uncompressed,
+# plus price_tiers.tsv.gz when docker-build.yml could download it: it isn't in git, and without it
+# the database has the 1-piece prices only) and the EasyEDA seed CSVs (data/easyeda/: footprints.csv
+# from scripts/build_easyeda_seed.py, pads.csv from scripts/build_easyeda_pads.py; the folder, so a missing pads.csv just builds an empty table) are
 # mounted for this step only: they're loaded into components.db, so none of them ships in the image. --mount needs
 # BuildKit (the default builder since Docker 23, and what Compose v2 and buildx use).
 # The builds run as root because a bind mount keeps the checkout's file mode (a umask 027/077

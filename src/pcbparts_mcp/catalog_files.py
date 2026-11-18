@@ -3,12 +3,16 @@
 Only standard-library imports: the scrape workflow does not install the server.
 """
 
+import gzip
+import io
 import json
 import logging
 import math
 import re
 import shutil
-from collections.abc import Iterator
+import zlib
+from collections.abc import Iterable, Iterator
+from datetime import datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -16,6 +20,13 @@ MAX_FILE_BYTES = 95_000_000
 WARN_FILE_BYTES = 50_000_000
 # transform_part's order, excluding the independently stored stock and price.
 _PART_KEYS = ("l", "m", "f", "p", "t", "c", "d", "a", "x", "n")
+# Stored outside the part files: stock and price in stock.tsv/prices.tsv, the price breaks ("$t")
+# in PRICE_TIERS_FILE, which is never committed.
+_STORED_APART = ("s", "$", "$t")
+# Every part's price breaks from one scrape (scrape_components.py writes it, build_database.py loads
+# it). Not in git (.gitignore): the scrape workflow hands it to the image build as an Actions artifact.
+PRICE_TIERS_FILE = "price_tiers.tsv.gz"
+_TIERS_HEADER = "#scraped_at\t"
 
 
 def _lcsc_key(code: str) -> tuple[int | float, str]:
@@ -78,7 +89,7 @@ def write_catalog(
                     row = {key: part[key] for key in _PART_KEYS if key in part}
                     # Preserve any additional fields rather than silently losing data.
                     row.update((key, part[key]) for key in sorted(part)
-                               if key not in row and key not in ("s", "$"))
+                               if key not in row and key not in _STORED_APART)
                     stream.write(json.dumps(row, separators=(",", ":"), ensure_ascii=False) + "\n")
             _check_size(path)
 
@@ -170,7 +181,7 @@ def read_catalog(catalog_dir: Path, *, prices: bool = True) -> Iterator[tuple[st
                     code = part["l"]
                     if type(part.get("c")) is not int or part["c"] != int(path.stem):
                         raise ValueError(f"{code}: subcategory does not match filename")
-                    if "s" in part or "$" in part:
+                    if any(key in part for key in _STORED_APART):
                         raise ValueError(f"{code}: stock/price must be stored in TSV")
                     if code in seen:
                         raise ValueError(f"duplicate LCSC {code}")
@@ -187,3 +198,109 @@ def read_catalog(catalog_dir: Path, *, prices: bool = True) -> Iterator[tuple[st
         if values:
             code = next(iter(values))
             raise ValueError(f"{catalog_dir / name}: {code} has no part")
+
+
+def _tier_values(code: object, qty: object, price: object) -> tuple[int, float]:
+    if not _valid_code(code):
+        raise ValueError(f"invalid LCSC {code!r}")
+    if type(qty) is not int or qty < 1:
+        raise ValueError(f"{code}: invalid quantity {qty!r}")
+    if type(price) not in (int, float) or not math.isfinite(price) or price < 0:
+        raise ValueError(f"{code}: invalid price {price!r}")
+    return qty, float(price)
+
+
+def pack_tiers(breaks: Iterable[tuple[int, float]]) -> str:
+    """Price breaks as compact text, "1:0.0228,300:0.0176": the scraper's form in memory and the
+    database's price_tiers column. A list of pairs per part took 8 times the memory (about 600 MB
+    more for a whole scrape)."""
+    return ",".join(f"{qty}:{json.dumps(float(price))}" for qty, price in breaks)
+
+
+def unpack_tiers(text: str) -> list[tuple[int, float]]:
+    """pack_tiers' text back as [(quantity, price), ...]."""
+    breaks = []
+    for pair in text.split(","):
+        qty, _, price = pair.partition(":")
+        breaks.append((int(qty), float(price)))
+    return breaks
+
+
+def write_price_tiers(path: Path, tiers: dict[str, str], scraped_at: str) -> int:
+    """Write every part's price breaks ({LCSC: pack_tiers text}) as gzipped TSV lines of LCSC,
+    quantity and price, sorted by LCSC code and quantity, under a first line naming the scrape time
+    ("#scraped_at", tab, ISO time). Byte-identical for the same input. Returns the number of parts."""
+    datetime.fromisoformat(scraped_at)  # a ValueError here, not a file the build rejects
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("wb") as raw, gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as packed, \
+            io.TextIOWrapper(packed, encoding="utf-8", newline="\n") as stream:
+        stream.write(f"{_TIERS_HEADER}{scraped_at}\n")
+        for code in sorted(tiers, key=_lcsc_key):
+            values = [_tier_values(code, qty, price) for qty, price in unpack_tiers(tiers[code])]
+            if any(a[0] >= b[0] for a, b in zip(values, values[1:])):
+                raise ValueError(f"{code}: price break quantities must rise")
+            for qty, price in values:
+                stream.write(f"{code}\t{qty}\t{json.dumps(price)}\n")
+    return len(tiers)
+
+
+def _tier_lines(path: Path) -> Iterator[tuple[int, str]]:
+    """A price tiers file's lines; ValueError (with the line number) for broken compression."""
+    number = 0
+    try:
+        with gzip.open(path, "rb") as stream:
+            for number, raw in enumerate(stream, 1):
+                try:
+                    yield number, raw.decode("utf-8")
+                except UnicodeError as exc:
+                    raise ValueError(f"{path} line {number}: invalid UTF-8") from exc
+    except (OSError, EOFError, zlib.error) as exc:
+        raise ValueError(f"{path} after line {number}: unreadable ({exc})") from exc
+
+
+def price_tiers_scraped_at(path: Path) -> str:
+    """The scrape time on a price tiers file's first line; ValueError when it has none."""
+    try:
+        with gzip.open(path, "rb") as stream:
+            text = stream.readline(200).decode("utf-8").removesuffix("\n")
+    except (OSError, EOFError, zlib.error, UnicodeError) as exc:
+        raise ValueError(f"{path}: unreadable ({exc})") from exc
+    if text.startswith(_TIERS_HEADER):
+        scraped_at = text[len(_TIERS_HEADER):]
+        try:
+            datetime.fromisoformat(scraped_at)
+            return scraped_at
+        except ValueError:
+            pass
+    raise ValueError(f"{path}: first line must be '#scraped_at<TAB><ISO time>'")
+
+
+def read_price_tiers(path: Path) -> Iterator[tuple[str, list[tuple[int, float]]]]:
+    """Yield (LCSC, [(quantity, price), ...]) per part, as write_price_tiers wrote them. Any
+    malformed line, a part out of LCSC order or split up, or quantities not rising raises
+    ValueError with the line number, so a caller can drop the whole file rather than load part of it."""
+    code: str | None = None
+    breaks: list[tuple[int, float]] = []
+    for number, line in _tier_lines(path):
+        if number == 1:
+            if not line.startswith(_TIERS_HEADER):  # its time is read by price_tiers_scraped_at
+                raise ValueError(f"{path}: first line must be '#scraped_at<TAB><ISO time>'")
+            continue
+        try:
+            fields = line.removesuffix("\n").split("\t")
+            if len(fields) != 3 or not re.fullmatch(r"[0-9]+", fields[1]):
+                raise ValueError("expected LCSC, quantity and price")
+            qty, price = _tier_values(fields[0], int(fields[1]), json.loads(fields[2]))
+            if fields[0] != code:
+                if code is not None:
+                    if _lcsc_key(fields[0]) <= _lcsc_key(code):
+                        raise ValueError(f"{fields[0]} out of LCSC order")
+                    yield code, breaks
+                code, breaks = fields[0], []
+            elif qty <= breaks[-1][0]:
+                raise ValueError(f"{code}: quantities must rise")
+            breaks.append((qty, price))
+        except (ValueError, OverflowError) as exc:
+            raise ValueError(f"{path} line {number}: malformed price tier ({exc})") from exc
+    if code is not None:
+        yield code, breaks

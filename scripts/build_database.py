@@ -3,7 +3,9 @@
 Build SQLite database from scraped JLCPCB component data.
 
 Reads sorted part, stock and price files from data/catalog/ and creates a searchable
-SQLite database with FTS5 full-text search.
+SQLite database with FTS5 full-text search. The scrape's price breaks
+(data/catalog/price_tiers.tsv.gz, not in git) are loaded when present; without them the build
+still succeeds and replies give the 1-piece price only.
 
 Usage:
     python scripts/build_database.py [--data-dir PATH] [--output PATH]
@@ -23,7 +25,9 @@ from typing import Any
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pcbparts_mcp.catalog_files import read_catalog
+from pcbparts_mcp.catalog_files import (
+    PRICE_TIERS_FILE, pack_tiers, price_tiers_scraped_at, read_catalog, read_price_tiers,
+)
 from pcbparts_mcp.mounting import english_package  # noqa: E402
 from pcbparts_mcp.parsers import (
     parse_capacitance,
@@ -505,6 +509,34 @@ def load_easyeda_pads(conn: sqlite3.Connection, rows: dict[str, PadsRow]) -> int
     return len(rows)
 
 
+def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path) -> tuple[int, str | None, str | None]:
+    """Load the scrape's price breaks (catalog/price_tiers.tsv.gz) into price_tiers, one row per
+    part listed in components, as pack_tiers text. The table is always created. The file is
+    optional (it isn't in git: the image build downloads it as an Actions artifact), so a missing
+    or malformed one leaves the table empty instead of failing the build, all or nothing. Returns
+    (parts loaded, the file's scrape time or None, why nothing was loaded or None)."""
+    conn.execute("CREATE TABLE price_tiers (lcsc TEXT PRIMARY KEY, tiers TEXT NOT NULL) WITHOUT ROWID")
+    path = catalog_dir / PRICE_TIERS_FILE
+    if not path.exists():
+        return 0, None, f"no {PRICE_TIERS_FILE}"
+    try:
+        scraped_at = price_tiers_scraped_at(path)
+        batch = []
+        for code, breaks in read_price_tiers(path):
+            batch.append((code, pack_tiers(breaks)))
+            if len(batch) >= 5000:
+                conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
+                batch = []
+        conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
+    except (ValueError, sqlite3.IntegrityError) as exc:
+        conn.execute("DELETE FROM price_tiers")
+        return 0, None, f"{PRICE_TIERS_FILE} not loaded: {exc}"
+    # A file from another day's scrape (an older artifact) lists parts this catalog doesn't
+    conn.execute("DELETE FROM price_tiers WHERE lcsc NOT IN (SELECT lcsc FROM components)")
+    count = conn.execute("SELECT COUNT(*) FROM price_tiers").fetchone()[0]
+    return (count, scraped_at, None) if count else (0, None, f"{PRICE_TIERS_FILE} lists no catalog part")
+
+
 def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     """
     Build SQLite database from compressed JSON files.
@@ -788,8 +820,20 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
     seed_rows = load_easyeda_seed(conn, seed)
     pads_rows = load_easyeda_pads(conn, pads)
+    # Whether replies have every price break, and from which scrape (they may be older or newer
+    # than the catalog's stock): ComponentDatabase.price_tiers_as_of()
+    tier_parts, tiers_scraped_at, tiers_missing = load_price_tiers(conn, catalog_dir)
+    conn.executemany("INSERT OR REPLACE INTO metadata VALUES (?, ?)", [
+        ("price_tiers_loaded", "1" if tier_parts else "0"), ("price_tiers_parts", str(tier_parts))])
+    if tiers_scraped_at:
+        conn.execute("INSERT OR REPLACE INTO metadata VALUES ('price_tiers_scraped_at', ?)", (tiers_scraped_at,))
+    if tiers_missing and (verbose or (catalog_dir / PRICE_TIERS_FILE).exists()):
+        # A file that didn't load always shows; a self-hoster's build has none, which is normal
+        print(f"WARNING: {tiers_missing}; replies list the 1-piece price only")
     if verbose:
         print(f"EasyEDA footprint seed: {seed_rows:,} rows; footprint pads: {pads_rows:,}")
+        if tier_parts:
+            print(f"Price breaks: {tier_parts:,} parts, scraped {tiers_scraped_at}")
         print("Optimizing database...")
 
     # Commit all changes first
@@ -838,6 +882,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         "total_parts": final_count,
         "easyeda_seed_rows": seed_rows,
         "easyeda_pads_rows": pads_rows,
+        "price_tier_parts": tier_parts,
+        "price_tiers_scraped_at": tiers_scraped_at,
         "categories": len(category_counts),
         "category_counts": category_counts,
         "db_size_bytes": db_size,

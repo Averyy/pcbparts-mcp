@@ -28,3 +28,7 @@ landing
 .env
 .env.example
 *.md
+
+# The scrape's price breaks, downloaded by docker-build.yml (not in git): the database build reads
+# them from the data/catalog bind mount, so they must stay in the build context
+!data/catalog/price_tiers.tsv.gz

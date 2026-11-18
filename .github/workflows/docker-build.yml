@@ -24,10 +24,45 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: read  # the price-tiers artifact
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      # Price breaks (data/catalog/price_tiers.tsv.gz) aren't in git: each daily scrape uploads them
+      # as the price-tiers artifact, kept 7 days. Take the newest from a run on this repository's
+      # main (a fork's pull request can upload an artifact with the same name). This step never
+      # fails the build: without the file, replies give the 1-piece price only.
+      - name: Download price tiers
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          warn() { echo "::warning title=No price tiers::$1; the image gives the 1-piece price only"; }
+          dir="$RUNNER_TEMP/price-tiers"
+          rm -rf "$dir" && mkdir -p "$dir"
+          if ! id=$(gh api "repos/$REPO/actions/artifacts?name=price-tiers&per_page=100" --jq '
+              [.artifacts[] | select(.expired == false and .workflow_run.head_branch == "main"
+                and .workflow_run.head_repository_id == .workflow_run.repository_id)]
+              | sort_by(.created_at) | last | .id // empty'); then
+            warn "listing the artifacts failed"; exit 0
+          fi
+          if [ -z "$id" ]; then warn "no unexpired price-tiers artifact from main"; exit 0; fi
+          if ! gh api "repos/$REPO/actions/artifacts/$id/zip" > "$dir/price-tiers.zip"; then
+            warn "downloading artifact $id failed"; exit 0
+          fi
+          if ! unzip -q -o "$dir/price-tiers.zip" price_tiers.tsv.gz -d "$dir" || ! gzip -t "$dir/price_tiers.tsv.gz"; then
+            warn "artifact $id has no readable price_tiers.tsv.gz"; exit 0
+          fi
+          header=$(gzip -cd "$dir/price_tiers.tsv.gz" | head -n 1 || true)
+          case "$header" in
+            "#scraped_at"*) ;;
+            *) warn "artifact $id's price_tiers.tsv.gz has no #scraped_at line"; exit 0 ;;
+          esac
+          mv "$dir/price_tiers.tsv.gz" data/catalog/price_tiers.tsv.gz
+          echo "Price tiers from artifact $id: ${header#*$'\t'}"
 
       - name: Log in to the Container registry
         uses: docker/login-action@v4
