@@ -144,7 +144,7 @@ class TestUsageStats:
         assert totals["upstream"] == {"lcsc": counts(sent=6)}
         # distinct can't be added across days (the same part on two days is one part), like callers
         assert totals["parts_asked"] == {"mouser": {"total": 6}}
-        assert totals["per_ip_refusals"] == {"total": 3, "everyone_else": 3}
+        assert totals["per_ip_refusals"] == {"total": 3, "everyone_else": 3, "platform_ranges": 0}
         assert [d["parts_asked"]["mouser"] for d in usage.summary()["days"]] == [{"total": 2, "distinct": 2}] * 3
 
     def test_distinct_parts_ignore_case_and_separators(self):
@@ -184,14 +184,15 @@ class TestUsageStats:
         usage = UsageStats(clock=Clock())
         usage.record_refusal()
         usage.record_refusal("everyone_else")
-        usage.record_refusal("platform_ranges")  # not a group yet: counts as everyone else
-        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 3}
-        assert REFUSAL_GROUPS == ("everyone_else",)
+        usage.record_refusal("platform_ranges")
+        usage.record_refusal("203.0.113.7")  # not a group: counts as everyone else
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 4, "everyone_else": 3, "platform_ranges": 1}
+        assert REFUSAL_GROUPS == ("everyone_else", "platform_ranges")
 
     def test_a_day_without_refusals_shows_none(self):
         usage = UsageStats(clock=Clock())
         usage.record_call("jlc_search", "ok", 1)
-        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 0, "everyone_else": 0}
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 0, "everyone_else": 0, "platform_ranges": 0}
 
     def test_days_from_before_0_10_0(self, tmp_path):
         """A 0.9.x day has none of the new counts: upstream and parts_asked are empty and refusals
@@ -207,13 +208,13 @@ class TestUsageStats:
         for day in summary["days"]:
             assert day["upstream"] == {} and day["parts_asked"] == {} and day["per_ip_refusals"] is None
             assert day["tools"]["jlc_search"]["calls"] == 4  # the old counts are kept
-        assert summary["totals"]["per_ip_refusals"] == {"total": 0, "everyone_else": 0}
+        assert summary["totals"]["per_ip_refusals"] == {"total": 0, "everyone_else": 0, "platform_ranges": 0}
         usage.record_refusal()  # counted from the deploy on
         usage.save()
         again = UsageStats(clock=Clock())
         again.open(path)
         today, yesterday = again.summary()["days"]
-        assert today["per_ip_refusals"] == {"total": 1, "everyone_else": 1}
+        assert today["per_ip_refusals"] == {"total": 1, "everyone_else": 1, "platform_ranges": 0}
         assert yesterday["per_ip_refusals"] is None  # still not counted
         assert json.loads(path.read_text(encoding="utf-8"))["days"]["2026-11-17"]["per_ip_refusals"] is None
 
@@ -229,7 +230,7 @@ class TestUsageStats:
         day = usage.summary()["days"][0]
         assert day["upstream"] == {"jlcpcb": counts(cached=2)}
         assert day["parts_asked"] == {"digikey": {"total": 4, "distinct": 0}}
-        assert day["per_ip_refusals"] == {"total": 0, "everyone_else": 0}
+        assert day["per_ip_refusals"] == {"total": 0, "everyone_else": 0, "platform_ranges": 0}
         usage.record_upstream("jlcpcb", "sent")  # counting goes on from the cleaned day
         usage.record_parts_asked("digikey", ["X1"])
         day = usage.summary()["days"][0]
@@ -239,7 +240,7 @@ class TestUsageStats:
         about = UsageStats(clock=Clock()).summary()["about"]
         for text in ("upstream", "parts_asked", "per_ip_refusals", "jlcpcb", "lcsc", "easyeda_products",
                      "easyeda_components", "easyeda_pads", "cse", "retries", "rate_limited", "distinct",
-                     "everyone_else", "not tool calls"):
+                     "everyone_else", "platform_ranges", "not tool calls"):
             assert text in about, text
 
 
@@ -448,7 +449,7 @@ class TestRefusals:
         assert {key: body[key] for key in ("error", "retry_after")} == {"error": "Rate limit exceeded", "retry_after": 60}
         assert body["reason"] == "per_ip_rate_limit"
         assert refusal.headers["retry-after"] == "60"  # all three at the same moment: a full minute
-        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 3}
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 3, "platform_ranges": 0}
         usage.save()
         assert "203.0.113" not in (tmp_path / "usage.json").read_text(encoding="utf-8")
         with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):
@@ -482,9 +483,11 @@ class TestRefusals:
         assert statuses == [200, 429]
         assert sum(tally._counts.values()) == 1  # the log line still gets it
 
-    def test_one_group_for_every_address_so_far(self):
-        assert server.RateLimitMiddleware._refusal_group("160.79.104.10") == "everyone_else"
-        assert server.RateLimitMiddleware._refusal_group("203.0.113.7") == "everyone_else"
+    def test_groups(self):
+        """The AI platforms' published addresses count apart (tests/test_platform_ranges.py has the rest)."""
+        middleware = server.RateLimitMiddleware(None)
+        assert middleware._refusal_group("160.79.104.10") == "platform_ranges"  # Anthropic's
+        assert middleware._refusal_group("203.0.113.7") == "everyone_else"
 
     async def test_shutdown_logs_the_hour_so_far(self, refused, caplog):
         from fastmcp import Client

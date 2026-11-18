@@ -18,6 +18,21 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = int(os.getenv("HTTP_PORT", "8080"))
 RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", "100"))
+# The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
+# per address instead of RATE_LIMIT_REQUESTS: claude.ai and ChatGPT connectors call from them for
+# many users at once. 1,000 (about 330 tool calls) is about half what the 1-CPU server is estimated to
+# sustain for database-served calls (scripts/load_test.py, 2026-11-18: about 1,800 a minute with
+# the CPU scaled to the VPS), so one busy platform address can't take the whole server.
+PLATFORM_RATE_LIMIT = int(os.getenv("PLATFORM_RATE_LIMIT", "1000"))
+# Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
+# not change without notice"), comma-separated; set empty to give them the normal limit
+ANTHROPIC_IP_RANGES = [r.strip() for r in os.getenv("ANTHROPIC_IP_RANGES", "160.79.104.0/21,153.61.208.0/20").split(",")
+                       if r.strip()]
+# OpenAI's ChatGPT connectors list (https://openai.com/chatgpt-connectors.json, which can change):
+# docker-build.yml downloads it on every image build, and the copy in data/platform_ranges/ is the
+# fallback. The server never downloads it. Set empty to give OpenAI's addresses the normal limit.
+OPENAI_IP_RANGES_FILE = os.getenv("OPENAI_IP_RANGES_FILE", str(
+    Path(__file__).resolve().parents[2] / "data" / "platform_ranges" / "openai-chatgpt-connectors.json")).strip()
 
 # Hostnames allowed in the Host header. fastmcp 3.x DNS-rebinding protection defaults to
 # localhost-only and 421s everything else — so a request arriving as Host: pcbparts.dev (passed

@@ -168,6 +168,9 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `HTTP_HOST` | `0.0.0.0` | Bind address: `127.0.0.1` or `::1` for localhost only, `::` for every IPv6 interface, or a specific IPv4 or IPv6 address. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only, and a localhost bind inside the container can't be reached from outside it |
 | `HTTP_PORT` | `8080` | Server port |
 | `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
+| `PLATFORM_RATE_LIMIT` | `1000` | Requests per minute per IP for addresses in the AI platforms' published ranges (many users share each one) |
+| `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges, comma-separated; empty gives them the normal limit |
+| `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's ChatGPT connectors list ([openai.com/chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json)); the image build refreshes the committed copy; empty gives them the normal limit |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily request quota for each of Mouser and DigiKey |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Keeps the day's Mouser/DigiKey counts and pauses across restarts |
@@ -181,7 +184,7 @@ These five cache and statistics paths are unset outside Docker, which keeps that
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
-- **Rate limit:** 100 requests a minute per IP
+- **Rate limit:** 100 requests a minute per IP; 1,000 for addresses in Anthropic's and OpenAI's published ranges (claude.ai and ChatGPT connectors), which many users share
 - **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
 - **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`), requests sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers caches gave instead (`upstream`), Mouser/DigiKey part numbers asked in total and distinct (`parts_asked`), and requests the per-IP rate limit turned away (`per_ip_refusals`). No IPs, queries or part numbers are kept.
 

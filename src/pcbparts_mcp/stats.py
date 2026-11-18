@@ -82,9 +82,9 @@ UPSTREAM_EVENTS = ("sent", "retries", "cached", "rate_limited")
 PARTS_ASKED = ("mouser", "digikey")
 MAX_DISTINCT_PARTS = 100_000  # distinct part numbers counted a day per distributor; later ones aren't
 # HTTP requests the per-IP rate limit (server.RateLimitMiddleware) turned away, by the group of the
-# address. One group so far; a separate limit for the AI platforms' address ranges would add
-# "platform_ranges" here and return it from server.RateLimitMiddleware._refusal_group().
-REFUSAL_GROUPS = ("everyone_else",)
+# address (RateLimitMiddleware._refusal_group()): everyone_else at the normal limit, platform_ranges
+# for the AI platforms' published addresses (Anthropic, OpenAI) at PLATFORM_RATE_LIMIT.
+REFUSAL_GROUPS = ("everyone_else", "platform_ranges")
 
 
 def _new_day() -> dict[str, Any]:
@@ -406,7 +406,8 @@ class UsageStats:
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
                       "held in memory, so a restart counts them again; not in totals, which can't add them across "
                       "days). per_ip_refusals: HTTP requests the per-IP rate limit turned away (429), total and by "
-                      "group (everyone_else: every caller); null on days before it was counted."),
+                      "group (platform_ranges: addresses in the AI platforms' published ranges, which have a "
+                      "higher limit; everyone_else: every other caller); null on days before it was counted."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,

@@ -27,10 +27,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
-from . import __version__, stats
+from . import __version__, platform_ranges, stats
 from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
-    RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
+    RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
+    HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
@@ -558,9 +559,21 @@ def _utc_iso(timestamp: float) -> str:
     return datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _load_platform_ranges() -> platform_ranges.PlatformRanges:
+    """The AI platforms' address ranges from config (ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE),
+    logged. RateLimitMiddleware calls this once, when the app starts and Starlette builds it."""
+    loaded = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE)
+    for warning in loaded.warnings:
+        logger.warning(warning)
+    logger.info(f"Platform address ranges: {loaded.summary}; {PLATFORM_RATE_LIMIT:,} requests a minute per "
+                f"platform address, {RATE_LIMIT_REQUESTS:,} for others")
+    return loaded.ranges
+
+
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per IP, the
-    limit _limit_for() gives each address.
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per IP, and
+    PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's and
+    OpenAI's published ranges), the limit _limit_for() gives each address.
 
     Every reply it sees says where the address stands: X-RateLimit-Limit (requests a minute),
     X-RateLimit-Remaining (left in the current window) and X-RateLimit-Reset (whole seconds until
@@ -582,9 +595,15 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
 
     def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS,
-                 clock: Callable[[], float] | None = None):
+                 clock: Callable[[], float] | None = None, platform_per_minute: int = PLATFORM_RATE_LIMIT,
+                 platform_addresses: platform_ranges.PlatformRanges | None = None):
         super().__init__(app)
         self.requests_per_minute = requests_per_minute
+        self.platform_per_minute = platform_per_minute
+        # None: load them from config (and log how many), once: Starlette builds the middleware
+        # when the app starts
+        self.platform_addresses = (platform_addresses if platform_addresses is not None
+                                   else _load_platform_ranges())
         self._clock = clock  # epoch seconds; None: time.time()
         self.request_counts: dict[str, list[float]] = {}
         self._last_cleanup = self._now()
@@ -595,11 +614,15 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     def _get_client_ip(self, request) -> str:
         return _client_ip(request)
 
+    def _is_platform(self, client_ip: str) -> bool:
+        """Whether the address is in an AI platform's published range (shared by many users)."""
+        return client_ip in self.platform_addresses
+
     def _limit_for(self, client_ip: str) -> int:
-        """Requests a minute this address may send. The check, the headers and the 429 all use
-        this. The same for every address so far; a higher limit for the AI platforms' address
-        ranges would go here (and in _refusal_group)."""
-        return self.requests_per_minute
+        """Requests a minute this address may send: PLATFORM_RATE_LIMIT for an AI platform's
+        address, RATE_LIMIT_REQUESTS for any other. The check, the headers and the 429 all use
+        this."""
+        return self.platform_per_minute if self._is_platform(client_ip) else self.requests_per_minute
 
     def _cleanup_stale_ips(self, now: float) -> None:
         """Remove IPs with no request left in the window. Called periodically."""
@@ -665,14 +688,17 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 "X-RateLimit-Reset": str(allowance.reset)}
 
     @classmethod
-    def _refusal(cls, allowance: _Allowance) -> JSONResponse:
+    def _refusal(cls, allowance: _Allowance, *, shared: bool = False) -> JSONResponse:
+        """The 429 for a refused request; shared: the address is an AI platform's (_is_platform)."""
         wait, limit = allowance.reset, allowance.limit
         seconds = f"{wait} second{'' if wait == 1 else 's'}"
         if allowance.refused == "too_many_clients":
             tell_user = f"pcbparts is serving too many addresses at once; try again in {seconds}."
         else:
-            tell_user = (f"pcbparts allows {limit} request{'' if limit == 1 else 's'} a minute per address; "
-                         f"try again in {seconds}, or run your own copy for heavy use: {SELF_HOSTING_URL}")
+            allows = f"pcbparts allows {limit:,} request{'' if limit == 1 else 's'} a minute per address"
+            if shared:
+                allows += ", and this address is shared by many users of the same AI platform"
+            tell_user = f"{allows}; try again in {seconds}, or run your own copy for heavy use: {SELF_HOSTING_URL}"
         return JSONResponse(
             status_code=429,
             content={"error": "Rate limit exceeded", "retry_after": wait, "reason": allowance.refused,
@@ -680,12 +706,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             headers={**cls._headers(allowance), "Retry-After": str(wait)},
         )
 
-    @staticmethod
-    def _refusal_group(client_ip: str) -> str:
-        """Which stats.REFUSAL_GROUPS group a refused address counts under. Every address has the
-        same limit so far; a higher limit for the AI platforms' address ranges would return
-        "platform_ranges" for those (and add it to stats.REFUSAL_GROUPS)."""
-        return "everyone_else"
+    def _refusal_group(self, client_ip: str) -> str:
+        """Which stats.REFUSAL_GROUPS group a refused address counts under: platform_ranges for an
+        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest."""
+        return "platform_ranges" if self._is_platform(client_ip) else "everyone_else"
 
     def _count_refusal(self, client_ip: str) -> None:
         """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused-IPs log line.
@@ -707,7 +731,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             allowance = self._allowance(client_ip)
             if allowance.refused:
                 self._count_refusal(client_ip)
-                return self._refusal(allowance)
+                return self._refusal(allowance, shared=self._is_platform(client_ip))
         response = await call_next(request)
         # call_next returns once the app has sent its status and headers, before any of the body:
         # these go out with them and a streamed (SSE) reply still streams. A new list, since an
@@ -3331,7 +3355,8 @@ def create_app():
     # FastMCP handles CORS for MCP endpoints.
     middleware = [
         Middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES),
-        Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS),
+        Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS,
+                   platform_per_minute=PLATFORM_RATE_LIMIT),
     ]
 
     # stateless_http=True required because Claude Code doesn't forward session cookies.

@@ -78,6 +78,11 @@ RUN python scripts/build_boards_db.py --data-dir /app/data --output /app/data/bo
 # Copy design rules (served markdown only, not raw sources)
 COPY --chown=appuser:appuser data/design-rules/rules/ /app/data/design-rules/rules/
 
+# OpenAI's published ChatGPT connector addresses, for the AI platforms' higher per-address rate limit
+# (platform_ranges.py). docker-build.yml replaces the committed copy with a fresh, checked download
+# before the build; after the database builds, so a changed list doesn't rebuild them.
+COPY --chown=appuser:appuser data/platform_ranges/ /app/data/platform_ranges/
+
 # Add src to Python path
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
