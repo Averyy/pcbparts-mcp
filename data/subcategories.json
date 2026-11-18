@@ -364,6 +364,11 @@
     "category_id": 8,
     "category_name": "Connectors"
   },
+  "2146": {
+    "name": "Backplane Connector",
+    "category_id": 8,
+    "category_name": "Connectors"
+  },
   "2137": {
     "name": "Barrier Terminal Blocks",
     "category_id": 8,
@@ -3146,6 +3151,11 @@
   },
   "3492": {
     "name": "diesel engine oil",
+    "category_id": 58,
+    "category_name": "Industrial reagents/lubrication/rust removal"
+  },
+  "1229": {
+    "name": "Metal repair agent",
     "category_id": 58,
     "category_name": "Industrial reagents/lubrication/rust removal"
   },

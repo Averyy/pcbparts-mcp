@@ -109,7 +109,6 @@
 {"l":"C22463781","m":"HYCW-TXT351543A","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"-40℃~+85℃ 0.3N.Min 3.5mmx1.5mmx4.3mm 80mΩ DC~4GHz Nickel-Plated 50u, Semi-Gold Plated 1+1u Stainless steel SMD Antenna spring ROHS","a":[["working temperature","-40℃~+85℃"],["frequency range","DC~4GHz"],["surface treatment","Nickel-Plated 50u, Semi-Gold Plated 1+1u"],["size","3.5mmx1.5mmx4.3mm"],["material quality","Stainless Steel"],["impedance","80mΩ"],["Under pressure","0.3N.Min"]],"x":0,"n":1}
 {"l":"C22463782","m":"HYCW-TXT3851644","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30605054","m":"ASP-D3504-A01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
-{"l":"C30605057","m":"ASP-D4001-B01","f":"XUNPU","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607525","m":"ASP-D1104-B01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607527","m":"ASP-D1403-B01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607528","m":"ASP-D1504-B01","f":"XUNPU","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0,"n":1}
@@ -131,7 +130,5 @@
 {"l":"C42421442","m":"HYCW-TXT341020","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C42421443","m":"HYCW-TXT341022A","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C52034428","m":"HYCW-TXT221113A","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
-{"l":"C55160335","m":"KH-351514-TP-CY","f":"Shenzhen Kinghelm Elec","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
-{"l":"C55559809","m":"SPN155A-1101-01","f":"KRCONN Technology","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
+{"l":"C55160335","m":"KH-351514-TP-CY","f":"Shenzhen Kinghelm Elec","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0}
 {"l":"C55652076","m":"TXTP-120B1-0264A","f":"Hanbo Electronic","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
-{"l":"C55807192","m":"LCK002B10275A","f":"LCKELEC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}

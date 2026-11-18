@@ -67,6 +67,7 @@
 {"l":"C5370858","m":"1202","f":"Keystone","p":"-","t":"e","c":104,"d":"2 30A Brass Tin - PCB Welding Terminal ROHS","a":[["Number of Leg","2"],["appearance and shape","Plug-in type (with screw)"],["Body Material","Brass"],["Pin Spacing(Adjacent)","10.3mm"],["Terminal Type","Top"],["Current Rating","30A"],["Ontology Coating","Tin"]],"x":0}
 {"l":"C5370871","m":"1514-2","f":"Keystone","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0}
 {"l":"C5370873","m":"7799","f":"Keystone","p":"-","t":"e","c":104,"d":"11.68mm 30A 5mm 6 Brass M4 Plug-in type (with screw) Tin Top - PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type (with screw)"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","30A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","11.68mm"],["Screw Hole Size","M4"]],"x":0}
+{"l":"C5495869","m":"214788-E","f":"TE Connectivity","p":"Plugin","t":"e","c":104,"d":"40A 6 Copper Alloy Tin Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["Body Material","Copper Alloy"],["Current Rating","40A"],["Ontology Coating","Tin"]],"x":0}
 {"l":"C5523892","m":"7761","f":"Keystone","p":"Plugin","t":"e","c":104,"d":"15A 4 Brass Tin 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type (with screw)"],["Body Material","Brass"],["Terminal Type","Side"],["Current Rating","15A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","13mm"]],"x":0}
 {"l":"C5525515","m":"7466104R","f":"Wurth Elektronik","p":"-","t":"e","c":104,"d":"1 50A Brass Tin - PCB Welding Terminal ROHS","a":[["Number of Leg","1"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Ontology Coating","Tin"],["Height Above Board","7.8mm"],["Screw Hole Size","M4"]],"x":0}
 {"l":"C5526528","m":"7787","f":"Keystone","p":"Plugin","t":"e","c":104,"d":"30A 6 Brass Tin 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Pin Spacing(Adjacent)","5.2mm"],["Terminal Type","Top"],["Current Rating","30A"],["Ontology Coating","Tin"]],"x":0}
@@ -173,6 +174,7 @@
 {"l":"C22374944","m":"T44080080-0680","f":"XFCN","p":"Plugin","t":"e","c":104,"d":"1 4 40A 5mm 6.8mm M4 Plug-in type Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Current Rating","40A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","6.8mm"],["Screw Hole Size","M4"]],"x":0}
 {"l":"C22374952","m":"TM68160200-1300","f":"XFCN","p":"Plugin","t":"e","c":104,"d":"1 13mm 240A 8 M6 Plug-in type Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","8"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Current Rating","240A"],["Ontology Coating","Tin"],["Height Above Board","13mm"],["Screw Hole Size","M6"]],"x":0}
 {"l":"C22438946","m":"T54117120-1300","f":"XFCN","p":"Plugin","t":"e","c":104,"d":"10mm 13mm 4 80A M5 Plug-in type Tin Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Current Rating","80A"],["Pin Spacing(Adjacent)","10mm"],["Ontology Coating","Tin"],["Height Above Board","13mm"],["Screw Hole Size","M5"]],"x":0}
+{"l":"C22442699","m":"CONSMA002","f":"TE Connectivity","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C22448686","m":"AMT0860001TA0000G","f":"Amphenol ICC","p":"SMD","t":"e","c":104,"d":"SMD PCB Welding Terminal ROHS","a":[],"x":0}
 {"l":"C22448810","m":"AMT0450003DB0000G","f":"Amphenol ICC","p":"DIP-4P,14x12mm","t":"e","c":104,"d":"DIP-4P,14x12mm PCB Welding Terminal ROHS","a":[],"x":0}
 {"l":"C22466633","m":"AMT0440007DB0000G","f":"Amphenol ICC","p":"Plugin","t":"e","c":104,"d":"35A 4 5.05mm 9.7mm Copper alloy M4 Plug-in type Tin 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Copper Alloy"],["Pin Spacing(Adjacent)","5.05mm"],["Current Rating","35A"],["Ontology Coating","Tin"],["Height Above Board","9.7mm"],["Screw Hole Size","M4"]],"x":0}
@@ -204,7 +206,6 @@
 {"l":"C41421483","m":"BTC27M5BBR4TM","f":"BZXC","p":"Plugin","t":"e","c":104,"d":"Plugin PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C41427242","m":"HC-RG66-1414-D002RC-01","f":"HCTL","p":"DIP-6P,14.5x14.5mm","t":"e","c":104,"d":"100A 6 6.25mm M6 Plug-in type Red copper Tin Top DIP-6P,14.5x14.5mm PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Pure Copper"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Current Rating","100A"],["Ontology Coating","Tin"],["Screw Hole Size","M6"]],"x":0}
 {"l":"C41427243","m":"HC-RG66-1414-D003RC-01","f":"HCTL","p":"DIP-6P,14.5x14.5mm","t":"e","c":104,"d":"126A 6 6.25mm M6 Plug-in type Red copper Tin Top DIP-6P,14.5x14.5mm PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Pure Copper"],["Current Rating","126A"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Ontology Coating","Tin"],["Screw Hole Size","M6"]],"x":0}
-{"l":"C41432470","m":"XD-RG68-1620-D004RC","f":"chxunda","p":"DIP-8P,20x16mm","t":"e","c":104,"d":"DIP-8P,20x16mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C42376597","m":"HC-RG34-0707-D051-02","f":"HCTL","p":"Plugin-4P,7.8x7.8mm","t":"e","c":104,"d":"4 50A Brass M4 Plug-in type Tin Top Plugin-4P,7.8x7.8mm PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Ontology Coating","Tin"],["Screw Hole Size","M4"]],"x":0}
 {"l":"C42376598","m":"HC-RG44-0808-D052-02","f":"HCTL","p":"Plugin-4P,8x8mm","t":"e","c":104,"d":"4 50A Brass M4 Plug-in type Tin Top Plugin-4P,8x8mm PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Ontology Coating","Tin"],["Screw Hole Size","M4"]],"x":0}
 {"l":"C42376599","m":"HC-RG44-0808-D053-02","f":"HCTL","p":"Plugin-4P,8x8mm","t":"e","c":104,"d":"4 50A Brass M4 Plug-in type Tin Top Plugin-4P,8x8mm PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Ontology Coating","Tin"],["Screw Hole Size","M4"]],"x":0}
@@ -281,6 +282,7 @@
 {"l":"C47121886","m":"1007035CL5","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 1 10.5mm 4 7mm 80A Brass M5 Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","7mm"],["Current Rating","80A"],["Ontology Coating","Tin"],["Height Above Board","10.5mm"],["Screw Hole Size","M5"]],"x":0}
 {"l":"C47121887","m":"1112040CD4","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 1 16mm 4 85A Brass M4 Plug-in type Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","85A"],["Pin Spacing(Adjacent)","-"],["Ontology Coating","Tin"],["Height Above Board","16mm"],["Screw Hole Size","M4"]],"x":0}
 {"l":"C47121888","m":"1458040CD5","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 1 100A 12mm 6 6.25mm Brass M5 Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Current Rating","100A"],["Ontology Coating","Tin"],["Height Above Board","12mm"],["Screw Hole Size","M5"]],"x":0}
+{"l":"C47121889","m":"1458040CD6","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"12mm 6 6.25mm 80A Brass M6 Plug-in type Tin Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Current Rating","80A"],["Ontology Coating","Tin"],["Height Above Board","12mm"],["Screw Hole Size","M6"]],"x":0}
 {"l":"C47121890","m":"1458040TD6","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 1 12mm 150A 6 6.25mm Brass M6 Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Current Rating","150A"],["Ontology Coating","Tin"],["Height Above Board","12mm"],["Screw Hole Size","M6"]],"x":0}
 {"l":"C47121891","m":"1458040TY6","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 120A 12mm 6 M6 Red copper Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Pure Copper"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Current Rating","120A"],["Ontology Coating","Tin"],["Height Above Board","12mm"],["Screw Hole Size","M6"]],"x":0}
 {"l":"C47121892","m":"6913535CD3","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"-25℃~+85℃ 1 17mm 4 50A 5mm Brass M3 Tin Top 插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","17mm"],["Screw Hole Size","M3"]],"x":0}
@@ -457,6 +459,7 @@
 {"l":"C54451089","m":"145110401L5","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"插件 PCB Welding Terminal ROHS","a":[["Number of Leg","6"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","6.25mm"],["Ontology Coating","Tin"],["Height Above Board","15mm"],["Screw Hole Size","M5"]],"x":0,"n":1}
 {"l":"C54451090","m":"81180301L3","f":"SAMZO","p":"Plugin","t":"e","c":104,"d":"插件 PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Pin Spacing(Adjacent)","4.6mm"],["Terminal Type","Side"],["Ontology Coating","Tin"],["Height Above Board","11mm"],["Screw Hole Size","M3"]],"x":0,"n":1}
 {"l":"C54524996","m":"HC-RG0844-0808-D052-02","f":"HCTL","p":"Plugin","t":"e","c":104,"d":"4 45A 5mm 8.3mm Brass M4 Plug-in type Tin Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","45A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","8.3mm"],["Screw Hole Size","M4"]],"x":0,"n":1}
+{"l":"C54524997","m":"HC-RG0844-0808-D201-07","f":"HCTL","p":"Plugin","t":"e","c":104,"d":"4 45A 5mm 8.7mm Brass M4 Nickel Plug-in type Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","45A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Nickel"],["Height Above Board","8.7mm"],["Screw Hole Size","M4"]],"x":0,"n":1}
 {"l":"C54525048","m":"HC-RG0844-0808-D053-02","f":"HCTL","p":"Plugin","t":"e","c":104,"d":"4 45A 5mm 9.7mm Brass M4 Plug-in type Tin Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","45A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","9.7mm"],["Screw Hole Size","M4"]],"x":0,"n":1}
 {"l":"C54525049","m":"HC-RG0844-0808-D204-07","f":"HCTL","p":"Plugin","t":"e","c":104,"d":"11.2mm 4 45A 5mm Brass M4 Nickel Plug-in type Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","45A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Nickel"],["Height Above Board","11.2mm"],["Screw Hole Size","M4"]],"x":0,"n":1}
 {"l":"C54525050","m":"HC-RG0844-0808-D054-02","f":"HCTL","p":"Plugin","t":"e","c":104,"d":"13.5mm 4 50A 5mm Brass M4 Plug-in type Tin Top Plugin PCB Welding Terminal ROHS","a":[["Number of Leg","4"],["appearance and shape","Plug-in type"],["Body Material","Brass"],["Terminal Type","Top"],["Current Rating","50A"],["Pin Spacing(Adjacent)","5mm"],["Ontology Coating","Tin"],["Height Above Board","13.5mm"],["Screw Hole Size","M4"]],"x":0,"n":1}
@@ -520,9 +523,8 @@
 {"l":"C55625962","m":"HC-RN2082-3718-S917-07","f":"HCTL","p":"SMD,20x18.3mm","t":"e","c":104,"d":"SMD,20x18.3mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C55625981","m":"HC-M1244-0909-D529-07","f":"HCTL","p":"DIP-4P,9.1x9.1mm","t":"e","c":104,"d":"DIP-4P,9.1x9.1mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C55625982","m":"HC-RG1554-1412-D712RC-07","f":"HCTL","p":"DIP-4P,14x12mm","t":"e","c":104,"d":"DIP-4P,14x12mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
-{"l":"C55629736","m":"SH-T08","f":"SHOU HAN","p":"DIP-4P,11x8mm","t":"e","c":104,"d":"1 4 5mm 9.8mm Plug-in type Top DIP-4P,11x8mm PCB Welding Terminal ROHS","a":[["Number of Holes","1"],["Number of Leg","4"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","5mm"],["Height Above Board","9.8mm"]],"x":0,"n":1}
-{"l":"C55629737","m":"SH-T10","f":"SHOU HAN","p":"DIP-4P,11.7x8.0mm","t":"e","c":104,"d":"1 4 5mm 9mm Plug-in type Top DIP-4P,11.7x8.0mm PCB Welding Terminal ROHS","a":[["Number of Holes","1"],["Number of Leg","4"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","5mm"],["Height Above Board","9mm"]],"x":0,"n":1}
-{"l":"C55629738","m":"SH-T12","f":"SHOU HAN","p":"DIP-4P,11.7x9.8mm","t":"e","c":104,"d":"1 10.1mm 4 5.1mm Plug-in type Top DIP-4P,11.7x9.8mm PCB Welding Terminal ROHS","a":[["Number of Holes","1"],["Number of Leg","4"],["appearance and shape","Plug-in type"],["Pin Spacing(Adjacent)","5.1mm"],["Terminal Type","Top"],["Height Above Board","10.1mm"]],"x":0,"n":1}
+{"l":"C55629737","m":"SH-T10","f":"SHOU HAN","p":"DIP-4P,11.7x8.0mm","t":"e","c":104,"d":"1 4 5mm 9mm Plug-in type Top DIP-4P,11.7x8.0mm PCB Welding Terminal ROHS","a":[["Number of Holes","1"],["Number of Leg","4"],["appearance and shape","Plug-in type"],["Terminal Type","Top"],["Pin Spacing(Adjacent)","5mm"],["Height Above Board","9mm"]],"x":0}
+{"l":"C55629738","m":"SH-T12","f":"SHOU HAN","p":"DIP-4P,11.7x9.8mm","t":"e","c":104,"d":"1 10.1mm 4 5.1mm Plug-in type Top DIP-4P,11.7x9.8mm PCB Welding Terminal ROHS","a":[["Number of Holes","1"],["Number of Leg","4"],["appearance and shape","Plug-in type"],["Pin Spacing(Adjacent)","5.1mm"],["Terminal Type","Top"],["Height Above Board","10.1mm"]],"x":0}
 {"l":"C56232476","m":"T54300100-0360","f":"XFCN","p":"DIP-4P,30x10mm","t":"e","c":104,"d":"DIP-4P,30x10mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C56232477","m":"TS54300100-0790","f":"XFCN","p":"SMD-4P,12.5x10mm","t":"e","c":104,"d":"SMD-4P,12.5x10mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C56232478","m":"TS54300115-0790","f":"XFCN","p":"SMD-4P,12.5x11.5mm","t":"e","c":104,"d":"SMD-4P,12.5x11.5mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
@@ -535,3 +537,94 @@
 {"l":"C56232504","m":"TTK44080080-1250","f":"XFCN","p":"DIP-4P,8x8mm","t":"e","c":104,"d":"DIP-4P,8x8mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C56232505","m":"T44007-1","f":"XFCN","p":"DIP-4P,11.1x9.5mm","t":"e","c":104,"d":"DIP-4P,11.1x9.5mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
 {"l":"C56314909","m":"T44001-1","f":"XFCN","p":"DIP-4P,8x8mm","t":"e","c":104,"d":"DIP-4P,8x8mm PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440906","m":"PCB-M3-06","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440907","m":"PCB-M3-07","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440908","m":"PCB-M3-08","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440909","m":"PCB-M3-09","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440910","m":"PCB-M3-10","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440912","m":"PCB-M4-09","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440913","m":"PCB-M4-10","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440915","m":"PCB-M4-12","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440916","m":"PCB-M4-13","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440917","m":"PCB-M4-14","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440918","m":"PCB-M4-15","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440919","m":"PCB-M4-16","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440920","m":"PCB-M4-17","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440922","m":"PCB-M4-19","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440923","m":"PCB-M4-20","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440924","m":"PCB-M4-21","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440925","m":"PCB-M4-22","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440926","m":"PCB-M4-23","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440927","m":"PCB-M4-24","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440928","m":"PCB-M4-25","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440929","m":"PCB-M4-26","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440931","m":"PCB-M4-28","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440932","m":"PCB-M4-29","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440933","m":"PCB-M4-30","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440934","m":"PCB-M4-31","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440936","m":"PCB-M4-33","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440937","m":"PCB-M4-34","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440938","m":"PCB-M4-35","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440940","m":"PCB-M4-37","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440941","m":"PCB-M4-38","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440942","m":"PCB-M4-39","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440943","m":"PCB-M4-41","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440944","m":"PCB-M4-42","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440945","m":"PCB-M4-43","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440946","m":"PCB-M4-44","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440947","m":"PCB-M4-45","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440948","m":"PCB-M4-46","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440949","m":"PCB-M4-47","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440950","m":"PCB-M4-48","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440952","m":"PCB-M4-50","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440954","m":"PCB-M4-52","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440955","m":"PCB-M4-53","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440956","m":"PCB-M5-06","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440957","m":"PCB-M5-07","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440958","m":"PCB-M5-08","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440959","m":"PCB-M5-09","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440960","m":"PCB-M5-10","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440961","m":"PCB-M5-11","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440962","m":"PCB-M5-12","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440963","m":"PCB-M5-14","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440966","m":"PCB-M5-17","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440967","m":"PCB-M5-18","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440968","m":"PCB-M5-19","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440969","m":"PCB-M5-20","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440971","m":"PCB-M5-23","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440972","m":"PCB-M5-24","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440973","m":"PCB-M5-25","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440974","m":"PCB-M5-26","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440975","m":"PCB-M5-27","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440976","m":"PCB-M5-28","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440977","m":"PCB-M5-29","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440978","m":"PCB-M5-30","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440979","m":"PCB-M5-31","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440981","m":"PCB-M5-33","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440983","m":"PCB-M5-35","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440984","m":"PCB-M5-36","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440985","m":"PCB-M5-37","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440987","m":"PCB-M5-39","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440988","m":"PCB-M5-40","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440989","m":"PCB-M5-41","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440990","m":"PCB-M5-42","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440992","m":"PCB-M5-44","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440993","m":"PCB-M5-45","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440994","m":"PCB-M5-46","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440995","m":"PCB-M5-47","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440996","m":"PCB-M5-48","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440998","m":"PCB-M6-02","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56440999","m":"PCB-M6-03","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441000","m":"PCB-M6-04","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441002","m":"PCB-M6-06","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441004","m":"PCB-M6-08","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441005","m":"PCB-M6-09","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441006","m":"PCB-M6-10","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441007","m":"PCB-M6-11","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441008","m":"PCB-M6-12","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441009","m":"PCB-M6-13","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441010","m":"PCB-M8-02","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441011","m":"PCB-M8-03","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441012","m":"PCB-M8-05","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441013","m":"PCB-M8-06","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
+{"l":"C56441015","m":"PCB-M8-08","f":"DLL","p":"-","t":"e","c":104,"d":"- PCB Welding Terminal ROHS","a":[],"x":0,"n":1}
