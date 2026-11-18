@@ -100,10 +100,7 @@ class EasyEDAComponentNotFound(ValueError):
 def _count_upstream(source: str, event: str, count: int = 1) -> None:
     """For /mcp/stats: a request sent to source, an answer its cache gave instead, or a request our
     budget or pause for it held back (stats.UPSTREAM_EVENTS). Counting never breaks a lookup."""
-    try:
-        stats.usage.record_upstream(source, event, count)
-    except Exception:
-        logger.exception("Usage stats: couldn't count an upstream request")
+    stats.count_upstream(source, event, count)
 
 
 def _wafer_retries(reply: Any) -> int:

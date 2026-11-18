@@ -43,6 +43,11 @@ _NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-rep
 OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed")
 TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
 DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
+# From 0.10.0, on days that had any: part numbers not sent because no distributor can list them (a
+# value such as "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters) or, for
+# part_lifecycle, because that distributor hasn't listed the maker's parts lately (search/mpn.py's
+# NOT_SENT_REASONS). One a number, under the distributor it would have gone to first.
+DISTRIBUTOR_SKIPPED = "skipped"
 # Historical DigiKey counts from before 0.9.3: an all-digit number missed the direct lookup and
 # went on to a keyword search, which found the part or didn't. Also counted in "sent".
 DISTRIBUTOR_RETRY_EVENTS = ("retry_found", "retry_missed")
@@ -57,6 +62,7 @@ REASONS = frozenset({
     # lookups that found nothing
     "mpn_not_in_snapshot", "placeholder_mpn", "lcsc_code_as_mpn", "part_not_found", "lcsc_not_found", "board_not_found",
     "no_parts_for_query", "no_ecad_model", "no_kicad_in_archive", "no_easyeda_symbol", "no_alternatives",
+    "not_sent",  # Mouser/DigiKey/part_lifecycle: no number worth a request (search/mpn.py's NOT_SENT_REASONS)
     # something failed
     "service_not_ready", "not_configured", "no_pcba_types", "query_too_complex", "board_db_failed", "jlcpcb_waf",
     "jlcpcb_unavailable", "easyeda_failed", "mouser_failed", "digikey_failed", "cse_auth_failed", "cse_lookup_failed",
@@ -113,7 +119,7 @@ def _clean_day(day: dict) -> dict[str, Any]:
             counts = {"rate_limited": counts.get("limited"), **counts}  # 0.6.3 called it "limited"
             clean["distributors"][str(name)] = {
                 **{key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS},
-                **{key: _int(counts[key]) for key in DISTRIBUTOR_RETRY_EVENTS if key in counts}}
+                **{key: _int(counts[key]) for key in (*DISTRIBUTOR_RETRY_EVENTS, DISTRIBUTOR_SKIPPED) if key in counts}}
     for name, counts in _dict(day.get("reasons")).items():
         if isinstance(counts, dict):
             clean["reasons"][str(name)] = {reason: _int(count) for reason, count in counts.items() if reason in REASONS}
@@ -169,7 +175,9 @@ class _SeenToday:
         """Whether value is new today (and was counted)."""
         if date != self._date:
             self._date, self._salt, self._seen = date, secrets.token_bytes(16), set()
-        digest = hashlib.blake2b(value.encode(), key=self._salt, digest_size=8).digest()
+        # surrogatepass: a part number can hold a lone surrogate (JSON's "\ud800"), which plain
+        # UTF-8 can't encode
+        digest = hashlib.blake2b(value.encode("utf-8", "surrogatepass"), key=self._salt, digest_size=8).digest()
         if digest in self._seen or len(self._seen) >= self._cap:
             return False
         self._seen.add(digest)
@@ -261,7 +269,8 @@ class UsageStats:
 
     def record_distributor(self, name: str, event: str) -> None:
         """A Mouser/DigiKey lookup: "sent" to the API, "cached" (answered from the cache) or
-        "rate_limited" (turned away by our limits or a pause the API asked for)."""
+        "rate_limited" (turned away by our limits or a pause the API asked for); or a part number
+        "skipped" (DISTRIBUTOR_SKIPPED)."""
         counts = self._day()["distributors"].setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
         counts[event] = counts.get(event, 0) + 1
 
@@ -274,7 +283,8 @@ class UsageStats:
 
     def record_parts_asked(self, distributor: str, numbers: list[str]) -> None:
         """Part numbers a Mouser/DigiKey lookup asked for (distinct within the lookup), whether they
-        were answered from the stored answers or not: counted, and the ones not seen yet today
+        were answered from the stored answers, with a request, or turned away by the limits (not
+        the skipped ones, which aren't looked up at all): counted, and the ones not seen yet today
         (compared by mpn_key: case and - _ / ignored) counted as distinct. Neither the numbers nor
         their hashes are written anywhere."""
         if distributor not in PARTS_ASKED or not numbers:
@@ -396,6 +406,10 @@ class UsageStats:
                       "call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, "
                       "package or stock limit to test). distributors retry_found and retry_missed: before 0.9.3, DigiKey all-digit "
                       "numbers that missed the direct lookup and went on to a keyword search, also counted in sent. "
+                      "distributors skipped (from 0.10.0, on days with any): part numbers not sent because no "
+                      "distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII "
+                      "text, not 3-40 characters) or, for part_lifecycle, because that distributor hasn't listed "
+                      "the maker's parts lately; one a number. "
                       "From 0.10.0 (earlier days have none): upstream, for each service this server calls other than "
                       "Mouser and DigiKey (those are in distributors): jlcpcb (parts search), lcsc (product data), "
                       "easyeda_products (footprint checks), easyeda_components (symbols and footprints for pinouts), "
@@ -404,7 +418,8 @@ class UsageStats:
                       "client made on its own for them, where it reports them (a timeout reports none); cached "
                       "answers given without a request (memory cache, on-disk store or seed); rate_limited requests "
                       "this server's own budget or pause for that service kept back. parts_asked: part numbers "
-                      "looked up with Mouser and DigiKey, from stored answers or with a request (total), and how many "
+                      "asked for with Mouser and DigiKey, whether stored answers gave them, a request did or the "
+                      "limits turned them away (total; skipped ones aren't counted), and how many "
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
                       "held in memory, so a restart counts them again; not in totals, which can't add them across "
                       "days). per_ip_refusals: HTTP requests admission control turned away (429), total and by "
@@ -464,3 +479,25 @@ def _by_count(counts: dict[str, int]) -> dict[str, int]:
 
 # The server's counts. Modules use stats.usage (not `from .stats import usage`) so tests can swap it.
 usage = UsageStats()
+
+
+# Counting never breaks a lookup: the clients call these instead of usage's methods
+def count_distributor(name: str, event: str) -> None:
+    try:
+        usage.record_distributor(name, event)
+    except Exception:
+        logger.exception("Usage stats: couldn't count a distributor lookup")
+
+
+def count_parts_asked(distributor: str, numbers: list[str]) -> None:
+    try:
+        usage.record_parts_asked(distributor, numbers)
+    except Exception:
+        logger.exception("Usage stats: couldn't count the part numbers asked")
+
+
+def count_upstream(source: str, event: str, count: int = 1) -> None:
+    try:
+        usage.record_upstream(source, event, count)
+    except Exception:
+        logger.exception("Usage stats: couldn't count an upstream request")

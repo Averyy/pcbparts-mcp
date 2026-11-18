@@ -124,7 +124,7 @@ class TestPacer:
         fake = FakeDigiKey(*(httpx.Response(200, json=PRODUCT) for _ in range(3)))
         client = digikey(fake)
         client._pacer = Pacer(5, clock=clock, sleep=sleep)
-        for number in ("A1", "A2", "A3"):
+        for number in ("PA1", "PA2", "PA3"):
             await client.get_part(number)
         assert fake.product_requests == 3
         # The token request goes first and takes a slot too; then each request waits 0.2 s

@@ -813,3 +813,328 @@ class TestServer:
             assert body["distributor_stored"] == {"answers": 0, "lifecycle": 0, "kept_across_restarts": True}
             assert server._mouser_client._store is server._distributor_store is server._digikey_client._store
         assert path.exists()
+
+
+# --- review fixes, 2026-11-18 ---
+
+class TestNotSentReason:
+    NOT_SENT = [
+        ("10k", "value"), ("4.7k", "value"), ("100nF", "value"), ("4.7uF", "value"), ("1R", "value"),
+        ("10k 0402", "value"), ("100nF 50V 0603", "value"), ("4K7 1%", "value"), ("16Ω", "value"),
+        ("10 kOhm", "value"), ("22pF/50V", "value"), ("8MHz", "value"),
+        ("DNP", "placeholder"), ("N/A", "placeholder"), ("C7950", "lcsc_code"), ("c2040", "lcsc_code"),
+        ("AB", "length"), ("X" * 41, "length"), ("LM358P中文", "not_ascii"), ("ＬＭ358", "not_ascii"),
+    ]
+
+    @pytest.mark.parametrize("number, reason", NOT_SENT, ids=[f"{r}{i}" for i, (_, r) in enumerate(NOT_SENT)])
+    def test_numbers_no_distributor_lists(self, number, reason):
+        from pcbparts_mcp.search.mpn import NOT_SENT_HINTS, NOT_SENT_REASONS, not_sent_reason
+        assert not_sent_reason(number) == reason
+        assert reason in NOT_SENT_REASONS and reason in NOT_SENT_HINTS
+
+    SENT = [
+        "1N4148", "LM358", "LM358P", "0805B103K500NT", "2N7002", "1N5819", "1N914", "BAT54", "STM32F103C8T6",
+        "TPS54331DR", "595-LM358P", "296-1395-5-ND", "B2B-PH-K-S(LF)(SN)", "9774025151R", "885012206095",
+        "RC0603FR-0710KL", "AMS1117-3.3", "SS14", "1206", "X7R", "LM358/NOPB", "74HC595", "C1815-Y",
+    ]
+
+    @pytest.mark.parametrize("number", SENT, ids=[f"pn{i}" for i in range(len(SENT))])
+    def test_real_part_numbers_are_sent(self, number):
+        from pcbparts_mcp.search.mpn import not_sent_reason
+        assert not_sent_reason(number) is None
+
+
+class TestNotSent:
+    async def test_mouser_batch_leaves_them_out(self, setup):
+        fake = FakeMouser(mouser_part("LM358P"))
+        m, _, _, mq, _ = setup(mouser=fake)
+        reply = await m.get_part("10k|LM358P|C7950|100nF 50V 0603")
+        assert fake.sent == ["LM358P"] and mq.status()["used_today"] == 1
+        assert reply["not_found"] == ["10k", "C7950", "100nF 50V 0603"]
+        assert reply["not_sent"] == {"10k": "value", "C7950": "lcsc_code", "100nF 50V 0603": "value"}
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["LM358P"]
+        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["skipped"] == 3
+
+    async def test_mouser_lone_number_spends_nothing(self, setup):
+        fake = FakeMouser()
+        m, _, _, mq, _ = setup(mouser=fake, mouser_limit=0)  # not even a spent day stops the answer
+        reply = await server.mouser_get_part(part_number="4.7uF")
+        assert reply == {"results": [], "total": 0, "not_found": ["4.7uF"], "not_sent": {"4.7uF": "value"},
+                         "observed_at": "2026-11-18T12:00:00+00:00"}
+        assert fake.sent == [] and mq.status()["used_today"] == 0
+        assert server._call_outcome(type("R", (), {"structured_content": reply})()) == "not_found"
+        assert server._call_reason("not_found", reply, None) == "not_sent"
+
+    async def test_digikey_lone_number(self, setup):
+        fake = FakeDigiKey()
+        _, d, _, _, dq = setup(digikey=fake)
+        reply = await server.digikey_get_part(product_number="10k 0402")
+        assert reply["error"] == "Part not found: 10k 0402"  # what a client reads as a completed miss
+        assert reply["not_sent"] == "value" and "component value" in reply["hint"]
+        assert fake.asked == [] and dq.status()["used_today"] == 0
+        assert server._call_reason("not_found", reply, None) == "not_sent"
+        assert (await d.get_part("AB"))["not_sent"] == "length"  # both distributors take 3-40 characters
+
+    async def test_part_lifecycle_rows(self, setup):
+        mouser, digikey = FakeMouser(mouser_part("LM358P")), FakeDigiKey()
+        setup(mouser=mouser, digikey=digikey)
+        reply = await lifecycle(["10k", {"mpn": "C7950"}, "AB", "16Ω", "LM358P", "DNP"])
+        rows = reply["results"]
+        assert [r.get("not_sent") for r in rows] == ["value", "lcsc_code", "length", "value", None, "placeholder"]
+        assert rows[0] == {"input": "10k", "mpn": "10k", "status": "unknown", "not_sent": "value"}
+        assert mouser.sent == ["LM358P"] and digikey.asked == []  # "AB" went to DigiKey before
+        assert rows[5]["error"].startswith("Invalid part: 'DNP' is a BOM placeholder")
+        none = await lifecycle(["10k", "4.7uF"])
+        assert server._lifecycle_outcome(none) == "not_found"
+        assert server._call_reason("not_found", none, None) == "not_sent"
+
+    async def test_a_kept_reading_still_answers(self, setup):
+        _, _, store, _, _ = setup(mouser=FakeMouser())
+        store.put_readings([Reading("AB", "Acme", "digikey", "obsolete", "Obsolete", NOW)])
+        assert (await lifecycle(["AB"]))["results"][0]["status"] == "obsolete"
+
+
+def lcsc_catalog(monkeypatch, parts):
+    class Catalog:
+        def get_by_lcsc_batch(self, codes):
+            return {code: parts.get(code) for code in codes}
+
+        def get_sold_out_rows(self, codes):
+            return dict.fromkeys(codes)
+
+    monkeypatch.setattr(server, "get_db", lambda: Catalog())
+
+
+class TestMakerNotCarried:
+    async def test_learned_then_skipped_then_asked_again(self, setup, monkeypatch, clock):
+        from pcbparts_mcp.config import MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED
+        maker = "UNI-ROYAL(Uniroyal Elec)"
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        parts = [{"mpn": f"0603WAF{i:04}T5E", "manufacturer": maker} for i in range(MAKER_SKIP_NOT_LISTED + 1)]
+        reply = await lifecycle(parts[:MAKER_SKIP_NOT_LISTED])
+        assert all(r.get("not_found") for r in reply["results"]) and len(digikey.asked) == MAKER_SKIP_NOT_LISTED
+        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}
+        sent = (len(mouser.sent), len(digikey.asked))
+        last = (await lifecycle([parts[-1]]))["results"][0]
+        assert last == {"input": parts[-1], "mpn": parts[-1]["mpn"], "status": "unknown", "manufacturer": maker,
+                        "not_sent": "maker_not_carried"}
+        assert (len(mouser.sent), len(digikey.asked)) == sent  # neither asked: both learned it
+        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["skipped"] == 1
+        clock.advance(MAKER_SKIP_DAYS * DAY)  # the counts age out, and the not-listed answers too
+        await lifecycle([parts[-1]])
+        assert len(mouser.sent) == sent[0] + 1
+
+    async def test_never_for_a_maker_listed_in_the_window(self, setup):
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        mouser = FakeMouser(mouser_part("LM358P"))
+        _, _, store, _, _ = setup(mouser=mouser)
+        store.count_maker_lookups("mouser", {"texas instruments": (MAKER_SKIP_NOT_LISTED * 3, 0)})
+        await lifecycle([{"mpn": "LM358P", "manufacturer": "TI"}])
+        assert mouser.sent == []  # learned: not carried (as counted above)
+        store.count_maker_lookups("mouser", {"texas instruments": (0, 1)})  # then one listed
+        assert (await lifecycle([{"mpn": "LM358P", "manufacturer": "Texas Instruments"}]))["results"][0]["source"] == "mouser"
+        assert mouser.sent == ["LM358P"]
+
+    async def test_mouser_skipped_for_the_maker_goes_to_digikey(self, setup):
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        mouser, digikey = FakeMouser(), FakeDigiKey(dk_product("CL10A106KP8NNNC", "Samsung Electro-Mechanics"))
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        store.count_maker_lookups("mouser", {"samsung electro mechanics": (MAKER_SKIP_NOT_LISTED, 0)})
+        row = (await lifecycle([{"mpn": "CL10A106KP8NNNC", "manufacturer": "Samsung Electro-Mechanics"}]))["results"][0]
+        assert (row["status"], row["source"]) == ("active", "digikey") and mouser.sent == []
+        assert store.makers_not_carried("digikey", {"samsung electro mechanics"}) == set()
+
+    async def test_listed_under_another_maker_counts_as_neither(self, setup):
+        _, _, store, _, _ = setup(mouser=FakeMouser(mouser_part("BSS138", "onsemi")), digikey=FakeDigiKey())
+        await lifecycle([{"mpn": "BSS138", "manufacturer": "Diodes Incorporated"}])
+        assert store._conn.execute("SELECT source, maker_key, not_listed, found FROM maker_lookups").fetchall() == [
+            ("digikey", "diodes", 1, 0)]  # Mouser lists the number (onsemi's): no count for Diodes
+
+    async def test_lcsc_code_entries_count_by_the_catalog_maker(self, setup, monkeypatch):
+        lcsc_catalog(monkeypatch, {"C25804": {"model": "0603WAF1002T5E", "manufacturer": "UNI-ROYAL(Uniroyal Elec)"}})
+        _, _, store, _, _ = setup(mouser=FakeMouser(), digikey=FakeDigiKey())
+        await lifecycle(["C25804"])
+        assert {r[0] for r in store._conn.execute("SELECT maker_key FROM maker_lookups")} == {"uni royal"}
+
+
+class TestMouserPartial:
+    """Decision 2026-11-18: a batch with some parts kept and the rest blocked by a spent limit
+    returns the kept parts with not_checked and retry_after, not the limit error."""
+
+    async def test_kept_parts_answer_with_not_checked(self, setup):
+        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
+        m, _, _, mq, _ = setup(mouser=fake)
+        await m.get_part("LM358P")
+        mq._count = mq._limit
+        reply = await server.mouser_get_part(part_number="LM358P|NE555P|TL431")
+        assert "error" not in reply
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["LM358P"]
+        assert reply["not_checked"] == ["NE555P", "TL431"] and reply["retry_after"] == MIDNIGHT - NOW
+        assert "not_found" not in reply and fake.sent == ["LM358P"]
+
+    async def test_nothing_kept_is_the_limit_error_as_before(self, setup):
+        m, _, _, _, _ = setup(mouser=FakeMouser(), mouser_limit=0)
+        reply = await m.get_part("NE555P|TL431")
+        assert set(reply) == {"error"} and "daily quota exceeded" in reply["error"]
+
+
+ODD_NUMBER = {"Errors": [{"Code": "InvalidCharacters", "Message": "The part number contains invalid characters."}]}
+
+
+class TestOneNumberMouserRejects:
+    async def test_the_others_still_answer(self, setup):
+        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"),
+                          responses=[httpx.Response(200, json=ODD_NUMBER), httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("LM358P")]}}),
+                                     httpx.Response(200, json=ODD_NUMBER), httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("NE555P")]}})])
+        m, _, store, _, _ = setup(mouser=fake)
+        reply = await m.get_part("LM358P|BAD*NUM|NE555P")
+        assert fake.sent == ["LM358P|BAD*NUM|NE555P", "LM358P", "BAD*NUM", "NE555P"]
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["LM358P", "NE555P"]
+        assert reply["lookup_failed"] == ["BAD*NUM"] and "not_found" not in reply
+        assert store.get_answer("mouser", "NE555P") is not None  # kept as a one-number answer
+
+    async def test_part_lifecycle_fails_only_that_number(self, setup):
+        fake = FakeMouser(responses=[httpx.Response(200, json=ODD_NUMBER),
+                                     httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("LM358P")]}}),
+                                     httpx.Response(200, json=ODD_NUMBER)])
+        setup(mouser=fake)
+        good, bad = (await lifecycle(["LM358P", "BAD*NUM"]))["results"]
+        assert good["status"] == "active" and bad["lookup_failed"] is True
+
+    async def test_a_second_failure_stops_the_singles(self, setup):
+        fake = FakeMouser(responses=[httpx.Response(200, json=ODD_NUMBER)] * 3)
+        m, _, _, mq, _ = setup(mouser=fake)
+        with pytest.raises(Exception, match="invalid characters"):
+            await m.get_part("PARTA1|PARTA2|PARTA3|PARTA4")
+        assert len(fake.sent) == 3 and mq.status()["used_today"] == 3  # Mouser's fault: no more
+
+    async def test_a_limit_stopping_the_singles(self, setup):
+        fake = FakeMouser(responses=[httpx.Response(200, json=ODD_NUMBER)])
+        m, _, _, _, _ = setup(mouser=fake, mouser_per_minute=1)
+        reply = await m.get_part("PARTA1|PARTA2")
+        assert set(reply) == {"error"} and "a minute" in reply["error"]  # nothing kept: the limit error
+        fake = FakeMouser(mouser_part("PARTB1"), responses=[httpx.Response(200, json=ODD_NUMBER)])
+        m, _, _, _, _ = setup(mouser=fake, mouser_per_minute=2)
+        reply = await m.get_part("PARTB1|PARTB2")
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["PARTB1"]
+        assert reply["not_checked"] == ["PARTB2"] and reply["retry_after"] == 60
+
+    async def test_a_pooled_bad_number_fails_only_its_caller(self, setup):
+        gate = Gate()
+        fake = FakeMouser(responses=[httpx.Response(200, json=ODD_NUMBER),
+                                     httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("LM358P")]}}),
+                                     httpx.Response(200, json=ODD_NUMBER)])
+        m, _, _, _, _ = setup(mouser=fake, gate=gate)
+        good = asyncio.create_task(m.get_part("LM358P"))
+        bad = asyncio.create_task(m.get_part("BAD*NUM"))
+        await settle()
+        gate.opened.set()
+        assert (await good)["results"][0]["mfr_part_number"] == "LM358P"
+        with pytest.raises(Exception, match="invalid characters"):
+            await bad
+
+
+class TestShielded:
+    async def test_mouser_batch_answer_kept_when_the_caller_gives_up(self, setup):
+        release = asyncio.Event()
+
+        async def slow(request):
+            await release.wait()
+            return httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("LM358P"), mouser_part("NE555P")]}})
+
+        m, _, store, _, _ = setup(mouser=slow)
+        call = asyncio.create_task(m.get_part("LM358P|NE555P"))
+        await settle()
+        call.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await call
+        release.set()
+        for _ in range(20):
+            await asyncio.sleep(0)
+        assert store.get_answer("mouser", "NE555P") is not None
+
+    async def test_digikey_answer_kept_when_the_caller_gives_up(self, setup):
+        release = asyncio.Event()
+
+        async def slow(request):
+            if "oauth2/token" in str(request.url):
+                return httpx.Response(200, json={"access_token": "tok", "expires_in": 599})
+            await release.wait()
+            return httpx.Response(200, json={"Products": [dk_product("LM358P")]})
+
+        _, d, store, _, _ = setup(digikey=slow)
+        call = asyncio.create_task(d.get_part("LM358P"))
+        await settle()
+        call.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await call
+        release.set()
+        for _ in range(20):
+            await asyncio.sleep(0)
+        assert store.get_answer("digikey", "LM358P") is not None
+
+
+class TestStatuses:
+    @pytest.mark.parametrize("value", ["Yes", "true", "TRUE", True])
+    def test_mouser_discontinued_flag(self, value):
+        part = {**mouser_part("LM358P"), "IsDiscontinued": value}
+        assert (_normalize_part(part)["lifecycle"], _normalize_part(part)["lifecycle_status"]) == ("Discontinued", "unknown")
+
+    @pytest.mark.parametrize("value", ["No", "false", False, None])
+    def test_mouser_not_discontinued(self, value):
+        assert _normalize_part({**mouser_part("LM358P"), "IsDiscontinued": value})["lifecycle"] is None
+
+    def test_digikey_nrnd_at_end_of_life_is_last_time_buy(self):
+        from pcbparts_mcp.lifecycle import digikey_status
+        assert digikey_status("Not For New Designs", end_of_life=True) == (
+            "last_time_buy", "Not For New Designs (end of life)")
+
+    async def test_mouser_unknown_status_does_not_ask_digikey(self, setup):
+        """Decision 2026-11-18: Mouser listing the part, whatever its status, keeps DigiKey out."""
+        mouser = FakeMouser(mouser_part("LM358P", lifecycle="Discontinued"))
+        digikey = FakeDigiKey(dk_product("LM358P", status="Obsolete"))
+        setup(mouser=mouser, digikey=digikey)
+        row = (await lifecycle(["LM358P"]))["results"][0]
+        assert (row["status"], row["source"]) == ("unknown", "mouser") and digikey.asked == []
+
+
+class TestJstBothSpellings:
+    """A JST part listed under both spellings in one reply: the one spelled as asked is the
+    number's reading (review 2026-11-18: the other overwrote it, flipping between calls)."""
+
+    def both(self):
+        bare = mouser_part("B2B-PH-K-S", "JST", "306-B2BPHKS", lifecycle="Obsolete")
+        full = mouser_part("B2B-PH-K-S(LF)(SN)", "JST", "306-B2BPHKSLFSN")
+        return FakeMouser(responses=[httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [bare, full]}})])
+
+    async def test_mouser_store_keeps_the_exact_spelling(self, setup):
+        m, _, store, _, _ = setup(mouser=self.both())
+        await m.get_part("B2B-PH-K-S(LF)(SN)")
+        assert [(r.mpn, r.status) for r in store.readings("B2B-PH-K-S(LF)(SN)")] == [("B2B-PH-K-S(LF)(SN)", "active")]
+
+    async def test_part_lifecycle_reads_the_exact_spelling(self, setup):
+        setup(mouser=self.both())
+        row = (await lifecycle([{"mpn": "B2B-PH-K-S(LF)(SN)", "manufacturer": "JST"}]))["results"][0]
+        assert (row["status"], row["raw"]) == ("active", "not stated by Mouser")
+
+
+class TestCountingNeverBreaksALookup:
+    async def test_counters_raising(self, setup, monkeypatch):
+        class Broken(stats.UsageStats):
+            def _day(self, date=None):
+                raise RuntimeError("counter broke")
+
+        monkeypatch.setattr(stats, "usage", Broken())
+        m, d, _, _, _ = setup(mouser=FakeMouser(mouser_part("LM358P")), digikey=FakeDigiKey(dk_product("LM358P")))
+        assert (await m.get_part("LM358P"))["total"] == 1
+        assert (await d.get_part("LM358P"))["total"] == 1
+        assert (await m.get_part("10k"))["not_sent"] == {"10k": "value"}
+
+    async def test_a_lone_surrogate_is_counted(self, setup):
+        fake = FakeMouser()
+        m, _, _, _, _ = setup(mouser=fake)
+        await m.get_part("LM358\ud800")
+        assert fake.sent == []  # not ASCII: not sent at all
+        stats.usage.record_parts_asked("mouser", ["LM358\ud800"])  # the counter itself copes too
+        assert stats.usage.summary()["days"][0]["parts_asked"]["mouser"] == {"total": 1, "distinct": 1}

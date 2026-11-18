@@ -129,12 +129,12 @@ class CSEClient:
         cache_key = f"cse:{query_key(query)}:{offset}"
         cached = self._cache.get(cache_key)
         if cached is not None:
-            stats.usage.record_upstream("cse", "cached")
+            stats.count_upstream("cse", "cached")
             return cached
         stored = self._store.get_search(query, offset) if self._store else None
         if stored is not None:
             self._cache.set(cache_key, stored)
-            stats.usage.record_upstream("cse", "cached")
+            stats.count_upstream("cse", "cached")
             return stored
 
         params = {
@@ -150,7 +150,7 @@ class CSEClient:
         for attempt in range(2):
             try:
                 async with self._get_semaphore():
-                    stats.usage.record_upstream("cse", "sent")
+                    stats.count_upstream("cse", "sent")
                     response = await self._get_http().get(_CSE_API_URL, params=params)
                     await asyncio.sleep(CSE_RATE_LIMIT)
             except httpx.HTTPError:
@@ -238,7 +238,7 @@ class CSEClient:
             if cached is not None:
                 self._kicad_cache.set(cache_key, cached)
         if cached is not None:
-            stats.usage.record_upstream("cse", "cached")
+            stats.count_upstream("cse", "cached")
             return {
                 "part_id": resolved_part_id,
                 **part_info,
@@ -249,7 +249,7 @@ class CSEClient:
         # Download the model zip (authenticated)
         try:
             async with self._get_semaphore():
-                stats.usage.record_upstream("cse", "sent")
+                stats.count_upstream("cse", "sent")
                 response = await self._get_http().get(
                     _CSE_MODEL_URL,
                     params={"partID": str(resolved_part_id)},

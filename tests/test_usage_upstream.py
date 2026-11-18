@@ -375,6 +375,26 @@ class TestCSE:
         await client.close()
         assert upstream() == {"cse": counts(sent=3, cached=2)}
 
+    async def test_a_counter_raising_doesnt_break_a_search(self, monkeypatch):
+        """Review 2026-11-18: cse.py called the counter unguarded, so a counter fault failed the lookup."""
+        from pcbparts_mcp import cse as cse_module
+
+        class Broken(stats.UsageStats):
+            def _day(self, date=None):
+                raise RuntimeError("counter broke")
+
+        monkeypatch.setattr(stats, "usage", Broken())
+        monkeypatch.setattr(cse_module, "CSE_RATE_LIMIT", 0)
+        part = {"PartNo": "P1", "Manuf": "TI", "PartID": 1, "Has3D": "N", "Quality": 3, "PinCount": 8}
+        client = CSEClient()
+        client._http = httpx.AsyncClient(transport=httpx.MockTransport(
+            lambda request: httpx.Response(200, json={"status": "Success", "parts": [part]})))
+        try:
+            assert (await client.search("LM358P"))["total"] == 1
+            assert (await client.search("LM358P"))["total"] == 1  # cached: counted too
+        finally:
+            await client.close()
+
 
 class TestPartsAsked:
     async def test_mouser(self):
@@ -534,9 +554,9 @@ class TestWiring:
     def test_every_count_names_a_known_source_and_event(self):
         """record_upstream drops names it doesn't know, so a typo would count nothing."""
         used, bad = set(), []
-        for file, name, node in self._calls({"record_upstream", "_count_upstream", "_sent"}):
+        for file, name, node in self._calls({"record_upstream", "count_upstream", "_count_upstream", "_sent"}):
             source = node.args[0]
-            if file == "client.py" and isinstance(source, ast.Name) and source.id == "source":
+            if file in ("client.py", "stats.py") and isinstance(source, ast.Name) and source.id == "source":
                 continue  # the helpers themselves, passing their own arguments on
             if not (isinstance(source, ast.Constant) and source.value in UPSTREAM_SOURCES):
                 bad.append(f"{file}: {ast.unparse(node)}")
@@ -548,6 +568,6 @@ class TestWiring:
         assert used == set(UPSTREAM_SOURCES)  # and every source is counted somewhere
 
     def test_parts_asked_names_a_distributor(self):
-        found = {node.args[0].value for _, _, node in self._calls({"record_parts_asked"})
+        found = {node.args[0].value for _, _, node in self._calls({"record_parts_asked", "count_parts_asked"})
                  if isinstance(node.args[0], ast.Constant)}
         assert found == set(PARTS_ASKED)

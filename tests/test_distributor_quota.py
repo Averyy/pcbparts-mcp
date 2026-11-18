@@ -559,13 +559,15 @@ MOUSER_MINUTE_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum 
 
 
 class TestMouserRefusals:
-    async def test_daily_403_pauses_until_utc_midnight(self, tmp_path, clock):
+    async def test_daily_403_pauses_an_hour_while_our_count_is_below_the_limit(self, tmp_path, clock):
+        """Decision 2026-11-18: Mouser's day isn't UTC-aligned (on 11-17 it refused after 110 of our
+        1,000), so its first daily refusal is retried hourly, not at midnight."""
         path = tmp_path / "quota.json"
         fake = FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403))
         client = mouser(fake, quota(clock, path, name="Mouser"))
         error = (await client.get_part("595-LM358P"))["error"]
         assert error.startswith("Mouser daily quota exceeded (counted by Mouser). Mouser doesn't say when its count "
-                                "resets, so this server tries again at 2026-10-17 00:00 UTC.")
+                                "resets, so this server tries again at 2026-10-16 22:15 UTC.")
         assert "your own" not in error  # no own_key text in this quota; the server passes one
         assert (await client.get_part("511-LM358P"))["error"] == error
         assert fake.requests == 1
@@ -574,7 +576,7 @@ class TestMouserRefusals:
         assert "daily quota exceeded" in (await mouser(restarted, quota(clock, path, name="Mouser")).get_part("595-LM358P"))["error"]
         assert restarted.requests == 0
 
-    async def test_refused_again_after_midnight_retries_hourly(self, clock):
+    async def test_refused_again_retries_hourly(self, clock):
         q = quota(clock, name="Mouser")
         fake = FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403), httpx.Response(403, json=MOUSER_DAILY_403),
                           httpx.Response(200, json=MOUSER_OK), httpx.Response(403, json=MOUSER_DAILY_403))
@@ -584,10 +586,31 @@ class TestMouserRefusals:
         assert "tries again at 2026-10-17 01:00 UTC" in (await client.get_part("595-LM358P"))["error"]
         clock.now = MIDNIGHT + 3600
         assert (await client.get_part("595-LM358P"))["total"] == 1
-        # after a request went through, the next daily refusal waits for midnight again
-        clock.now = MIDNIGHT + 20 * 3600
-        assert "tries again at 2026-10-18 00:00 UTC" in (await client.get_part("511-LM358P"))["error"]
+        clock.now = MIDNIGHT + 20 * 3600  # refused again later that day: an hour again
+        assert "tries again at 2026-10-17 21:00 UTC" in (await client.get_part("511-LM358P"))["error"]
         assert fake.requests == 4
+
+    async def test_refused_with_our_own_count_spent_waits_for_midnight(self, clock):
+        q = quota(clock, name="Mouser", limit=1)
+        client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), q)
+        assert "tries again at 2026-10-17 00:00 UTC" in (await client.get_part("595-LM358P"))["error"]
+
+    async def test_daily_refusal_in_a_429_keeps_the_hourly_retry(self, clock):
+        """A daily refusal can come as HTTP 429 with the TooManyRequests body: the 429 mustn't also
+        set a minute's pause, which replaced the daily one and made a second refusal wait for the
+        next midnight instead of an hour (review 2026-11-18)."""
+        q = quota(clock, name="Mouser")
+        pauses = []
+        real_pause = q.pause
+        q.pause = lambda until, reason: (pauses.append(reason), real_pause(until, reason))
+        fake = FakeMouser(httpx.Response(429, json=MOUSER_DAILY_403), httpx.Response(429, json=MOUSER_DAILY_403))
+        client = mouser(fake, q)
+        assert "tries again at 2026-10-16 22:15 UTC" in (await client.get_part("595-LM358P"))["error"]
+        assert pauses == ["daily_unknown"]  # no "burst" from the 429 itself
+        assert q._pause_reason == "daily_unknown"
+        clock.now = MIDNIGHT
+        assert "tries again at 2026-10-17 01:00 UTC" in (await client.get_part("595-LM358P"))["error"]
+        assert fake.requests == 2
 
     async def test_per_minute_403_pauses_a_minute(self, clock):
         q = quota(clock, name="Mouser")

@@ -15,7 +15,13 @@ depend on another caller's broad number.
 
 Each request picks its API key as it goes out (Mouser takes the key in the query string): the first
 key until its day is spent, then the next (MouserKeyPool). A daily refusal from Mouser moves the
-request on to the next key.
+request on to the next key, and so does Mouser rejecting a key as invalid when there are several
+(that key then waits for the next UTC day, and the log names its number).
+
+Numbers neither distributor can list (search/mpn.py's not_sent_reason: a value such as "10k", a BOM
+placeholder, an LCSC code, non-ASCII) aren't sent: get_part lists them in not_found and not_sent.
+When Mouser rejects a request of several numbers, each is asked alone once, so one number it
+can't take doesn't fail the others (_one_by_one).
 """
 
 from __future__ import annotations
@@ -31,7 +37,7 @@ from typing import Any, Callable
 import httpx
 
 from . import stats
-from .cache import DailyQuota, MouserKeyPool, QuotaPool, _header_int
+from .cache import DailyQuota, MouserKeyPool, QuotaPool, _header_int, _next_utc_midnight
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
@@ -39,10 +45,33 @@ from .config import (
     MOUSER_POOL_WINDOW,
 )
 from .distributor_store import DistributorStore
-from .lifecycle import MOUSER_NOT_STATED, Reading, mouser_status, utc_text
-from .search.mpn import distributor_match, mpn_key, same_jst_part
+from .lifecycle import MOUSER_NOT_STATED, Reading, maker_key, mouser_status, utc_text
+from .search.mpn import distributor_match, mpn_key, not_sent_reason, same_jst_part
 
 logger = logging.getLogger(__name__)
+
+
+class _RedactApiKey(logging.Filter):
+    """httpx logs each request's URL at INFO, and Mouser takes the API key in the query string: blank
+    it in any such line, whatever level the httpx loggers are set to."""
+
+    _KEY = re.compile(r"(apiKey=)[^&\s\"']+", re.IGNORECASE)
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        try:
+            message = record.getMessage()
+        except Exception:  # a malformed record: leave it to logging's own handling
+            return True
+        if "apikey=" in message.casefold():
+            record.msg, record.args = self._KEY.sub(r"\1[redacted]", message), None
+        return True
+
+
+# The server sets the root logger to WARNING, but a self-hoster's logging setup may not: keep the
+# request lines (and any key in them) out of the log either way
+for _name in ("httpx", "httpcore"):
+    logging.getLogger(_name).setLevel(logging.WARNING)
+    logging.getLogger(_name).addFilter(_RedactApiKey())
 
 
 MOUSER_MAX_BATCH = 10  # part numbers per SearchByPartRequest (Mouser's API docs)
@@ -68,6 +97,19 @@ class MouserAPIError(Exception):
     def __init__(self, code: str, message: str):
         self.code = code
         super().__init__(f"Mouser API error [{code}]: {message}")
+
+
+class MouserKeyRejected(MouserAPIError):
+    """Mouser rejected the only API key as invalid: nothing else can send, so the error is shown as
+    Mouser gave it (a self-hoster's typo), and asking each number alone wouldn't help."""
+
+
+def _rejects_key(error: dict[str, Any]) -> bool:
+    """Whether a Mouser error rejects the API key itself ("Invalid unique identifier.", for the
+    property "API Key"), not the request."""
+    text = " ".join(str(error.get(k) or "") for k in ("Code", "Message", "ResourceKey", "PropertyName")).casefold()
+    return "invalid unique identifier" in text or "invalididentifier" in text or (
+        "invalid" in text and ("api key" in text or "apikey" in text))
 
 
 # Pre-compiled patterns for parsing Mouser fields
@@ -170,7 +212,8 @@ def _attribute(numbers: list[str], results: list[dict[str, Any]]
     """Match one request's results to the numbers asked (distinct by cache key).
 
     Returns each number's results (every result that can be its loose match), each result's owner
-    (the one number it is, by mpn_key, else the only number it can match; None when that's unclear),
+    (the number it is, by mpn_key: the first, when several are; else the only number it can match;
+    None when that's unclear),
     the results that match no number (extras), and the clean numbers: those whose results all belong
     to them alone, which may be kept per part. A result that matches no number could belong to any,
     so then none is clean. One number owns everything Mouser returned for it.
@@ -180,9 +223,11 @@ def _attribute(numbers: list[str], results: list[dict[str, Any]]
     touched = [[n for n in numbers if _touches(r, n)] for r in results]
     owners: list[str | None] = []
     for result, matches in zip(results, touched):
-        # The number spelled as listed wins over one that differs by JST's (LF)/(SN) endings
+        # The number spelled as listed wins over one that differs by JST's (LF)/(SN) endings. Several
+        # numbers that are each the part itself (595-LM358P and LM358P, or LM358P and LM358-P: one
+        # part asked twice) give it to the first of them
         exact = [n for n in numbers if _identifies(result, n, finish=False)] or [n for n in numbers if _identifies(result, n)]
-        owners.append(exact[0] if len(exact) == 1 else matches[0] if not exact and len(matches) == 1 else None)
+        owners.append(exact[0] if exact else matches[0] if len(matches) == 1 else None)
     per = {n: [r for r, matches in zip(results, touched) if n in matches] for n in numbers}
     extras = [r for r, matches in zip(results, touched) if not matches]
     clean = set() if extras else {
@@ -211,11 +256,14 @@ class PartAnswer:
     really matches it (else the reply's not_found names it), and when Mouser answered. checked is
     False for a number a reply cut at Mouser's cap may have crowded out (no results for it, or none
     that is the part itself while another number filled the reply) that couldn't be asked again
-    (_fetch): Mouser may list it. Such answers are never kept, so a kept answer is always checked."""
+    (_fetch): Mouser may list it. Such answers are never kept, so a kept answer is always checked.
+    problem: why a number wasn't checked at all (_one_by_one): the limit error that held its request
+    back, or the error Mouser gave for it asked alone."""
     results: list[dict[str, Any]]
     matched: bool
     fetched_at: float
     checked: bool = True
+    problem: dict[str, Any] | Exception | None = None
 
     def as_json(self) -> dict[str, Any]:
         return {"results": self.results, "matched": self.matched}
@@ -271,7 +319,7 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
     lifecycle = None
     if part.get("LifecycleStatus"):
         lifecycle = part["LifecycleStatus"]
-    elif part.get("IsDiscontinued") == "Yes":
+    elif part.get("IsDiscontinued") is True or str(part.get("IsDiscontinued") or "").strip().casefold() in ("yes", "true"):
         lifecycle = "Discontinued"
 
     return {
@@ -351,10 +399,6 @@ class MouserClient:
         except httpx.HTTPError:
             # Sanitize: httpx exceptions may include the full URL with API key
             raise MouserError("Mouser API request failed (network/connection error)")
-        if key_quota is not None:
-            # Only this key's: a daily count in the headers is that key's (a 429's per-minute
-            # pause goes to every key in _refused_for_limit)
-            key_quota.note_response(response.status_code, response.headers)
         try:
             data = response.json()
         except ValueError:
@@ -367,12 +411,21 @@ class MouserClient:
         # "ResourceKey":"MaxCallPerDay"}]}, or "Maximum calls per minute exceeded." It sends no
         # rate-limit headers and doesn't say when the daily count resets.
         limit = next((e for e in errors if e.get("Code") == "TooManyRequests"), None)
+        if key_quota is not None:
+            # Only this key's: a daily count in the headers is that key's (a 429's per-minute
+            # pause goes to every key in _refused_for_limit). A refusal in the body is paused for
+            # by what it says (_refused_for_limit): its HTTP 429, if it comes with one, isn't a
+            # per-minute pause of its own, which would replace a daily pause's hourly retry.
+            key_quota.note_response(200 if limit is not None else response.status_code, response.headers)
         if limit is not None or response.status_code == 429:
             raise self._refused_for_limit(limit, key_index, response.headers)
         if errors:
             err = errors[0]
-            raise MouserAPIError(self._redact(str(err.get("Code") or "")),
-                                 self._redact(str(err.get("Message") or "Unknown Mouser API error")))
+            code = self._redact(str(err.get("Code") or ""))
+            message = self._redact(str(err.get("Message") or "Unknown Mouser API error"))
+            if _rejects_key(err) and self._quota is not None:
+                raise self._key_rejected(key_index, code, message)
+            raise MouserAPIError(code, message)
         # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
         if response.status_code >= 400:
             raise MouserError(f"Mouser API returned HTTP {response.status_code}")
@@ -384,7 +437,8 @@ class MouserClient:
 
     def _refused_for_limit(self, err: dict | None, key_index: int = 0, headers: Any = None) -> MouserRateLimited:
         """Pause for the limit Mouser named and return the error to raise. A daily refusal pauses
-        only the key that got it (until 00:00 UTC, then hourly); while another key can send, that's
+        only the key that got it (for an hour while our own count for it is below its limit, since
+        Mouser doesn't say when its count resets; else until 00:00 UTC); while another key can send, that's
         MouserKeySpent, and the request goes out again on it. A per-minute refusal (a TooManyRequests
         that isn't the daily one, or a bare 429: for its Retry-After, else a minute) pauses every key
         through the pool's shared pause, apart from each key's own: a key already paused for its
@@ -407,6 +461,22 @@ class MouserClient:
         detail = self._redact(str((err.get("Message") if err else None) or "HTTP 429"))
         return MouserRateLimited(f"Mouser is limiting requests ({detail}). Try again later.")
 
+    def _key_rejected(self, key_index: int, code: str, message: str) -> Exception:
+        """Mouser rejected this key as invalid (a typo, or revoked). With several keys it waits for
+        the next UTC day, the log names its number (never the key), and the request goes out again
+        on the next key (MouserKeySpent), or gets the pool's daily error when none is left. The
+        only key's rejection is shown as Mouser gave it."""
+        if len(self._keys) == 1:
+            return MouserKeyRejected(code, message)
+        key_quota = self._quota.quotas[key_index]
+        until = _next_utc_midnight(key_quota.now())
+        key_quota.pause(until, "invalid_key")
+        logger.error(f"Mouser rejected API key {key_index + 1} as invalid ({message}); it isn't used again "
+                     f"until {utc_text(until)}: check MOUSER_API_KEY" + (f"_{key_index + 1}" if key_index else ""))
+        if paused := self._quota.paused_error():
+            return MouserRateLimited(paused["error"])
+        return MouserKeySpent(self._quota.daily_error()["error"])
+
     async def get_part(self, part_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up part(s) by Mouser part number or MPN.
 
@@ -415,7 +485,11 @@ class MouserClient:
             caller: the caller's IP, for the hourly log of who sent requests
 
         Returns:
-            Dict with results list
+            Dict with results list. Numbers not worth a request (not_sent_reason) are in not_found
+            and not_sent. When a limit holds back the request for some numbers while others were
+            kept, the kept answers come back with not_checked (the numbers not looked up) and
+            retry_after; with nothing kept, the limit error. lookup_failed: numbers Mouser gave an
+            error for when asked alone (the others still answer).
         """
         # Mouser's SearchByPartRequest takes up to 10 part numbers, each 3-40 characters. Checked
         # here so a malformed batch doesn't spend a request.
@@ -433,38 +507,65 @@ class MouserClient:
         for number in numbers:  # once each, as first spelled
             distinct.setdefault(_cache_key(number), number)
         numbers = list(distinct.values())
+        not_sent = {n: reason for n in numbers if (reason := not_sent_reason(n))}
+        for _ in not_sent:
+            stats.count_distributor("mouser", "skipped")
+        sent = [n for n in numbers if n not in not_sent]
 
-        answers, extras, error = await self._answers(numbers, caller)
-        if error is not None:
-            return error
+        answers: dict[str, PartAnswer] = {}
+        extras: list[dict[str, Any]] = []
+        error = None
+        if sent:
+            answers, extras, error = await self._answers(sent, caller)
+        checked = {key: answer for key, answer in answers.items() if answer.problem is None}
+        limited = [n for n in sent if _cache_key(n) not in answers or isinstance(answers[_cache_key(n)].problem, dict)]
+        failed = [n for n in sent if isinstance(getattr(answers.get(_cache_key(n)), "problem", None), Exception)]
+        # A limit held back the numbers not kept: with none kept, the limit error as before
+        if limited and not checked and not failed:
+            return error or answers[_cache_key(limited[0])].problem
+        if failed and not checked and not limited:  # Mouser rejected every number: its error, as before
+            raise answers[_cache_key(failed[0])].problem
         results: list[dict[str, Any]] = []
         seen = set()
-        for result in [r for n in numbers for r in answers[_cache_key(n)].results] + extras:
+        unowned = set()  # results matching no number asked (from a request shared with other lookups)
+        for result, extra in [(r, False) for n in sent if _cache_key(n) in checked for r in checked[_cache_key(n)].results] \
+                + [(r, True) for r in extras]:
             identity = (result.get("part_number"), result.get("mfr_part_number"), result.get("manufacturer"))
             if identity not in seen:
                 seen.add(identity)
                 results.append(result)
+                if extra:
+                    unowned.add(identity)
         # Which number each result answers, as this caller spelled it, and how: the owner the
-        # answers were kept by (_attribute), worked out again over this call's numbers
-        owners = _attribute(numbers, results)[1]
-        results = [_answering(result, owner) for result, owner in zip(results, owners)]
+        # answers were kept by (_attribute), worked out again over this call's numbers. A result
+        # that matches none of them answers none, even when this call asked one number.
+        answered = [n for n in sent if _cache_key(n) in checked]
+        owners = _attribute(answered, results)[1] if answered else [None] * len(results)
+        results = [_answering(result, None if (result.get("part_number"), result.get("mfr_part_number"),
+                                                result.get("manufacturer")) in unowned else owner)
+                   for result, owner in zip(results, owners)]
         reply: dict[str, Any] = {"results": results, "total": len(results)}
         # Mouser leaves out numbers it doesn't find, so in a batch of 10 a missing part looked checked
-        if missing := [n for n in numbers if not answers[_cache_key(n)].matched]:
+        if missing := [n for n in numbers if n in not_sent or (_cache_key(n) in checked and not checked[_cache_key(n)].matched)]:
             reply["not_found"] = missing
+        if not_sent:
+            reply["not_sent"] = not_sent
+        if limited:
+            reply["not_checked"] = limited
+            reply["retry_after"] = self.retry_after()
+        if failed:
+            reply["lookup_failed"] = failed
         # The oldest answer used: parts fetched by other calls can be up to MOUSER_CACHE_TTL old
-        reply["observed_at"] = utc_text(min(answer.fetched_at for answer in answers.values()))
+        reply["observed_at"] = utc_text(min((answer.fetched_at for answer in checked.values()), default=self._store.now()))
         return reply
 
     async def lookup(self, numbers: list[str], caller: str | None = None
-                     ) -> tuple[dict[str, PartAnswer] | None, dict[str, Any] | None]:
+                     ) -> tuple[dict[str, PartAnswer], dict[str, Any] | None]:
         """Each number's answer, as get_part finds it (store first, then a request for the rest; see
-        PartAnswer.checked), or a limit error. numbers: up to 10 distinct numbers of 3-40 characters
-        (part_lifecycle)."""
+        PartAnswer.checked and problem), and a limit error when one held back the numbers that have
+        no answer in it. numbers: up to 10 distinct numbers of 3-40 characters (part_lifecycle)."""
         answers, _, error = await self._answers(numbers, caller)
-        if error is not None:
-            return None, error
-        return {n: answers[_cache_key(n)] for n in numbers}, None
+        return {n: answers[_cache_key(n)] for n in numbers if _cache_key(n) in answers}, error
 
     def retry_after(self) -> int:
         """Seconds until Mouser may be asked again (60 when the limits don't say)."""
@@ -484,8 +585,10 @@ class MouserClient:
         """Answers by cache key from the store, then from Mouser for the numbers it doesn't have:
         one request (a lone number waits to share it, _pooled), and one more for numbers a capped
         reply crowded out (_fetch). Also the results matching no number asked (they're returned to
-        the caller, not kept per part), or a limit error."""
-        stats.usage.record_parts_asked("mouser", numbers)
+        the caller, not kept per part), and a limit error when one held back the request: then the
+        answers are only those the store had. The request runs on as its own task (shielded), so its
+        answers are kept even if this caller gives up."""
+        stats.count_parts_asked("mouser", numbers)
         answers: dict[str, PartAnswer] = {}
         missing = []
         for number in numbers:
@@ -513,14 +616,14 @@ class MouserClient:
             missing = []
             break
         if not missing:
-            stats.usage.record_distributor("mouser", "cached")
+            stats.count_distributor("mouser", "cached")
             return answers, extras, None
         if len(missing) == 1:
             fresh, more, error = await self._pooled(missing[0], caller)
         else:
-            fresh, more, error = await self._fetch(missing, caller)
+            fresh, more, error = await self._shielded(self._fetch(missing, caller))
         if error is not None:
-            return {}, [], error
+            return answers, extras, error
         answers.update(fresh)
         return answers, extras + more, None
 
@@ -529,8 +632,18 @@ class MouserClient:
         """One request for these numbers (distinct by cache key), and when its reply was cut at
         Mouser's cap, one more for the numbers it crowded out (_crowded_out), within the limits:
         their answers then come from that reply. A limit refusal or failure of that second request
-        leaves the first reply's answers; numbers it had no results for are then not checked."""
-        data, error = await self._request(numbers, caller)
+        leaves the first reply's answers; numbers it had no results for are then not checked. When
+        Mouser rejects a request of several numbers (an error for the request, not a limit), each
+        number is asked alone instead (_one_by_one)."""
+        try:
+            data, error = await self._request(numbers, caller)
+        except MouserKeyRejected:
+            raise
+        except MouserAPIError as e:
+            if len(numbers) < 2:
+                raise
+            logger.warning(f"Mouser rejected a request of {len(numbers)} numbers ({e}); asking each alone")
+            return await self._one_by_one(numbers, caller)
         if error is not None:
             return {}, [], error
         answers, extras, again = self._keep(numbers, data, pooled)
@@ -545,6 +658,47 @@ class MouserClient:
                 answers.update(more)
                 extras = extras + more_extras
         return answers, extras, None
+
+    async def _one_by_one(self, numbers: list[str], caller: str | None
+                          ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
+        """Each number asked alone, within the limits, after Mouser rejected the request of all of
+        them: the numbers it takes still answer, and an answer's problem says why one wasn't
+        checked (Mouser's error for it, or the limit that held its request back). After a second
+        number fails the rest aren't asked (the fault is likely Mouser's, not the numbers'): they
+        share that error. Each single answer is kept as a one-number request's is."""
+        answers: dict[str, PartAnswer] = {}
+        extras: list[dict[str, Any]] = []
+        failures: list[Exception] = []
+        for index, number in enumerate(numbers):
+            now = self._store.now()
+            if len(failures) >= 2:
+                answers[_cache_key(number)] = PartAnswer([], False, now, False, failures[-1])
+                continue
+            try:
+                data, error = await self._request([number], caller)
+            except MouserKeyRejected:
+                raise
+            except (MouserError, MouserAPIError) as e:
+                logger.warning(f"Mouser lookup of one number failed: {type(e).__name__}: {e}")
+                failures.append(e)
+                answers[_cache_key(number)] = PartAnswer([], False, now, False, e)
+                continue
+            if error is not None:  # a limit: the rest aren't asked either
+                for rest in numbers[index:]:
+                    answers[_cache_key(rest)] = PartAnswer([], False, now, False, error)
+                break
+            more, more_extras, _ = self._keep([number], data, pooled=True)
+            answers.update(more)
+            extras += more_extras
+        return answers, extras, None
+
+    async def _shielded(self, coro):
+        """Run coro as its own task and wait for it: a caller giving up (a cancelled tool call)
+        doesn't cancel the request, whose answer is still kept for the next caller. close()
+        cancels it."""
+        task = self._spawn(coro)
+        task.add_done_callback(_consume_exception)
+        return await asyncio.shield(task)
 
     async def _request(self, numbers: list[str], caller: str | None) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         """Mouser's reply to one request for these numbers, or a limit error."""
@@ -563,15 +717,15 @@ class MouserClient:
             if self._quota:
                 key_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
-                    stats.usage.record_distributor("mouser", "rate_limited")
+                    stats.count_distributor("mouser", "rate_limited")
                     return None, quota_error
-            stats.usage.record_distributor("mouser", "sent")
+            stats.count_distributor("mouser", "sent")
             try:
                 return await self._post("/search/partnumber", body, key_index), None
             except MouserKeySpent as e:
                 if attempt + 1 < len(self._keys):
                     continue
-                return None, {"error": str(e)}
+                return None, (self._quota.paused_error() if self._quota else None) or {"error": str(e)}
             except MouserRateLimited as e:
                 return None, {"error": str(e)}
         raise AssertionError("unreachable: the last attempt returns")
@@ -614,9 +768,12 @@ class MouserClient:
                     for r, owner in zip(results, owners) if owner is not None and r.get("mfr_part_number")]
         self._store.put_readings([reading for reading, _, _ in readings])
         # A JST part listed without the (LF)/(SN) endings asked is filed under the number asked too,
-        # so part_lifecycle finds it by that spelling (as DigiKey's answers are)
+        # so part_lifecycle finds it by that spelling (as DigiKey's answers are), unless the reply
+        # also lists that maker's part spelled as asked: that listing's reading is the number's own
+        spelled = {(mpn_key(reading.mpn), maker_key(reading.maker)) for reading, _, _ in readings}
         for reading, result, owner in readings:
-            if mpn_key(owner) != mpn_key(reading.mpn) and _same_jst(result, owner):
+            if (mpn_key(owner) != mpn_key(reading.mpn) and _same_jst(result, owner)
+                    and (mpn_key(owner), maker_key(reading.maker)) not in spelled):
                 self._store.put_readings([reading], also_as=owner)
         if not capped:  # in a capped reply the part itself may be past the cap
             for number in clean:
@@ -645,6 +802,12 @@ class MouserClient:
         if error is not None:
             return {}, [], error
         answer = answers[key]
+        # Asked alone after Mouser rejected the shared request (_one_by_one): this number's own
+        # outcome, as if it had been asked by itself; another caller's number can't fail it
+        if isinstance(answer.problem, Exception):
+            raise answer.problem
+        if isinstance(answer.problem, dict):
+            return {}, [], answer.problem
         return {key: answer}, (extras if not answer.matched else []), None
 
     def _spawn(self, coro) -> asyncio.Task:

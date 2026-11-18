@@ -227,7 +227,9 @@ class TestDailyRefusals:
         assert "error" not in await m.get_part("PART0A")  # key 1, whose day this spends
         assert "error" not in await m.get_part("PART1A")  # key 2 refused: the same call goes on to key 3
         assert fake.used == [1, 2, 3]
-        assert k2.status()["paused_until"] == "2026-11-19 00:00 UTC"
+        # An hour from the first refusal: our own count for key 2 is far below its limit (decision
+        # 2026-11-18: Mouser's day isn't UTC-aligned, so waiting for midnight wasted most of one)
+        assert k2.status()["paused_until"] == "2026-11-18 21:00 UTC"
         assert k1.status()["paused_until"] is None and k3.status()["paused_until"] is None
         assert k1._pause_reason == k3._pause_reason == ""
         assert "error" not in await m.get_part("PART2A")  # key 3 while key 2 waits
@@ -266,12 +268,12 @@ class TestDailyRefusals:
             fake.script(key, httpx.Response(403, json=DAILY_403))
         m = make(quotas, fake)
         error = {"error": "Mouser daily quota exceeded (counted by Mouser). Mouser doesn't say when its count resets, "
-                          f"so this server tries again at 2026-11-19 00:00 UTC.{ADVICE}"}
+                          f"so this server tries again at 2026-11-18 21:00 UTC.{ADVICE}"}
         assert await m.get_part("PART0A") == error
         assert fake.used == [1, 2, 3]  # once on each key, no more
         assert await m.get_part("PART1A") == error and len(fake.keys) == 3
         assert mouser_stats() == {"sent": 3, "cached": 0, "rate_limited": 1}
-        assert m.retry_after() == MIDNIGHT - NOW
+        assert m.retry_after() == 3600  # hourly: our own counts are far below the keys' limits
 
     async def test_refusals_in_flight_keep_the_hourly_retry(self, make, clock):
         """Two batches refused right after midnight: the second refusal mustn't stretch the hourly
@@ -374,7 +376,7 @@ class TestPerMinute:
         assert await b == paused
         assert keys == ([1, 1, 2] if first == "daily" else [1, 1])  # the daily refusal's batch moved on before the minute's
         assert await m.get_part("PARTC1|PARTC2") == paused and len(keys) == (3 if first == "daily" else 2)
-        assert quotas.quotas[0].status()["paused_until"] == "2026-11-19 00:00 UTC"  # and key 1's day stays over
+        assert quotas.quotas[0].status()["paused_until"] == "2026-11-18 21:00 UTC"  # and key 1's day stays over
         clock.advance(wait)
         assert "error" not in await m.get_part("PARTD1|PARTD2")
         assert keys[-1] == 2
@@ -388,7 +390,7 @@ class TestRestart:
         quotas.quotas[2].pause_daily_unknown_reset()
         restarted = pool(clock, limit=2, path=path)
         assert [q.status()["used_today"] for q in restarted.quotas] == [2, 1, 0]
-        assert restarted.quotas[2].status()["paused_until"] == "2026-11-19 00:00 UTC"
+        assert restarted.quotas[2].status()["paused_until"] == "2026-11-18 21:00 UTC"
         assert restarted.acquire() == (1, None)
         assert restarted.acquire()[0] is None
         assert set(json.loads(path.read_text(encoding="utf-8"))) == {"Mouser", "Mouser#2", "Mouser#3"}
@@ -540,7 +542,8 @@ class TestServer:
             assert (await health())["used_today"] == 0 and (await health())["paused_until"] is None
             quotas.acquire(), quotas.acquire()
             status = await health()
-            assert status["used_today"] == 2 and status["paused_until"] == "2026-11-19 00:00 UTC"
+            # every key out: key 2 tries again first, an hour after its refusal
+            assert status["used_today"] == 2 and status["paused_until"] == "2026-11-18 21:00 UTC"
             public = json.dumps([status, stats.usage.summary(), quotas.acquire()[1]])
             assert not any(text in public for text in ("Mouser#", "key 2", "key 3", "3000", "2000", *KEYS))
 
@@ -553,3 +556,63 @@ class TestServer:
         assert [m for m in caplog.messages if "moved to" in m] == [
             "Mouser requests moved to key 2 for 2026-11-18 UTC", "Mouser requests moved to key 3 for 2026-11-18 UTC"]
         assert caplog.messages[-1].endswith("3 from 1 IPs; top: 203.0.113.7 3 (key 2: 1, key 3: 1)")
+
+
+# Mouser's reply to a key it doesn't know (as other projects record it)
+INVALID_KEY = {"Errors": [{"Id": 0, "Code": "Invalid", "Message": "Invalid unique identifier.",
+                           "ResourceKey": "InvalidIdentifier", "PropertyName": "API Key"}], "SearchResults": None}
+
+
+class TestInvalidKey:
+    """Review 2026-11-18: a bad extra key (typo, revoked) failed every lookup once key 1's day was
+    spent, until midnight, with nothing in the log naming it."""
+
+    async def test_an_extra_key_rejected_waits_for_the_next_day_and_the_request_moves_on(self, make, clock, caplog):
+        quotas = pool(clock, limit=(1, 1000, 1000))
+        fake = FakeMouser(part("PART1A"))
+        fake.script(KEYS[1], httpx.Response(200, json=INVALID_KEY))
+        m = make(quotas, fake)
+        assert "error" not in await m.get_part("PART0A")  # key 1's day
+        with caplog.at_level(logging.ERROR, logger="pcbparts_mcp.mouser"):
+            assert (await m.get_part("PART1A"))["total"] == 1
+        assert fake.used == [1, 2, 3]
+        assert "Mouser rejected API key 2 as invalid" in caplog.text and "MOUSER_API_KEY_2" in caplog.text
+        assert not any(key in caplog.text for key in KEYS)
+        assert quotas.quotas[1].status()["paused_until"] == "2026-11-19 00:00 UTC"
+        assert "error" not in await m.get_part("PART2A") and fake.used[-1] == 3  # key 2 stays out
+        clock.now = MIDNIGHT
+        await m.get_part("PART3A")
+        await m.get_part("PART4A")
+        assert fake.used[-2:] == [1, 2]  # a new day: key 2 is tried again
+
+    async def test_the_last_key_rejected_gives_the_shared_daily_error(self, make, clock):
+        quotas = pool(clock, n=2, limit=(1, 1000))
+        fake = FakeMouser()
+        fake.script(KEYS[1], httpx.Response(200, json=INVALID_KEY))
+        m = make(quotas, fake)
+        await m.get_part("PART0A")
+        reply = await m.get_part("PART1A")
+        assert reply["error"].startswith("Mouser daily quota exceeded on this shared server. It resets at 2026-11-19 00:00 UTC.")
+        assert "key" not in reply["error"].replace("API key", "")  # never a word about extra keys
+        assert await m.get_part("PART2A") == reply and len(fake.keys) == 2
+
+    async def test_the_only_key_rejected_shows_mousers_error(self, make, clock):
+        """A self-hoster's typo: Mouser's own message, no pause (nothing else could send)."""
+        quotas = pool(clock, n=1)
+        fake = FakeMouser()
+        fake.script(KEYS[0], httpx.Response(200, json=INVALID_KEY), httpx.Response(200, json=INVALID_KEY))
+        m = make(quotas, fake)
+        with pytest.raises(MouserAPIError, match=r"\[Invalid\]: Invalid unique identifier"):
+            await m.get_part("PART0A|PART1A")
+        assert len(fake.keys) == 1  # not asked again number by number
+        assert quotas.quotas[0].status()["paused_until"] is None
+
+
+class TestHttpxLog:
+    def test_request_lines_never_show_the_key(self, caplog):
+        httpx_log = logging.getLogger("httpx")
+        assert httpx_log.getEffectiveLevel() >= logging.WARNING  # not logged at all by default
+        with caplog.at_level(logging.INFO, logger="httpx"):
+            httpx_log.info('HTTP Request: %s %s "%s"', "POST",
+                           httpx.URL(f"https://api.mouser.com/api/v2/search/partnumber?apiKey={KEYS[0]}"), "HTTP/1.1 200 OK")
+        assert caplog.records and KEYS[0] not in caplog.text and "apiKey=[redacted]" in caplog.text

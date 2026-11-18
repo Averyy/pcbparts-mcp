@@ -97,7 +97,7 @@ async def client(clock):
 async def test_first_app_until_its_count_limit_then_second(client, clock):
     quotas = pool(clock, limit=2)
     dk, fake = client(quotas, ok(), ok(), ok())
-    for pn in ("A", "B", "C"):
+    for pn in ("PART-A", "PART-B", "PART-C"):
         assert (await dk.get_part(pn))["total"] == 1
     assert fake.apps == [CREDS[0], CREDS[0], CREDS[2]]
     assert [q.status()["used_today"] for q in quotas.quotas] == [2, 1]
@@ -110,10 +110,10 @@ async def test_first_app_until_its_count_limit_then_second(client, clock):
 async def test_success_with_remaining_zero_moves_next_lookup_to_second(client, clock):
     quotas = pool(clock)
     dk, fake = client(quotas, ok(DAILY_HEADERS), ok())
-    assert (await dk.get_part("A"))["total"] == 1
+    assert (await dk.get_part("PART-A"))["total"] == 1
     assert quotas.status()["api_remaining"] is None
     assert quotas.status()["paused_until"] is None
-    assert (await dk.get_part("B"))["total"] == 1
+    assert (await dk.get_part("PART-B"))["total"] == 1
     assert fake.apps == [CREDS[0], CREDS[2]]
     assert quotas.quotas[0].status()["api_remaining"] == 0
 
@@ -131,10 +131,10 @@ async def test_daily_429_retries_once_on_second_and_counts_both(client, clock):
 
 async def test_both_daily_429s_stop_without_third_attempt(client, clock):
     dk, fake = client(pool(clock), *(httpx.Response(429, headers=DAILY_HEADERS) for _ in range(2)))
-    result = await dk.get_part("A")
+    result = await dk.get_part("PART-A")
     assert result["error"].startswith("DigiKey daily quota exceeded on this shared server. It resets at 2026-11-15 00:00 UTC.")
     assert fake.apps == [CREDS[0], CREDS[2]]
-    assert await dk.get_part("B") == result
+    assert await dk.get_part("PART-B") == result
     assert len(fake.requests) == 2
 
 
@@ -143,7 +143,7 @@ async def test_both_spent_error_has_reset_and_advice_without_request_count(clien
     assert quotas.acquire() == (0, None)
     assert quotas.acquire() == (1, None)
     dk, fake = client(quotas)
-    result = await dk.get_part("A")
+    result = await dk.get_part("PART-A")
     assert result == {"error": "DigiKey daily quota exceeded on this shared server. It resets at 2026-11-15 00:00 UTC. "
                      "To skip the shared limits, run pcbparts-mcp with your own DigiKey API credentials: "
                      "https://github.com/Averyy/pcbparts-mcp#self-hosting. Meanwhile use jlc_search."}
@@ -154,10 +154,10 @@ async def test_both_spent_error_has_reset_and_advice_without_request_count(clien
 async def test_utc_midnight_returns_to_first_app(client, clock):
     quotas = pool(clock, limit=1)
     dk, fake = client(quotas, ok(), ok(), ok())
-    await dk.get_part("A")
-    await dk.get_part("B")
+    await dk.get_part("PART-A")
+    await dk.get_part("PART-B")
     clock.now = MIDNIGHT
-    assert (await dk.get_part("C"))["total"] == 1
+    assert (await dk.get_part("PART-C"))["total"] == 1
     assert fake.apps == [CREDS[0], CREDS[2], CREDS[0]]
     assert [q.status()["used_today"] for q in quotas.quotas] == [1, 0]
 
@@ -185,9 +185,9 @@ async def test_penalties_pause_both_and_survive_restart(client, clock, tmp_path,
     path = tmp_path / "quota.json"
     quotas = pool(clock, path=path)
     dk, fake = client(quotas, httpx.Response(status, headers=headers))
-    result = await dk.get_part("A")
+    result = await dk.get_part("PART-A")
     assert wording in result["error"] and f"{wait} s." in result["error"]
-    assert await dk.get_part("B") == result
+    assert await dk.get_part("PART-B") == result
     assert fake.apps == [CREDS[0]]
     # A daily pause on one app must not hide the shorter penalty from the other app.
     quotas.quotas[0].pause(MIDNIGHT, "daily")
@@ -212,10 +212,10 @@ def test_shared_minute_budget_spans_both_apps(clock):
 @pytest.mark.parametrize("response", [ok(), httpx.Response(404)])
 async def test_cache_is_shared_after_switching_apps(client, clock, response):
     dk, fake = client(pool(clock, limit=1), response, ok())
-    first = await dk.get_part("A")
-    assert await dk.get_part("A") == first
-    await dk.get_part("B")
-    assert await dk.get_part("A") == first
+    first = await dk.get_part("PART-A")
+    assert await dk.get_part("PART-A") == first
+    await dk.get_part("PART-B")
+    assert await dk.get_part("PART-A") == first
     assert fake.apps == [CREDS[0], CREDS[2]]
 
 
@@ -236,7 +236,7 @@ async def test_second_app_401_refreshes_only_its_token_once(client, clock):
     quotas.acquire(), quotas.acquire()  # app 1's day is spent
     dk, fake = client(quotas, httpx.Response(401), httpx.Response(401))
     with pytest.raises(DigiKeyError, match="DigiKey API returned HTTP 401"):
-        await dk.get_part("A")
+        await dk.get_part("PART-A")
     assert fake.apps == [CREDS[2], CREDS[2]]
     assert [t["client_id"][0] for t in fake.tokens] == [CREDS[2], CREDS[2]]
     assert dk._apps[0].access_token is None
@@ -248,7 +248,7 @@ async def test_second_app_401_can_succeed_after_refresh(client, clock):
     quotas = pool(clock, limit=2)
     quotas.acquire(), quotas.acquire()
     dk, fake = client(quotas, httpx.Response(401), ok())
-    assert (await dk.get_part("A"))["total"] == 1
+    assert (await dk.get_part("PART-A"))["total"] == 1
     assert fake.apps == [CREDS[2], CREDS[2]]
     assert len(fake.tokens) == 2
     assert [q.status()["used_today"] for q in quotas.quotas] == [2, 2]
@@ -305,7 +305,7 @@ async def test_error_redacts_all_app_credentials(monkeypatch):
             raise DigiKeyError("echo " + " ".join(CREDS))
 
     monkeypatch.setattr(server, "_digikey_client", Broken())
-    result = await server.digikey_get_part("A")
+    result = await server.digikey_get_part("PART-A")
     assert result == {"error": "DigiKey part lookup failed: echo " + " ".join(["[redacted]"] * 4)}
 
 
@@ -395,7 +395,7 @@ async def test_lookup_queued_when_first_app_runs_out_goes_to_second_app(clock):
     preset_tokens(dk)
     dk._pacer = Pacer(5, clock=clock, sleep=queue_until(second_queued, lambda: quotas.active_index() == 1))
     try:
-        first, second = await asyncio.gather(dk.get_part("A"), dk.get_part("B"))
+        first, second = await asyncio.gather(dk.get_part("PART-A"), dk.get_part("PART-B"))
     finally:
         await dk.close()
     assert first["total"] == 1 and second["total"] == 1
@@ -413,8 +413,8 @@ async def test_lookup_queued_during_a_penalty_is_neither_sent_nor_counted(clock)
     preset_tokens(dk)
     dk._pacer = Pacer(5, clock=clock, sleep=queue_until(second_queued, lambda: quotas.penalty_error() is not None))
     try:
-        first, second = await asyncio.gather(dk.get_part("A", caller="203.0.113.7"),
-                                             dk.get_part("B", caller="203.0.113.8"))
+        first, second = await asyncio.gather(dk.get_part("PART-A", caller="203.0.113.7"),
+                                             dk.get_part("PART-B", caller="203.0.113.8"))
     finally:
         await dk.close()
     assert "refused this server's requests (HTTP 403)" in first["error"]
@@ -463,7 +463,7 @@ async def test_slow_quota_save_does_not_shorten_the_gap(clock, monkeypatch):
     dk._pacer = paced_by(clock)
     monkeypatch.setattr(DailyQuota, "_save", slow_save)
     try:
-        await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(4)))
+        await asyncio.gather(*(dk.get_part(f"PART{i}") for i in range(4)))
     finally:
         await dk.close()
     assert stalls and len(sent_at) == 4
@@ -494,7 +494,7 @@ async def test_token_daily_limit_on_first_app_moves_lookup_to_second(clock):
 
     dk._pacer = Pacer(5, clock=clock, sleep=sleep)
     try:
-        assert (await dk.get_part("A"))["total"] == 1
+        assert (await dk.get_part("PART-A"))["total"] == 1
     finally:
         await dk.close()
     assert calls == [CREDS[0], CREDS[2], "product " + CREDS[2]]
@@ -513,7 +513,7 @@ async def test_401_resend_waits_out_a_daily_pause_on_that_app(client, clock):
         await asyncio.sleep(0)
 
     dk._pacer = Pacer(5, clock=clock, sleep=sleep)
-    assert (await dk.get_part("A"))["total"] == 1
+    assert (await dk.get_part("PART-A"))["total"] == 1
     assert fake.apps == [CREDS[0], CREDS[2]]
 
 
@@ -534,7 +534,7 @@ async def test_oauth_error_text_is_redacted_in_the_client(client, clock, monkeyp
     dk, _ = client(quotas)
     dk._http = httpx.AsyncClient(transport=httpx.MockTransport(oauth))
     with pytest.raises(DigiKeyError) as raised:
-        await dk.get_part("A")
+        await dk.get_part("PART-A")
     assert asked == [CREDS[2] if spent else CREDS[0]]
     assert str(raised.value) == "DigiKey OAuth error: Unknown client " + " ".join(["[redacted]"] * 4)
     monkeypatch.setattr(server, "_mouser_client", None)
@@ -566,7 +566,7 @@ async def test_failure_logs_are_redacted_like_replies(monkeypatch, caplog):
             (Broken(RuntimeError("boom " + " ".join(CREDS))), server.digikey_get_part),
         ]:
             monkeypatch.setattr(server, "_digikey_client", client)
-            await call("A")
+            await call("PART-A")
         for error in (MouserError("echo mouser-api-key-value"), RuntimeError("boom mouser-api-key-value")):
             monkeypatch.setattr(server, "_mouser_client", Broken(error))
             await server.mouser_get_part("AAA")
@@ -604,7 +604,7 @@ async def test_slow_token_refresh_does_not_release_a_burst(clock):
     dk._http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
     dk._pacer = paced_by(clock)
     try:
-        results = await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(6)))
+        results = await asyncio.gather(*(dk.get_part(f"PART{i}") for i in range(6)))
     finally:
         await dk.close()
     assert all(r["total"] == 1 for r in results) and len(sent_at) == 6
@@ -616,7 +616,7 @@ async def test_no_token_request_while_paused_after_a_401(clock):
     fake = FakeDigiKey(httpx.Response(401, headers=DAILY_HEADERS))
     dk, quotas = one_app(clock, fake)
     try:
-        result = await dk.get_part("A")
+        result = await dk.get_part("PART-A")
     finally:
         await dk.close()
     assert result["error"].startswith("DigiKey daily quota exceeded on this shared server.")
@@ -626,9 +626,9 @@ async def test_no_token_request_while_paused_after_a_401(clock):
 async def test_no_token_request_during_a_penalty(client, clock):
     quotas = pool(clock)
     dk, fake = client(quotas, httpx.Response(403))
-    await dk.get_part("A")
+    await dk.get_part("PART-A")
     dk._apps[0].access_token = None  # the next lookup would need a new token
-    assert "HTTP 403" in (await dk.get_part("B"))["error"]
+    assert "HTTP 403" in (await dk.get_part("PART-B"))["error"]
     assert len(fake.tokens) == 1 and len(fake.requests) == 1
 
 
@@ -637,7 +637,7 @@ async def test_401_resend_is_counted_and_refused_once_the_day_is_spent(clock):
     fake = FakeDigiKey(httpx.Response(401), ok())
     dk, quotas = one_app(clock, fake, limit=1)
     try:
-        result = await dk.get_part("A")
+        result = await dk.get_part("PART-A")
     finally:
         await dk.close()
     assert result["error"].startswith("DigiKey daily quota exceeded on this shared server.")
@@ -670,8 +670,8 @@ async def test_token_endpoint_rate_limit_pauses_lookups(clock):
     fake = TokenEndpoint(httpx.Response(429, headers={"retry-after": "30"}))
     dk, quotas = one_app(clock, fake)
     try:
-        first = await dk.get_part("A")
-        second = await dk.get_part("B")
+        first = await dk.get_part("PART-A")
+        second = await dk.get_part("PART-B")
     finally:
         await dk.close()
     assert "limiting requests per minute" in first["error"] and "30 s" in first["error"]
@@ -694,7 +694,7 @@ async def test_lookup_waiting_on_a_token_refresh_sends_nothing_once_a_penalty_be
     fake = TokenEndpoint(slow_failing_refresh, token())
     dk, quotas = one_app(clock, fake)
     try:
-        first, second = await asyncio.gather(dk.get_part("A"), dk.get_part("B"), return_exceptions=True)
+        first, second = await asyncio.gather(dk.get_part("PART-A"), dk.get_part("PART-B"), return_exceptions=True)
     finally:
         await dk.close()
     assert isinstance(first, DigiKeyError) and "HTTP 500" in str(first)
@@ -707,8 +707,8 @@ async def test_short_lived_token_is_refreshed_once_per_lookup_not_forever(clock)
     fake = TokenEndpoint(token(expires_in=60))
     dk, quotas = one_app(clock, fake)
     try:
-        assert (await dk.get_part("A"))["total"] == 1
-        assert (await dk.get_part("B"))["total"] == 1
+        assert (await dk.get_part("PART-A"))["total"] == 1
+        assert (await dk.get_part("PART-B"))["total"] == 1
     finally:
         await dk.close()
     assert fake.token_requests == 2 and fake.product_requests == 2
@@ -719,7 +719,7 @@ async def test_already_expired_token_fails_instead_of_looping(clock):
     dk, quotas = one_app(clock, fake)
     try:
         with pytest.raises(DigiKeyError, match="expired token"):
-            await dk.get_part("A")
+            await dk.get_part("PART-A")
     finally:
         await dk.close()
     assert fake.token_requests == 1 and fake.product_requests == 0
@@ -752,7 +752,7 @@ async def test_lookups_queued_on_a_spent_apps_token_move_to_the_next_app(clock):
 
     dk._pacer = Pacer(5, clock=clock, sleep=sleep)
     try:
-        results = await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(3)))
+        results = await asyncio.gather(*(dk.get_part(f"PART{i}") for i in range(3)))
     finally:
         await dk.close()
     assert all(r["total"] == 1 for r in results)
@@ -798,7 +798,7 @@ async def test_client_marks_the_minute_at_the_send(client, clock, monkeypatch):
         original(self)
 
     monkeypatch.setattr(DailyQuota, "_save", slow_save)
-    assert (await dk.get_part("A"))["total"] == 1
+    assert (await dk.get_part("PART-A"))["total"] == 1
     assert list(quotas._minute._sent) == [NOW + 0.5]  # stamped at the send, after the save
 
 
@@ -823,7 +823,7 @@ async def test_slow_first_http_client_build_does_not_eat_the_gap(clock, monkeypa
     dk._pacer = paced_by(clock)
     monkeypatch.setattr(httpx, "AsyncClient", slow_client)
     try:
-        results = await asyncio.gather(*(dk.get_part(f"P{i}") for i in range(3)))
+        results = await asyncio.gather(*(dk.get_part(f"PART{i}") for i in range(3)))
     finally:
         await dk.close()
     assert all(r["total"] == 1 for r in results) and len(sent_at) == 4  # a token, then 3 products

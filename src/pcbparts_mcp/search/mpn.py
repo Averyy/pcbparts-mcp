@@ -30,6 +30,72 @@ def is_placeholder_mpn(mpn: str) -> bool:
     return re.sub(r"[^0-9a-z]", "", mpn.casefold()) in _PLACEHOLDER_MPNS
 
 
+# Why a number isn't sent to Mouser or DigiKey (not_sent on mouser_get_part, digikey_get_part and
+# part_lifecycle replies): neither can list it, so a request would only spend the shared daily
+# limits. maker_not_carried is part_lifecycle's alone (LifecycleLookup): the distributor hasn't
+# listed any of that maker's parts lately.
+NOT_SENT_REASONS = ("placeholder", "lcsc_code", "value", "length", "not_ascii", "maker_not_carried")
+NOT_SENT_HINTS = {
+    "placeholder": "is a BOM placeholder (not fitted or not chosen), not a part number",
+    "lcsc_code": "is an LCSC code, not a manufacturer part number: jlc_get_part(lcsc=...) gives its MPN",
+    "value": "is a component value, not a part number: jlc_search finds parts by value",
+    "length": "isn't 3-40 characters, as Mouser and DigiKey part numbers are",
+    "not_ascii": "has characters Mouser and DigiKey part numbers don't use",
+    "maker_not_carried": "is by a maker whose parts this distributor hasn't listed lately",
+}
+
+# A plain electrical value, perhaps with a size, dielectric or tolerance: "10k", "4.7uF", "1R",
+# "100nF 50V 0603", "4K7 1%". Each number has at most 4 significant digits (value_digits), so a
+# part number such as Wurth's 9774025151R isn't a value; a part number has more than a number and
+# a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
+_VALUE_NUMBER = r"(\d+)(?:\.(\d+))?"
+_VALUE_UNITS = (r"(?:[kmg]?\s?(?:ohms?|Ω)|meg|[rkm]|[pnuµμm]?f|[pnuµμ]|[pnuµμm]?h|[mk]?v|[munµμ]?a|[mk]?w"
+                r"|[kmg]?hz|%)")
+_VALUE_TOKEN = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?{_VALUE_UNITS}|(\d+)[rkm](\d+)|(\d+)/(\d+)\s?w", re.IGNORECASE)
+_VALUE_EXTRA = re.compile(r"01005|0201|0402|0603|0805|1206|1210|1812|2010|2512|x[5-8][rstpv]|c0g|np0|y5v|z5u|smd",
+                          re.IGNORECASE)
+_VALUE_GAP = re.compile(r"[\s,;/]+")
+
+
+def _is_value(text: str) -> bool:
+    from ..smart_parser.values import value_digits  # here: the smart parser is a lot to load with this module
+
+    tokens = [t for t in _VALUE_GAP.split(text.strip()) if t]
+    # "10 k" or "10 kOhm": a number and its unit given apart
+    joined: list[str] = []
+    for token in tokens:
+        if joined and re.fullmatch(r"(?:±\s?)?\d+(?:\.\d+)?", joined[-1]) and re.fullmatch(_VALUE_UNITS, token, re.I):
+            joined[-1] += token
+        else:
+            joined.append(token)
+    values = 0
+    for token in joined:
+        if match := _VALUE_TOKEN.fullmatch(token):
+            if not value_digits(*(group for group in match.groups() if group)):
+                return False
+            values += 1
+        elif not _VALUE_EXTRA.fullmatch(token):
+            return False
+    return values > 0
+
+
+def not_sent_reason(number: str) -> str | None:
+    """Why a part number isn't worth a Mouser or DigiKey request (one of NOT_SENT_REASONS), or None
+    to send it. Conservative: a real part number is never caught."""
+    number = (number or "").strip()
+    if is_placeholder_mpn(number):
+        return "placeholder"
+    if LCSC_CODE.fullmatch(number):
+        return "lcsc_code"
+    if _is_value(number):
+        return "value"
+    if not 3 <= len(number) <= 40:
+        return "length"
+    if not number.isascii():
+        return "not_ascii"
+    return None
+
+
 _MAKER_SUFFIX = re.compile(r".+\(([A-Za-z]{2,})\)")
 # Lead-free, tin plating and reel codes, which could otherwise spell a maker's initials.
 _PACKING_TAGS = frozenset({"lf", "sn", "tr", "pbf", "rl"})
@@ -70,8 +136,9 @@ def same_jst_part(listed: str, asked: str, maker: str) -> bool:
 
 
 # matched_by on mouser_get_part / digikey_get_part results: how a result matches the number it
-# answers, the first that applies in this order. exact, separators and packing mean what
-# jlc_get_part(mpn=...)'s exact and match do, so one word means one thing in every tool.
+# answers, the first that applies in this order. exact and separators mean what jlc_get_part(mpn=...)'s
+# exact and match do; packing here is only JST's (LF)/(SN) endings (same_jst_part), while
+# jlc_get_part's packing also covers tape, reel and lead-free suffixes (PACKING_RULES).
 MATCHED_BY = ("exact", "separators", "packing", "mouser_pn", "digikey_pn", "prefix", "other")
 
 

@@ -218,7 +218,8 @@ class DailyQuota:
         self._date = self._today()
         self._paused_until = 0.0  # unix time; the API said its own limit is used up until then
         # "daily" (until the reset the API named), "daily_unknown" (it didn't name one), "burst"
-        # (its per-minute limit) or "refused" (403)
+        # (its per-minute limit), "refused" (403) or "invalid_key" (Mouser rejected one of several
+        # keys: out until the next UTC day, like a spent one)
         self._pause_reason = ""
         self._api_remaining: int | None = None  # the API's own count of requests left today
         self._api_limit: int | None = None
@@ -326,21 +327,21 @@ class DailyQuota:
             self._save()
 
     def pause_daily_unknown_reset(self) -> None:
-        """The API refused for its daily limit without saying when it resets (Mouser): wait for the
-        next UTC midnight. Refused again on the first try after a daily pause, it retries hourly,
-        so a reset at another time of day (or a rolling 24 hours) costs at most an hour. A refusal
-        while a daily pause is running answers a request sent before that pause began (concurrent
-        batches): it changes nothing, so the second of two refusals right after midnight can't turn
-        the hourly retry into a wait for the next midnight."""
+        """The API refused for its daily limit without saying when it resets (Mouser): while our own
+        count is below the limit, try again in an hour, from the first refusal on, so a count that
+        resets at another time of day (or rolls over 24 hours) costs at most an hour (on 2026-11-17
+        Mouser refused after 110 of our 1,000). Once our own count is spent too, wait for the next
+        UTC midnight. A refusal while a daily pause is running answers a request sent before that
+        pause began (concurrent batches): it changes nothing, so two refusals together can't
+        stretch the pause."""
         now = self._clock()
         if self._pause_reason in ("daily", "daily_unknown") and now < self._paused_until:
             return
-        retried = self._pause_reason in ("daily", "daily_unknown")  # and that pause has ended
-        self.pause(now + 3600 if retried else _next_utc_midnight(now), "daily_unknown")
+        self._maybe_reset()
+        self.pause(now + 3600 if self._count < self._limit else _next_utc_midnight(now), "daily_unknown")
 
     def clear_expired_pause(self) -> None:
-        """After a request went through: forget an ended pause, so the next daily refusal waits
-        for midnight again instead of retrying hourly."""
+        """After a request went through: forget an ended pause (and what it was for)."""
         if self._pause_reason and self._clock() >= self._paused_until:
             self._pause_reason = ""
             self._save()
@@ -442,7 +443,7 @@ class QuotaPool:
     @staticmethod
     def _daily_reset_at(quota: DailyQuota) -> float:
         reset = _next_utc_midnight(quota.now()) if not quota.remaining else 0.0
-        if quota._pause_reason in ("daily", "daily_unknown") and quota.now() < quota._paused_until:
+        if quota._pause_reason in ("daily", "daily_unknown", "invalid_key") and quota.now() < quota._paused_until:
             reset = max(reset, quota._paused_until)
         return reset
 

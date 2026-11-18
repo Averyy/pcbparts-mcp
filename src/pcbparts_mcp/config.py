@@ -213,11 +213,20 @@ DIGIKEY_NOT_FOUND_TTL = 86400  # as MOUSER_NOT_FOUND_TTL
 
 # Lifecycle store (distributor_store.py, part_lifecycle): every lifecycle status Mouser or DigiKey
 # states, by maker and MPN. A status changes rarely and with notice (JEDEC JESD48: at least 6 months
-# from a discontinuation notice to the last order), so it's kept 90 days; "not listed" and unknown
-# statuses a week. part_lifecycle takes up to this many parts a call.
+# from a discontinuation notice to the last order), so it's kept 90 days; an unknown status a week;
+# "not listed" (the distributor has no part with that number: mostly Chinese makers' parts, which
+# neither carries) 30 days, so each such part costs a request a month, not a week.
+# part_lifecycle takes up to this many parts a call.
 LIFECYCLE_TTL = 90 * 86400
 LIFECYCLE_UNKNOWN_TTL = 7 * 86400
+LIFECYCLE_NOT_LISTED_TTL = 30 * 86400
 LIFECYCLE_MAX_PARTS = 50
+# part_lifecycle stops sending a maker's parts to a distributor that, over the last MAKER_SKIP_DAYS
+# days, said "not listed" for at least MAKER_SKIP_NOT_LISTED of them and listed none (counts per
+# maker and distributor in distributor_store.py; no part numbers). Never for a maker it listed in
+# that time, and the counts age out, so a maker it starts carrying is asked again.
+MAKER_SKIP_DAYS = 30
+MAKER_SKIP_NOT_LISTED = 20
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
 DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")

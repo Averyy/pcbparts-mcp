@@ -3,7 +3,7 @@ names compared across catalogs, and part_lifecycle's lookups.
 
 Statuses: active, nrnd (not recommended for new designs), last_time_buy, obsolete and unknown. Each
 reading keeps the distributor's own wording (raw) beside it. Readings live in the lifecycle table of
-distributor_store.py for LIFECYCLE_TTL (90 days); "not listed" and unknown ones for a week.
+distributor_store.py for LIFECYCLE_TTL (90 days); unknown ones a week, "not listed" ones 30 days.
 """
 
 from __future__ import annotations
@@ -14,9 +14,10 @@ import logging
 import re
 import unicodedata
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import TYPE_CHECKING, Any
 
-from .search.mpn import mpn_key, same_jst_part
+from .search.mpn import mpn_key, not_sent_reason, same_jst_part
 from .search.resolvers import resolve_manufacturer
 
 if TYPE_CHECKING:
@@ -58,12 +59,12 @@ def mouser_status(lifecycle: str | None) -> tuple[str, str]:
 
 def digikey_status(status_text: str | None, discontinued: bool = False, end_of_life: bool = False) -> tuple[str, str]:
     """(status, raw) from DigiKey's ProductStatus.Status, Discontinued and EndOfLife. EndOfLife on a
-    part whose status still says Active means its last orders are being taken; Discontinued
-    (DigiKey stopped selling it) on an Active one says nothing sure about the maker."""
+    part whose status still says Active (or Not For New Designs) means its last orders are being
+    taken; Discontinued (DigiKey stopped selling it) on an Active one says nothing sure about the maker."""
     text = (status_text or "").strip()
     status = _DIGIKEY_STATUSES.get(text.casefold(), "unknown")
     notes = []
-    if end_of_life and status in ("active", "unknown"):
+    if end_of_life and status in ("active", "nrnd", "unknown"):
         status = "last_time_buy"
         notes.append("end of life")
     elif discontinued and status == "active":
@@ -82,11 +83,25 @@ def last_buy_date(value: Any) -> str | None:
     return date if date >= "1990-01-01" else None
 
 
-# Words left out when comparing maker names: company forms and regions ("NXP USA Inc." is NXP)
+# Words left out when comparing maker names: company forms and regions ("NXP USA Inc." is NXP,
+# "GigaDevice Semicon Beijing" is DigiKey's "GigaDevice Semiconductor (HK) Limited")
 _NAME_NOISE = frozenset({
     "inc", "incorporated", "ltd", "limited", "llc", "co", "corp", "corporation", "company", "gmbh", "ag",
     "plc", "sa", "bv", "nv", "srl", "spa", "kk", "usa", "us", "america", "americas", "the",
+    "hk", "beijing", "shanghai", "shenzhen", "china", "taiwan", "japan", "europe", "asia",
 })
+
+# Makers known under names the word rules can't tie together: one company's divisions, or a maker
+# and its own sales arm. A name belongs to a family when it matches one of its names (by the word
+# rules), and two names of one family are one maker: JLCPCB's "Vishay Intertech" is Mouser's
+# "Vishay / Dale" and DigiKey's "Vishay Siliconix"; JLCPCB's "OSRAM Opto Semicon" is "ams OSRAM".
+_MAKER_FAMILIES: tuple[tuple[str, ...], ...] = (
+    ("Vishay",),
+    ("OSRAM", "ams OSRAM", "AMS"),  # JLCPCB's "AMS" is ams OSRAM (AS5047P, AS7341, OSRAM LEDs)
+    ("Nippon Chemi-Con", "United Chemi-Con"),  # United Chemi-Con is its US arm; JLCPCB: "NCC(Nippon Chemi-Con)"
+    ("Epson", "Seiko Epson"),  # "EPSON", "Epson Timing"
+    ("Infineon", "Cypress Semiconductor"),  # Infineon bought Cypress; JLCPCB: "Infineon/Cypress Semicon"
+)
 
 
 def _words(text: str) -> tuple[str, ...]:
@@ -94,20 +109,53 @@ def _words(text: str) -> tuple[str, ...]:
     return tuple(word for word in re.findall(r"[a-z0-9]+", text) if word not in _NAME_NOISE)
 
 
+@dataclass(frozen=True)
+class _Name:
+    """One word list a maker can be recognised by. short: an abbreviation that stands for a longer
+    name elsewhere: the one before a catalog's parenthesised full name ("ST" of "ST(Semtech)", "UMW"
+    of "UMW(Youtai Semiconductor ...)"), or one an alias resolves ("ST" is STMicroelectronics). It
+    matches only the same letters as a whole name, never another abbreviation and never as the
+    start of a longer name: "ST(Semtech)" isn't ST Microelectronics."""
+    words: tuple[str, ...]
+    short: bool = False
+
+
+def _is_abbreviation(words: tuple[str, ...]) -> bool:
+    return len(words) == 1 and len(words[0]) <= 4
+
+
+@lru_cache(maxsize=4096)
+def _name_forms(name: str) -> tuple[_Name, ...]:
+    """Every word list the maker can be recognised by, from its name as given and as its alias
+    resolves (JLCPCB's "AMS" is ams OSRAM, while the alias "ams" is Advanced Monolithic Systems):
+    the name without parentheses and each parenthesised name, each split at "/" ("SKYWORKS/SILICON
+    LABS" is Skyworks and Silicon Labs, Mouser's "Vishay / Dale" is Vishay)."""
+    forms: list[_Name] = []
+    resolved = resolve_manufacturer(name)
+    for text in dict.fromkeys((resolved, name)):
+        inner = re.findall(r"\(([^)]*)\)", text)
+        outer = [_words(part) for part in re.sub(r"\([^)]*\)", " ", text).split("/")]
+        aliased = text.casefold() != resolved.casefold()  # the name as given, which an alias resolved
+        for words in outer:
+            if words:
+                short = _is_abbreviation(words) and (aliased or (bool(inner) and len(outer) == 1))
+                forms.append(_Name(words, short))
+        forms.extend(_Name(words) for part in inner for words in (_words(p) for p in part.split("/")) if words)
+    return tuple(dict.fromkeys(forms))
+
+
 def maker_names(name: str | None) -> list[tuple[str, ...]]:
-    """The word lists a maker can be recognised by: its name without parentheses, and each
-    parenthesised name (JLCPCB writes "UMW(Youtai Semiconductor Co., Ltd.)"). Aliases such as TI
-    resolve first."""
-    name = resolve_manufacturer((name or "").strip())
-    outer = re.sub(r"\([^)]*\)", " ", name)
-    names = [_words(outer), *(_words(inner) for inner in re.findall(r"\(([^)]*)\)", name))]
-    return [words for words in names if words]
+    """The word lists a maker can be recognised by (_name_forms). Aliases such as TI resolve too."""
+    return [form.words for form in _name_forms((name or "").strip())]
 
 
 def maker_key(name: str | None) -> str:
-    """One maker's key in the lifecycle store ("Texas Instruments Inc." and "Texas Instruments" share one)."""
-    names = maker_names(name)
-    return " ".join(names[0]) if names else ""
+    """One maker's key in the lifecycle store ("Texas Instruments Inc." and "Texas Instruments"
+    share one): its alias-resolved name without parentheses."""
+    name = resolve_manufacturer((name or "").strip())
+    words = _words(re.sub(r"\([^)]*\)", " ", name)) or next(
+        (w for inner in re.findall(r"\(([^)]*)\)", name) if (w := _words(inner))), ())
+    return " ".join(words)
 
 
 def _starts(short: tuple[str, ...], long: tuple[str, ...]) -> bool:
@@ -119,16 +167,36 @@ def _starts(short: tuple[str, ...], long: tuple[str, ...]) -> bool:
     return last == other or (len(last) >= 4 and other.startswith(last))
 
 
-def _names_match(a: tuple[str, ...], b: tuple[str, ...]) -> bool:
-    if len(a) > len(b):
-        a, b = b, a
-    return _starts(a, b) or (len(a) == len(b) and _starts(b, a))
+def _names_match(a: _Name, b: _Name) -> bool:
+    if "".join(a.words) == "".join(b.words):  # "ST Microelectronics" is STMicroelectronics, "On Semi" onsemi
+        return not (a.short and b.short)  # two abbreviations of the same letters can stand for two makers
+    if a.short or b.short:
+        return False
+    x, y = (a.words, b.words) if len(a.words) <= len(b.words) else (b.words, a.words)
+    return _starts(x, y) or (len(x) == len(y) and _starts(y, x))
+
+
+_FAMILY_FORMS = [[_Name(_words(member)) for member in family] for family in _MAKER_FAMILIES]
+
+
+@lru_cache(maxsize=4096)
+def _families(name: str) -> frozenset[int]:
+    """The _MAKER_FAMILIES the name belongs to (one of its names matches a member's)."""
+    forms = _name_forms(name)
+    return frozenset(index for index, members in enumerate(_FAMILY_FORMS)
+                     if any(_names_match(form, member) for member in members for form in forms))
 
 
 def makers_match(a: str | None, b: str | None) -> bool:
     """Whether two catalogs' maker names name the same maker: JLCPCB's "NXP Semicon" and "Microchip
-    Tech" are Mouser's NXP Semiconductors and Microchip Technology."""
-    return any(_names_match(x, y) for x in maker_names(a) for y in maker_names(b))
+    Tech" are Mouser's NXP Semiconductors and Microchip Technology, and its "Vishay Intertech" is
+    DigiKey's "Vishay Siliconix" (_MAKER_FAMILIES)."""
+    a, b = (a or "").strip(), (b or "").strip()
+    if a and a.casefold() == b.casefold():
+        return True
+    if any(_names_match(x, y) for x in _name_forms(a) for y in _name_forms(b)):
+        return True
+    return bool(_families(a) & _families(b))
 
 
 def utc_text(timestamp: float) -> str:
@@ -169,12 +237,17 @@ class Reading:
 @dataclass
 class Entry:
     """One part_lifecycle input: what was given, and the MPN and maker to look up (an LCSC code is
-    resolved to both from the catalog)."""
+    resolved to both from the catalog). not_sent: why its number isn't worth a request at all
+    (search/mpn.py's not_sent_reason). skip: distributors that haven't listed the maker's parts
+    lately (maker_not_carried); skipped: those of them it would have been sent to this call."""
     input: Any
     mpn: str | None = None
     maker: str | None = None
     lcsc: str | None = None
     error: dict[str, Any] | None = None
+    not_sent: str | None = None
+    skip: set[str] = field(default_factory=set)
+    skipped: set[str] = field(default_factory=set)
 
 
 @dataclass
@@ -186,6 +259,8 @@ class _KeyState:
     limited: dict[str, int] = field(default_factory=dict)  # source -> seconds until it may be asked
     day_spent: set[str] = field(default_factory=set)  # sources limited because their whole day is spent
     failed: set[str] = field(default_factory=set)
+    asked: set[str] = field(default_factory=set)  # sources a lookup went to this call
+    answered: set[str] = field(default_factory=set)  # sources that answered it this call
 
     def add(self, reading: Reading) -> None:
         if reading.found:
@@ -215,11 +290,17 @@ def _best_per_maker(readings: list[Reading]) -> list[Reading]:
 class LifecycleLookup:
     """part_lifecycle: answers from the store; parts it doesn't have go to Mouser in 10-part
     requests, and to DigiKey only when Mouser doesn't list them (for the maker given) or can't be
-    asked today: Mouser's daily limit is spent, Mouser isn't configured, or the number is one
-    Mouser doesn't take (3-40 characters). A Mouser per-minute pause leaves the part unknown with
-    retry_after, and a failed Mouser lookup with lookup_failed, without asking DigiKey: a minute's
-    wait or a fault isn't a reason to spend DigiKey's smaller day. Both clients write what they
-    fetch into the store and their 3-day answer cache, as for mouser_get_part and digikey_get_part."""
+    asked today: Mouser's daily limit is spent, or Mouser isn't configured. A Mouser per-minute
+    pause leaves the part unknown with retry_after, and a failed Mouser lookup with lookup_failed,
+    without asking DigiKey: a minute's wait or a fault isn't a reason to spend DigiKey's smaller day.
+    Mouser listing the part with a status it can't name (unknown) doesn't send it to DigiKey either.
+
+    Nothing goes out for a number neither distributor can list (Entry.not_sent: a value such as
+    "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters), nor to a distributor
+    for a maker it hasn't listed a part of lately (MAKER_SKIP_NOT_LISTED "not listed" answers and
+    none listed in MAKER_SKIP_DAYS days, counted per maker in the store): Mouser skipped that way
+    counts as not listing it. Both clients write what they fetch into the store and their 3-day
+    answer cache, as for mouser_get_part and digikey_get_part."""
 
     def __init__(self, store: DistributorStore, mouser: MouserClient | None = None,
                  digikey: DigiKeyClient | None = None):
@@ -228,20 +309,33 @@ class LifecycleLookup:
         self._digikey = digikey
 
     async def answer(self, entries: list[Entry], caller: str | None = None) -> list[dict[str, Any]]:
+        from . import stats
+
         states: dict[str, _KeyState] = {}
         for entry in entries:
             if entry.error is None:
                 key = mpn_key(entry.mpn or "")
+                entry.not_sent = not_sent_reason(entry.mpn or "")
                 if key not in states:
                     states[key] = state = _KeyState(entry.mpn or "")
                     for reading in self._store.readings(entry.mpn or ""):
                         state.add(reading)
+                    if entry.not_sent and not state.readings and not state.not_listed:
+                        # No request: counted under the distributor it would have gone to first
+                        stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
+        for source, client in (("mouser", self._mouser), ("digikey", self._digikey)):
+            makers = {maker_key(e.maker) for e in entries if e.error is None and e.maker and not e.not_sent}
+            if client is not None and makers:
+                not_carried = self._store.makers_not_carried(source, makers)
+                for entry in entries:
+                    if entry.maker and maker_key(entry.maker) in not_carried:
+                        entry.skip.add(source)
 
         # Mouser first, then DigiKey for what it doesn't list or can't answer today; a part with a
         # reading is never asked
         await self._ask_mouser(self._unanswered(entries, states, "mouser"), caller)
-        await self._ask_digikey([state for state in self._unanswered(entries, states, "digikey")
-                                 if self._digikey_may_ask(state)], caller)
+        await self._ask_digikey(self._unanswered(entries, states, "digikey", self._digikey_may_ask), caller)
+        self._count_makers(entries, states)
         return [self._result(entry, states.get(mpn_key(entry.mpn or ""))) for entry in entries]
 
     @staticmethod
@@ -252,17 +346,51 @@ class LifecycleLookup:
         return "mouser" not in state.limited or "mouser" in state.day_spent
 
     @staticmethod
-    def _unanswered(entries: list[Entry], states: dict[str, _KeyState], source: str) -> list[_KeyState]:
+    def _unanswered(entries: list[Entry], states: dict[str, _KeyState], source: str,
+                    may_ask: Any = None) -> list[_KeyState]:
         """The numbers some entry has no reading for (for its maker, if given), that this source
-        hasn't answered yet."""
+        hasn't answered yet and may be asked (may_ask: a test of the number's state), and that may
+        be sent to it (Entry.not_sent and skip)."""
+        from . import stats
+
         wanted: dict[str, _KeyState] = {}
+        skipped: set[str] = set()
         for entry in entries:
-            if entry.error is None:
+            if entry.error is None and not entry.not_sent:
                 key = mpn_key(entry.mpn or "")
                 state = states[key]
-                if not state.matching(entry.maker) and not state.knows(source):
-                    wanted[key] = state
+                if not state.matching(entry.maker) and not state.knows(source) and (may_ask is None or may_ask(state)):
+                    if source in entry.skip:
+                        entry.skipped.add(source)
+                        skipped.add(key)
+                    else:
+                        wanted[key] = state
+        for _ in skipped - set(wanted):
+            stats.count_distributor(source, "skipped")
         return list(wanted.values())
+
+    def _count_makers(self, entries: list[Entry], states: dict[str, _KeyState]) -> None:
+        """Count, per maker given, whether each distributor that answered this call listed the
+        number for that maker or didn't list it at all (MAKER_SKIP_*; listed only under other
+        makers counts as neither)."""
+        counts: dict[str, dict[str, list[int]]] = {}
+        seen: set[tuple[str, str]] = set()
+        for entry in entries:
+            if entry.error is not None or not entry.maker:
+                continue
+            key, maker = mpn_key(entry.mpn or ""), maker_key(entry.maker)
+            if (key, maker) in seen or not maker:
+                continue
+            seen.add((key, maker))
+            state = states[key]
+            for source in state.answered:
+                tally = counts.setdefault(source, {}).setdefault(maker, [0, 0])
+                if state.matching(entry.maker, source):
+                    tally[1] += 1
+                elif source in state.not_listed and not any(r.source == source for r in state.readings):
+                    tally[0] += 1
+        for source, makers in counts.items():
+            self._store.count_maker_lookups(source, {maker: (nl, found) for maker, (nl, found) in makers.items()})
 
     async def _ask_mouser(self, wanted: list[_KeyState], caller: str | None) -> None:
         if self._mouser is None or not wanted:
@@ -274,6 +402,8 @@ class LifecycleLookup:
         chunks = [numbers[i:i + MOUSER_MAX_BATCH] for i in range(0, len(numbers), MOUSER_MAX_BATCH)]
 
         async def ask(chunk: list[str]) -> None:
+            for number in chunk:
+                states[mpn_key(number)].asked.add("mouser")
             try:
                 answers, error = await self._mouser.lookup(chunk, caller=caller)
             except (MouserError, MouserAPIError) as e:
@@ -284,26 +414,29 @@ class LifecycleLookup:
                 answers, error = None, None
             for number in chunk:
                 state = states[mpn_key(number)]
-                # Not checked: Mouser's 50-result cap crowded the number out of a reply and it
-                # couldn't be asked again, so Mouser may list it. A limit held that request back
-                # (as for a refused lookup), or it failed or came back crowded too (a failure).
-                unchecked = answers is not None and not answers[number].checked
-                if error is not None or (unchecked and self._mouser.held_back()):
+                answer = answers.get(number) if answers is not None else None
+                # A limit held the number's request back (with the reply's error, or for that number
+                # alone), or Mouser's 50-result cap crowded it out of a reply and a limit kept it from
+                # being asked again (Mouser may list it); else it failed, or came back crowded again
+                if answers is None:
+                    state.failed.add("mouser")
+                elif answer is None or isinstance(answer.problem, dict) or (
+                        answer.problem is None and not answer.checked and self._mouser.held_back()):
+                    if answer is None and error is None:
+                        state.failed.add("mouser")
+                        continue
                     state.limited["mouser"] = self._mouser.retry_after()
                     if self._mouser.day_spent():
                         state.day_spent.add("mouser")
-                elif answers is None or unchecked:
+                elif not answer.checked:
                     state.failed.add("mouser")
                 else:
-                    answer = answers[number]
-                    # The part itself, or the JST part it names without the (LF)/(SN) endings
-                    found = [r for r in answer.results if mpn_key(r.get("mfr_part_number") or "") == mpn_key(number)
-                             or same_jst_part(r.get("mfr_part_number") or "", number, r.get("manufacturer") or "")]
-                    for result in found:
+                    state.answered.add("mouser")
+                    for result in _own_listings(answer.results, number):
                         status, raw = result.get("lifecycle_status") or "unknown", result.get("lifecycle") or MOUSER_NOT_STATED
                         state.add(Reading(result.get("mfr_part_number") or number, result.get("manufacturer") or "",
                                           "mouser", status, raw, answer.fetched_at))
-                    if not found:
+                    if not any(r.source == "mouser" for r in state.readings):
                         state.add(Reading(number, "", "mouser", "unknown", None, answer.fetched_at, found=False))
 
         await asyncio.gather(*(ask(chunk) for chunk in chunks))
@@ -314,6 +447,7 @@ class LifecycleLookup:
         from .digikey import DigiKeyError
 
         async def ask(state: _KeyState) -> None:
+            state.asked.add("digikey")
             try:
                 reply, kind, fetched_at = await self._digikey.lookup(state.spelling, caller=caller)
             except DigiKeyError as e:
@@ -327,8 +461,10 @@ class LifecycleLookup:
             if kind == "limited":
                 state.limited["digikey"] = self._digikey.retry_after()
             elif kind == "not_found":
+                state.answered.add("digikey")
                 state.add(Reading(state.spelling, "", "digikey", "unknown", None, fetched_at, found=False))
             elif kind == "found":
+                state.answered.add("digikey")
                 # The client filed each part's reading under this number too (with DigiKey's full
                 # wording); from the reply only if the store couldn't keep them
                 readings = [r for r in self._store.readings(state.spelling) if r.source == "digikey" and r.found]
@@ -367,6 +503,9 @@ class LifecycleLookup:
             others = _best_per_maker(state.readings)
             if others:  # listed, but only under other makers
                 result["makers"] = [r.as_reply() for r in others]
+        # Why no lookup went out for it: its number can't be one they list, or the distributors it
+        # would have gone to haven't listed its maker's parts lately
+        not_sent = None if state.asked else entry.not_sent or ("maker_not_carried" if entry.skipped else None)
         if state.limited:
             result["retry_after"] = min(state.limited.values())
         elif state.failed:
@@ -375,6 +514,19 @@ class LifecycleLookup:
             if state.not_listed:
                 result["not_found"] = True
                 result["observed_at"] = utc_text(min(state.not_listed.values()))
-            else:  # neither distributor could be asked about this number
+            elif not not_sent:  # neither distributor could be asked about this number
                 result["lookup_failed"] = True
+        if not_sent:
+            result["not_sent"] = not_sent
         return result
+
+
+def _own_listings(results: list[dict[str, Any]], number: str) -> list[dict[str, Any]]:
+    """The results that are the part asked: its MPN (mpn_key), and for a maker without one, the
+    JST part the number names without the (LF)/(SN) endings. A JST part Mouser lists under both
+    spellings is read from the one spelled as asked: the two can have different statuses."""
+    key = mpn_key(number)
+    exact = [r for r in results if mpn_key(r.get("mfr_part_number") or "") == key]
+    return exact + [r for r in results if r not in exact
+                    and same_jst_part(r.get("mfr_part_number") or "", number, r.get("manufacturer") or "")
+                    and not any(makers_match(r.get("manufacturer"), e.get("manufacturer")) for e in exact)]

@@ -47,7 +47,7 @@ KNOWN_MANUFACTURERS: set[str] = {
     "TE Connectivity", "XKB Connection", "Shenzhen Kinghelm Elec",
     "Ningbo Kangnex Elec", "BOOMELE(Boom Precision Elec)",
     # Crystals / Oscillators
-    "YXC Crystal Oscillators", "Seiko", "TAITIEN Elec", "Hosonic Elec",
+    "YXC Crystal Oscillators", "Seiko", "Seiko Epson", "TAITIEN Elec", "Hosonic Elec",
     # Memory
     "Winbond Elec", "Micron Tech", "ISSI(Integrated Silicon Solution)",
     "MXIC(Macronix)", "RAMXEED/FUJITSU",
@@ -81,6 +81,8 @@ MANUFACTURER_ALIASES: dict[str, str] = {
     "stm": "STMicroelectronics",
     "st": "STMicroelectronics",
     "stmicro": "STMicroelectronics",
+    "st micro": "STMicroelectronics",
+    "st microelectronics": "STMicroelectronics",
     "nxp": "NXP Semicon",
     "nxp semiconductor": "NXP Semicon",
     "microchip": "Microchip Tech",
@@ -99,6 +101,8 @@ MANUFACTURER_ALIASES: dict[str, str] = {
     "rohm semiconductor": "ROHM Semicon",
     "vishay": "Vishay Intertech",
     "vishay intertechnology": "Vishay Intertech",
+    "vishay dale": "Vishay Intertech",  # JLCPCB lists every Vishay division as Vishay Intertech
+    "vishay siliconix": "Vishay Intertech",
     "diodes": "Diodes Incorporated",
     "diodes inc": "Diodes Incorporated",
     "broadcom": "Broadcom Limited",
@@ -206,7 +210,7 @@ MANUFACTURER_ALIASES: dict[str, str] = {
     # Crystals / Oscillators
     "yxc": "YXC Crystal Oscillators",
     "yangxing": "YXC Crystal Oscillators",
-    "seiko epson": "Seiko",
+    "epson": "Seiko Epson",  # JLCPCB's "Seiko" is Seiko Instruments' crystals, not Epson's
     "taitien": "TAITIEN Elec",
     "hosonic": "Hosonic Elec",
     # MCU/SoC

@@ -389,6 +389,8 @@ def _call_outcome(result: Any) -> str:
         if content["alternatives"]:
             return "ok"
         return "similar_only" if (content.get("similar_parts") or content.get("unverified_alternatives")) else "not_found"
+    if content.get("not_checked") and not content.get("results"):  # Mouser: a limit held the rest back
+        return "rate_limited"
     if any(key in content and not content[key] for key in ("results", "matched_files")):
         return "not_found"
     return "ok"
@@ -443,6 +445,10 @@ def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
 
 def _empty_reason(content: dict) -> str:
     """Why a reply counted as not_found (stats.REASONS): one reason, the most specific it shows."""
+    not_sent = content.get("not_sent")  # Mouser: by number; DigiKey: the one number's reason
+    if not_sent and not content.get("results") and (
+            isinstance(not_sent, str) or set(content.get("not_found") or ()) <= set(not_sent)):
+        return "not_sent"  # nothing that was worth a request
     if content.get("error"):
         reason = _first_reason(_NOT_FOUND_REASONS, str(content["error"])) or "no_results"
         if reason == "mpn_not_in_snapshot":
@@ -457,6 +463,9 @@ def _empty_reason(content: dict) -> str:
         for error in _lifecycle_errors(content):  # or, with nothing looked up, LCSC codes not in the catalog
             if reason := _first_reason(_NOT_FOUND_REASONS, error):
                 return reason
+        rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
+        if rows and all(row.get("not_sent") for row in rows):  # none worth a request
+            return "not_sent"
         return "part_not_found"
     if _is_parts_reply(content):
         return _parts_empty_reason(content)
@@ -2909,10 +2918,15 @@ async def mouser_get_part(part_number: str) -> dict:
     some the maker marks NRND (AP2553W6-7); lifecycle_status is active, nrnd, last_time_buy, obsolete
     or unknown (null is active). digikey_get_part's lifecycle is DigiKey's product status (it listed
     AP2553W6-7 as NRND); the maker's site decides.
-    not_found lists the given numbers no result matches (Mouser skips them without saying).
-    Each result's requested is the number it answers (null when a batch result can't be put down
-    to one), matched_by how: exact, separators, packing or mouser_pn are that part; prefix (a
-    longer number) and other need checking.
+    not_found lists the given numbers no result matches (Mouser skips them without saying), and
+    those not sent: a value ("10k"), an LCSC code, a BOM placeholder or non-ASCII text can't be a
+    Mouser part number, so not_sent gives each one's reason (value, lcsc_code, placeholder,
+    not_ascii) and no request is spent on it. A limit holding back numbers not kept yet, while
+    others were: the kept ones answer, not_checked lists the rest, retry_after says when to ask
+    them (with none kept, the limit error). lookup_failed: numbers Mouser gave an error for.
+    Each result's requested is the number it answers (null when it can't be put down to one of the
+    numbers given), matched_by how: exact, separators, packing (JST's (LF)/(SN) endings set aside)
+    or mouser_pn are that part; prefix (a longer number) and other need checking.
     A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
 
     Args:
@@ -2958,6 +2972,8 @@ async def digikey_get_part(product_number: str) -> dict:
     A number several makers use returns each maker's listing, most stock first. Each result's
     requested is the number asked, matched_by how it matched: exact, separators, packing (JST's
     (LF)/(SN) endings set aside) or digikey_pn are that part; prefix and other need checking.
+    A number that can't be a DigiKey part number isn't sent: its not-found reply adds not_sent
+    (value: "10k"; lcsc_code; placeholder; length: not 3-40 characters; not_ascii).
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
@@ -2998,7 +3014,8 @@ def _lifecycle_entry(item: Any) -> Entry:
     if maker and len(maker) > 100:
         return Entry(item, error={"error": "Manufacturer too long (max 100 characters)"})
     if mpn and is_placeholder_mpn(mpn):
-        return Entry(item, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number"})
+        return Entry(item, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
+                                  "not_sent": "placeholder"})
     return Entry(item, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
 
 
@@ -3025,17 +3042,20 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
 async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
-    digikey_get_part for lifecycle. Readings are kept 90 days (not listed: a week) for every caller; a
-    part not kept yet is looked up on Mouser, and on DigiKey only if Mouser doesn't list it or
-    Mouser's daily limit is spent. A limit in the way (Mouser's per-minute one, or both daily ones)
-    leaves it unknown with retry_after (seconds); a failed lookup, unknown with lookup_failed. Kept
-    parts still answer.
+    digikey_get_part for lifecycle. Readings are kept 90 days (unknown: a week; not listed: 30
+    days) for every caller; a part not kept yet is looked up on Mouser, and on DigiKey only if
+    Mouser doesn't list it or Mouser's daily limit is spent. A limit in the way (Mouser's
+    per-minute one, or both daily ones) leaves it unknown with retry_after (seconds); a failed
+    lookup, unknown with lookup_failed. Kept parts still answer. Nothing is sent for a number
+    neither lists, or to a distributor that hasn't listed the maker's parts lately: unknown with
+    not_sent (value: "10k"; lcsc_code; placeholder; length: not 3-40 characters; not_ascii;
+    maker_not_carried).
     Reply: results in input order: input (as given), mpn, manufacturer, status, raw (the
     distributor's wording; Mouser states none for most active parts: "not stated by Mouser"),
     source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
-    (neither lists it), retry_after, lookup_failed, error (unusable input, such as an MPN with
-    "|"), or makers: each maker's reading, when several list the number and none was given, or
-    only other makers do. status_counts counts the statuses.
+    (neither lists it), retry_after, lookup_failed, not_sent, error (unusable input, such as an MPN
+    with "|"), or makers: each maker's reading, when several list the number and none was given,
+    or only other makers do. status_counts counts the statuses.
 
     Args:
         parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the

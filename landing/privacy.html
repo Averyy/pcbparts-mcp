@@ -230,7 +230,7 @@
         <main>
             <div class="zone">Legal</div>
             <h1>Privacy Policy</h1>
-            <p class="updated">Effective November 17, 2026</p>
+            <p class="updated">Effective November 18, 2026</p>
 
             <div class="summary">
                 <ul>
@@ -254,7 +254,8 @@
             <ul>
                 <li>JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
                 <li>Mouser and DigiKey answers (stock, prices and lifecycle) are stored on our server's disk by part number and reused for up to 3 days (a day when the part wasn't found). They hold only the part numbers asked and the distributors' answers.</li>
-                <li>Lifecycle statuses that Mouser and DigiKey state (for example active, not recommended for new designs, or obsolete) are stored on disk by manufacturer and part number for up to 90 days (a week when a distributor doesn't list the part or states no usable status), and used to answer anyone who asks about that part. Each holds the part number, the manufacturer, the status, the distributor's wording and when it was checked.</li>
+                <li>Lifecycle statuses that Mouser and DigiKey state (for example active, not recommended for new designs, or obsolete) are stored on disk by manufacturer and part number for up to 90 days (30 days when a distributor doesn't list the part, a week when it states no usable status), and used to answer anyone who asks about that part. Each holds the part number, the manufacturer, the status, the distributor's wording and when it was checked.</li>
+                <li>For each manufacturer, we keep per day how many lifecycle lookups of its parts Mouser and DigiKey didn't list and how many they did, for 30 days, so we stop asking a distributor about a manufacturer it doesn't carry. These counts hold only the manufacturer's name and the numbers: no part numbers and nothing about who asked.</li>
                 <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are stored on our server's disk and reused for up to one year (a week for a search where some parts had no model). Expired entries are deleted the next time the server starts.</li>
                 <li>EasyEDA answers about whether a part has a footprint are stored on disk with no fixed end date, since they rarely change. Each holds the part number, the answer, EasyEDA's symbol and footprint IDs, and when it was checked.</li>
                 <li>EasyEDA footprint pad positions, used to compare a replacement part's footprint with the original's, are stored on disk by footprint ID with no fixed end date, since footprints rarely change.</li>
@@ -273,8 +274,8 @@
             <p>When an MCP client connects, it reports its own name, for example <code>claude-ai</code> or <code>cursor</code>. We count connections per app name per day. These counts are published on our public statistics page.</p>
 
             <h3>4. Anonymous usage statistics</h3>
-            <p>We keep daily counts so we can see which tools are useful and which ones fail. For each day, we keep calls per tool and their outcome (found, similar parts only, nothing found, invalid request, rate-limited, failed), the average response time, calls per hour, Mouser and DigiKey lookup counts, for failed or empty calls a reason chosen from a fixed list of labels, and totals for how the checks behind empty searches turned out. We also count the requests our server sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers our caches gave instead, how many part numbers were looked up with Mouser and DigiKey and how many of them were different, and how many requests the per-IP rate limit turned away. The counts never contain IP addresses, queries or part numbers.</p>
-            <p>To count distinct callers, we hash each IP address with a random salt that is held in memory only. To count how many different part numbers were looked up with Mouser and DigiKey, we hash each part number the same way, with salts of their own. Each salt and its hashes are replaced the first time they are needed on a new UTC day, and a restart discards them too. The hashes are never written to disk; only the totals are kept. The 30 most recent days of these counts are public at <a href="https://pcbparts.dev/mcp/stats">pcbparts.dev/mcp/stats</a>.</p>
+            <p>We keep daily counts so we can see which tools are useful and which ones fail. For each day, we keep calls per tool and their outcome (found, similar parts only, nothing found, invalid request, rate-limited, failed), the average response time, calls per hour, Mouser and DigiKey lookup counts, for failed or empty calls a reason chosen from a fixed list of labels, and totals for how the checks behind empty searches turned out. We also count the requests our server sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers our caches gave instead, how many part numbers were asked for with Mouser and DigiKey (including ones our shared limits turned away) and how many of them were different, how many part numbers we didn't send to them because no distributor could list them (a value such as "10k", or an LCSC code), and how many requests the per-IP rate limit turned away. The counts never contain IP addresses, queries or part numbers.</p>
+            <p>To count distinct callers, we hash each IP address with a random salt that is held in memory only. To count how many different part numbers were asked for with Mouser and DigiKey, we hash each part number the same way, with salts of their own. Each salt and its hashes are replaced the first time they are needed on a new UTC day, and a restart discards them too. The hashes are never written to disk; only the totals are kept. The 30 most recent days of these counts are public at <a href="https://pcbparts.dev/mcp/stats">pcbparts.dev/mcp/stats</a>.</p>
 
             <h3>5. The website</h3>
             <p>The website uses no cookies, no analytics, and no tracking scripts. Its fonts are loaded from Google Fonts, so your browser connects to Google when you open a page; Google's handling of that connection is covered by the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</p>
@@ -313,7 +314,8 @@
                         <tr><td>On-disk EasyEDA footprint answers (part numbers, the answer, EasyEDA IDs, when checked; no user identifiers)</td><td>No fixed end date</td></tr>
                         <tr><td>On-disk EasyEDA footprint pads (footprint IDs and pad positions; no user identifiers)</td><td>No fixed end date</td></tr>
                         <tr><td>On-disk Mouser and DigiKey answers (part numbers and the distributors' answers; no user identifiers)</td><td>Reused for up to 3 days (a day for parts not found); expired entries deleted within an hour</td></tr>
-                        <tr><td>On-disk lifecycle statuses (part numbers, manufacturers, statuses, when checked; no user identifiers)</td><td>Up to 90 days (a week when a part isn't listed or its status is unknown); expired entries deleted within an hour</td></tr>
+                        <tr><td>On-disk lifecycle statuses (part numbers, manufacturers, statuses, when checked; no user identifiers)</td><td>Up to 90 days (30 days when a part isn't listed, a week when its status is unknown); expired entries deleted within an hour</td></tr>
+                        <tr><td>On-disk counts of lifecycle lookups each distributor listed or didn't, per manufacturer and day (no part numbers, no user identifiers)</td><td>30 days; older days deleted within an hour</td></tr>
                         <tr><td>Mouser and DigiKey daily lookup counts and pauses (no user identifiers)</td><td>Replaced each UTC day</td></tr>
                         <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
                     </tbody>

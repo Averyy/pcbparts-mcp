@@ -24,7 +24,7 @@ from .config import (
 )
 from .distributor_store import DistributorStore
 from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
-from .search.mpn import distributor_match, same_jst_part
+from .search.mpn import NOT_SENT_HINTS, distributor_match, not_sent_reason, same_jst_part
 
 logger = logging.getLogger(__name__)
 
@@ -215,6 +215,7 @@ class DigiKeyClient:
             raise ValueError("Each DigiKey app needs its own daily quota")
         # DigiKey suspends an app for ten minutes for going over its per-second threshold
         self._pacer = Pacer(per_second)
+        self._tasks: set[asyncio.Task] = set()  # lookups whose caller may have given up (_shielded)
 
     def _get_http(self) -> httpx.AsyncClient:
         if self._http is None:
@@ -407,21 +408,34 @@ class DigiKeyClient:
 
     async def lookup(self, product_number: str, caller: str | None = None) -> tuple[dict[str, Any], str, float]:
         """get_part's reply, what it was ("found", "not_found", "limited" or "invalid") and when
-        DigiKey answered (part_lifecycle)."""
+        DigiKey answered (part_lifecycle). A number DigiKey can't list (search/mpn.py's
+        not_sent_reason: a value such as "10k", an LCSC code, not 3-40 characters...) isn't sent: it
+        gets the not-found reply with not_sent, without a request or the quota."""
         product_number = product_number.strip()
         if not product_number:
             return {"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now()
-        stats.usage.record_parts_asked("digikey", [product_number])
+        if reason := not_sent_reason(product_number):
+            stats.count_distributor("digikey", "skipped")
+            return _not_sent_reply(product_number, reason), "not_found", self._store.now()
+        stats.count_parts_asked("digikey", [product_number])
         # Kept per number, ignoring case: DigiKey's search ignores it, and so does its match (_same_mpn)
         cache_key = product_number.upper()
         stored = self._store.get_answer("digikey", cache_key)
         if stored is not None:
-            stats.usage.record_distributor("digikey", "cached")
+            stats.count_distributor("digikey", "cached")
             answer, fetched_at = stored
             if answer.get("not_found"):
                 return _not_found_reply(product_number), "not_found", fetched_at
             return _answering(answer, product_number), "found", fetched_at
+        # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
+        task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
+        task.add_done_callback(lambda done: done.cancelled() or done.exception())
+        return await asyncio.shield(task)
 
+    async def _fetch(self, product_number: str, caller: str | None, cache_key: str) -> tuple[dict[str, Any], str, float]:
+        """lookup() for a number the store doesn't have: one keyword search, within the limits."""
         # Cache hits cost no quota. Each attempt gets the app's token and its pacer slot, then checks
         # every limit and pause, counts the request and sends it with that token, with no await from
         # the check to the send: a pause or a spent day noticed meanwhile stops it before anything
@@ -429,21 +443,21 @@ class DigiKeyClient:
         # one more after a daily refusal on app 1 (on app 2), or after an early-expired token.
         for attempt in range(2):
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
-                stats.usage.record_distributor("digikey", "rate_limited")
+                stats.count_distributor("digikey", "rate_limited")
                 return paused, "limited", self._store.now()
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
                 app_index, token = await self._ready_app()
             except DigiKeyRateLimited as e:  # a pause began during a token request
-                stats.usage.record_distributor("digikey", "rate_limited")
+                stats.count_distributor("digikey", "rate_limited")
                 return {"error": str(e)}, "limited", self._store.now()
             if self._quota:
                 app_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
-                    stats.usage.record_distributor("digikey", "rate_limited")
+                    stats.count_distributor("digikey", "rate_limited")
                     return quota_error, "limited", self._store.now()
-            stats.usage.record_distributor("digikey", "sent")
+            stats.count_distributor("digikey", "sent")
             try:
                 data = await self._request("POST", "/search/keyword", app_index=app_index, token=token, json={
                     "Keywords": product_number, "Limit": 10, "Offset": 0,
@@ -500,12 +514,21 @@ class DigiKeyClient:
         return _answering(result, product_number), "found", fetched_at
 
     async def close(self) -> None:
-        """Close the HTTP client (and the store, if this client made its own)."""
+        """Close the HTTP client (and the store, if this client made its own). Lookups still in
+        flight are cancelled."""
+        for task in list(self._tasks):
+            task.cancel()
         if self._http:
             await self._http.aclose()
             self._http = None
         if self._owns_store:
             self._store.close()
+
+
+def _not_sent_reply(product_number: str, reason: str) -> dict[str, Any]:
+    """The not-found reply for a number not sent to DigiKey (search/mpn.py's NOT_SENT_REASONS)."""
+    return {"error": f"Part not found: {product_number}", "not_sent": reason,
+            "hint": f"Not sent to DigiKey: '{product_number[:60]}' {NOT_SENT_HINTS[reason]}."}
 
 
 def _not_found_reply(product_number: str) -> dict[str, Any]:

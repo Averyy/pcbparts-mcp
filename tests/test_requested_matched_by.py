@@ -350,3 +350,50 @@ async def test_jst_lifecycle_after_get_part(lifecycle_server):
     assert reading(reply) == [({"mpn": "B2B-PH-K-S(LF)(SN)", "manufacturer": "JST"}, "active",
                                "not stated by Mouser", "JST", "mouser")]
     assert len(fake.sent) == 1
+
+
+# --- review fixes, 2026-11-18 ---
+
+@pytest.mark.parametrize("numbers", ["595-LM358P|LM358P", "LM358P|LM358-P"], ids=["mouser_pn", "separators"])
+async def test_one_part_asked_twice_goes_to_the_first(mouser, numbers):
+    """Both numbers are the part itself: it answers the first, so the caller gets a usable
+    requested (it was null, and neither number was in not_found)."""
+    m = mouser(FakeMouser(replies=[[mouser_part("LM358P")]]))
+    reply = await m.get_part(numbers)
+    first = numbers.split("|")[0]
+    assert [(mpn, requested) for mpn, requested, _ in answered(reply)] == [("LM358P", first)]
+    assert "not_found" not in reply
+
+
+async def test_a_shared_requests_odd_result_answers_no_one(monkeypatch):
+    """Two callers' one-part lookups share a request; a result matching neither number goes to
+    both (unmatched) callers, each with requested null, not their own number."""
+    import asyncio
+
+    gate = asyncio.Event()
+
+    async def wait(seconds):
+        await gate.wait()
+
+    store = DistributorStore(clock=Clock())
+    m = MouserClient(api_key="k", store=store, pool_window=0.1, sleep=wait)
+    m._client = httpx.AsyncClient(transport=httpx.MockTransport(FakeMouser(replies=[[
+        mouser_part("LM358P"), mouser_part("XYZ-1", mouser_pn="123-XYZ1")]])))
+    try:
+        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "OLDNAME1")]
+        for _ in range(5):
+            await asyncio.sleep(0)
+        gate.set()
+        found, other = await asyncio.gather(*tasks)
+        assert answered(found) == [("LM358P", "LM358P", "exact")]
+        assert answered(other) == [("XYZ-1", None, None)] and other["not_found"] == ["OLDNAME1"]
+    finally:
+        await m.close()
+        store.close()
+
+
+def test_packing_wording_names_jst_only():
+    from fastmcp.utilities.docstring_parsing import parse_docstring
+    for name in ("mouser_get_part", "digikey_get_part"):
+        sent = " ".join(parse_docstring(getattr(server, name)).description.split())
+        assert "packing (JST's (LF)/(SN) endings set aside)" in sent, name

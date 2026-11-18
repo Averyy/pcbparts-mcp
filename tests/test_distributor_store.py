@@ -6,8 +6,8 @@ import datetime
 import pytest
 
 from pcbparts_mcp.config import (
-    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL, MOUSER_CACHE_TTL,
-    MOUSER_NOT_FOUND_TTL,
+    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
+    MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
 from pcbparts_mcp.distributor_store import DistributorStore
 from pcbparts_mcp.lifecycle import (
@@ -49,7 +49,86 @@ def reading(mpn="LM358P", maker="Texas Instruments", source="mouser", status="ac
 def test_lifetimes_as_decided():
     assert (MOUSER_CACHE_TTL, DIGIKEY_CACHE_TTL) == (3 * DAY, 3 * DAY)
     assert (MOUSER_NOT_FOUND_TTL, DIGIKEY_NOT_FOUND_TTL) == (DAY, DAY)
-    assert (LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL) == (90 * DAY, 7 * DAY)
+    assert (LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL) == (90 * DAY, 7 * DAY, 30 * DAY)
+    assert (MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED) == (30, 20)
+
+
+class TestSchema:
+    def test_small_columns_before_the_answer_and_age_indexes(self, store):
+        """prune() scans by source and time: the large answer column comes last, so the scan
+        doesn't read its overflow pages, and each delete is a range on an index."""
+        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(answers)")]
+        assert columns == ["source", "key", "found", "fetched_at", "answer"]
+        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(lifecycle)")]
+        assert columns.index("observed_at") < columns.index("mpn") < columns.index("raw")
+        indexes = {row[1] for row in store._conn.execute("SELECT * FROM sqlite_master WHERE type = 'index'")}
+        assert {"answers_age", "lifecycle_age"} <= indexes
+        plan = " ".join(str(row) for row in store._conn.execute(
+            "EXPLAIN QUERY PLAN DELETE FROM answers WHERE source = 'mouser' AND found = 1 AND fetched_at <= 5"))
+        assert "answers_age" in plan
+
+    def test_prune_keeps_each_kind_for_its_lifetime(self, store, clock):
+        store.put_answer("mouser", "LM358P", {"results": [1]}, True)
+        store.put_answer("mouser", "NOPE", {"not_found": True}, False)
+        store.put_readings([reading(), reading(mpn="NOPE1", maker="", status="unknown", raw=None, found=False),
+                            reading(mpn="ODD1", status="unknown", raw="Odd")])
+        clock.advance(DAY)
+        store.prune()
+        assert store.get_answer("mouser", "LM358P") is not None
+        assert store._conn.execute("SELECT COUNT(*) FROM answers").fetchone()[0] == 1  # the miss is gone
+        clock.advance(LIFECYCLE_UNKNOWN_TTL - DAY)
+        store.prune()
+        assert {r[0] for r in store._conn.execute("SELECT mpn FROM lifecycle")} == {"LM358P", "NOPE1"}
+        clock.advance(LIFECYCLE_NOT_LISTED_TTL - LIFECYCLE_UNKNOWN_TTL)
+        store.prune()
+        assert {r[0] for r in store._conn.execute("SELECT mpn FROM lifecycle")} == {"LM358P"}
+
+    def test_old_column_order_still_reads_and_writes(self, tmp_path, clock):
+        """A store file made before the columns were reordered (never shipped, but on dev machines)."""
+        import sqlite3
+
+        path = tmp_path / "distributor.db"
+        conn = sqlite3.connect(path)
+        conn.execute("CREATE TABLE answers (source TEXT NOT NULL, key TEXT NOT NULL, answer TEXT NOT NULL, "
+                     "found INTEGER NOT NULL, fetched_at REAL NOT NULL, PRIMARY KEY (source, key))")
+        conn.commit()
+        conn.close()
+        store = DistributorStore(path, clock=clock)
+        try:
+            assert store.put_answer("mouser", "LM358P", {"results": [1]}, True)
+            assert store.get_answer("mouser", "LM358P") == ({"results": [1]}, NOW)
+        finally:
+            store.close()
+
+
+class TestMakerLookups:
+    def test_not_carried_after_enough_misses_and_none_listed(self, store, clock):
+        store.count_maker_lookups("mouser", {"uni royal": (MAKER_SKIP_NOT_LISTED - 1, 0)})
+        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
+        clock.advance(DAY)
+        store.count_maker_lookups("mouser", {"uni royal": (1, 0)})
+        assert store.makers_not_carried("mouser", {"uni royal", "texas instruments"}) == {"uni royal"}
+        assert store.makers_not_carried("digikey", {"uni royal"}) == set()  # per distributor
+
+    def test_one_listed_part_in_the_window_keeps_the_maker(self, store, clock):
+        store.count_maker_lookups("mouser", {"vishay intertech": (50, 0)})
+        clock.advance(10 * DAY)
+        store.count_maker_lookups("mouser", {"vishay intertech": (0, 1)})
+        assert store.makers_not_carried("mouser", {"vishay intertech"}) == set()
+
+    def test_counts_age_out_so_a_maker_is_asked_again(self, store, clock):
+        store.count_maker_lookups("mouser", {"uni royal": (MAKER_SKIP_NOT_LISTED, 0)})
+        clock.advance((MAKER_SKIP_DAYS - 1) * DAY)
+        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}
+        clock.advance(DAY)
+        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
+        store.prune()
+        assert store._conn.execute("SELECT COUNT(*) FROM maker_lookups").fetchone()[0] == 0
+
+    def test_no_part_numbers_or_callers_kept(self, store):
+        store.count_maker_lookups("mouser", {"uni royal": (1, 0)})
+        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(maker_lookups)")]
+        assert columns == ["source", "maker_key", "day", "not_listed", "found"]
 
 
 class TestAnswers:
@@ -113,10 +192,15 @@ class TestReadings:
         clock.advance(1)
         assert store.readings("LM358P") == []
 
-    @pytest.mark.parametrize("found, status", [(False, "unknown"), (True, "unknown")])
-    def test_not_listed_and_unknown_kept_a_week(self, store, clock, found, status):
-        store.put_readings([reading(maker="" if not found else "TI", status=status, raw=None, found=found)])
-        clock.advance(LIFECYCLE_UNKNOWN_TTL - 1)
+    @pytest.mark.parametrize("found, ttl", [(False, LIFECYCLE_NOT_LISTED_TTL), (True, LIFECYCLE_UNKNOWN_TTL)],
+                             ids=["not_listed", "unknown"])
+    def test_not_listed_30_days_and_unknown_a_week(self, store, clock, found, ttl):
+        """An unknown status a week; "not listed" 30 days (decision 2026-11-18: mostly parts neither
+        distributor carries, each costing a request whenever its answer expires)."""
+        store.put_readings([reading(maker="" if not found else "TI", status="unknown", raw=None, found=found)])
+        clock.advance(ttl - 1)
+        assert len(store.readings("LM358P")) == 1
+        store.prune()
         assert len(store.readings("LM358P")) == 1
         clock.advance(1)
         assert store.readings("LM358P") == []
@@ -197,31 +281,79 @@ class TestStatuses:
         assert last_buy_date(value) == date
 
 
+SAME_MAKERS = [
+    ("Texas Instruments", "Texas Instruments Inc."),
+    ("TI", "Texas Instruments"),
+    ("Microchip Tech", "Microchip Technology"),
+    ("NXP Semicon", "NXP USA Inc."),
+    ("NXP Semicon", "NXP Semiconductors"),
+    ("Diodes Incorporated", "Diodes Inc"),
+    ("TDK Corporation", "TDK"),
+    ("Wurth Elektronik", "Würth Elektronik"),
+    ("UMW(Youtai Semiconductor Co., Ltd.)", "UMW"),
+    ("ST(Semtech)", "Semtech"),
+    ("Alpha & Omega Semicon", "Alpha & Omega Semiconductor Inc."),
+    # JLCPCB's names for whole families against Mouser's and DigiKey's (review 2026-11-18)
+    ("Vishay Intertech", "Vishay / Siliconix"),
+    ("Vishay Intertech", "Vishay / Dale"),
+    ("Vishay Intertech", "Vishay Siliconix"),
+    ("Vishay Intertech", "Vishay General Semiconductor - Diodes Division"),
+    ("Vishay Dale", "Vishay Intertech"),  # the alias
+    ("OSRAM Opto Semicon", "ams OSRAM"),
+    ("OSRAM Opto Semicon", "ams-OSRAM USA INC."),
+    ("AMS", "ams OSRAM"),  # JLCPCB's "AMS" (AS5047P), though the alias "ams" is Advanced Monolithic Systems
+    ("NCC(Nippon Chemi-Con)", "United Chemi-Con"),
+    ("Seiko Epson", "EPSON"),
+    ("Seiko Epson", "Epson Timing"),
+    ("Infineon/Cypress Semicon", "Infineon Technologies"),
+    ("Infineon/Cypress Semicon", "Cypress Semiconductor"),
+    ("Infineon Technologies", "Cypress Semiconductor"),
+    ("SKYWORKS/SILICON LABS", "Silicon Labs"),
+    ("SKYWORKS/SILICON LABS", "Skyworks Solutions, Inc."),
+    ("GigaDevice Semicon Beijing", "GigaDevice Semiconductor (HK) Limited"),
+    ("Analog Devices Inc./Maxim Integrated", "Maxim Integrated"),
+    ("HRS(Hirose)", "Hirose Connector"),
+    ("ST Microelectronics", "STMicroelectronics"),
+    ("ST Micro", "STMicroelectronics"),
+    ("ON Semiconductor", "onsemi"),
+]
+DIFFERENT_MAKERS = [
+    ("ST(Semtech)", "STMicroelectronics"),  # a short name must be whole
+    ("ST(Semtech)", "ST Microelectronics"),  # an abbreviation before a full name isn't a prefix
+    ("ST(Semtech)", "ST"),  # the alias ST is STMicroelectronics
+    ("UMW(Youtai Semiconductor Co., Ltd.)", "Texas Instruments"),
+    ("Silicon Labs", "Silicon Storage Technology"),
+    ("onsemi", "Nexperia"),
+    ("Analogix", "Analog Devices"),
+    ("Skyworks Solutions", "Silicon Labs"),  # only JLCPCB's combined name is both
+    ("Seiko Epson", "Seiko Instruments"),
+    ("Vishay Intertech", "Diodes Incorporated"),
+    ("HRS(Hirose)", "HRS Electronics"),
+    ("OSRAM Opto Semicon", "Advanced Monolithic Systems"),
+]
+
+
 class TestMakers:
-    @pytest.mark.parametrize("a, b", [
-        ("Texas Instruments", "Texas Instruments Inc."),
-        ("TI", "Texas Instruments"),
-        ("Microchip Tech", "Microchip Technology"),
-        ("NXP Semicon", "NXP USA Inc."),
-        ("NXP Semicon", "NXP Semiconductors"),
-        ("Diodes Incorporated", "Diodes Inc"),
-        ("TDK Corporation", "TDK"),
-        ("Wurth Elektronik", "Würth Elektronik"),
-        ("UMW(Youtai Semiconductor Co., Ltd.)", "UMW"),
-        ("ST(Semtech)", "Semtech"),
-        ("Alpha & Omega Semicon", "Alpha & Omega Semiconductor Inc."),
-    ])
+    @pytest.mark.parametrize("a, b", SAME_MAKERS, ids=[f"same{i}" for i in range(len(SAME_MAKERS))])
     def test_same_maker(self, a, b):
         assert makers_match(a, b) and makers_match(b, a)
 
-    @pytest.mark.parametrize("a, b", [
-        ("ST(Semtech)", "STMicroelectronics"),  # a short name must be whole
-        ("UMW(Youtai Semiconductor Co., Ltd.)", "Texas Instruments"),
-        ("Silicon Labs", "Silicon Storage Technology"),
-        ("onsemi", "Nexperia"),
-    ])
+    @pytest.mark.parametrize("a, b", DIFFERENT_MAKERS, ids=[f"diff{i}" for i in range(len(DIFFERENT_MAKERS))])
     def test_different_makers(self, a, b):
-        assert not makers_match(a, b)
+        assert not makers_match(a, b) and not makers_match(b, a)
+
+    def test_also_as_keeps_the_numbers_own_listing(self, store):
+        """DigiKey lists a JST part both bare and with (LF)(SN): filing the bare one's reading under
+        the number asked mustn't replace that number's own (they can differ)."""
+        asked = "B2B-PH-K-S(LF)(SN)"
+        store.put_readings([reading(mpn=asked, maker="JST", source="digikey", status="active", raw="Active"),
+                            reading(mpn="B2B-PH-K-S", maker="JST", source="digikey", status="obsolete", raw="Obsolete")],
+                           also_as=asked)
+        assert [(r.mpn, r.status) for r in store.readings(asked)] == [(asked, "active")]
+        assert [r.status for r in store.readings("B2B-PH-K-S")] == ["obsolete"]
+        store.put_readings([reading(mpn="B2B-PH-K-S", maker="JST", source="digikey", status="obsolete", raw="Obsolete")],
+                           also_as="455-1704-ND")  # nothing of its own there: filed under it too
+        assert [r.status for r in store.readings("455-1704-ND")] == ["obsolete"]
 
     def test_one_key_per_maker(self):
         assert maker_key("Texas Instruments Inc.") == maker_key("texas instruments") == "texas instruments"
