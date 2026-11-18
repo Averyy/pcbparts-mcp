@@ -628,3 +628,57 @@ async def test_live_network_waits_do_not_count(monkeypatch):
     finally:
         release.set()
         await asyncio.gather(*tasks)
+
+
+class TestStuckWorkerExit:
+    """The minute task exits the process when a database call has waited past DB_STUCK_WAIT_SECONDS
+    at two checks in a row, so Docker restarts a stuck server (it shouldn't happen)."""
+
+    @pytest.fixture
+    def stuck(self, monkeypatch):
+        clock = Clock()
+        pressure = DatabasePressure(clock)
+        exits = []
+        monkeypatch.setattr(server, "database_pressure", pressure)
+        monkeypatch.setattr(server, "_exit_process", exits.append)
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        return types.SimpleNamespace(clock=clock, pressure=pressure, exits=exits, pool=object())
+
+    def test_exits_only_after_two_stuck_checks(self, stuck):
+        token = stuck.pressure.enqueue(stuck.pool)
+        stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS + 1)
+        assert server._exit_if_stuck(0) == 1 and stuck.exits == []
+        assert server._exit_if_stuck(1) == 2 and stuck.exits == [1]
+        stuck.pressure.discard(stuck.pool, token)
+
+    def test_a_healthy_check_resets_the_count(self, stuck):
+        token = stuck.pressure.enqueue(stuck.pool)
+        stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS + 1)
+        assert server._exit_if_stuck(0) == 1
+        stuck.pressure.discard(stuck.pool, token)  # the worker got to it
+        assert server._exit_if_stuck(1) == 0 and stuck.exits == []
+
+    def test_a_busy_but_moving_queue_never_exits(self, stuck):
+        token = stuck.pressure.enqueue(stuck.pool)
+        stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS - 1)
+        assert server._exit_if_stuck(5) == 0 and stuck.exits == []
+        stuck.pressure.discard(stuck.pool, token)
+
+    async def test_the_minute_task_exits_when_stuck(self, stuck, monkeypatch):
+        token = stuck.pressure.enqueue(stuck.pool)
+        stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS + 1)
+        real_sleep, slept = asyncio.sleep, []
+
+        async def one_minute(seconds):
+            slept.append(seconds)
+            await real_sleep(0)
+
+        monkeypatch.setattr(server.asyncio, "sleep", one_minute)
+        task = asyncio.ensure_future(server._every_minute())
+        while not stuck.exits and len(slept) < 10:
+            await real_sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        assert stuck.exits == [1] and len(slept) >= 2
+        stuck.pressure.discard(stuck.pool, token)

@@ -10,6 +10,7 @@ import ipaddress
 import json
 import logging
 import math
+import os
 import re
 import sqlite3
 import time
@@ -260,11 +261,43 @@ async def lifespan(app):
     await run_db(BOARD_POOL, close_boards_db)
 
 
+# A database call waiting longer than DB_STUCK_WAIT_SECONDS at this many minute checks in a row
+# means a worker is stuck (every tools/call is then refused as busy and /health says unhealthy):
+# the server exits so Docker's `restart: unless-stopped` starts a fresh one. os._exit, not
+# sys.exit: a normal exit would wait for the stuck worker thread and hang. Replaced in tests.
+STUCK_CHECKS_BEFORE_EXIT = 2
+_exit_process = os._exit
+
+
+def _exit_if_stuck(stuck_checks: int) -> int:
+    """The minute task's stuck-worker check: the updated count of checks in a row that found a
+    database call waiting longer than DB_STUCK_WAIT_SECONDS; exits the process at
+    STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
+    milliseconds); it guards against a hung disk or a runaway query."""
+    oldest = database_pressure.summary()["oldest_wait_seconds"]
+    stuck_checks = stuck_checks + 1 if oldest >= DB_STUCK_WAIT_SECONDS else 0
+    if stuck_checks >= STUCK_CHECKS_BEFORE_EXIT:
+        logger.error(f"A database call has waited {oldest:g} s (over {DB_STUCK_WAIT_SECONDS:g} s at "
+                     f"{stuck_checks} minute checks in a row): a worker is stuck; exiting so Docker "
+                     "restarts the server")
+        try:
+            stats.usage.save()
+        except Exception:
+            logger.exception("Couldn't save the usage counts before exiting")
+        for handler in logging.getLogger().handlers:
+            with contextlib.suppress(Exception):
+                handler.flush()
+        _exit_process(1)
+    return stuck_checks
+
+
 async def _every_minute() -> None:
     """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts and per-IP rate
     limit refusals (one line each, for hours that had any) and save the usage counts; every hour,
-    drop expired Mouser/DigiKey answers from the store."""
+    drop expired Mouser/DigiKey answers from the store; exit if a database worker is stuck
+    (_exit_if_stuck)."""
     minutes = 0
+    stuck_checks = 0
     while True:
         await asyncio.sleep(60)
         minutes += 1
@@ -278,6 +311,10 @@ async def _every_minute() -> None:
                 _distributor_store.prune()
         except Exception:
             logger.exception("Minute task failed; trying again in a minute")
+        try:
+            stuck_checks = _exit_if_stuck(stuck_checks)
+        except Exception:
+            logger.exception("Stuck-worker check failed; trying again in a minute")
 
 
 # Create MCP server

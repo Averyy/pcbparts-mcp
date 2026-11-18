@@ -172,7 +172,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `PLATFORM_RATE_LIMIT` | `1000` | Requests per minute per IP for addresses in the AI platforms' published ranges (many users share each one); never less than `RATE_LIMIT_REQUESTS` |
 | `DB_BUSY_MAX_WAITING` | `12` | Refuse new tool calls (`server_busy`) while a database pool has this many calls waiting to start, counting calls accepted whose tool hasn't started |
 | `DB_BUSY_MAX_WAIT_SECONDS` | `0.5` | ...or while its oldest call has waited this long. Set both very large (`1000000`) to turn the cap off |
-| `DB_STUCK_WAIT_SECONDS` | `60` | `/health` answers 503 (unhealthy) while a database call has waited this long to start (a stuck worker) |
+| `DB_STUCK_WAIT_SECONDS` | `60` | `/health` answers 503 (unhealthy) while a database call has waited this long to start (a stuck worker); after two minute checks in a row the server exits so Docker restarts it |
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges, comma-separated; empty gives them the normal limit |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's ChatGPT connectors list ([openai.com/chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json)); the image build refreshes the committed copy; empty gives them the normal limit |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |
