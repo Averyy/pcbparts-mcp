@@ -35,13 +35,13 @@ from .config import (
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
-    CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS,
+    CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
 )
 from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
-from .lifecycle import Entry, LifecycleLookup, STATUSES
+from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
 from .cse import CSEClient
 from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
@@ -251,7 +251,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -360,6 +360,8 @@ def _call_outcome(result: Any) -> str:
         return _error_kind(str(content["error"]))
     if "status_counts" in content:
         return _lifecycle_outcome(content)
+    if _is_parts_reply(content):
+        return _parts_outcome(content)
     if "parts" in content and "what_is_recorded" in content:
         # Single history replies count as ok even with no events or snapshot stock. A batch
         # follows that rule if any valid code was answered; all-invalid codes are bad_request.
@@ -396,6 +398,24 @@ def _lifecycle_outcome(content: dict) -> str:
     return "not_found"
 
 
+def _is_parts_reply(content: dict) -> bool:
+    """A jlc_get_parts reply (counts of found, not_found and error rows)."""
+    return isinstance(content.get("counts"), dict) and "results" in content
+
+
+def _parts_outcome(content: dict) -> str:
+    """jlc_get_parts: ok when any part was found; not_found when parts were looked up and none was;
+    bad_request when every input was unusable (each row's own error)."""
+    counts = content["counts"]
+    return "ok" if counts.get("found") else "not_found" if counts.get("not_found") else "bad_request"
+
+
+def _parts_empty_reason(content: dict) -> str:
+    """Why no jlc_get_parts part was found: its LCSC codes or its MPNs aren't in the snapshot, or both."""
+    missed = {"results" in row for row in content.get("results") or [] if isinstance(row, dict) and row.get("not_found")}
+    return "lcsc_not_found" if missed == {False} else "mpn_not_in_snapshot" if missed == {True} else "part_not_found"
+
+
 def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
     return next((reason for reason, pattern in table if pattern.match(text)), None)
 
@@ -417,6 +437,8 @@ def _empty_reason(content: dict) -> str:
             if reason := _first_reason(_NOT_FOUND_REASONS, error):
                 return reason
         return "part_not_found"
+    if _is_parts_reply(content):
+        return _parts_empty_reason(content)
     if content.get("total") and not content.get("results"):
         return "offset_past_end"
     blocking = {item.get("constraint") for item in (content.get("why_empty") or {}).get("blocking") or []}
@@ -1993,13 +2015,14 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
     assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; part_lifecycle gives it
     from Mouser and DigiKey, for one part or a BOM. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
-    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
+    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total,
+    exact (the number itself matched, ignoring case) and ambiguous (several parts match). Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
     MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; its prices are
-    refreshed weekly (prices_as_of).
+    refreshed weekly (prices_as_of). Many parts at once (a BOM): jlc_get_parts, from the snapshot.
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
     jlc_stock_check with min_stock=0 without executing it.
@@ -2043,6 +2066,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             "data_as_of": db.scraped_at(),
             "prices_as_of": db.prices_as_of(),
             "total": len(results),
+            **_match_flags(results, match_info),
             "results": results,
             **match_info,
         }
@@ -2064,6 +2088,128 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     if note := _subcategory_note([result]):
         result = {**result, "note": note}
     return result
+
+
+def _match_flags(results: list[dict[str, Any]], match_info: dict[str, Any]) -> dict[str, bool]:
+    """An MPN lookup's exact and ambiguous. exact: the number itself matched (ignoring case), not a
+    separator, packing, alias, alternative, LCSC-code or full-text recovery (those set
+    match_info["match"]). ambiguous: several parts (LCSC codes) match, so picking one needs the
+    manufacturer or package."""
+    return {"exact": "match" not in match_info, "ambiguous": len(results) > 1}
+
+
+# Once per jlc_get_parts reply rather than on each of up to 50 rows
+_GET_PARTS_NOT_FOUND_HINT = (
+    "not_found parts aren't in the daily snapshot, which lists in-stock parts only (stock >= 10): "
+    "jlc_get_part(lcsc=...) looks a code up live, and jlc_stock_check(query=...) finds low or zero stock.")
+
+
+def _get_parts_mpn_row(mpn: str, matches: list[dict[str, Any]], found: list[dict[str, Any]],
+                       match_info: dict[str, Any], rows: dict[str, dict[str, Any] | None]) -> dict[str, Any]:
+    """An MPN's jlc_get_parts row, shaped like jlc_get_part(mpn)'s reply: matches are found narrowed
+    to the maker given (if any); the first GET_PARTS_MAX_MATCHES are listed and total counts all."""
+    row: dict[str, Any] = {"mpn": mpn, "total": len(matches)}
+    if not matches:
+        row.update(results=[], not_found=True)
+        if found:  # listed, but only under other makers
+            row["other_manufacturers"] = list(dict.fromkeys(p["manufacturer"] for p in found))[:GET_PARTS_MAX_MATCHES]
+        return row
+    info = dict(match_info)
+    if "matched_mpn" in info and info.get("match") != "alternative":
+        info["matched_mpn"] = matches[0]["model"]  # get_by_mpn names its first match, maybe another maker's
+    row.update(_match_flags(matches, info))
+    row["results"] = [dict(rows[p["lcsc"]]) for p in matches[:GET_PARTS_MAX_MATCHES] if rows.get(p["lcsc"])]
+    row.update(info)
+    return row
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get Parts (BOM, Daily Snapshot)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+@offload(COMPONENT_POOL)
+def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
+    """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot
+    (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
+    live request. For one part's live stock, every price tier and datasheet, use jlc_get_part.
+    Reply: data_as_of (stock), prices_as_of (weekly prices), counts (found, not_found, error), hint
+    once when any part isn't found, and results in input order, each with input (as given). An LCSC
+    code's row has jlc_get_part's fields: lcsc, model, manufacturer, package, stock, price, prices
+    (first tier only), library_type, preferred, pcba_type, category, subcategory, description; or
+    not_found. An MPN's row is like jlc_get_part(mpn): mpn, total, up to 10 results (most stock first,
+    same fields), exact, ambiguous and match info; or not_found, with other_manufacturers when only
+    other makers list it. An unusable input has error.
+
+    Args:
+        parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
+            (the maker narrows the matches; "lcsc" also works, and wins over mpn; {"mpn": "C1815"}
+            for a part number shaped like a code). A list or a JSON array string; never comma-split.
+    """
+    items: Any = parts
+    if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
+        try:
+            items = json.loads(items)
+        except json.JSONDecodeError:
+            return _argument_error("parts", ValueError("not a valid JSON array"),
+                                   ["LCSC code", "MPN", '{"mpn", "manufacturer"}', "list or JSON array of these"])
+    if not isinstance(items, list):
+        items = [items]
+    if not items:
+        return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
+    if error := _check_list_cap("parts", items, GET_PARTS_MAX_ITEMS):
+        return error
+
+    # Inputs read as part_lifecycle reads them; a valid LCSC code wins over an MPN given with it
+    entries = [_lifecycle_entry(item) for item in items]
+    db = get_db()
+    try:
+        found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # each MPN looked up once
+        matches: list[list[dict[str, Any]]] = []  # per entry: its MPN's matches for the maker given
+        codes: list[str] = []
+        for entry in entries:
+            mine: list[dict[str, Any]] = []
+            if entry.error is None and entry.lcsc:
+                codes.append(entry.lcsc)
+            elif entry.error is None and entry.mpn:
+                if entry.mpn not in found:
+                    match_info: dict[str, Any] = {}
+                    found[entry.mpn] = (db.get_by_mpn(entry.mpn, match_info=match_info), match_info)
+                mine = found[entry.mpn][0]
+                if entry.maker:
+                    mine = [p for p in mine if makers_match(p.get("manufacturer"), entry.maker)]
+                codes.extend(p["lcsc"] for p in mine[:GET_PARTS_MAX_MATCHES])
+            matches.append(mine)
+        rows = db.get_snapshot_rows(codes)
+        data_as_of, prices_as_of = db.scraped_at(), db.prices_as_of()
+    except (OSError, sqlite3.Error):
+        logger.exception("jlc_get_parts: catalog lookup failed")
+        return {"error": "Database not available"}
+
+    counts = {"found": 0, "not_found": 0, "error": 0}
+    results = []
+    for entry, mine in zip(entries, matches):
+        row: dict[str, Any] = {"input": entry.input}
+        if entry.error is not None:
+            row.update(entry.error)
+            counts["error"] += 1
+        elif entry.lcsc:
+            part = rows.get(entry.lcsc)
+            row.update(part or {"lcsc": entry.lcsc, "not_found": True})
+            counts["found" if part else "not_found"] += 1
+        else:
+            row.update(_get_parts_mpn_row(entry.mpn, mine, *found[entry.mpn], rows))
+            counts["found" if mine else "not_found"] += 1
+        results.append(row)
+    reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of, "total": len(results),
+                             "counts": counts, "results": results}
+    if counts["not_found"]:
+        reply["hint"] = _GET_PARTS_NOT_FOUND_HINT
+    return reply
 
 
 def _datasheet_link_base() -> str | None:

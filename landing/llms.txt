@@ -36,6 +36,7 @@ Clients that only run local commands (Copilot for Xcode): `{"command": "npx", "a
 - Find parts: `jlc_search`. Confirm stock before ordering, or find parts with stock under 10: `jlc_stock_check`.
 - Recorded low-stock observations for one LCSC code or a BOM's list of up to 50: `jlc_stock_history`; missing scrape records are not confirmed stockouts.
 - One part's live details: `jlc_get_part(lcsc=...)`. A manufacturer part number to JLCPCB parts: `jlc_get_part(mpn=...)`.
+- A BOM's parts at once (stock, price, library type), up to 50 LCSC codes or MPNs per call from the daily snapshot: `jlc_get_parts`. Check live with `jlc_get_part(lcsc=...)` only when a part is missing or its stock is close to the quantity needed.
 - Replacement for a part: get its LCSC code (from `jlc_get_part(mpn=...)` if needed), then `jlc_find_alternatives(lcsc=...)`.
 - Mouser or DigiKey data: `mouser_get_part`, `digikey_get_part`, only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price); their shared daily limits often run out.
 - Lifecycle status (NRND, last time buy, obsolete) of one part or a BOM of up to 50: `part_lifecycle`.
@@ -84,7 +85,7 @@ Changes are recorded only when resulting stock is <=1,000 and absolute change ex
 ### jlc_get_part
 
 - `lcsc` (e.g. "C82899"): live details, cached up to an hour.
-- `mpn` (e.g. "LM358P", max 100 characters): searches the daily snapshot (stock >= 10) and returns `{mpn, results, total}`; call `jlc_get_part(lcsc=...)` on a result for live stock and full details. It also finds other dash and space spellings, the same maker's packing codes and BOM text with notes ("TL074 OP AMP"), and never a different grade. Inexact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` results can be other part types.
+- `mpn` (e.g. "LM358P", max 100 characters): searches the daily snapshot (stock >= 10) and returns `{mpn, results, total}`; call `jlc_get_part(lcsc=...)` on a result for live stock and full details. It also finds other dash and space spellings, the same maker's packing codes and BOM text with notes ("TL074 OP AMP"), and never a different grade. Inexact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` results can be other part types. Hits add `exact` (true when the number itself matched, ignoring case; false for any `match`) and `ambiguous` (true when more than one part matches: pick by `manufacturer` and `package`).
 
 Provide `lcsc` or `mpn`; a nonempty `lcsc` wins when both are supplied.
 
@@ -93,6 +94,16 @@ Snapshot part rows carry `data_source` (`kind`, `provider`, `observed_at`, plus 
 Reply fields: `prices` (quantity tiers), `datasheet_pdf` (a stable link to the PDF), `datasheet` (LCSC's viewer page, null when none), `maker_datasheet` (the manufacturer's link, where listed), `datasheet_note`, `specs`, `specs_note` (what the listing leaves out for the part type), `spec_evidence` (where reviewed: manufacturer values, conditions, document, printed page, source URL, review date), `spec_discrepancies` (known catalog/document conflicts; catalog specs and numeric filtering/sorting are preserved), `pcba_type`, `lcsc_url`, `min_order`, `reel_qty`, `has_easyeda_footprint` (null = unknown, false = none), `easyeda_symbol_uuid`, `easyeda_footprint_uuid`. No lifecycle status: use `part_lifecycle`.
 
 Savings use a rounded legacy $3 Economic loading-fee estimate, labelled with `is_estimate` and `assembly_service_assumption`; confirm current quotes. Standard service differs.
+
+### jlc_get_parts
+
+Up to 50 parts per call from the daily snapshot (stock >= 10), for BOM refreshes and checking many parts at once. Database only: no JLCPCB, LCSC or EasyEDA request, and one call counts as one request against the rate limit. Stock is as of `data_as_of`; prices are refreshed weekly, as of `prices_as_of`. For one part's live stock, every price tier, datasheet and footprint status, use `jlc_get_part(lcsc=...)`. No specs, datasheet links, EasyEDA status or lifecycle (`jlc_get_part`, `part_lifecycle`).
+
+- Arguments: `parts` (required): up to 50, as a list or a JSON array string (one plain string is one part; never comma-split). Each is an LCSC code string ("C7950": C and 1-12 digits; case and surrounding spaces ignored), an MPN string ("LM358P", max 100 characters), or an object `{"mpn", "manufacturer"}` (max 100 characters each; `"lcsc"` also accepted, and wins over `mpn` when both are given). The maker narrows an MPN's matches, compared loosely ("Microchip Tech" matches "Microchip Technology"). A part number shaped like an LCSC code (2SC1815's "C1815") needs `{"mpn": "C1815"}`. Repeated inputs are answered again, in place.
+- Reply: `data_as_of`, `prices_as_of`, `total` (rows), `counts` (`found`, `not_found`, `error`), `results` (one row per input, in input order) and, when any row is `not_found`, one `hint` (the snapshot lists in-stock parts only; `jlc_get_part(lcsc=...)` looks a code up live, `jlc_stock_check(query=...)` finds low or zero stock).
+- LCSC code row: `input` (exactly as given), `lcsc`, `model`, `manufacturer`, `package`, `stock`, `price`, `prices` (`[{"qty": "1+", "price"}]`, `jlc_get_part`'s shape: the snapshot keeps only the first tier's price; absent when it has none), `library_type`, `preferred`, `pcba_type` (where known), `category`, `subcategory`, `description` (the catalog's text, possibly empty), and `no_datasheet: true` when JLCPCB lists no datasheet. Not in the snapshot: `{input, lcsc, not_found: true}`.
+- MPN row, matched as `jlc_get_part(mpn=...)` matches: `input`, `mpn` (trimmed), `total` (every match for the maker given), `exact`, `ambiguous`, `results` (the first 10 by stock, each with the LCSC code row's fields except `input`), plus `match`, `matched_mpn` and `note` for inexact matches, as in `jlc_get_part`. No match: `{input, mpn, total: 0, results: [], not_found: true}`, plus `other_manufacturers` (up to 10 names) when the number is listed only under other makers.
+- A row with `error` is an unusable input (a BOM placeholder such as DNP, an empty string, a wrong type, an invalid `lcsc`, over 100 characters); the other rows are still answered. Call errors: an empty list, more than 50 parts, an invalid JSON array, the database unavailable.
 
 ### jlc_get_pinout
 

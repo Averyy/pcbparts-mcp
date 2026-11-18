@@ -82,7 +82,7 @@ Add to the Extensions config:
 }
 ```
 
-## Tools (16)
+## Tools (17)
 
 | Tool | What it does |
 |------|--------------|
@@ -90,6 +90,7 @@ Add to the Extensions config:
 | `jlc_stock_check` | Live JLCPCB stock, including out-of-stock and low-stock parts |
 | `jlc_stock_history` | Recorded low-stock events for one LCSC code or a list of up to 50, with scrape-gap warnings and snapshot stock |
 | `jlc_get_part` | Full details for an LCSC code or manufacturer part number |
+| `jlc_get_parts` | Up to 50 LCSC codes or part numbers at once from the daily snapshot (stock, price, library type), for BOM refreshes |
 | `jlc_get_pinout` | Pin numbers and names from the EasyEDA symbol; `footprint=true` adds the footprint's pads |
 | `jlc_find_alternatives` | Replacements checked against compatibility rules, with unverified candidates listed apart |
 | `jlc_search_help` | Categories, subcategories and the specs each one can filter on |
@@ -120,7 +121,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 
 ## Good to know
 
-- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
+- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_parts` reads the same snapshot for up to 50 parts at once. `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
 - The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Their answers are kept 3 days per part and lifecycle readings 90 days, so repeat lookups cost no request. Self-host with your own keys to get your own limits.

@@ -76,8 +76,8 @@ async def test_other_catalog_paths_run_off_loop(monkeypatch, handler, args, owne
 
     monkeypatch.setattr(owner(), method, work)
     result = await handler(**args)
-    assert result == ({"mpn": "LM358", "total": 1, "results": reply, "data_as_of": db.get_db().scraped_at(),
-                       "prices_as_of": db.get_db().prices_as_of()}
+    assert result == ({"mpn": "LM358", "total": 1, "exact": True, "ambiguous": False, "results": reply,
+                       "data_as_of": db.get_db().scraped_at(), "prices_as_of": db.get_db().prices_as_of()}
                       if handler is server.jlc_get_part else reply)
 
 
@@ -123,7 +123,7 @@ async def test_offloaded_tools_preserve_schemas():
     by_name = {tool.name: tool for tool in tools}
     for handler in (server.jlc_search, server.jlc_search_help, server.sensor_recommend,
                     server.get_design_rules, server.board_search, server.board_get,
-                    server.jlc_stock_history):
+                    server.jlc_stock_history, server.jlc_get_parts):
         original = Tool.from_function(handler.__wrapped__)
         published = by_name[handler.__name__]
         assert published.parameters == original.parameters

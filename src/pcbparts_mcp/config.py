@@ -96,6 +96,9 @@ MAX_PAGE_SIZE = 100
 MAX_SEARCH_OFFSET = 10_000  # jlc_search offset: 100 pages of 100
 DEFAULT_MIN_STOCK = 10
 MAX_ALTERNATIVES = 50
+# jlc_get_parts: parts per call, and the matches listed for each MPN (its total counts them all)
+GET_PARTS_MAX_ITEMS = 50
+GET_PARTS_MAX_MATCHES = 10
 
 # Max element counts for list-valued tool params (reject abusive payloads; well above real use)
 MAX_LIST_PARAM_ITEMS = 50

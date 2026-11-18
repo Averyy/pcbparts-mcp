@@ -415,7 +415,7 @@ class TestServerWiring:
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
                 await client.call_tool("not_a_tool", {})
-            assert len(stats.usage.tools) == 16
+            assert len(stats.usage.tools) == 17
         day = stats.usage.summary()["days"][0]
         assert day["tools"]["get_design_rules"]["ok"] == 1
         assert day["tools"]["digikey_get_part"]["failed"] == 1  # not configured: this server can't do it

@@ -25,7 +25,7 @@ from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
-from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
+from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows
 from .categories import (
     CandidateBatch,
     get_subcategory_name,
@@ -549,6 +549,15 @@ class ComponentDatabase:
         if not self._conn:
             return {}
         return {code: self._snapshot_part(part) for code, part in get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories).items()}
+
+    @serialized
+    def get_snapshot_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
+        """jlc_get_parts' rows for LCSC codes in one query (lookup.snapshot_row), None when not listed.
+        No data_source per row: the reply gives the snapshot's times once."""
+        self._ensure_db()
+        if not self._conn:
+            return {code.upper(): None for code in lcsc_codes}
+        return get_snapshot_rows(self._conn, lcsc_codes, self._subcategories)
 
     @serialized
     def find_alternative_candidates(

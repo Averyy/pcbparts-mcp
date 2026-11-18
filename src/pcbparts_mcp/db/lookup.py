@@ -191,6 +191,39 @@ def get_by_lcsc(
 MAX_BATCH_SIZE = 1000  # Prevent memory/performance issues with huge batches
 
 
+def snapshot_row(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> dict[str, Any]:
+    """A part as jlc_get_parts lists it: jlc_get_part's field names and price shape for what the
+    snapshot holds, without specs, datasheet links or EasyEDA status (jlc_get_part has those).
+    The snapshot keeps one price, the first tier's, so prices has that tier only."""
+    part = row_to_dict(row, subcategories)
+    row_part = {key: part[key] for key in ("lcsc", "model", "manufacturer", "package", "stock", "price")}
+    if part["price"] is not None:
+        row_part["prices"] = [{"qty": "1+", "price": part["price"]}]
+    row_part.update((key, part[key]) for key in ("library_type", "preferred", "pcba_type", "category", "subcategory")
+                    if key in part)
+    row_part["description"] = row["description"]  # row_to_dict leaves it out when specs are listed
+    if part.get("no_datasheet"):
+        row_part["no_datasheet"] = True
+    return row_part
+
+
+def get_snapshot_rows(
+    conn: sqlite3.Connection,
+    lcsc_codes: list[str],
+    subcategories: dict[int, dict[str, Any]],
+) -> dict[str, dict[str, Any] | None]:
+    """snapshot_row() for each LCSC code (upper-cased, de-duplicated, in order) in one query; None
+    for codes the snapshot doesn't list. Raises ValueError beyond MAX_BATCH_SIZE codes."""
+    codes = list(dict.fromkeys(code.upper() for code in lcsc_codes))
+    if len(codes) > MAX_BATCH_SIZE:
+        raise ValueError(f"Batch size {len(codes)} exceeds maximum of {MAX_BATCH_SIZE}. Split into smaller batches.")
+    results: dict[str, dict[str, Any] | None] = dict.fromkeys(codes)
+    if codes:
+        for row in conn.execute(f"SELECT * FROM components WHERE lcsc IN ({','.join('?' * len(codes))})", codes):
+            results[row["lcsc"]] = snapshot_row(row, subcategories)
+    return results
+
+
 def get_by_lcsc_batch(
     conn: sqlite3.Connection,
     lcsc_codes: list[str],
