@@ -89,3 +89,6 @@ data/easyeda/*.tmp
 # The committed catalog: its directory names come from JLCPCB category names, so no pattern above
 # (lib/, var/, ...) may hide a file under it. git add skips ignored files without a word.
 !/data/catalog/**
+
+# Local Claude notes, never committed
+CLAUDE.local.md

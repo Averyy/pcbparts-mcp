@@ -13,7 +13,7 @@ for library search). `_get_easyeda_products_session()` sends exactly one
 request per check (`max_retries=0, max_rotations=0`). `_get_easyeda_session()` keeps wafer's
 retries for symbol data, with `attempt_timeout` paired to its `timeout`.
 
-Land checks (0.9.4, `land.py`) fetch footprints through `_get_easyeda_land_session()`, one attempt
+Land checks (0.9.5, `land.py`) fetch footprints through `_get_easyeda_land_session()`, one attempt
 per request like the products session, because `/api/components`' own limit was never measured.
 They take footprint UUIDs from the part, the store or the seed only, never `/api/products`. Each
 call compares at most `EASYEDA_LAND_MAX_CHECKS` (30) candidates; fetches are budgeted process-wide
@@ -24,6 +24,9 @@ and only then one request. A footprint the server has is never fetched again on 
 its age, so clones that share a footprint and repeat checks cost no request; refreshing is the seed
 script's job (see "The pads seed" below). Measured 2026-11-17: 120-160 ms and about 12 kB per
 footprint; the C295747 check fetched 23 footprints (5.7 s for the whole call), 1.7 s once stored.
+`/api/components` was never refused at one request per 1-2 s: the first pads seed run (from home)
+made 48,403 requests between 2026-11-17 17:18Z and 2026-11-18 11:24Z, 16,405 at one per 2 s and then
+31,998 at one per 1 s, without a single 403/429 or failure. Its real limit is still unmeasured.
 
 Where a footprint answer comes from, first match wins:
 
@@ -236,7 +239,7 @@ now handled by the script:
 Makers still under 50% are mostly connector makers whose parts likely have no EasyEDA footprint
 (TE Connectivity 19%, MOLEX 30%, Samtec 31%), which only `/api/products` can confirm.
 
-## The pads seed (`scripts/build_easyeda_pads.py`, 0.9.4)
+## The pads seed (`scripts/build_easyeda_pads.py`, 0.9.5)
 
 `data/easyeda/pads.csv` holds footprint pads for land checks, one row per footprint UUID:
 `footprint_uuid,pads,fetched`, pads as `easyeda_store.pack_pads()` writes them
