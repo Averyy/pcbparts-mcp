@@ -1138,3 +1138,92 @@ class TestCountingNeverBreaksALookup:
         assert fake.sent == []  # not ASCII: not sent at all
         stats.usage.record_parts_asked("mouser", ["LM358\ud800"])  # the counter itself copes too
         assert stats.usage.summary()["days"][0]["parts_asked"]["mouser"] == {"total": 1, "distinct": 1}
+
+
+# --- review fixes C, 2026-11-18 ---
+
+class TestMakerIdentity:
+    async def test_seiko_is_not_epson(self, setup, monkeypatch):
+        """JLCPCB's "Seiko" is Seiko Instruments: it matched "Seiko Epson" as its first word (and so
+        Epson's family), so a kept Epson reading answered it and no lookup went out."""
+        mouser = FakeMouser(mouser_part("SC-32S-TEST", "Seiko Instruments"))
+        _, _, store, _, _ = setup(mouser=mouser)
+        store.put_readings([Reading("SC-32S-TEST", "EPSON", "digikey", "obsolete", "Obsolete", NOW)])
+        lcsc_catalog(monkeypatch, {"C97605": {"model": "SC-32S-TEST", "manufacturer": "Seiko"}})
+        code, given, epson = (await lifecycle(["C97605", {"mpn": "SC-32S-TEST", "manufacturer": "Seiko"},
+                                               {"mpn": "SC-32S-TEST", "manufacturer": "Seiko Epson"}]))["results"]
+        assert (code["manufacturer"], code["status"], code["source"]) == ("Seiko Instruments", "active", "mouser")
+        assert given["status"] == "active" and mouser.sent == ["SC-32S-TEST"]
+        assert (epson["manufacturer"], epson["status"]) == ("EPSON", "obsolete")  # Epson's own still answers
+
+    async def test_hk_is_a_maker(self, setup):
+        """JLCPCB's maker "HK" had an empty maker key (all region words), so its misses were never
+        counted and maker_not_carried never applied to it."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        parts = [{"mpn": f"HK32F0{i:02}TEST", "manufacturer": "HK"} for i in range(MAKER_SKIP_NOT_LISTED + 1)]
+        await lifecycle(parts[:MAKER_SKIP_NOT_LISTED])
+        assert store.makers_not_carried("mouser", {"hk"}) == {"hk"}
+        sent = (len(mouser.sent), len(digikey.asked))
+        last = (await lifecycle([parts[-1]]))["results"][0]
+        assert last["not_sent"] == "maker_not_carried" and (len(mouser.sent), len(digikey.asked)) == sent
+
+
+class TestSpellingsSharingANumber:
+    """["10k", "10-k"] share one mpn_key: the first spelling was sent for both, so Mouser got the
+    value "10k", and both replies lost not_sent."""
+
+    @pytest.mark.parametrize("parts", [["10k", "10-k"], ["10-k", "10k"]], ids=["value_first", "value_last"])
+    async def test_only_a_spelling_that_may_be_sent_goes_out(self, setup, parts):
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        setup(mouser=mouser, digikey=digikey)
+        rows = {row["input"]: row for row in (await lifecycle(parts))["results"]}
+        assert mouser.sent == ["10-k"] and digikey.asked == ["10-k"]
+        assert rows["10k"] == {"input": "10k", "mpn": "10k", "status": "unknown", "not_found": True,
+                               "observed_at": "2026-11-18T12:00:00+00:00", "not_sent": "value"}
+        assert rows["10-k"]["not_found"] is True and "not_sent" not in rows["10-k"]
+
+    async def test_a_limit_on_the_other_spelling_isnt_the_values(self, setup):
+        mouser = FakeMouser()
+        setup(mouser=mouser, mouser_limit=0)
+        value, other = (await lifecycle(["10k", "10-k"]))["results"]
+        assert value == {"input": "10k", "mpn": "10k", "status": "unknown", "not_sent": "value"}
+        assert other["retry_after"] > 0 and mouser.sent == []
+
+    async def test_every_spelling_excluded_sends_nothing(self, setup):
+        mouser = FakeMouser()
+        setup(mouser=mouser)
+        rows = (await lifecycle(["10k", "10K"]))["results"]
+        assert [r.get("not_sent") for r in rows] == ["value", "value"] and mouser.sent == []
+        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["skipped"] == 1  # one number
+
+    async def test_mouser_lookup_refuses_them_itself(self, setup):
+        fake = FakeMouser(mouser_part("LM358P"))
+        m, _, _, mq, _ = setup(mouser=fake)
+        answers, error = await m.lookup(["10k", "LM358P"])
+        assert fake.sent == ["LM358P"] and list(answers) == ["LM358P"] and error is None
+        assert await m.lookup(["C7950", "N/A"]) == ({}, None)
+        assert len(fake.sent) == 1 and mq.status()["used_today"] == 1
+        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["skipped"] == 3
+
+
+class TestCodeBesideAnUnusableMpn:
+    """An LCSC code supplies the MPN: an MPN beside it that can't be looked up isn't the row's error."""
+
+    async def test_the_catalogs_mpn_is_used(self, setup, monkeypatch):
+        lcsc_catalog(monkeypatch, {"C7950": {"model": "LM358P", "manufacturer": "Texas Instruments"}})
+        mouser = FakeMouser(mouser_part("LM358P"))
+        setup(mouser=mouser)
+        parts = [{"lcsc": "C7950", "mpn": mpn} for mpn in ("N/A", "M" * 101, "LM\x00358", "LM358P|NE555P")]
+        parts.append({"lcsc": "C7950", "mpn": "LM358P", "manufacturer": "T" * 101})
+        rows = (await lifecycle(parts))["results"]
+        assert [(r["mpn"], r["status"], r.get("error")) for r in rows] == [("LM358P", "active", None)] * 5
+        assert rows[4]["manufacturer"] == "Texas Instruments" and mouser.sent == ["LM358P"]
+        assert rows[0]["input"] == {"lcsc": "C7950", "mpn": "N/A"}
+
+    async def test_without_a_valid_code_they_stay_errors(self, setup):
+        setup(mouser=FakeMouser())
+        rows = (await lifecycle([{"lcsc": "N/A", "mpn": "DNP"}, {"lcsc": "X1", "mpn": "M" * 101}]))["results"]
+        assert rows[0]["error"].startswith("Invalid part: 'DNP' is a BOM placeholder")
+        assert rows[1]["error"] == "MPN too long (max 100 characters)"

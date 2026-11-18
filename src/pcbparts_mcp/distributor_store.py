@@ -35,7 +35,7 @@ from .config import (
     DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
     MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
-from .lifecycle import Reading, maker_key
+from .lifecycle import NOT_LISTED_MAKER_KEY, Reading, maker_key
 from .search.mpn import mpn_key
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,8 @@ _SCHEMA = (
         PRIMARY KEY (source, key)
     )""",
     "CREATE INDEX IF NOT EXISTS answers_age ON answers (source, found, fetched_at)",
-    # maker_key is '' on a "not listed" row (found = 0): the distributor has no part with that number
+    # maker_key is NOT_LISTED_MAKER_KEY on a "not listed" row (found = 0): the distributor has no part
+    # with that number (a key no maker has, so neither row replaces the other)
     """CREATE TABLE IF NOT EXISTS lifecycle (
         mpn_key TEXT NOT NULL,
         maker_key TEXT NOT NULL,
@@ -206,19 +207,19 @@ class DistributorStore:
             return False
         rows, own = [], set()
         for reading in readings:
-            maker = maker_key(reading.maker) if reading.found else ""
+            maker = maker_key(reading.maker) if reading.found else NOT_LISTED_MAKER_KEY
             if key := mpn_key(reading.mpn):
                 rows.append((key, maker, reading))
                 own.add((key, maker, reading.source))
         if also_as and (extra := mpn_key(also_as)):
             for reading in readings:
-                maker = maker_key(reading.maker) if reading.found else ""
+                maker = maker_key(reading.maker) if reading.found else NOT_LISTED_MAKER_KEY
                 if mpn_key(reading.mpn) != extra and (extra, maker, reading.source) not in own:
                     rows.append((extra, maker, reading))
         try:
             for key, maker, reading in rows:
-                if reading.found:
-                    self._conn.execute("DELETE FROM lifecycle WHERE mpn_key = ? AND maker_key = '' AND source = ?",
+                if reading.found:  # the source's "not listed" row for the number
+                    self._conn.execute("DELETE FROM lifecycle WHERE mpn_key = ? AND source = ? AND NOT found",
                                        (key, reading.source))
                 self._conn.execute(
                     "INSERT OR REPLACE INTO lifecycle (mpn_key, maker_key, source, found, observed_at, status, mpn, "

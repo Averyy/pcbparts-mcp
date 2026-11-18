@@ -563,7 +563,16 @@ class MouserClient:
                      ) -> tuple[dict[str, PartAnswer], dict[str, Any] | None]:
         """Each number's answer, as get_part finds it (store first, then a request for the rest; see
         PartAnswer.checked and problem), and a limit error when one held back the numbers that have
-        no answer in it. numbers: up to 10 distinct numbers of 3-40 characters (part_lifecycle)."""
+        no answer in it. numbers: up to 10 distinct numbers of 3-40 characters (part_lifecycle). A
+        number no distributor can list (not_sent_reason: a value such as "10k", an LCSC code...) is
+        never sent and has no answer, as in get_part: callers leave those out, so one here is a bug."""
+        if refused := [n for n in numbers if not_sent_reason(n)]:
+            logger.error(f"Mouser lookup: {len(refused)} number(s) no distributor can list were given; not sent")
+            for _ in refused:
+                stats.count_distributor("mouser", "skipped")
+            numbers = [n for n in numbers if n not in refused]
+            if not numbers:
+                return {}, None
         answers, _, error = await self._answers(numbers, caller)
         return {n: answers[_cache_key(n)] for n in numbers if _cache_key(n) in answers}, error
 

@@ -23,6 +23,7 @@ import datetime
 import hashlib
 import json
 import logging
+import math
 import os
 import re
 import secrets
@@ -107,8 +108,18 @@ def _new_day() -> dict[str, Any]:
 _DAY_FIELDS = frozenset(_new_day())
 
 
+# Far above any real count. A larger one (or 1e309, which JSON reads as infinity, or NaN) is malformed:
+# int() can't take infinity or NaN, and summary()'s average time can't divide a huge one into a float.
+_MAX_COUNT = 2**53
+
+
 def _int(value: Any) -> int:
-    return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else 0
+    """A count read from the file: 0 for anything that isn't a usable number."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return 0
+    if isinstance(value, float) and not math.isfinite(value):
+        return 0
+    return int(value) if abs(value) <= _MAX_COUNT else 0
 
 
 def _dict(value: Any) -> dict:
@@ -229,7 +240,11 @@ class UsageStats:
         if not isinstance(days, dict):
             self._set_aside("has no days")
             return
-        self._days = {str(date): _clean_day(day) for date, day in days.items() if isinstance(day, dict)}
+        try:  # malformed values are dropped (_clean_day); anything that still fails here is corruption too
+            self._days = {str(date): _clean_day(day) for date, day in days.items() if isinstance(day, dict)}
+        except (ValueError, TypeError, OverflowError, RecursionError) as e:
+            self._days = {}
+            self._set_aside(f"unreadable ({type(e).__name__}: {e})")
 
     def _set_aside(self, problem: str) -> None:
         aside = self.path.with_name(self.path.name + ".corrupt")

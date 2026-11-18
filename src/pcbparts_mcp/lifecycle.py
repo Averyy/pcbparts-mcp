@@ -84,12 +84,24 @@ def last_buy_date(value: Any) -> str | None:
 
 
 # Words left out when comparing maker names: company forms and regions ("NXP USA Inc." is NXP,
-# "GigaDevice Semicon Beijing" is DigiKey's "GigaDevice Semiconductor (HK) Limited")
-_NAME_NOISE = frozenset({
+# "GigaDevice Semicon Beijing" is DigiKey's "GigaDevice Semiconductor (HK) Limited"). Regions only
+# when other words are left: JLCPCB's "HK" (HK32 MCUs) is a maker, not a region (_DROPS).
+_COMPANY_WORDS = frozenset({
     "inc", "incorporated", "ltd", "limited", "llc", "co", "corp", "corporation", "company", "gmbh", "ag",
-    "plc", "sa", "bv", "nv", "srl", "spa", "kk", "usa", "us", "america", "americas", "the",
-    "hk", "beijing", "shanghai", "shenzhen", "china", "taiwan", "japan", "europe", "asia",
+    "plc", "sa", "bv", "nv", "srl", "spa", "kk", "the",
 })
+_REGION_WORDS = frozenset({
+    "usa", "us", "america", "americas", "hk", "beijing", "shanghai", "shenzhen", "china", "taiwan", "japan",
+    "europe", "asia",
+})
+_NAME_NOISE = _COMPANY_WORDS | _REGION_WORDS
+# The words left out, tried in turn until a name has some words left: "HK Ltd" is "hk", "Ltd" "ltd"
+_DROPS = (_NAME_NOISE, _COMPANY_WORDS, frozenset())
+
+# JLCPCB's short names that stand for a longer one, where the short name would match another maker
+# by its first word: JLCPCB's "Seiko" is Seiko Instruments (SII's SC-20S, SSP-T7-F and VT-200-F
+# crystals, MS412FE batteries), not Seiko Epson, which JLCPCB lists as "Seiko Epson".
+_CATALOG_NAMES = {"seiko": "Seiko Instruments"}
 
 # Makers known under names the word rules can't tie together: one company's divisions, or a maker
 # and its own sales arm. A name belongs to a family when it matches one of its names (by the word
@@ -104,9 +116,15 @@ _MAKER_FAMILIES: tuple[tuple[str, ...], ...] = (
 )
 
 
-def _words(text: str) -> tuple[str, ...]:
+def _words(text: str, drop: frozenset[str] = _NAME_NOISE) -> tuple[str, ...]:
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().casefold()
-    return tuple(word for word in re.findall(r"[a-z0-9]+", text) if word not in _NAME_NOISE)
+    return tuple(word for word in re.findall(r"[a-z0-9]+", text) if word not in drop)
+
+
+def _resolved(name: str) -> str:
+    """The name as its alias resolves, and as _CATALOG_NAMES spells out JLCPCB's short names."""
+    resolved = resolve_manufacturer(name)
+    return _CATALOG_NAMES.get(resolved.casefold(), resolved)
 
 
 @dataclass(frozen=True)
@@ -130,18 +148,25 @@ def _name_forms(name: str) -> tuple[_Name, ...]:
     resolves (JLCPCB's "AMS" is ams OSRAM, while the alias "ams" is Advanced Monolithic Systems):
     the name without parentheses and each parenthesised name, each split at "/" ("SKYWORKS/SILICON
     LABS" is Skyworks and Silicon Labs, Mouser's "Vishay / Dale" is Vishay)."""
+    name = _CATALOG_NAMES.get(name.casefold(), name)  # JLCPCB's "Seiko" never stands as "seiko" alone
+    resolved = _resolved(name)
     forms: list[_Name] = []
-    resolved = resolve_manufacturer(name)
     for text in dict.fromkeys((resolved, name)):
-        inner = re.findall(r"\(([^)]*)\)", text)
-        outer = [_words(part) for part in re.sub(r"\([^)]*\)", " ", text).split("/")]
         aliased = text.casefold() != resolved.casefold()  # the name as given, which an alias resolved
-        for words in outer:
-            if words:
-                short = _is_abbreviation(words) and (aliased or (bool(inner) and len(outer) == 1))
-                forms.append(_Name(words, short))
-        forms.extend(_Name(words) for part in inner for words in (_words(p) for p in part.split("/")) if words)
+        for drop in _DROPS:  # region words kept only for a spelling that is nothing else ("HK")
+            if found := _text_forms(text, aliased, drop):
+                forms += found
+                break
     return tuple(dict.fromkeys(forms))
+
+
+def _text_forms(text: str, aliased: bool, drop: frozenset[str]) -> list[_Name]:
+    """_name_forms of one spelling, leaving out the words in drop."""
+    inner = re.findall(r"\(([^)]*)\)", text)
+    outer = [_words(part, drop) for part in re.sub(r"\([^)]*\)", " ", text).split("/")]
+    forms = [_Name(words, _is_abbreviation(words) and (aliased or (bool(inner) and len(outer) == 1)))
+             for words in outer if words]
+    return forms + [_Name(words) for part in inner for words in (_words(p, drop) for p in part.split("/")) if words]
 
 
 def maker_names(name: str | None) -> list[tuple[str, ...]]:
@@ -149,13 +174,26 @@ def maker_names(name: str | None) -> list[tuple[str, ...]]:
     return [form.words for form in _name_forms((name or "").strip())]
 
 
+# The lifecycle store's maker key for a "not listed" row (the distributor has no part with the
+# number, whoever makes it): never a maker_key, which is words of [a-z0-9], "#" and a name's text,
+# or "" for no name (a reading without a maker), so a "not listed" row never replaces a reading.
+NOT_LISTED_MAKER_KEY = "*"
+
+
 def maker_key(name: str | None) -> str:
-    """One maker's key in the lifecycle store ("Texas Instruments Inc." and "Texas Instruments"
-    share one): its alias-resolved name without parentheses."""
-    name = resolve_manufacturer((name or "").strip())
-    words = _words(re.sub(r"\([^)]*\)", " ", name)) or next(
-        (w for inner in re.findall(r"\(([^)]*)\)", name) if (w := _words(inner))), ())
-    return " ".join(words)
+    """One maker's key in the lifecycle store and its maker counts ("Texas Instruments Inc." and
+    "Texas Instruments" share one): its alias-resolved name without parentheses, by its words.
+    Never empty for a name that isn't: a name of region words only keeps them (JLCPCB's maker "HK"
+    is "hk"), and one without letters or digits (JLCPCB's "--") is "#" and its text."""
+    name = (name or "").strip()
+    if not name:
+        return ""
+    resolved = _resolved(name)
+    outer, inner = re.sub(r"\([^)]*\)", " ", resolved), re.findall(r"\(([^)]*)\)", resolved)
+    for drop in _DROPS:
+        if words := _words(outer, drop) or next((w for part in inner if (w := _words(part, drop))), ()):
+            return " ".join(words)
+    return "#" + " ".join(resolved.casefold().split())
 
 
 def _starts(short: tuple[str, ...], long: tuple[str, ...]) -> bool:
@@ -252,8 +290,11 @@ class Entry:
 
 @dataclass
 class _KeyState:
-    """What's known about one MPN (by mpn_key) during a call, from the store and this call's lookups."""
+    """What's known about one MPN (by mpn_key) during a call, from the store and this call's lookups.
+    spelling: the one sent, the first of its entries' that may be sent (sendable: there is one;
+    "10-k" goes out for ["10k", "10-k"], never the value "10k")."""
     spelling: str
+    sendable: bool = True
     readings: list[Reading] = field(default_factory=list)
     not_listed: dict[str, float] = field(default_factory=dict)  # source -> when it said so
     limited: dict[str, int] = field(default_factory=dict)  # source -> seconds until it may be asked
@@ -316,13 +357,17 @@ class LifecycleLookup:
             if entry.error is None:
                 key = mpn_key(entry.mpn or "")
                 entry.not_sent = not_sent_reason(entry.mpn or "")
-                if key not in states:
-                    states[key] = state = _KeyState(entry.mpn or "")
+                state = states.get(key)
+                if state is None:
+                    states[key] = state = _KeyState(entry.mpn or "", sendable=not entry.not_sent)
                     for reading in self._store.readings(entry.mpn or ""):
                         state.add(reading)
-                    if entry.not_sent and not state.readings and not state.not_listed:
-                        # No request: counted under the distributor it would have gone to first
-                        stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
+                elif not entry.not_sent and not state.sendable:
+                    state.spelling, state.sendable = entry.mpn or "", True
+        for state in states.values():
+            if not state.sendable and not state.readings and not state.not_listed:
+                # No request: counted under the distributor it would have gone to first
+                stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
         for source, client in (("mouser", self._mouser), ("digikey", self._digikey)):
             makers = {maker_key(e.maker) for e in entries if e.error is None and e.maker and not e.not_sent}
             if client is not None and makers:
@@ -503,12 +548,14 @@ class LifecycleLookup:
             others = _best_per_maker(state.readings)
             if others:  # listed, but only under other makers
                 result["makers"] = [r.as_reply() for r in others]
-        # Why no lookup went out for it: its number can't be one they list, or the distributors it
-        # would have gone to haven't listed its maker's parts lately
-        not_sent = None if state.asked else entry.not_sent or ("maker_not_carried" if entry.skipped else None)
-        if state.limited:
+        # Why no lookup went out for it: its number can't be one they list (never sent, even when
+        # another spelling of it was: that lookup's limit or failure isn't this entry's), or the
+        # distributors it would have gone to haven't listed its maker's parts lately
+        own = entry.not_sent
+        not_sent = own or (None if state.asked else "maker_not_carried" if entry.skipped else None)
+        if state.limited and not own:
             result["retry_after"] = min(state.limited.values())
-        elif state.failed:
+        elif state.failed and not own:
             result["lookup_failed"] = True
         elif not state.readings:
             if state.not_listed:

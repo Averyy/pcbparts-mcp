@@ -15,8 +15,9 @@ CONFIG_WARNINGS: list[str] = []
 def number_setting(name: str, default: int | float, minimum: int | float,
                    environ: Mapping[str, str] = os.environ, warnings: list[str] = CONFIG_WARNINGS) -> int | float:
     """The environment variable `name` as a number of default's type (int or float). Unset or blank:
-    the default. Not a number (`1,000`, `1e3` for an int), or not finite: the default, with a
-    warning. Below minimum: minimum, with a warning."""
+    the default. Not a number (`1,000`, `1e3` for an int), not finite, or an integer past a float's
+    range (about 1.8e308, either sign): the default, with a warning. Below minimum: minimum, with a
+    warning."""
     raw = (environ.get(name) or "").strip()
     if not raw:
         return default
@@ -26,7 +27,12 @@ def number_setting(name: str, default: int | float, minimum: int | float,
     except ValueError:
         warnings.append(f"{name}={raw!r} isn't a{'n integer' if kind is int else ' number'}; using {default}")
         return default
-    if not math.isfinite(value):
+    try:
+        finite = math.isfinite(value)
+    except OverflowError:  # an int past a float's range: math.isfinite converts it
+        warnings.append(f"{name}={raw[:20]!r}... ({len(raw)} characters) is out of range; using {default}")
+        return default
+    if not finite:
         warnings.append(f"{name}={raw!r} isn't a finite number; using {default}")
         return default
     if value < minimum:

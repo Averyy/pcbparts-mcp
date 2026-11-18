@@ -175,6 +175,17 @@ class TestPressure:
         assert settings[name] == used and type(settings[name]) is type(used)
         assert any(w.startswith(f"{name}=") for w in settings["CONFIG_WARNINGS"]) is warned
 
+    @pytest.mark.parametrize("sign", ["", "-"], ids=["pos", "neg"])
+    def test_integer_too_large_for_a_float_falls_back(self, sign):
+        """math.isfinite converts an int to a float: one past a float's range (about 1.8e308, 309
+        digits) raised OverflowError at startup."""
+        warnings: list[str] = []
+        raw = sign + "9" * 309
+        assert config.number_setting("RATE_LIMIT_REQUESTS", 100, 1, {"RATE_LIMIT_REQUESTS": raw}, warnings) == 100
+        assert len(warnings) == 1 and warnings[0].startswith("RATE_LIMIT_REQUESTS=") and "out of range" in warnings[0]
+        assert len(warnings[0]) < 100  # the value isn't repeated whole
+        assert config.number_setting("X", 100, 1, {"X": sign + "1" * 309}, []) == (1 if sign else int("1" * 309))
+
     def test_huge_or_infinite_wait_never_overflows(self):
         pressure, pool = DatabasePressure(Clock()), object()
         for _ in range(3):

@@ -61,6 +61,18 @@ def test_admission_summary(case, expected):
     assert result["sustained"] is False  # the old mode still requires accepting the offered rate
 
 
+@pytest.mark.parametrize("errors,expected", [(0, True), (1, True), (2, False), (100, False)],
+                         ids=["none", "one", "two", "all"])
+def test_sustained_needs_answers_not_tool_errors(errors, expected):
+    """The default mode: a step whose every call came back as a tool error (isError, counted in ok)
+    was sustained. Up to 1% of its answered calls may be tool errors (odd queries)."""
+    step = load.Step(100)
+    step.started = step.ok = 100
+    step.tool_errors = errors
+    step.latency = [0.5] * 100
+    assert load.summary(step, 60, 0, 2)["sustained"] is expected
+
+
 @pytest.mark.parametrize("case,expected", [("busy", 0), ("no_busy", 2), ("slow", 2), ("upstream", 3)],
                          ids=["busy", "none", "slow", "upstream"])
 async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):

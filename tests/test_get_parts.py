@@ -286,6 +286,22 @@ class TestReviewFixes:
         alone, = (await get_parts([{"lcsc": "N/A"}]))["results"]
         assert alone["error"].startswith("lcsc must be an LCSC C-code")
 
+    async def test_a_valid_code_wins_over_an_unusable_mpn(self, db):
+        """An LCSC code wins when both are given, so the MPN's checks (placeholder, length, control
+        characters) mustn't refuse the row: a BOM's "N/A" in its MPN column beside C7950 was an error."""
+        parts = [{"lcsc": "C7950", "mpn": "N/A"}, {"lcsc": "c7950", "mpn": "DNP"}, {"lcsc": "C7950", "mpn": "M" * 101},
+                 {"lcsc": "C7950", "mpn": "LM\x00358"}, {"lcsc": "C7950", "mpn": "LM358", "manufacturer": "T" * 101}]
+        reply = await get_parts(parts)
+        assert [(row.get("lcsc"), row.get("model"), row.get("error")) for row in reply["results"]] == [
+            ("C7950", "LM358DR2G", None)] * 5
+        assert reply["counts"] == {"found": 5, "gone": 0, "not_found": 0, "error": 0}
+        assert reply["results"][0]["input"] == {"lcsc": "C7950", "mpn": "N/A"}
+        entry = server._lifecycle_entry({"lcsc": "C7950", "mpn": "N/A", "manufacturer": "TI"})
+        assert (entry.error, entry.mpn, entry.maker, entry.lcsc) == (None, None, "TI", "C7950")
+        # No valid code: the MPN's own error, as before
+        bad, = (await get_parts([{"lcsc": "N/A", "mpn": "N/A"}]))["results"]
+        assert bad["error"].startswith("Invalid part: 'N/A' is a BOM placeholder")
+
     async def test_a_code_string_not_listed_is_tried_as_a_part_number(self, db):
         reply = await get_parts(["C945", {"lcsc": "C945"}, "C99999999", "c945"])
         number, code, missing, lower = reply["results"]

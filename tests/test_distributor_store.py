@@ -11,7 +11,8 @@ from pcbparts_mcp.config import (
 )
 from pcbparts_mcp.distributor_store import DistributorStore
 from pcbparts_mcp.lifecycle import (
-    MOUSER_NOT_STATED, Reading, digikey_status, last_buy_date, maker_key, makers_match, mouser_status,
+    MOUSER_NOT_STATED, NOT_LISTED_MAKER_KEY, Reading, digikey_status, last_buy_date, maker_key, makers_match,
+    mouser_status,
 )
 
 NOW = datetime.datetime(2026, 11, 18, 12, tzinfo=datetime.timezone.utc).timestamp()
@@ -316,6 +317,11 @@ SAME_MAKERS = [
     ("ST Microelectronics", "STMicroelectronics"),
     ("ST Micro", "STMicroelectronics"),
     ("ON Semiconductor", "onsemi"),
+    # Review 2026-11-18: JLCPCB's "Seiko" is Seiko Instruments; "HK" (HK32 MCUs) is a maker, not a region
+    ("Seiko", "Seiko Instruments"),
+    ("Seiko", "Seiko Instruments Inc."),
+    ("HK", "HK Ltd"),
+    ("hk32", "HK"),  # the alias resolves to JLCPCB's "HK"
 ]
 DIFFERENT_MAKERS = [
     ("ST(Semtech)", "STMicroelectronics"),  # a short name must be whole
@@ -330,6 +336,11 @@ DIFFERENT_MAKERS = [
     ("Vishay Intertech", "Diodes Incorporated"),
     ("HRS(Hirose)", "HRS Electronics"),
     ("OSRAM Opto Semicon", "Advanced Monolithic Systems"),
+    ("Seiko", "Seiko Epson"),  # JLCPCB lists Epson as "Seiko Epson" and Seiko Instruments as "Seiko"
+    ("Seiko", "EPSON"),
+    ("Seiko", "Epson Timing"),
+    ("HK", "GigaDevice Semiconductor (HK) Limited"),  # a region inside another maker's name
+    ("HK", "HKR(Hong Kong Resistors)"),
 ]
 
 
@@ -357,3 +368,25 @@ class TestMakers:
 
     def test_one_key_per_maker(self):
         assert maker_key("Texas Instruments Inc.") == maker_key("texas instruments") == "texas instruments"
+
+    def test_a_maker_name_never_has_an_empty_or_not_listed_key(self):
+        """JLCPCB's maker "HK" was all region words, so its key was "": its misses were never counted
+        (maker_not_carried never applied) and it shared the "not listed" rows' key. JLCPCB's "--"
+        (no letters or digits) was "" too."""
+        assert maker_key("HK") == maker_key("HK Ltd") == maker_key("hk32") == "hk"
+        assert maker_key("--") == "#--" and maker_key("Seiko") == "seiko instruments"
+        assert maker_key("GigaDevice Semicon Beijing") == "gigadevice semicon"  # regions still left out
+        for name in ("HK", "--", "Ltd", "Asia", "华为", "ß", "*", "Seiko", "Seiko Epson", "NXP USA Inc."):
+            assert maker_key(name) not in ("", NOT_LISTED_MAKER_KEY), name
+        assert maker_key("") == maker_key("  ") == maker_key(None) == ""
+
+    @pytest.mark.parametrize("maker", ["HK", ""], ids=["hk", "none"])
+    def test_not_listed_never_replaces_a_reading(self, store, maker):
+        """A "not listed" row and a reading by a maker whose key was "" (HK's, or a reading without
+        a maker) shared one row, so a later "not listed" overwrote the reading."""
+        store.put_readings([reading(mpn="HK32F103VET6", maker=maker, status="obsolete", raw="Obsolete")])
+        store.put_not_listed("HK32F103VET6", "mouser")
+        assert sorted((r.found, r.status) for r in store.readings("HK32F103VET6")) == [
+            (False, "unknown"), (True, "obsolete")]
+        store.put_readings([reading(mpn="HK32F103VET6", maker=maker, status="obsolete", raw="Obsolete")])
+        assert [r.found for r in store.readings("HK32F103VET6")] == [True]  # the reading drops "not listed"

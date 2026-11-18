@@ -3240,10 +3240,27 @@ def _echo_input(item: Any) -> Any:
     return item if len(text) <= 2 * _ECHO_MAX else text[:_ECHO_MAX] + "..."
 
 
+def _entry_problem(mpn: str | None, maker: str | None) -> dict[str, Any] | None:
+    """Why an input's MPN or maker can't be looked up (the first problem found), or None."""
+    if mpn and len(mpn) > 100:
+        return {"error": "MPN too long (max 100 characters)"}
+    if maker and len(maker) > 100:
+        return {"error": "Manufacturer too long (max 100 characters)"}
+    if any(value and _has_control_characters(value) for value in (mpn, maker)):
+        return dict(_CONTROL_CHARACTERS)
+    if mpn and is_placeholder_mpn(mpn):
+        return {"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
+                "not_sent": "placeholder"}
+    return None
+
+
 def _lifecycle_entry(item: Any) -> Entry:
     """One part_lifecycle or jlc_get_parts input as an Entry (input: _echo_input's), with its error
     if it can't be looked up. A malformed lcsc beside an MPN (a BOM's "N/A" in its LCSC column) is
-    set aside, and the MPN looked up."""
+    set aside, and the MPN looked up. Beside a valid LCSC code, which wins over the MPN in
+    jlc_get_parts and supplies what isn't given in part_lifecycle, an MPN or maker that can't be
+    looked up (a BOM's "N/A" in its MPN column, over 100 characters, control characters) is set
+    aside the same way, not the row's error."""
     echo = _echo_input(item)
     if isinstance(item, str):
         text = item.strip()
@@ -3259,15 +3276,11 @@ def _lifecycle_entry(item: Any) -> Entry:
         lcsc = None
     if not mpn and not lcsc:
         return Entry(echo, error={"error": "Give a part number or an LCSC code"})
-    if mpn and len(mpn) > 100:
-        return Entry(echo, error={"error": "MPN too long (max 100 characters)"})
-    if maker and len(maker) > 100:
-        return Entry(echo, error={"error": "Manufacturer too long (max 100 characters)"})
-    if any(value and _has_control_characters(value) for value in (mpn, maker)):
-        return Entry(echo, error=dict(_CONTROL_CHARACTERS))
-    if mpn and is_placeholder_mpn(mpn):
-        return Entry(echo, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
-                                  "not_sent": "placeholder"})
+    if lcsc:
+        mpn = None if _entry_problem(mpn, None) else mpn
+        maker = None if _entry_problem(None, maker) else maker
+    elif problem := _entry_problem(mpn, maker):
+        return Entry(echo, error=problem)
     return Entry(echo, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
 
 
@@ -3332,6 +3345,9 @@ async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
         return error
 
     entries = [_lifecycle_entry(item) for item in items]
+    for entry in entries:  # an MPN Mouser can't take ("|", below) beside a valid code: the catalog's instead
+        if entry.error is None and entry.lcsc and entry.mpn and "|" in entry.mpn:
+            entry.mpn = None
     codes = list(dict.fromkeys(e.lcsc for e in entries if e.error is None and e.lcsc and not (e.mpn and e.maker)))
     if codes:  # an LCSC code's MPN and maker from the catalog snapshot, or from a part kept after it left it
         try:

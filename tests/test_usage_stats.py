@@ -381,6 +381,33 @@ class TestUsageStats:
         assert json.loads(path.read_text(encoding="utf-8"))["days"] and aside.read_bytes() == content
         assert usage.summary()["kept_across_restarts"] is True
 
+    def test_counts_too_large_or_not_finite_are_dropped(self, tmp_path):
+        """JSON reads 1e309 as infinity: int() raised OverflowError outside open()'s recovery and
+        stopped the server starting. A huge count broke summary()'s average time the same way."""
+        path = tmp_path / "usage.json"
+        tools = '{"jlc_search": {"calls": 4, "ok": NaN, "not_found": 2, "ms": 1' + "0" * 400 + '}}'
+        day = '{"callers": 1e309, "apps": {"a": -1e309, "b": 2}, "tools": ' + tools + '}'
+        path.write_text('{"days": {"2026-10-17": ' + day + '}}', encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        day = usage.summary()["days"][0]
+        assert (day["callers"], day["apps"]) == (0, {"a": 0, "b": 2})
+        assert day["tools"]["jlc_search"]["calls"] == 4 and day["tools"]["jlc_search"]["not_found"] == 2
+        assert day["tools"]["jlc_search"]["avg_ms"] == 0
+        assert path.exists() and not (tmp_path / "usage.json.corrupt").exists()  # the rest is kept
+
+    def test_a_day_that_fails_to_clean_is_moved_aside(self, tmp_path, monkeypatch):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {"callers": 1}}}), encoding="utf-8")
+
+        def broken(day):
+            raise OverflowError("cannot convert float infinity to integer")
+
+        monkeypatch.setattr(stats, "_clean_day", broken)
+        usage = UsageStats(clock=Clock())
+        usage.open(path)  # doesn't raise
+        assert usage.summary()["days"] == [] and (tmp_path / "usage.json.corrupt").exists()
+
     def test_unknown_day_fields_survive_a_save(self, tmp_path):
         """A newer version's fields are kept through this version's saves, so a rollback and a
         redeploy don't erase them."""

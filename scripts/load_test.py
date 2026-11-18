@@ -66,6 +66,9 @@ MIXES = {
               "get_design_rules": 10},
 }
 
+# A step is sustained only if at most this share of its answered calls were tool errors (isError)
+MAX_TOOL_ERROR_SHARE = 0.01
+
 ACCEPT = {"Accept": "application/json, text/event-stream", "Content-Type": "application/json"}
 PROTOCOL = "2025-06-18"
 
@@ -267,8 +270,10 @@ def summary(step: Step, seconds: float, drain: float, p95_limit: float) -> dict:
         "admission_ok": failed == 0 and step.tool_errors == 0 and step.skipped == 0
                         and p95 is not None and p95 < p95_limit
                         and step.ok > 0 and step.ok + step.busy == step.started,
+        # ok counts every answered call, tool errors (isError) included: a server answering every
+        # call with an error isn't sustaining the load, while a few odd queries' errors are normal
         "sustained": failed == 0 and step.busy == 0 and step.skipped == 0 and p95 is not None and p95 < p95_limit
-                     and step.ok >= 0.95 * step.started,
+                     and step.ok >= 0.95 * step.started and step.tool_errors <= MAX_TOOL_ERROR_SHARE * step.ok,
     }
 
 
