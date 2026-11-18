@@ -16,7 +16,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from .search.mpn import mpn_key
+from .search.mpn import mpn_key, same_jst_part
 from .search.resolvers import resolve_manufacturer
 
 if TYPE_CHECKING:
@@ -277,7 +277,9 @@ class LifecycleLookup:
                     state.failed.add("mouser")
                 else:
                     answer = answers[number]
-                    found = [r for r in answer.results if mpn_key(r.get("mfr_part_number") or "") == mpn_key(number)]
+                    # The part itself, or the JST part it names without the (LF)/(SN) endings
+                    found = [r for r in answer.results if mpn_key(r.get("mfr_part_number") or "") == mpn_key(number)
+                             or same_jst_part(r.get("mfr_part_number") or "", number, r.get("manufacturer") or "")]
                     for result in found:
                         status, raw = result.get("lifecycle_status") or "unknown", result.get("lifecycle") or MOUSER_NOT_STATED
                         state.add(Reading(result.get("mfr_part_number") or number, result.get("manufacturer") or "",

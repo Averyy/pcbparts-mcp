@@ -6,6 +6,7 @@ is a fallback behavior, not input transformation.
 """
 
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -49,6 +50,62 @@ def is_maker_suffixed(part: dict) -> bool:
 def mpn_key(mpn: str) -> str:
     """SQLite-compatible ASCII case folding and separator removal."""
     return mpn.translate(str.maketrans("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "- _/"))
+
+
+# JST ends its part numbers in (LF) (lead-free) and (SN) (tin plating). JLCPCB keeps them
+# (B2B-PH-K-S(LF)(SN)); DigiKey sometimes drops them (B2B-PH-K-S, 455-1704-ND). Other bracketed
+# endings stay significant: (UMW), (TOKMAS) and (XBLW) name another maker's copy, and Hirose's
+# (51) or (50) is a different variant.
+_JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
+
+
+def same_jst_part(listed: str, asked: str, maker: str) -> bool:
+    """Whether a JST part's listed number is the one asked once JST's (LF)/(SN) endings are set
+    aside, ignoring case and outer spaces. Always False for other makers, and for a number that is
+    nothing but those endings."""
+    if "jst" not in (maker or "").casefold().split():
+        return False
+    core = _JST_FINISH.sub("", (listed or "").strip().casefold())
+    return bool(core) and core == _JST_FINISH.sub("", (asked or "").strip().casefold())
+
+
+# matched_by on mouser_get_part / digikey_get_part results: how a result matches the number it
+# answers, the first that applies in this order. exact, separators and packing mean what
+# jlc_get_part(mpn=...)'s exact and match do, so one word means one thing in every tool.
+MATCHED_BY = ("exact", "separators", "packing", "mouser_pn", "digikey_pn", "prefix", "other")
+
+
+def _alnum(text: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", text.upper())
+
+
+def distributor_match(asked: str, mpn: str, maker: str, own_numbers: Iterable[str], own_kind: str) -> str:
+    """matched_by for a distributor's result: how its MPN (mpn, by maker) or the distributor's own
+    part numbers for it (own_numbers; own_kind names them: "mouser_pn" or "digikey_pn") match the
+    number asked.
+
+    exact: the MPN is the number, ignoring case. separators: also ignoring -, space, _ and /
+    (mpn_key). packing: a JST part's MPN once its (LF)/(SN) endings are set aside. own_kind: the
+    number is the distributor's own part number for it (as mpn_key compares). The match is sure for
+    all of these. prefix: its MPN or the distributor's number starts with the number, ignoring case
+    and punctuation (Mouser's loose match: LM358P finds LM358PE4), so it's a longer, maybe different
+    part number. other: none of these; the distributor returned it for the number by a rule of its
+    own (DigiKey's exact matches, or anything Mouser returns for a lone number)."""
+    mpn = (mpn or "").strip()
+    own = [number for number in own_numbers if number and number.strip()]
+    if mpn and mpn.casefold() == asked.strip().casefold():
+        return "exact"
+    key = mpn_key(asked.upper())
+    if mpn and key and mpn_key(mpn.upper()) == key:
+        return "separators"
+    if mpn and same_jst_part(mpn, asked, maker):
+        return "packing"
+    if key and any(mpn_key(number.upper()) == key for number in own):
+        return own_kind
+    start = _alnum(asked)
+    if start and any(_alnum(number).startswith(start) for number in [mpn, *own] if number):
+        return "prefix"
+    return "other"
 
 
 MPN_MATCH_NAMES = ("full", "same_suffix", "family")

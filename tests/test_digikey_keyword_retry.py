@@ -80,7 +80,11 @@ async def test_products_only_exact_mpn_is_normalized_and_cached(digikey):
     assert part["parameters"] == {"Battery Size": "AA"}
     assert await client.get_part("209") == result
     assert_keyword_request(fake)
-    assert client._store.get_answer("digikey", "209")[0] == result
+    # Kept without requested and matched_by, which each reply adds for the number as asked
+    assert (part["requested"], part["matched_by"]) == ("209", "exact")
+    stored = client._store.get_answer("digikey", "209")[0]
+    assert stored == {**result, "results": [
+        {k: v for k, v in p.items() if k not in ("requested", "matched_by")} for p in result["results"]]}
     assert DIGIKEY_CACHE_TTL == 3 * 86400
 
 

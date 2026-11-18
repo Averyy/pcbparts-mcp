@@ -34,7 +34,7 @@ from .config import (
 )
 from .distributor_store import DistributorStore
 from .lifecycle import MOUSER_NOT_STATED, Reading, mouser_status, utc_text
-from .search.mpn import mpn_key
+from .search.mpn import distributor_match, mpn_key, same_jst_part
 
 logger = logging.getLogger(__name__)
 
@@ -106,19 +106,29 @@ def _part_key(number: str | None) -> str:
 
 def _touches(result: dict[str, Any], number: str) -> bool:
     """Whether a result can be one of Mouser's loose matches for the number: its Mouser PN or MPN is
-    the number or starts with it, or the number ends with its MPN (a Mouser PN such as 595-LM358P).
-    Mouser matches loosely: "LM358P" finds LM358P and LM358PE4."""
+    the number or starts with it, the number ends with its MPN (a Mouser PN such as 595-LM358P), or
+    it's the JST part the number names with or without (LF)/(SN) (_same_jst). Mouser matches
+    loosely: "LM358P" finds LM358P and LM358PE4."""
     asked = _part_key(number)
     if not asked:
         return False
     mouser, mpn = _part_key(result.get("part_number")), _part_key(result.get("mfr_part_number"))
-    return mouser.startswith(asked) or mpn.startswith(asked) or bool(mpn) and asked.endswith(mpn)
+    return (mouser.startswith(asked) or mpn.startswith(asked) or bool(mpn) and asked.endswith(mpn)
+            or _same_jst(result, number))
 
 
-def _identifies(result: dict[str, Any], number: str) -> bool:
-    """Whether the result is the number itself (its MPN or Mouser PN, compared with mpn_key)."""
+def _same_jst(result: dict[str, Any], number: str) -> bool:
+    """Whether the result is the JST part the number names once JST's (LF)/(SN) endings are set
+    aside (B2B-PH-K-S for B2B-PH-K-S(LF)(SN)), as digikey_get_part and matched_by "packing" decide."""
+    return same_jst_part(result.get("mfr_part_number") or "", number, result.get("manufacturer") or "")
+
+
+def _identifies(result: dict[str, Any], number: str, finish: bool = True) -> bool:
+    """Whether the result is the number itself: its MPN or Mouser PN, compared with mpn_key, or
+    (finish=True) the JST part it names apart from the (LF)/(SN) endings."""
     key = mpn_key(number)
-    return bool(key) and key in (mpn_key(result.get("mfr_part_number") or ""), mpn_key(result.get("part_number") or ""))
+    listed = (mpn_key(result.get("mfr_part_number") or ""), mpn_key(result.get("part_number") or ""))
+    return (bool(key) and key in listed) or (finish and _same_jst(result, number))
 
 
 def _not_found(numbers: list[str], results: list[dict[str, Any]]) -> list[str]:
@@ -141,13 +151,24 @@ def _attribute(numbers: list[str], results: list[dict[str, Any]]
     touched = [[n for n in numbers if _touches(r, n)] for r in results]
     owners: list[str | None] = []
     for result, matches in zip(results, touched):
-        exact = [n for n in numbers if _identifies(result, n)]
+        # The number spelled as listed wins over one that differs by JST's (LF)/(SN) endings
+        exact = [n for n in numbers if _identifies(result, n, finish=False)] or [n for n in numbers if _identifies(result, n)]
         owners.append(exact[0] if len(exact) == 1 else matches[0] if not exact and len(matches) == 1 else None)
     per = {n: [r for r, matches in zip(results, touched) if n in matches] for n in numbers}
     extras = [r for r, matches in zip(results, touched) if not matches]
     clean = set() if extras else {
         n for n in numbers if all(owner == n for owner, matches in zip(owners, touched) if n in matches)}
     return per, owners, extras, clean
+
+
+def _answering(result: dict[str, Any], number: str | None) -> dict[str, Any]:
+    """The result with requested (the number it answers, None when it can't be put down to one of
+    the numbers asked) and matched_by (search/mpn.py's distributor_match; None with no number).
+    Added to each reply, not kept: kept answers serve every spelling and batch."""
+    matched = None if number is None else distributor_match(
+        number, result.get("mfr_part_number") or "", result.get("manufacturer") or "",
+        [result.get("part_number") or ""], "mouser_pn")
+    return {**result, "requested": number, "matched_by": matched}
 
 
 def _cache_key(number: str) -> str:
@@ -386,6 +407,10 @@ class MouserClient:
             if identity not in seen:
                 seen.add(identity)
                 results.append(result)
+        # Which number each result answers, as this caller spelled it, and how: the owner the
+        # answers were kept by (_attribute), worked out again over this call's numbers
+        owners = _attribute(numbers, results)[1]
+        results = [_answering(result, owner) for result, owner in zip(results, owners)]
         reply: dict[str, Any] = {"results": results, "total": len(results)}
         # Mouser leaves out numbers it doesn't find, so in a batch of 10 a missing part looked checked
         if missing := [n for n in numbers if not answers[_cache_key(n)].matched]:
@@ -500,10 +525,15 @@ class MouserClient:
                 "answers": {key: answer.as_json() for key, answer in answers.items()}, "extras": extras,
             }, bool(results), fetched_at)
 
-        readings = [Reading(r["mfr_part_number"], r.get("manufacturer") or "", "mouser", r["lifecycle_status"],
-                            r.get("lifecycle") or MOUSER_NOT_STATED, fetched_at)
+        readings = [(Reading(r["mfr_part_number"], r.get("manufacturer") or "", "mouser", r["lifecycle_status"],
+                             r.get("lifecycle") or MOUSER_NOT_STATED, fetched_at), r, owner)
                     for r, owner in zip(results, owners) if owner is not None and r.get("mfr_part_number")]
-        self._store.put_readings(readings)
+        self._store.put_readings([reading for reading, _, _ in readings])
+        # A JST part listed without the (LF)/(SN) endings asked is filed under the number asked too,
+        # so part_lifecycle finds it by that spelling (as DigiKey's answers are)
+        for reading, result, owner in readings:
+            if mpn_key(owner) != mpn_key(reading.mpn) and _same_jst(result, owner):
+                self._store.put_readings([reading], also_as=owner)
         for number in clean:
             if not any(_identifies(r, number) for r in per[number]):
                 self._store.put_not_listed(number, "mouser", fetched_at)

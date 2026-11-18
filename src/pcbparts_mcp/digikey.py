@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable
@@ -25,6 +24,7 @@ from .config import (
 )
 from .distributor_store import DistributorStore
 from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
+from .search.mpn import distributor_match, same_jst_part
 
 logger = logging.getLogger(__name__)
 
@@ -69,20 +69,23 @@ def _min_qty(variation: dict[str, Any]) -> int:
     return variation.get("MinimumOrderQuantity") or 1
 
 
-# JST ends its part numbers in (LF) (lead-free) and (SN) (tin plating). JLCPCB keeps them
-# (B2B-PH-K-S(LF)(SN)); DigiKey sometimes drops them (B2B-PH-K-S, 455-1704-ND). Other bracketed
-# endings stay significant: (UMW), (TOKMAS) and (XBLW) name another maker's copy, and Hirose's
-# (51) or (50) is a different variant.
-_JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
-
-
 def _same_mpn(listed: str, asked: str, maker: str) -> bool:
     """Whether DigiKey's ManufacturerProductNumber is the number asked for: equal ignoring case
-    and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside."""
-    listed, asked = listed.strip().casefold(), asked.strip().casefold()
-    if listed == asked:
-        return True
-    return "jst" in maker.casefold().split() and _JST_FINISH.sub("", listed) == _JST_FINISH.sub("", asked)
+    and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside
+    (DigiKey sometimes drops them: B2B-PH-K-S(LF)(SN) is listed as B2B-PH-K-S)."""
+    return listed.strip().casefold() == asked.strip().casefold() or same_jst_part(listed, asked, maker)
+
+
+def _answering(reply: dict[str, Any], number: str) -> dict[str, Any]:
+    """A found reply whose results say which number they answer (requested: the number asked) and
+    how they match it (matched_by: search/mpn.py's distributor_match; part_number is DigiKey's
+    number for the packaging described, the one asked when it's one of the product's). Added to
+    each reply, not kept: the 3-day answer is shared by every spelling of the number."""
+    return {**reply, "results": [
+        {**result, "requested": number,
+         "matched_by": distributor_match(number, result.get("mfr_part_number") or "", result.get("manufacturer") or "",
+                                         [result.get("part_number") or ""], "digikey_pn")}
+        for result in reply.get("results") or []]}
 
 
 def _pick_variation(variations: list[dict[str, Any]], product_number: str) -> dict[str, Any]:
@@ -409,7 +412,7 @@ class DigiKeyClient:
             answer, fetched_at = stored
             if answer.get("not_found"):
                 return _not_found_reply(product_number), "not_found", fetched_at
-            return answer, "found", fetched_at
+            return _answering(answer, product_number), "found", fetched_at
 
         # Cache hits cost no quota. Each attempt gets the app's token and its pacer slot, then checks
         # every limit and pause, counts the request and sends it with that token, with no await from
@@ -486,7 +489,7 @@ class DigiKeyClient:
                 readings.append(Reading(part["mfr_part_number"], part["manufacturer"], "digikey", status, raw,
                                         fetched_at, last_buy_date=part.get("last_buy_date")))
         self._store.put_readings(readings, also_as=product_number)
-        return result, "found", fetched_at
+        return _answering(result, product_number), "found", fetched_at
 
     async def close(self) -> None:
         """Close the HTTP client (and the store, if this client made its own)."""

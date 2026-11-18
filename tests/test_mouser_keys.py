@@ -425,7 +425,10 @@ class TestPooledAndStored:
         gate.opened.set()
         a, b, c = await asyncio.gather(*tasks)
         assert fake.sent == ["LM358P|NE555P"] and fake.used == [2]
-        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"] and a == c
+        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"]
+        # The same answer, with requested as each caller spelled it
+        assert [r["requested"] for r in c["results"]] == ["lm358p"]
+        assert a == {**c, "results": [{**r, "requested": "LM358P"} for r in c["results"]]}
         assert [r["mfr_part_number"] for r in b["results"]] == ["NE555P"]
         # Kept per part: asking again costs nothing on any key
         assert (await m.get_part("NE555P|LM358P"))["total"] == 2

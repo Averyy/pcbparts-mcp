@@ -2594,12 +2594,15 @@ async def mouser_get_part(part_number: str) -> dict:
     or unknown (null is active). digikey_get_part's lifecycle is DigiKey's product status (it listed
     AP2553W6-7 as NRND); the maker's site decides.
     not_found lists the given numbers no result matches (Mouser skips them without saying).
+    Each result's requested is the number it answers (null when a batch result can't be put down
+    to one), matched_by how: exact, separators, packing or mouser_pn are that part; prefix (a
+    longer number) and other need checking.
     A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
 
     Args:
         part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
             3-40 chars each. Loose match, max 50 results per call: use full PNs when batching;
-            match results by mfr_part_number.
+            match results by requested and matched_by.
     """
     if not _mouser_client:
         return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
@@ -2636,7 +2639,9 @@ async def digikey_get_part(product_number: str) -> dict:
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
     lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date is DigiKey's
     last order date where given. Answers are kept up to 3 days (not found: a day; observed_at).
-    A number several makers use returns each maker's listing, most stock first.
+    A number several makers use returns each maker's listing, most stock first. Each result's
+    requested is the number asked, matched_by how it matched: exact, separators, packing (JST's
+    (LF)/(SN) endings set aside) or digikey_pn are that part; prefix and other need checking.
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a

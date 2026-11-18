@@ -266,7 +266,8 @@ class TestPool:
         gate.opened.set()
         a, b, c = await asyncio.gather(*tasks)
         assert fake.sent == ["LM358P|NE555P"] and mq.status()["used_today"] == 1
-        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"] and a == c
+        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"]
+        assert a == {**c, "results": [{**r, "requested": "LM358P"} for r in c["results"]]}  # c asked "lm358p"
         assert [r["mfr_part_number"] for r in b["results"]] == ["NE555P"]
         assert store.get_answer("mouser", "NE555P") is not None  # clean: kept per part
         assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["sent"] == 1
