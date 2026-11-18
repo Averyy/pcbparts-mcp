@@ -547,6 +547,10 @@ class TestInputs:
                 assert codes == ["C7950", "C99999999"]  # once each
                 return {"C7950": {"model": "LM358P", "manufacturer": "Texas Instruments"}}
 
+            def get_sold_out_rows(self, codes):
+                assert codes == ["C99999999"]  # only the codes the snapshot doesn't list
+                return dict.fromkeys(codes)
+
         monkeypatch.setattr(server, "get_db", lambda: Catalog())
         setup(mouser=FakeMouser(mouser_part("LM358P")))
         reply = await lifecycle(["c7950", {"lcsc": "C7950"}, "C99999999"])
@@ -554,6 +558,24 @@ class TestInputs:
         assert (first["input"], first["lcsc"], first["mpn"], first["status"]) == ("c7950", "C7950", "LM358P", "active")
         assert second["mpn"] == "LM358P"
         assert missing["error"] == "Part C99999999 not found" and missing["status"] == "unknown"
+
+    async def test_gone_lcsc_codes_use_the_kept_part(self, setup, monkeypatch):
+        """A code the snapshot no longer lists, kept after it left (stock under 10 or delisted:
+        exactly when lifecycle matters), resolves to its MPN and maker instead of "not found"."""
+        class Catalog:
+            def get_by_lcsc_batch(self, codes):
+                return dict.fromkeys(codes)
+
+            def get_sold_out_rows(self, codes):
+                return {"C2660": {"model": "IRFB4710PBF", "manufacturer": "Infineon Technologies", "gone": True},
+                        "C99999999": None}
+
+        monkeypatch.setattr(server, "get_db", lambda: Catalog())
+        mouser = FakeMouser(mouser_part("IRFB4710PBF", "Infineon Technologies", lifecycle="Obsolete"))
+        setup(mouser=mouser)
+        gone, missing = (await lifecycle(["C2660", "C99999999"]))["results"]
+        assert (gone["mpn"], gone["manufacturer"], gone["status"]) == ("IRFB4710PBF", "Infineon Technologies", "obsolete")
+        assert missing["error"] == "Part C99999999 not found" and mouser.sent == ["IRFB4710PBF"]
 
     async def test_unusable_inputs_get_their_own_error(self, setup):
         fake = FakeMouser(mouser_part("LM358P"))
@@ -579,6 +601,9 @@ class TestInputs:
         class Empty:
             def get_by_lcsc_batch(self, codes):
                 return {}
+
+            def get_sold_out_rows(self, codes):
+                return dict.fromkeys(codes)
 
         setup(mouser=FakeMouser())
         monkeypatch.setattr(server, "get_db", lambda: Down())

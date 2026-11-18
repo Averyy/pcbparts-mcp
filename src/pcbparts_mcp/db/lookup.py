@@ -25,7 +25,7 @@ def get_by_mpn(
     Additional recoveries compare separator keys and curated vendor packing or
     ordering aliases. Only after the full input misses are annotations and
     alternatives tried. Optional reply metadata leaves list callers unchanged.
-    sold_out=True looks in the parts kept after they sold out instead (sold_out_part rows, most
+    sold_out=True looks in the parts kept after they left the snapshot instead (sold_out_part rows, most
     stock when last listed first), by the same rules except full-text search, which they're outside.
     """
     if match_info is not None:
@@ -118,17 +118,9 @@ def get_by_mpn(
                    LIMIT 10""", [f'{columns}"{escaped}"*'],
             ))
             if results:
-                categories = list(dict.fromkeys(p['subcategory'] or 'Uncategorized' for p in results))
-                note = (f"No exact match for '{candidate}'. These parts' part numbers start with it "
-                        "or their text mentions it, so check the package and manufacturer. "
-                        f"Part types: {', '.join(categories)}.")
-                if copies := [p for p in results if is_maker_suffixed(p)]:
-                    names = ", ".join(f"{p['model']} ({p['manufacturer']})" for p in copies[:3])
-                    note += (f" {names} {'is' if len(copies) == 1 else 'are'} numbered after the "
-                             "original part but made by another manufacturer; check "
-                             f"{'its datasheet' if len(copies) == 1 else 'their datasheets'} "
-                             "before substituting.")
-                return results, {"match": "related", "note": note}
+                return results, {"match": "related", "note": related_note(
+                    results, f"No exact match for '{candidate}'. These parts' part numbers start with it "
+                             "or their text mentions it, so check the package and manufacturer.")}
 
         # 5. Only the named vendor may supply a packing variant. The indexed
         # prefix narrows retrieval; the full rule must preserve device identity.
@@ -260,11 +252,26 @@ def snapshot_row(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> 
     return row_part
 
 
+def related_note(results: list[dict[str, Any]], lead: str) -> str:
+    """The note on full-text ("related") results: lead (what they are), their part types, and the
+    parts among them numbered after the original by another maker."""
+    categories = list(dict.fromkeys(p['subcategory'] or 'Uncategorized' for p in results))
+    note = f"{lead} Part types: {', '.join(categories)}."
+    if copies := [p for p in results if is_maker_suffixed(p)]:
+        names = ", ".join(f"{p['model']} ({p['manufacturer']})" for p in copies[:3])
+        note += (f" {names} {'is' if len(copies) == 1 else 'are'} numbered after the "
+                 "original part but made by another manufacturer; check "
+                 f"{'its datasheet' if len(copies) == 1 else 'their datasheets'} "
+                 "before substituting.")
+    return note
+
+
 def sold_out_part(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> dict[str, Any]:
-    """A part kept after it sold out (the sold_out table) in row_to_dict's shape for what is kept:
-    stock 0 and no specs, plus sold_out, gone_since (the UTC date of the first daily scrape it was
-    missing from) and last_stock (its stock in the last scrape that listed it). price is the
-    1-piece price that scrape had."""
+    """A part kept after it left the snapshot (the sold_out table: a scrape no longer lists it, so
+    its stock fell under 10 or JLCPCB stopped listing it) in row_to_dict's shape for what is kept:
+    stock unknown (None) and no specs, plus gone, gone_since (the UTC date of the first daily
+    scrape it was missing from) and last_stock (its stock in the last scrape that listed it). price
+    is the 1-piece price that scrape had."""
     library_type = {"b": "basic", "p": "preferred", "e": "extended"}.get(row["library_type"], row["library_type"])
     subcategory_info = subcategories.get(row["subcategory_id"], {})
     category, subcategory = subcategory_info.get("category_name"), subcategory_info.get("name")
@@ -273,7 +280,7 @@ def sold_out_part(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) ->
         "model": row["mpn"],
         "manufacturer": row["manufacturer"],
         "package": row["package"],
-        "stock": 0,
+        "stock": None,
         "price": row["price"],
         "library_type": library_type,
         "preferred": library_type == "preferred",
@@ -282,15 +289,15 @@ def sold_out_part(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) ->
         "subcategory_id": row["subcategory_id"],
         "mounting_type": detect_mounting_type(row["package"], category=category, subcategory=subcategory),
         "description": row["description"],
-        "sold_out": True,
+        "gone": True,
         "gone_since": row["gone_since"],
         "last_stock": row["last_stock"],
     }
 
 
-# jlc_get_parts' sold-out rows: snapshot_row's fields (prices after price) and the sold-out ones
+# jlc_get_parts' gone rows: snapshot_row's fields (prices after price) and the gone ones
 _SOLD_OUT_ROW_KEYS = ("lcsc", "model", "manufacturer", "package", "stock", "price", "library_type", "preferred",
-                      "category", "subcategory", "description", "sold_out", "gone_since", "last_stock")
+                      "category", "subcategory", "description", "gone", "gone_since", "last_stock")
 
 
 def get_sold_out_rows(
@@ -299,8 +306,8 @@ def get_sold_out_rows(
     subcategories: dict[int, dict[str, Any]],
 ) -> dict[str, dict[str, Any] | None]:
     """Sold-out parts for LCSC codes (upper-cased, de-duplicated, in order) in one query, as
-    jlc_get_parts lists them (snapshot_row's fields, stock 0, prices the last 1-piece price, plus
-    sold_out, gone_since and last_stock); None for codes not kept. Raises ValueError beyond
+    jlc_get_parts lists them (snapshot_row's fields, stock None, prices the last 1-piece price, plus
+    gone, gone_since and last_stock); None for codes not kept. Raises ValueError beyond
     MAX_BATCH_SIZE codes."""
     codes = list(dict.fromkeys(code.upper() for code in lcsc_codes))
     if len(codes) > MAX_BATCH_SIZE:

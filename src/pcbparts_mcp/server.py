@@ -48,6 +48,7 @@ from .cse import CSEClient
 from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
 from .db import get_db, close_db
+from .db.lookup import related_note
 from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
@@ -415,10 +416,10 @@ def _is_parts_reply(content: dict) -> bool:
 
 
 def _parts_outcome(content: dict) -> str:
-    """jlc_get_parts: ok when any part was found, in stock or sold out; not_found when parts were
-    looked up and none was; bad_request when every input was unusable (each row's own error)."""
+    """jlc_get_parts: ok when any part was found, in the snapshot or gone from it; not_found when
+    parts were looked up and none was; bad_request when every input was unusable (each row's own error)."""
     counts = content["counts"]
-    if counts.get("found") or counts.get("sold_out"):  # a sold-out answer is an answer, from our data
+    if counts.get("found") or counts.get("gone"):  # a gone part's answer is an answer, from our data
         return "ok"
     return "not_found" if counts.get("not_found") else "bad_request"
 
@@ -2080,8 +2081,8 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
     """Recorded low-stock events, newest first: one code gets at most 100; a list gives one reply
     with a per-part summary and the newest 10 events each, notes once. more_events flags more.
     Gone is missing from a scrape, not a confirmed stockout; suspect gaps are labelled.
-    Includes the window, recording limits and current_stock from the catalog snapshot (0 with
-    gone_since for a part that left it).
+    Includes the window, recording limits and current_stock from the catalog snapshot (null, with
+    gone_since, for a part that left it).
 
     Args:
         lcsc: One LCSC C-code (e.g. C8314) or a list of up to 50; ignores case and surrounding
@@ -2111,10 +2112,10 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
         db = get_db()
         stock = db.get_by_lcsc_batch(valid_codes)
         missing = [code for code in valid_codes if not stock.get(code)]
-        sold = db.get_sold_out_rows(missing) if missing else {}
+        gone = db.get_sold_out_rows(missing) if missing else {}
         histories = {part["lcsc"]: part for part in result["parts"]}
         result["parts"] = [
-            {"lcsc": code, **_current_stock(stock.get(code), sold.get(code)), **histories[code]}
+            {"lcsc": code, **_current_stock(stock.get(code), gone.get(code)), **histories[code]}
             if code in histories else {"lcsc": code, **invalid_code}
             for code in codes
         ]
@@ -2137,13 +2138,13 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
     return result
 
 
-def _current_stock(part: dict[str, Any] | None, sold: dict[str, Any] | None) -> dict[str, Any]:
-    """jlc_stock_history's current_stock: the snapshot's stock; 0 with gone_since for a part kept
-    after it sold out; None for a part neither lists."""
+def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> dict[str, Any]:
+    """jlc_stock_history's current_stock: the snapshot's stock, else None, with gone_since for a part
+    kept after it left the snapshot (its stock unknown: under 10, or no longer listed)."""
     if part:
         return {"current_stock": part["stock"]}
-    if sold:
-        return {"current_stock": 0, "gone_since": sold["gone_since"]}
+    if gone:
+        return {"current_stock": None, "gone_since": gone["gone_since"]}
     return {"current_stock": None}
 
 
@@ -2186,13 +2187,15 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     Many parts at once (a BOM): jlc_get_parts, from the snapshot.
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
-    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot are kept until it
-    lists them again: when only those match, they're the results (stock 0, sold_out, gone_since: the
-    date it left, last_stock) with hint and that next_call; with parts in stock, sold_out_matches counts them.
+    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (under 10 or no
+    longer listed) are kept until it lists them again: when one matches and no in-stock part does
+    (full-text related results are listed after it), it answers with gone, gone_since (the date it
+    left), last_stock and stock null (unknown), plus hint and that next_call; with parts in stock that
+    match, gone_matches counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
-        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10), then sold-out ones. Also
+        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10), then gone ones. Also
             finds other dash/space spellings, the same manufacturer's other packing codes, and BOM
             entries with notes or alternatives; never a different grade. Finds the JLCPCB
             equivalent of a part from another distributor or a reference design.
@@ -2207,17 +2210,17 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         db = get_db()
         match_info: dict[str, Any] = {}
         results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info, with_prices=True)
-        sold_info: dict[str, Any] = {}
-        sold = await run_db(COMPONENT_POOL, db.get_sold_out_by_mpn, mpn, match_info=sold_info, with_prices=True)
-        if not results and sold:
-            # Every match sold out: answer from what the catalog had, pointing to the live check
+        gone_info: dict[str, Any] = {}
+        gone = await run_db(COMPONENT_POOL, db.get_sold_out_by_mpn, mpn, match_info=gone_info, with_prices=True)
+        kind, listed, info, matched = _mpn_answer(mpn, results, match_info, gone, gone_info)
+        if kind == "gone":
+            # The part asked for left the snapshot: answer from what the catalog had, pointing to the live check
             reply = {"mpn": mpn, "data_as_of": db.scraped_at(), "prices_as_of": db.prices_as_of(),
-                     "price_tiers_as_of": db.price_tiers_as_of(), "total": len(sold),
-                     **_match_flags(sold, sold_info), "results": sold, **sold_info}
-            if note := _subcategory_note(sold):
-                reply["note"] = note
-            reply["hint"] = (_SOLD_OUT_HINT + f" jlc_stock_check(query={json.dumps(mpn)}, min_stock=0) "
-                             "checks live stock, under 10 included.")
+                     "price_tiers_as_of": db.price_tiers_as_of(), "total": len(listed),
+                     **_match_flags(matched, info), "results": listed, **info}
+            if note := _subcategory_note(listed):
+                reply["note"] = " ".join(filter(None, [reply.get("note"), note]))
+            reply["hint"] = _GONE_HINT
             reply["next_call"] = {"tool": "jlc_stock_check", "arguments": {"query": mpn, "min_stock": 0, "limit": 10}}
             return reply
         if not results:
@@ -2249,8 +2252,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
         }
         if note := _subcategory_note(results):
             reply["note"] = note
-        if sold:  # others numbered so sold out: counted only, the reply is about the parts in stock
-            reply["sold_out_matches"] = len(sold)
+        if gone:  # gone parts numbered so too: counted only, the reply is about the parts in stock
+            reply["gone_matches"] = len(gone)
         return reply
 
     # LCSC lookup via live API (existing behavior)
@@ -2269,10 +2272,29 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     return result
 
 
-# What a sold-out row is, for jlc_get_part(mpn) and jlc_get_parts replies that have one
-_SOLD_OUT_HINT = ("sold_out parts dropped out of the daily snapshot (stock >= 10) on gone_since and are listed "
-                  "with stock 0 and the details they had: last_stock and price are from the last scrape that "
-                  "listed them.")
+# What a gone row is, once per jlc_get_part(mpn) or jlc_get_parts reply that has one
+_GONE_HINT = ("gone parts left the daily snapshot (stock >= 10) on gone_since: their stock fell under 10 or JLCPCB "
+              "stopped listing them, so stock is null (unknown); last_stock and price are from the last scrape "
+              "that listed them. jlc_get_part(lcsc=...) checks one live.")
+
+
+def _mpn_answer(mpn: str, in_stock: list[dict[str, Any]], in_info: dict[str, Any], gone: list[dict[str, Any]],
+                gone_info: dict[str, Any]) -> tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    """How an MPN lookup answers, as (kind, parts listed, match info, parts that match it):
+    "found": in-stock parts match (their match info; gone ones are only counted). "gone": parts
+    numbered so left the snapshot and none in stock matches but by full text: the gone ones first,
+    the in-stock related ones after them, which the note describes. "none": neither."""
+    if in_stock and not (gone and in_info.get("match") == "related"):
+        return "found", in_stock, in_info, in_stock
+    if not gone:
+        return "none", [], {}, []
+    info = dict(gone_info)
+    if in_stock:
+        lead = (f"'{mpn.strip()}' itself left the snapshot (the gone parts, listed first); the parts after it "
+                "are in stock, and their part numbers start with it or their text mentions it, so check the "
+                "package and manufacturer.")
+        info["note"] = " ".join(filter(None, [info.get("note"), related_note(in_stock, lead)]))
+    return "gone", [*gone, *in_stock], info, gone
 
 
 def _match_flags(results: list[dict[str, Any]], match_info: dict[str, Any]) -> dict[str, bool]:
@@ -2289,31 +2311,32 @@ _GET_PARTS_NOT_FOUND_HINT = (
     "jlc_get_part(lcsc=...) looks a code up live, and jlc_stock_check(query=...) finds low or zero stock.")
 
 
-def _get_parts_mpn_row(mpn: str, matches: list[dict[str, Any]], found: list[dict[str, Any]],
-                       match_info: dict[str, Any], rows: dict[str, dict[str, Any] | None],
-                       sold: list[dict[str, Any]], sold_info: dict[str, Any]) -> dict[str, Any]:
-    """An MPN's jlc_get_parts row, shaped like jlc_get_part(mpn)'s reply: matches are found narrowed
-    to the maker given (if any); the first GET_PARTS_MAX_MATCHES are listed and total counts all.
-    sold (with sold_info) are its sold-out matches for that maker: they answer when no part in stock
-    matches, and are counted in sold_out_matches when one does."""
-    listed, info = (matches, match_info) if matches else (sold, sold_info)
+def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]],
+                       found: list[dict[str, Any]], found_info: dict[str, Any], gone: list[dict[str, Any]],
+                       rows: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """An MPN's jlc_get_parts row, shaped like jlc_get_part(mpn)'s reply. answer is _mpn_answer's for
+    the parts narrowed to the maker given (if any): the first GET_PARTS_MAX_MATCHES listed are shown
+    and total counts all. found are the in-stock parts before that narrowing (found_info their match
+    info), gone the gone matches after it (counted in gone_matches when in-stock parts answer)."""
+    kind, listed, info, matched = answer
     row: dict[str, Any] = {"mpn": mpn, "total": len(listed)}
+    # Other makers list the number in stock (not only full-text related parts)
     others = list(dict.fromkeys(p["manufacturer"] for p in found))[:GET_PARTS_MAX_MATCHES]
-    if not listed:
+    if kind == "none":
         row.update(results=[], not_found=True)
         if found:  # listed, but only under other makers
             row["other_manufacturers"] = others
         return row
     info = dict(info)
     if "matched_mpn" in info and info.get("match") != "alternative":
-        info["matched_mpn"] = listed[0]["model"]  # get_by_mpn names its first match, maybe another maker's
-    row.update(_match_flags(listed, info))
-    row["results"] = [dict(rows[p["lcsc"]]) for p in listed[:GET_PARTS_MAX_MATCHES] if rows.get(p["lcsc"])]
+        info["matched_mpn"] = matched[0]["model"]  # get_by_mpn names its first match, maybe another maker's
+    row.update(_match_flags(matched, info))
+    row["results"] = [dict(rows[p["lcsc"]]) for p in listed[:GET_PARTS_MAX_MATCHES] if p["lcsc"] in rows]
     row.update(info)
-    if matches and sold:
-        row["sold_out_matches"] = len(sold)
-    elif not matches and found:  # sold out, while other makers' parts numbered so are in stock
-        row["other_manufacturers"] = others
+    if kind == "found" and gone:
+        row["gone_matches"] = len(gone)
+    elif kind == "gone" and found and len(listed) == len(matched) and found_info.get("match") != "related":
+        row["other_manufacturers"] = others  # gone for the maker given; others list it in stock
     return row
 
 
@@ -2332,16 +2355,16 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
     (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
     live request. For one part's live stock and prices and its datasheet, use jlc_get_part.
     Reply: data_as_of (stock), prices_as_of (weekly 1-piece price), price_tiers_as_of (the daily
-    scrape's quantity tiers in prices; null when this server has none), counts (found, sold_out,
-    not_found, error), hint once when any part is sold out or not found, and results in input order,
+    scrape's quantity tiers in prices; null when this server has none), counts (found, gone,
+    not_found, error), hint once when any part is gone or not found, and results in input order,
     each with input (as given). An LCSC code's row has jlc_get_part's fields: lcsc, model,
     manufacturer, package, stock, price, prices (quantity tiers; the 1-piece price alone when there
     are none), library_type, preferred, pcba_type, category, subcategory, description; a part that
-    left the snapshot has stock 0, sold_out, gone_since (the date it left) and last_stock instead of
-    pcba_type; or not_found. An MPN's row is like jlc_get_part(mpn): mpn, total, up to 10 results
-    (most stock first, same fields; sold-out ones only when none is in stock, else counted in
-    sold_out_matches), exact, ambiguous and match info; or not_found, with other_manufacturers when
-    only other makers list it in stock. An unusable input has error.
+    left the snapshot (under 10 or no longer listed) has stock null, gone, gone_since (the date it
+    left) and last_stock instead of pcba_type; or not_found. An MPN's row is like jlc_get_part(mpn):
+    mpn, total, up to 10 results (most stock first, same fields; gone ones as jlc_get_part(mpn)
+    lists them), exact, ambiguous and match info, gone_matches; or not_found, with
+    other_manufacturers when only other makers list it in stock. An unusable input has error.
 
     Args:
         parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
@@ -2367,45 +2390,42 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
     db = get_db()
     try:
         found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # each MPN looked up once
-        sold_found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # and its sold-out matches
-        matches: list[list[dict[str, Any]]] = []  # per entry: its MPN's matches for the maker given
-        sold_matches: list[list[dict[str, Any]]] = []  # per entry: its MPN's sold-out matches for that maker
+        gone_found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # and its gone matches
+        answers: list[tuple[Any, ...] | None] = []  # per MPN entry: _mpn_answer for the maker given, its gone matches
         codes: list[str] = []
-        sold_codes: list[str] = []
+        gone_codes: list[str] = []
         for entry in entries:
-            mine: list[dict[str, Any]] = []
-            sold_mine: list[dict[str, Any]] = []
+            answer = None
             if entry.error is None and entry.lcsc:
                 codes.append(entry.lcsc)
             elif entry.error is None and entry.mpn:
                 if entry.mpn not in found:
                     match_info: dict[str, Any] = {}
                     found[entry.mpn] = (db.get_by_mpn(entry.mpn, match_info=match_info), match_info)
-                    sold_info: dict[str, Any] = {}
-                    sold_found[entry.mpn] = (db.get_sold_out_by_mpn(entry.mpn, match_info=sold_info), sold_info)
-                mine, sold_mine = found[entry.mpn][0], sold_found[entry.mpn][0]
+                    gone_info: dict[str, Any] = {}
+                    gone_found[entry.mpn] = (db.get_sold_out_by_mpn(entry.mpn, match_info=gone_info), gone_info)
+                (mine, mine_info), (gone, gone_info) = found[entry.mpn], gone_found[entry.mpn]
                 if entry.maker:
                     mine = [p for p in mine if makers_match(p.get("manufacturer"), entry.maker)]
-                    sold_mine = [p for p in sold_mine if makers_match(p.get("manufacturer"), entry.maker)]
-                codes.extend(p["lcsc"] for p in mine[:GET_PARTS_MAX_MATCHES])
-                if not mine:
-                    sold_codes.extend(p["lcsc"] for p in sold_mine[:GET_PARTS_MAX_MATCHES])
-            matches.append(mine)
-            sold_matches.append(sold_mine)
+                    gone = [p for p in gone if makers_match(p.get("manufacturer"), entry.maker)]
+                answer = (_mpn_answer(entry.mpn, mine, mine_info, gone, gone_info), gone)
+                for part in answer[0][1][:GET_PARTS_MAX_MATCHES]:
+                    (gone_codes if part.get("gone") else codes).append(part["lcsc"])
+            answers.append(answer)
         rows = db.get_snapshot_rows(codes)
-        # LCSC codes the snapshot doesn't list may be sold out; one more read only when there are any
-        sold_codes.extend(code for code, part in rows.items() if part is None)
-        sold_rows = db.get_sold_out_rows(sold_codes) if sold_codes else {}
+        # LCSC codes the snapshot doesn't list may be gone; one more read only when there are any
+        gone_codes.extend(code for code, part in rows.items() if part is None)
+        gone_rows = db.get_sold_out_rows(gone_codes) if gone_codes else {}
         data_as_of, prices_as_of, tiers_as_of = db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
     except (OSError, sqlite3.Error):
         logger.exception("jlc_get_parts: catalog lookup failed")
         return {"error": "Database not available"}
 
-    # found: in the snapshot (stock >= 10); sold_out: answered from the parts kept after they sold out
-    counts = {"found": 0, "sold_out": 0, "not_found": 0, "error": 0}
-    listed = {code: part for code, part in [*sold_rows.items(), *rows.items()] if part}  # never both
+    # found: in the snapshot (stock >= 10); gone: answered from the parts kept after they left it
+    counts = {"found": 0, "gone": 0, "not_found": 0, "error": 0}
+    listed = {code: part for code, part in [*gone_rows.items(), *rows.items()] if part}  # never both
     results = []
-    for entry, mine, sold_mine in zip(entries, matches, sold_matches):
+    for entry, answer in zip(entries, answers):
         row: dict[str, Any] = {"input": entry.input}
         if entry.error is not None:
             row.update(entry.error)
@@ -2413,16 +2433,16 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
         elif entry.lcsc:
             part = listed.get(entry.lcsc)
             row.update(part or {"lcsc": entry.lcsc, "not_found": True})
-            counts["not_found" if not part else "sold_out" if part.get("sold_out") else "found"] += 1
+            counts["not_found" if not part else "gone" if part.get("gone") else "found"] += 1
         else:
-            row.update(_get_parts_mpn_row(entry.mpn, mine, *found[entry.mpn], listed, sold_mine,
-                                          sold_found[entry.mpn][1]))
-            counts["found" if mine else "sold_out" if sold_mine else "not_found"] += 1
+            (kind, *_), gone = answer
+            row.update(_get_parts_mpn_row(entry.mpn, answer[0], *found[entry.mpn], gone, listed))
+            counts["not_found" if kind == "none" else kind] += 1
         results.append(row)
     reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of,
                              "price_tiers_as_of": tiers_as_of, "total": len(results),
                              "counts": counts, "results": results}
-    hints = [_SOLD_OUT_HINT + " jlc_get_part(lcsc=...) checks a part's live stock."] if counts["sold_out"] else []
+    hints = [_GONE_HINT] if counts["gone"] else []
     if counts["not_found"]:
         hints.append(_GET_PARTS_NOT_FOUND_HINT)
     if hints:
@@ -2866,6 +2886,17 @@ def _lifecycle_entry(item: Any) -> Entry:
     return Entry(item, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
 
 
+def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
+    """part_lifecycle's MPN and maker for LCSC codes: the snapshot's part, or for a code it no longer
+    lists, the part kept after it left (gone); None for a code neither has."""
+    db = get_db()
+    parts = db.get_by_lcsc_batch(codes)
+    if missing := [code for code in codes if not parts.get(code)]:
+        gone = db.get_sold_out_rows(missing)
+        parts.update((code, gone[code]) for code in missing if gone.get(code))
+    return parts
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Part Lifecycle (BOM)",
@@ -2891,7 +2922,7 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
 
     Args:
         parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
-            catalog snapshot) or {"mpn", "manufacturer"} (the maker picks among parts sharing a
+            catalog snapshot, parts that left it included) or {"mpn", "manufacturer"} (the maker picks among parts sharing a
             number; "lcsc" also works). A list or a JSON array string.
     """
     if not _mouser_client and not _digikey_client:
@@ -2913,9 +2944,9 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
 
     entries = [_lifecycle_entry(item) for item in items]
     codes = list(dict.fromkeys(e.lcsc for e in entries if e.error is None and e.lcsc and not (e.mpn and e.maker)))
-    if codes:  # an LCSC code's MPN and maker from the catalog snapshot
+    if codes:  # an LCSC code's MPN and maker from the catalog snapshot, or from a part kept after it left it
         try:
-            catalog = await run_db(COMPONENT_POOL, get_db().get_by_lcsc_batch, codes)
+            catalog = await run_db(COMPONENT_POOL, _catalog_identities, codes)
         except Exception:
             logger.exception("part_lifecycle: catalog lookup failed")
             catalog = None
@@ -2928,8 +2959,9 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
             elif not part:
                 if not entry.mpn:
                     entry.error = {"error": f"Part {entry.lcsc} not found",
-                                   "hint": "The catalog snapshot lists in-stock parts (stock >= 10) only: give its MPN "
-                                           "and manufacturer instead."}
+                                   "hint": "The catalog snapshot lists in-stock parts (stock >= 10) and parts that "
+                                           "have left it since 2026-11-12, not this one: give its MPN and "
+                                           "manufacturer instead."}
             else:
                 entry.mpn = entry.mpn or part.get("model") or None
                 entry.maker = entry.maker or part.get("manufacturer") or None

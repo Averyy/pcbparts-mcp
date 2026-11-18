@@ -1,5 +1,6 @@
-"""0.10.0: parts that drop out of the daily catalog are kept at stock 0 with gone_since, until a scrape
-lists them again, so sold-out BOM lines answer from the database instead of a live jlc_stock_check.
+"""0.10.0: parts that drop out of the daily catalog (stock under 10, or no longer listed) are kept, with
+gone_since and their stock unknown, until a scrape lists them again, so their BOM lines answer from the
+database instead of a live jlc_stock_check.
 The scrape's output step writes them to committed files (data/catalog/sold_out/, no new requests);
 the database build loads them into a table apart from components, so search never sees them.
 No network: fixture catalogs, a stubbed scrape and small built databases."""
@@ -236,6 +237,7 @@ class TestScrapeOutputs:
 
 SUBCATEGORIES = {
     "11": {"name": "Operational Amplifier", "category_id": 3, "category_name": "Amplifiers/Comparators"},
+    "12": {"name": "MOSFETs", "category_id": 1, "category_name": "Transistors/Thyristors"},
     "13": {"name": "Multilayer Ceramic Capacitors MLCC - SMD/SMT", "category_id": 2, "category_name": "Capacitors"},
 }
 
@@ -250,6 +252,8 @@ CATALOG = [
     catalog_part("C5252902", "LM358", "MSKSEMI", "SOP-8", 338940, price=0.039, description="op amp"),
     catalog_part("C1525", "CL05B104KO5NNNC", "Samsung Electro-Mechanics", "0402", 37_286_642, "b", sub=13,
                  price=0.0029, description="100nF 16V X7R 0402"),
+    # Another maker's copy, numbered after Infineon's IRFB4710PBF (gone below): full-text "related" only
+    catalog_part("C55112117", "IRFB4710PBF-JSM", "JSMSEMI", "TO-220-3", 92, sub=12, price=0.9651),
 ]
 SOLD_OUT = {
     "C2040": sold("C2040", "2026-11-16", "RP2040", "Raspberry Pi", "LQFN-56(7x7)", 15, 0.7, sub=11,
@@ -259,12 +263,14 @@ SOLD_OUT = {
     "C9002": sold("C9002", "2026-10-30", "TPS7A0233PDBVR", "Texas Instruments", "SOT-23-5", 12, 0.3, sub=11),
     "C9003": sold("C9003", "2026-11-15", "HDR-2X5", "Maker", "插件,P=2.54mm", 30, None, sub=11),
     "C1525": sold("C1525", "2026-11-01", "CL05B104KO5NNNC", "Samsung Electro-Mechanics", "0402", 10, 0.003, sub=13),
+    "C2660": sold("C2660", "2026-11-13", "IRFB4710PBF", "Infineon Technologies", "TO-220AB", 941, 2.8428, sub=12),
 }
 
 
 def _data_dir(root, sold_out=SOLD_OUT):
     write_catalog_category(root, "amplifiers", CATALOG[:2])
-    write_catalog_category(root, "capacitors", CATALOG[2:])
+    write_catalog_category(root, "capacitors", CATALOG[2:3])
+    write_catalog_category(root, "transistors", CATALOG[3:])
     (root / "subcategories.json").write_text(json.dumps(SUBCATEGORIES), encoding="utf-8")
     (root / "manifest.json").write_text(json.dumps(
         {"scraped_at": "2026-11-17T22:00:00+00:00", "prices_updated_at": "2026-11-12T20:00:00+00:00",
@@ -278,15 +284,15 @@ class TestDatabaseBuild:
     def test_loaded_apart_from_the_catalog(self, tmp_path):
         data = _data_dir(tmp_path)
         stats = build_database(data, data / "c.db", verbose=False)
-        assert (stats["total_parts"], stats["sold_out_parts"]) == (3, 4)  # C1525 is in the catalog: not sold out
+        assert (stats["total_parts"], stats["sold_out_parts"]) == (4, 5)  # C1525 is in the catalog: not gone
         with closing(sqlite3.connect(data / "c.db")) as conn:
             rows = {row[0]: row for row in conn.execute("SELECT * FROM sold_out")}
             assert rows["C2040"] == ("C2040", "RP2040", "Raspberry Pi", "LQFN-56(7x7)", "e", 11, 0.7,
                                      "Dual-core RP2040 microcontroller", 15, "2026-11-16")
             assert rows["C9003"][3] == english_package("插件,P=2.54mm") == "Plugin,P=2.54mm"
-            assert conn.execute("SELECT COUNT(*) FROM components").fetchone()[0] == 3
+            assert conn.execute("SELECT COUNT(*) FROM components").fetchone()[0] == 4
             assert conn.execute("SELECT COUNT(*) FROM components_fts WHERE components_fts MATCH 'RP2040'").fetchone()[0] == 0
-            assert conn.execute("SELECT value FROM metadata WHERE key = 'sold_out_parts'").fetchone() == ("4",)
+            assert conn.execute("SELECT value FROM metadata WHERE key = 'sold_out_parts'").fetchone() == ("5",)
 
     def test_without_the_files(self, tmp_path):
         data = _data_dir(tmp_path, sold_out=None)
@@ -336,9 +342,9 @@ def outcome(reply):
 
 
 SOLD_ROW = {"lcsc": "C2040", "model": "RP2040", "manufacturer": "Raspberry Pi", "package": "LQFN-56(7x7)",
-            "stock": 0, "price": 0.7, "prices": [{"qty": "1+", "price": 0.7}], "library_type": "extended",
+            "stock": None, "price": 0.7, "prices": [{"qty": "1+", "price": 0.7}], "library_type": "extended",
             "preferred": False, "category": "Amplifiers/Comparators", "subcategory": "Operational Amplifier",
-            "description": "Dual-core RP2040 microcontroller", "sold_out": True, "gone_since": "2026-11-16",
+            "description": "Dual-core RP2040 microcontroller", "gone": True, "gone_since": "2026-11-16",
             "last_stock": 15}
 
 
@@ -346,24 +352,25 @@ class TestGetParts:
     async def test_code_rows(self, use_db):
         use_db("kept")
         reply = await server.jlc_get_parts(["c2040", "C7950", "C99999999", "C9003"])
-        sold_row, listed, missing, unpriced = reply["results"]
-        assert sold_row == {"input": "c2040", **SOLD_ROW}
-        assert "sold_out" not in listed and listed["stock"] == 495224
+        gone_row, listed, missing, unpriced = reply["results"]
+        assert gone_row == {"input": "c2040", **SOLD_ROW}  # stock null: under 10, or no longer listed
+        assert "gone" not in listed and listed["stock"] == 495224
         assert missing == {"input": "C99999999", "lcsc": "C99999999", "not_found": True}
         assert unpriced["price"] is None and "prices" not in unpriced and unpriced["package"] == "Plugin,P=2.54mm"
-        assert reply["counts"] == {"found": 1, "sold_out": 2, "not_found": 1, "error": 0}
+        assert reply["counts"] == {"found": 1, "gone": 2, "not_found": 1, "error": 0}
         assert sum(reply["counts"].values()) == reply["total"] == 4
-        assert reply["hint"].startswith("sold_out parts dropped out of the daily snapshot") and "not_found" in reply["hint"]
+        assert reply["hint"].startswith("gone parts left the daily snapshot") and "not_found" in reply["hint"]
+        assert reply["hint"].count("gone parts") == 1 and "jlc_get_part(lcsc=...)" in reply["hint"]  # once a reply
         assert outcome(reply) == "ok"
-        only_sold = await server.jlc_get_parts(["C2040"])
-        assert outcome(only_sold) == "ok" and "not_found parts" not in only_sold["hint"]
+        only_gone = await server.jlc_get_parts(["C2040"])
+        assert outcome(only_gone) == "ok" and "not_found parts" not in only_gone["hint"]
 
     async def test_mpn_rows(self, use_db):
         use_db("kept")
         in_stock, ti, spelled, nothing = (await server.jlc_get_parts([
             "LM358", {"mpn": "LM358", "manufacturer": "Texas Instruments"}, "TPS7A02-33PDBVR", "ZZQ9981XK"]))["results"]
-        # Parts in stock: today's row, plus how many numbered so sold out
-        assert [p["lcsc"] for p in in_stock["results"]] == ["C5252902"] and in_stock["sold_out_matches"] == 1
+        # Parts in stock: today's row, plus how many numbered so are gone
+        assert [p["lcsc"] for p in in_stock["results"]] == ["C5252902"] and in_stock["gone_matches"] == 1
         assert ti == {"input": {"mpn": "LM358", "manufacturer": "Texas Instruments"}, "mpn": "LM358", "total": 1,
                       "exact": True, "ambiguous": False,
                       "results": [{**SOLD_ROW, "lcsc": "C9001", "model": "LM358", "manufacturer": "Texas Instruments",
@@ -384,11 +391,11 @@ class TestGetParts:
             await server.jlc_get_parts(["C7950", "C1525", "LM358DR2G"])
         finally:
             db._conn.set_trace_callback(None)
-        assert sum("WHERE lcsc IN" in query for query in queries) == 1  # no sold-out read when all are listed
+        assert sum("WHERE lcsc IN" in query for query in queries) == 1  # no gone read when all are listed
 
 
 class TestGetPartByMpn:
-    async def test_every_match_sold_out(self, use_db):
+    async def test_every_match_gone(self, use_db):
         use_db("kept")
         reply = await server.jlc_get_part(mpn="RP2040")
         assert "error" not in reply and outcome(reply) == "ok"
@@ -400,14 +407,14 @@ class TestGetPartByMpn:
         assert part["data_source"] == {"kind": "snapshot", "provider": "JLCPCB", "observed_at": "2026-11-17T22:00:00Z"}
         assert reply["next_call"] == {"tool": "jlc_stock_check", "arguments": {"query": "RP2040", "min_stock": 0,
                                                                               "limit": 10}}
-        assert "jlc_stock_check" in reply["hint"]
+        assert "under 10" in reply["hint"] and "jlc_get_part(lcsc=...)" in reply["hint"]
 
     async def test_in_stock_reply_only_adds_a_count(self, use_db):
         use_db("none")
         before = await server.jlc_get_part(mpn="LM358")
         use_db("kept")
         after = await server.jlc_get_part(mpn="LM358")
-        assert after.pop("sold_out_matches") == 1 and after == before
+        assert after.pop("gone_matches") == 1 and after == before
 
     async def test_misses_unchanged(self, use_db):
         replies = []
@@ -416,18 +423,65 @@ class TestGetPartByMpn:
             replies.append(await server.jlc_get_part(mpn="ZZQ9981XK"))
         assert replies[0] == replies[1] == replies[2]
         assert replies[0]["error"] == "No part found in the local snapshot for MPN 'ZZQ9981XK'"
-        use_db("none")  # without the files a sold-out number is a miss, as before
+        use_db("none")  # without the files a gone number is a miss, as before
         assert (await server.jlc_get_part(mpn="RP2040"))["error"].startswith("No part found")
 
-    async def test_backplane_reads_the_sold_out_row(self, use_db):
-        """Backplane's pick(): results[] entry whose model matches, integer stock, prices with qty and
+    async def test_backplane_reads_the_gone_row(self, use_db):
+        """Backplane's pick(): the results[] entry whose model matches; stock not an integer reads as -1,
+        their "unknown" (not "out", which their design review reports as an error); prices with qty and
         numeric price (research-backplane-code-review.md, "What they parse")."""
         use_db("kept")
         reply = await server.jlc_get_part(mpn="RP2040")
         match = next(r for r in reply["results"] if r["model"].casefold() == "rp2040")
-        assert type(match["stock"]) is int and match["stock"] == 0
+        assert match["stock"] is None
         assert match["lcsc"] == "C2040" and match["manufacturer"] and match["library_type"] in ("basic", "preferred", "extended")
         assert all(int(tier["qty"].rstrip("+")) >= 1 and isinstance(tier["price"], float) for tier in match["prices"])
+
+
+class TestGoneBeatsRelatedOnly:
+    """IRFB4710PBF (Infineon, C2660) left the snapshot; in stock there is only JSMSEMI's
+    IRFB4710PBF-JSM, a full-text "related" result. The part asked for answers first."""
+
+    async def test_get_part(self, use_db):
+        use_db("none")
+        before = await server.jlc_get_part(mpn="IRFB4710PBF")
+        assert before["match"] == "related" and [p["lcsc"] for p in before["results"]] == ["C55112117"]
+        use_db("kept")
+        reply = await server.jlc_get_part(mpn="IRFB4710PBF")
+        assert [(p["lcsc"], p.get("gone")) for p in reply["results"]] == [("C2660", True), ("C55112117", None)]
+        assert (reply["exact"], reply["ambiguous"], reply["total"]) == (True, False, 2) and "match" not in reply
+        assert reply["note"].startswith("'IRFB4710PBF' itself left the snapshot (the gone parts, listed first)")
+        assert "Part types: MOSFETs." in reply["note"]
+        assert reply["results"][1] == before["results"][0]  # the related part as before
+        assert reply["hint"].startswith("gone parts") and reply["next_call"]["tool"] == "jlc_stock_check"
+        assert outcome(reply) == "ok"
+
+    async def test_get_parts(self, use_db):
+        use_db("kept")
+        reply = await server.jlc_get_parts(["IRFB4710PBF", {"mpn": "IRFB4710PBF", "manufacturer": "JSMSEMI"}])
+        asked, copy = reply["results"]
+        assert [(p["lcsc"], p["stock"]) for p in asked["results"]] == [("C2660", None), ("C55112117", 92)]
+        assert (asked["exact"], asked["total"]) == (True, 2) and asked["note"].startswith("'IRFB4710PBF' itself")
+        assert "other_manufacturers" not in asked  # JSMSEMI's is a related part, not this number
+        # The maker given has no gone part numbered so: today's related answer
+        assert copy["match"] == "related" and [p["lcsc"] for p in copy["results"]] == ["C55112117"]
+        assert reply["counts"] == {"found": 1, "gone": 1, "not_found": 0, "error": 0}
+
+    async def test_an_exact_part_in_stock_still_answers(self, use_db):
+        use_db("kept")
+        reply = await server.jlc_get_part(mpn="LM358")  # MSKSEMI's in stock, Texas Instruments' gone
+        assert [p["lcsc"] for p in reply["results"]] == ["C5252902"] and reply["gone_matches"] == 1
+
+
+class TestLifecycleIdentities:
+    async def test_gone_codes_resolve(self, use_db):
+        use_db("kept")
+        parts = server._catalog_identities(["C2040", "C7950", "C99999"])
+        assert (parts["C2040"]["model"], parts["C2040"]["manufacturer"], parts["C2040"]["gone"]) == (
+            "RP2040", "Raspberry Pi", True)
+        assert parts["C7950"]["model"] == "LM358DR2G" and parts["C99999"] is None
+        use_db("old")
+        assert server._catalog_identities(["C2040"]) == {"C2040": None}
 
 
 class TestOtherReadersUnchanged:
@@ -464,15 +518,15 @@ def history(tmp_path, monkeypatch):
 
 
 class TestStockHistory:
-    async def test_current_stock_of_a_sold_out_part(self, use_db, history):
+    async def test_current_stock_of_a_gone_part(self, use_db, history):
         use_db("kept")
         one = await server.jlc_stock_history("C2040")
-        assert (one["current_stock"], one["gone_since"]) == (0, "2026-11-16")
+        assert (one["current_stock"], one["gone_since"]) == (None, "2026-11-16")  # null as before, plus when
         assert list(one)[-3:] == ["current_stock", "gone_since", "current_stock_as_of"]
         assert one["events"][0]["type"] == "gone"
         many = await server.jlc_stock_history(["C2040", "C7950", "C99999"])
         assert [(p["current_stock"], p.get("gone_since")) for p in many["parts"]] == [
-            (0, "2026-11-16"), (495224, None), (None, None)]
+            (None, "2026-11-16"), (495224, None), (None, None)]
         assert list(many["parts"][0])[:3] == ["lcsc", "current_stock", "gone_since"]
 
     async def test_listed_and_unknown_parts_unchanged(self, use_db, history):

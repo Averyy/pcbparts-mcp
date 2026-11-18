@@ -101,8 +101,8 @@ async def test_related_ssd1306_names_every_part_type():
 async def test_exact_reply_is_unchanged(mpn):
     reply = await server.jlc_get_part(mpn=mpn)
     # 0.10.0 adds exact, ambiguous and price_tiers_as_of (and prices on each result), and
-    # sold_out_matches when parts numbered so have sold out; nothing else changes
-    assert set(reply) - {"sold_out_matches"} == {"mpn", "total", "exact", "ambiguous", "results", "data_as_of",
+    # gone_matches when parts numbered so have left the snapshot; nothing else changes
+    assert set(reply) - {"gone_matches"} == {"mpn", "total", "exact", "ambiguous", "results", "data_as_of",
                                                  "prices_as_of", "price_tiers_as_of"}
     assert reply["data_as_of"] and reply["prices_as_of"]
     assert reply["exact"] is True and reply["ambiguous"] == (len(reply["results"]) > 1)

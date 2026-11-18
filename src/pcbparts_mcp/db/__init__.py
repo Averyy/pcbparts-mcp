@@ -91,7 +91,7 @@ class ComponentDatabase:
         self._prices_as_of: str | None = None
         self._price_tiers_as_of: str | None = None  # None: no price breaks loaded (built without the file)
         self._english_packages = False
-        self._has_sold_out = False  # built since 0.10.0: parts kept after they sold out
+        self._has_sold_out = False  # built since 0.10.0: parts kept after they left the snapshot
 
     @serialized
     def _ensure_db(self) -> None:
@@ -138,7 +138,7 @@ class ComponentDatabase:
             self._has_sold_out = self._conn.execute(
                 "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sold_out'").fetchone() is not None
             if not self._has_sold_out:
-                limitations.append("sold-out parts aren't kept, so lookups miss them")
+                limitations.append("parts that left the snapshot aren't kept, so lookups miss them")
             if limitations:
                 logger.warning(
                     "Component database %s predates this version: %s. "
@@ -569,7 +569,7 @@ class ComponentDatabase:
     @serialized
     def get_sold_out_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
                             with_prices: bool = False) -> list[dict[str, Any]]:
-        """Parts kept after they sold out (stock 0, sold_out, gone_since, last_stock: lookup.sold_out_part)
+        """Parts kept after they left the snapshot (stock None, gone, gone_since, last_stock: lookup.sold_out_part)
         that match a part number by get_by_mpn's rules, without full-text matches. with_prices adds
         prices: the last 1-piece price. [] for a database built before 0.10.0."""
         self._ensure_db()
@@ -584,7 +584,7 @@ class ComponentDatabase:
 
     @serialized
     def get_sold_out_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
-        """jlc_get_parts' rows for sold-out parts (lookup.get_sold_out_rows), None for codes not kept."""
+        """jlc_get_parts' rows for parts that left the snapshot (lookup.get_sold_out_rows), None for codes not kept."""
         self._ensure_db()
         if not self._conn or not self._has_sold_out:
             return {code.upper(): None for code in lcsc_codes}
