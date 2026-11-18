@@ -62,6 +62,7 @@ from .config import (
     MAX_PAGE_SIZE,
     DEFAULT_MIN_STOCK,
     MAX_ALTERNATIVES,
+    MAX_ORDER_QUANTITY,
     PART_CACHE_TTL,
     PART_CACHE_MAX_SIZE,
 )
@@ -1713,8 +1714,8 @@ class JLCPCBClient:
                                    If None (default), don't filter by footprint.
                                    Note: filtering is slower as it checks each part.
             limit: Maximum entries per verified/unverified list (default: 10, max: 50)
-            board_quantity: Boards in the order for savings (default: 1)
-            placements_per_board: Placements of the original per board (default: 1)
+            board_quantity: Boards in the order for savings (default: 1, max MAX_ORDER_QUANTITY)
+            placements_per_board: Placements of the original per board (default: 1, max MAX_ORDER_QUANTITY)
             land_compatible: Compare the top EASYEDA_LAND_MAX_CHECKS candidates' EasyEDA footprint
                              pads with the original's (land.py) and list the best fits first
 
@@ -1726,6 +1727,8 @@ class JLCPCBClient:
             return {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
         if board_quantity < 1 or placements_per_board < 1:
             return {"error": "board_quantity and placements_per_board must be positive integers"}
+        if board_quantity > MAX_ORDER_QUANTITY or placements_per_board > MAX_ORDER_QUANTITY:
+            return {"error": f"board_quantity and placements_per_board must be at most {MAX_ORDER_QUANTITY:,} each"}
 
         # Validate and cap limit
         effective_limit = max(1, min(limit, MAX_ALTERNATIVES))

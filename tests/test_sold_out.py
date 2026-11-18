@@ -71,6 +71,17 @@ class TestFiles:
                                                      "c": 7, "m": "M", "f": "F", "p": "0603", "d": "x"}
         assert list(sold_out_row(part, "2026-11-18")) == list(SOLD_OUT_KEYS)
 
+    def test_a_catalog_part_the_row_cant_hold_as_is(self, tmp_path, caplog):
+        """write_catalog takes any model or maker type, a sold-out row only text: such a part made
+        every scrape fail (write_sold_out raised) until a scrape listed it again."""
+        part = {"l": "C1", "m": 2222, "f": None, "p": ["SOT-23"], "s": 25, "t": "x", "c": 7, "$": 0.5, "d": 1.5}
+        row = sold_out_row(part, "2026-11-18")
+        assert {key: row[key] for key in ("m", "f", "p", "d", "t")} == {"m": "2222", "f": None, "p": '["SOT-23"]',
+                                                                         "d": "1.5", "t": "e"}
+        assert write_sold_out(tmp_path, {"C1": row}) == {"2026-11.jsonl": 1}
+        assert next(read_sold_out(tmp_path))["m"] == "2222"
+        assert "Sold-out part C1" in caplog.text
+
     @pytest.mark.parametrize("change", [{"g": "2026-11-31"}, {"g": "18/11/2026"}, {"s": "5"}, {"$": float("inf")},
                                         {"t": "x"}, {"c": -1}, {"m": 5}, {"l": "C 1"}],
                              ids=["day", "form", "stock", "price", "type", "sub", "mpn", "code"])
@@ -372,12 +383,13 @@ class TestGetParts:
             "LM358", {"mpn": "LM358", "manufacturer": "Texas Instruments"}, "TPS7A02-33PDBVR", "ZZQ9981XK"]))["results"]
         # Parts in stock: today's row, plus how many numbered so are gone
         assert [p["lcsc"] for p in in_stock["results"]] == ["C5252902"] and in_stock["gone_matches"] == 1
+        # An MPN row's matches have the short field list (an LCSC code's row has them all)
         assert ti == {"input": {"mpn": "LM358", "manufacturer": "Texas Instruments"}, "mpn": "LM358", "total": 1,
                       "exact": True, "ambiguous": False,
-                      "results": [{**SOLD_ROW, "lcsc": "C9001", "model": "LM358", "manufacturer": "Texas Instruments",
-                                   "package": "SOIC-8", "price": 0.12, "prices": [{"qty": "1+", "price": 0.12}],
-                                   "library_type": "basic", "description": "Dual op amp", "gone_since": "2026-11-14",
-                                   "last_stock": 40}],
+                      "results": [{"lcsc": "C9001", "model": "LM358", "manufacturer": "Texas Instruments",
+                                   "package": "SOIC-8", "stock": None, "price": 0.12,
+                                   "prices": [{"qty": "1+", "price": 0.12}], "library_type": "basic",
+                                   "preferred": False, "gone": True, "gone_since": "2026-11-14", "last_stock": 40}],
                       "other_manufacturers": ["MSKSEMI"]}
         assert (spelled["match"], spelled["matched_mpn"], spelled["exact"]) == ("separators", "TPS7A0233PDBVR", False)
         assert spelled["results"][0]["gone_since"] == "2026-10-30"
@@ -489,15 +501,17 @@ class TestGoneBeatsRelatedOnly:
         assert outcome(reply) == "ok"
 
     async def test_get_parts(self, use_db):
+        """jlc_get_parts never lists full-text matches, so the gone part is the whole answer, and
+        JSMSEMI's copy, which only its text relates, is no match for JSMSEMI either."""
         use_db("kept")
         reply = await server.jlc_get_parts(["IRFB4710PBF", {"mpn": "IRFB4710PBF", "manufacturer": "JSMSEMI"}])
         asked, copy = reply["results"]
-        assert [(p["lcsc"], p["stock"]) for p in asked["results"]] == [("C2660", None), ("C55112117", 92)]
-        assert (asked["exact"], asked["total"]) == (True, 2) and asked["note"].startswith("'IRFB4710PBF' itself")
+        assert [(p["lcsc"], p["stock"]) for p in asked["results"]] == [("C2660", None)]
+        assert (asked["exact"], asked["total"]) == (True, 1) and "note" not in asked
         assert "other_manufacturers" not in asked  # JSMSEMI's is a related part, not this number
-        # The maker given has no gone part numbered so: today's related answer
-        assert copy["match"] == "related" and [p["lcsc"] for p in copy["results"]] == ["C55112117"]
-        assert reply["counts"] == {"found": 1, "gone": 1, "not_found": 0, "error": 0}
+        assert copy == {"input": {"mpn": "IRFB4710PBF", "manufacturer": "JSMSEMI"}, "mpn": "IRFB4710PBF",
+                        "total": 0, "results": [], "not_found": True}
+        assert reply["counts"] == {"found": 0, "gone": 1, "not_found": 1, "error": 0}
 
     async def test_an_exact_part_in_stock_still_answers(self, use_db):
         use_db("kept")

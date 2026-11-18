@@ -149,11 +149,12 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
-Quantity price tiers come from `data/catalog/price_tiers.tsv.gz`, which isn't in git: each daily scrape publishes it as the `price-tiers` Actions artifact, kept 7 days. The GHCR image has them; a database or image built from a clone has the 1-piece prices only, unless you download the file first (it needs a GitHub login, `gh auth login`) and then build:
+Quantity price tiers come from `data/catalog/price_tiers.tsv.gz`, which isn't in git: each daily scrape publishes it as the `price-tiers` Actions artifact, kept 7 days. The GHCR image has them; a database or image built from a clone has the 1-piece prices only, unless you download the file first (it needs a GitHub login, `gh auth login`) and then build. A run whose upload failed has no artifact, so this tries the newest runs in turn:
 
 ```bash
-run=$(gh run list -R Averyy/pcbparts-mcp -w scrape-components.yml -b main -s success -L 1 --json databaseId -q '.[0].databaseId')
-gh run download "$run" -R Averyy/pcbparts-mcp -n price-tiers -D data/catalog
+for run in $(gh run list -R Averyy/pcbparts-mcp -w scrape-components.yml -b main -s success -L 7 --json databaseId -q '.[].databaseId'); do
+  gh run download "$run" -R Averyy/pcbparts-mcp -n price-tiers -D data/catalog && break
+done
 ```
 
 Build recorded stock history with `uv run python scripts/build_history_db.py`. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path. Only changes leaving stock at 1,000 or below are recorded; [llms.txt](https://pcbparts.dev/llms.txt) has the tool's limits.
@@ -188,7 +189,7 @@ These five cache and statistics paths are unset outside Docker, which keeps that
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 100 requests a minute per IP (an IPv6 /64 counts as one); 1,000 for addresses in Anthropic's and OpenAI's published ranges (claude.ai and ChatGPT connectors), which many users share
-- **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today, database pressure, the AI platforms' address lists and when OpenAI's was made); HTTP 503 while a database call has waited a minute to start
+- **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today, database pressure, the AI platforms' address lists and when OpenAI's was made, and the quantity price tiers loaded: when they were scraped and how many parts have them); HTTP 503 while a database call has waited a minute to start
 - **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`), requests sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers caches gave instead (`upstream`), Mouser/DigiKey part numbers asked in total and distinct (`parts_asked`), requests the rate limit or the busy cap turned away (`per_ip_refusals`: `total` and by group, `everyone_else`, `platform_ranges`, `server_busy` and `too_many_clients`), and how many times the server started each day (`restarts`). No IPs, queries or part numbers are kept.
 
 ## Privacy

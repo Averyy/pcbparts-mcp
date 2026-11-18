@@ -52,6 +52,7 @@ TRANSISTORS = [
     part("C6749", "C1815", "CJ", "TO-92", 5000, sub=14),  # 2SC1815's short name is also an LCSC code
     part("C916392", "SS8050", "JSMSEMI", "SOT-23", 2_030_627, sub=14),
     part("C2931495", "SS8050", "JSMSEMI", "TO-92", 33_277, sub=14),
+    part("C5000945", "C945", "CJ", "TO-92", 4000, sub=14),  # 2SC945's short name, shaped like an LCSC code
 ]
 CAPACITORS = [
     part("C1815", "CL21B104KBCNNNC", "Samsung Electro-Mechanics", "0805", 10_000, "b", sub=13, price=0.005,
@@ -158,13 +159,12 @@ class TestMpnRows:
         assert row["ambiguous"] is True
 
     async def test_recoveries_keep_their_match_info(self, db):
-        separators, alias_free, related = (await get_parts(["AO-3400A", "ao3400a", "LM32"]))["results"]
+        separators, alias_free = (await get_parts(["AO-3400A", "ao3400a"]))["results"]
         single = await server.jlc_get_part(mpn="AO-3400A")
         assert (separators["exact"], separators["match"], separators["matched_mpn"]) == (False, "separators", "AO3400A")
         assert {k: single[k] for k in ("match", "matched_mpn", "exact", "ambiguous")} == {
             k: separators[k] for k in ("match", "matched_mpn", "exact", "ambiguous")}
         assert (alias_free["exact"], alias_free["ambiguous"]) == (True, False) and "match" not in alias_free
-        assert related["match"] == "related" and related["exact"] is False and related["note"].startswith("No exact match")
 
     async def test_not_found(self, db):
         reply = await get_parts(["ZZQ9981XK", "C7950"])
@@ -182,14 +182,30 @@ class TestMpnRows:
         assert other == {"input": {"mpn": "AO3400A", "manufacturer": "Nobody Inc"}, "mpn": "AO3400A", "total": 0,
                          "results": [], "not_found": True, "other_manufacturers": ["Alpha & Omega Semicon"]}
 
-    async def test_related_parts_dont_name_other_manufacturers(self, db):
-        """"LM32" finds only full-text related parts (LM324s): their makers don't list the number,
-        so a miss for the maker given names none of them (other_manufacturers is "listed only under
-        other makers", as on gone rows)."""
-        assert (await get_parts(["LM32"]))["results"][0]["match"] == "related"
-        row = (await get_parts([{"mpn": "LM32", "manufacturer": "Nobody Inc"}]))["results"][0]
-        assert row == {"input": {"mpn": "LM32", "manufacturer": "Nobody Inc"}, "mpn": "LM32", "total": 0,
-                       "results": [], "not_found": True}
+    async def test_no_full_text_guesses(self, db):
+        """jlc_get_part(mpn="LM32") answers with full-text related parts (LM324s); a BOM line needs
+        sure matches, and short or common tokens ("R", "10k") made full-text lookups take up to 1.7 s
+        each, so jlc_get_parts never runs them: not_found, the hint pointing to jlc_search for values.
+        Its makers don't list the number, so a miss for a maker given names none of them."""
+        assert (await server.jlc_get_part(mpn="LM32"))["match"] == "related"
+        reply = await get_parts(["LM32", {"mpn": "LM32", "manufacturer": "Nobody Inc"}, "op amp"])
+        assert reply["results"] == [
+            {"input": "LM32", "mpn": "LM32", "total": 0, "results": [], "not_found": True},
+            {"input": {"mpn": "LM32", "manufacturer": "Nobody Inc"}, "mpn": "LM32", "total": 0, "results": [],
+             "not_found": True},
+            {"input": "op amp", "mpn": "op amp", "total": 0, "results": [], "not_found": True}]
+        assert reply["counts"] == {"found": 0, "gone": 0, "not_found": 3, "error": 0}
+        assert "never by their text" in reply["hint"] and "jlc_search finds parts" in reply["hint"]
+
+    async def test_no_full_text_query_runs(self, db):
+        queries = []
+        db._ensure_db()
+        db._conn.set_trace_callback(queries.append)
+        try:
+            await get_parts(["LM32", "R", "10k", {"mpn": "LM3", "manufacturer": "MSKSEMI"}])
+        finally:
+            db._conn.set_trace_callback(None)
+        assert queries and not any("components_fts" in query for query in queries)
 
     async def test_the_maker_picks_matched_mpn_too(self, db):
         row = (await get_parts([{"mpn": "LM-358", "manufacturer": "JSMSEMI"}]))["results"][0]
@@ -202,11 +218,13 @@ class TestMpnRows:
         assert both["lcsc"] == "C7950" and "results" not in both  # lcsc wins over mpn, as in jlc_get_part
 
     async def test_each_number_looked_up_once(self, db, monkeypatch):
+        """Once per number and maker: the maker narrows every match step (see TestMakerNarrowsEachStep),
+        so a number given with a maker is its own lookup; repeats aren't."""
         asked = []
         lookup = db.get_by_mpn
 
         def spy(mpn, **kwargs):
-            asked.append(mpn)
+            asked.append((mpn, kwargs["maker"] is not None))
             return lookup(mpn, **kwargs)
 
         monkeypatch.setattr(db, "get_by_mpn", spy)
@@ -214,12 +232,118 @@ class TestMpnRows:
         db._ensure_db()
         db._conn.set_trace_callback(queries.append)
         try:
-            reply = await get_parts(["LM358", {"mpn": "LM358", "manufacturer": "MSKSEMI"}, "C7950", "C1525", "LM324"])
+            reply = await get_parts(["LM358", {"mpn": "LM358", "manufacturer": "MSKSEMI"}, "C7950", "C1525", "LM324",
+                                     "lm358", {"mpn": "LM358", "manufacturer": "msksemi"}])
         finally:
             db._conn.set_trace_callback(None)
-        assert asked == ["LM358", "LM324"]
+        assert asked == [("LM358", False), ("LM358", True), ("LM324", False), ("lm358", False)]
         assert sum("WHERE lcsc IN" in query for query in queries) == 1  # every row's part in one read
-        assert [row["total"] for row in reply["results"] if "total" in row] == [2, 1, 12]
+        assert [row["total"] for row in reply["results"] if "total" in row] == [2, 1, 12, 2, 1]
+
+
+class TestReviewFixes:
+    """Review of 2026-11-18: inputs that failed a whole batch or were refused before the tool ran,
+    lines that missed their part, and replies ten times the size they needed."""
+
+    async def test_mpn_rows_list_short_matches(self, db):
+        code_row, mpn_row = (await get_parts(["C7950", "LM358DR2G"]))["results"]
+        match = mpn_row["results"][0]
+        assert list(match) == ["lcsc", "model", "manufacturer", "package", "stock", "price", "prices",
+                               "library_type", "preferred"]
+        assert {key: code_row[key] for key in match} == match
+        assert {"description", "category", "subcategory", "pcba_type"} <= set(code_row)  # code rows stay whole
+
+    async def test_control_characters_are_one_rows_error(self, db):
+        reply = await get_parts(["LM\x00358", {"mpn": "LM358", "manufacturer": "T\x00I"}, "LM358\tDR2G", "C7950"])
+        errors = [row.get("error") for row in reply["results"]]
+        assert errors == [server._CONTROL_CHARACTERS["error"]] * 3 + [None]
+        assert server._error_kind(errors[0]) == "bad_request"
+        assert reply["counts"] == {"found": 1, "gone": 0, "not_found": 0, "error": 3}
+        # jlc_get_part raised instead (the NUL broke its full-text query)
+        assert await server.jlc_get_part(mpn="LM\x00358") == server._CONTROL_CHARACTERS
+
+    async def test_one_number_the_database_fails_on(self, db, monkeypatch):
+        lookup = db.get_by_mpn
+
+        def flaky(mpn, **kwargs):
+            if mpn == "LM358":
+                raise sqlite3.OperationalError("fts5: syntax error")
+            return lookup(mpn, **kwargs)
+
+        monkeypatch.setattr(db, "get_by_mpn", flaky)
+        reply = await get_parts(["LM358", "LM324", "C7950"])
+        assert reply["results"][0] == {"input": "LM358", "error": "Database not available"}
+        assert reply["results"][1]["total"] == 12 and reply["results"][2]["lcsc"] == "C7950"
+        assert reply["counts"] == {"found": 2, "gone": 0, "not_found": 0, "error": 1}
+        alone = await get_parts(["LM358", "DNP"])
+        assert outcome(alone) == "failed" and server._call_reason("failed", alone, None) == "service_not_ready"
+
+    async def test_unusable_lcsc_beside_an_mpn(self, db):
+        row, = (await get_parts([{"lcsc": "N/A", "mpn": "LM358DR2G"}]))["results"]
+        assert row["input"] == {"lcsc": "N/A", "mpn": "LM358DR2G"} and row["results"][0]["lcsc"] == "C7950"
+        entry = server._lifecycle_entry({"lcsc": "-", "mpn": "LM358P", "manufacturer": "TI"})  # part_lifecycle's too
+        assert (entry.error, entry.mpn, entry.maker, entry.lcsc) == (None, "LM358P", "TI", None)
+        alone, = (await get_parts([{"lcsc": "N/A"}]))["results"]
+        assert alone["error"].startswith("lcsc must be an LCSC C-code")
+
+    async def test_a_code_string_not_listed_is_tried_as_a_part_number(self, db):
+        reply = await get_parts(["C945", {"lcsc": "C945"}, "C99999999", "c945"])
+        number, code, missing, lower = reply["results"]
+        assert (number["input"], number["mpn"], number["exact"], number["total"]) == ("C945", "C945", True, 1)
+        assert number["results"][0]["lcsc"] == "C5000945" and lower["results"] == number["results"]
+        assert number["note"] == ("'C945' isn't an LCSC code in the snapshot or among the parts that left it, "
+                                  "so it was looked up as a part number.")
+        assert code == {"input": {"lcsc": "C945"}, "lcsc": "C945", "not_found": True}  # asked as a code: a code
+        assert missing == {"input": "C99999999", "lcsc": "C99999999", "not_found": True}
+        assert reply["counts"] == {"found": 2, "gone": 0, "not_found": 2, "error": 0}
+
+    async def test_deeply_nested_json_is_an_argument_error(self, db, monkeypatch):
+        """json.loads raises RecursionError past Python's nesting limit (on the event loop's thread at
+        least: how deep a worker thread gets varies by version), which failed the call with an exception."""
+        monkeypatch.setattr(server, "_mouser_client", object())  # part_lifecycle parses only with a distributor
+        deep = "[" * 100_000 + "]" * 100_000
+        reply = await server.part_lifecycle(deep)
+        assert reply["error"] == "Invalid parts: not a valid JSON array"
+        assert server._error_kind(reply["error"]) == "bad_request"
+
+        def too_deep(text):
+            raise RecursionError("maximum recursion depth exceeded while decoding a JSON array")
+
+        monkeypatch.setattr(server.json, "loads", too_deep)
+        for tool in (server.jlc_get_parts, server.part_lifecycle):
+            assert (await tool('[["x"]]'))["error"] == "Invalid parts: not a valid JSON array", tool
+
+    async def test_long_inputs_are_echoed_cut_short(self, db):
+        long, padded, nested = (await get_parts(["M" * 5000, {"mpn": "LM358DR2G", "notes": "x" * 1000},
+                                                 [[[[["deep"]]]] * 40]]))["results"]
+        assert long["input"] == "M" * 100 + "..." and long["error"] == "MPN too long (max 100 characters)"
+        assert padded["input"].startswith('{"mpn": "LM358DR2G", "notes": "xxx') and len(padded["input"]) == 103
+        assert padded["results"][0]["lcsc"] == "C7950"  # still answered
+        assert len(nested["input"]) == 103 and nested["error"].startswith("Invalid part")
+        assert server._lifecycle_entry("M" * 5000).input == "M" * 100 + "..."  # part_lifecycle's input too
+
+    async def test_any_item_type_through_the_server(self, db, monkeypatch):
+        """The parameter type let pydantic refuse a native list holding null or a number (the whole
+        call an error, isError) before the rows could each say what was wrong; and a bare object."""
+        @asynccontextmanager
+        async def lifespan(app):
+            yield {}
+
+        monkeypatch.setattr(server.mcp, "_lifespan", lifespan)
+        monkeypatch.setattr(server, "_mouser_client", None)
+        monkeypatch.setattr(server, "_digikey_client", None)
+        async with Client(server.mcp) as client:
+            for name in ("jlc_get_parts", "part_lifecycle"):
+                tool = next(tool for tool in await client.list_tools() if tool.name == name)
+                for value in ([None, 7, ["x"], "C7950"], {"mpn": "LM358"}, "LM358", '["C7950"]'):
+                    validate({"parts": value}, tool.inputSchema)
+            mixed = (await client.call_tool("jlc_get_parts", {"parts": [None, 7, ["x"], "C7950"]})).structured_content
+            assert [row.get("error", "")[:13] for row in mixed["results"]] == ["Invalid part:"] * 3 + [""]
+            assert mixed["counts"] == {"found": 1, "gone": 0, "not_found": 0, "error": 3}
+            bare = (await client.call_tool("jlc_get_parts", {"parts": {"mpn": "LM358DR2G"}})).structured_content
+            assert bare["results"][0]["input"] == {"mpn": "LM358DR2G"} and bare["counts"]["found"] == 1
+            lifecycle = await client.call_tool("part_lifecycle", {"parts": [None, 7]})
+            assert lifecycle.is_error is False  # this server has no distributor keys: the call's own error
 
 
 class TestJlcGetPartFlags:
@@ -286,13 +410,16 @@ class TestUsageCounts:
 
     async def test_database_down(self, monkeypatch):
         class Down:
-            def get_by_mpn(self, mpn, match_info=None):
-                raise sqlite3.OperationalError("disk I/O error")
+            def __getattr__(self, name):
+                def fail(*args, **kwargs):
+                    raise sqlite3.OperationalError("disk I/O error")
+                return fail
 
         monkeypatch.setattr(server, "get_db", lambda: Down())
-        reply = await get_parts(["LM358"])
-        assert reply == {"error": "Database not available"}
-        assert outcome(reply) == "failed" and server._call_reason("failed", reply, None) == "service_not_ready"
+        for parts in (["LM358"], ["C7950"]):
+            reply = await get_parts(parts)
+            assert reply == {"error": "Database not available"}
+            assert outcome(reply) == "failed" and server._call_reason("failed", reply, None) == "service_not_ready"
 
     async def test_through_the_server(self, db, monkeypatch):
         # Only the startup/shutdown work is replaced: the real schema, call handling and counts run

@@ -13,6 +13,7 @@ import math
 import re
 import sqlite3
 import time
+import unicodedata
 from collections import defaultdict
 from contextlib import asynccontextmanager
 from difflib import get_close_matches
@@ -52,7 +53,7 @@ from .mounting import english_package
 from .db_worker import (BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, Reservation, database_pressure,
                         offload, run_db)
 from .db import get_db, close_db
-from .db.lookup import related_note
+from .db.lookup import VIA, related_note
 from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
@@ -91,6 +92,9 @@ _busy_refused_callers = CallerTally("Server busy limit", what="refusals")
 # The AI platforms' address lists as loaded at startup (_load_platform_ranges), for /health: how many
 # ranges each has and when OpenAI's list was made. None before the app starts.
 _platform_ranges_info: dict[str, Any] | None = None
+# The database's price breaks, for /health (a deploy whose artifact download failed shows as none):
+# {"as_of": ComponentDatabase.price_tiers_as_of(), "parts": price_tiers_parts()}, None before startup
+_price_tiers_info: dict[str, Any] | None = None
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -101,7 +105,7 @@ HEALTH_STORE_COUNT_TTL = 60
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
-    global _distributor_store, _distributor_stored
+    global _distributor_store, _distributor_stored, _price_tiers_info
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
     for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
         logger.warning(warning)
@@ -126,7 +130,8 @@ async def lifespan(app):
     _client.set_subcategory_parts(db.subcategory_parts)
     tiers_as_of = db.price_tiers_as_of()
     _client.set_alternative_price_tiers(db.get_price_tiers, tiers_as_of)
-    logger.info(f"Price tiers: scraped {tiers_as_of}" if tiers_as_of else
+    _price_tiers_info = {"as_of": tiers_as_of, "parts": db.price_tiers_parts()}
+    logger.info(f"Price tiers: {_price_tiers_info['parts']:,} parts, scraped {tiers_as_of}" if tiers_as_of else
                 "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only")
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
@@ -434,11 +439,14 @@ def _is_parts_reply(content: dict) -> bool:
 
 def _parts_outcome(content: dict) -> str:
     """jlc_get_parts: ok when any part was found, in the snapshot or gone from it; not_found when
-    parts were looked up and none was; bad_request when every input was unusable (each row's own error)."""
+    parts were looked up and none was; with neither, failed when the database failed on a part
+    number (that row's "Database not available"), else bad_request (every input was unusable)."""
     counts = content["counts"]
     if counts.get("found") or counts.get("gone"):  # a gone part's answer is an answer, from our data
         return "ok"
-    return "not_found" if counts.get("not_found") else "bad_request"
+    if counts.get("not_found"):
+        return "not_found"
+    return "failed" if "failed" in {_error_kind(error) for error in _lifecycle_errors(content)} else "bad_request"
 
 
 def _parts_empty_reason(content: dict) -> str:
@@ -508,9 +516,9 @@ def _call_reason(outcome: str, content: dict, error: Exception | None) -> str:
         return "exception"
     if outcome == "not_found":
         return _empty_reason(content)
-    if "status_counts" in content and not content.get("error"):
+    if ("status_counts" in content or _is_parts_reply(content)) and not content.get("error"):
         reasons = (_first_reason(_FAILED_REASONS, error) for error in _lifecycle_errors(content))
-        return next(filter(None, reasons), "lifecycle_lookup_failed")
+        return next(filter(None, reasons), "lifecycle_lookup_failed" if "status_counts" in content else "unexpected_error")
     return _first_reason(_FAILED_REASONS, str(content.get("error") or "")) or "unexpected_error"
 
 
@@ -2398,9 +2406,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
     jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (under 10 or no
     longer listed) are kept until it lists them again: when one matches and no in-stock part does
-    (full-text related results are listed after it), it answers with gone, gone_since (the date it
-    left), last_stock and stock null (unknown), plus hint and that next_call; with parts in stock that
-    match, gone_matches counts them.
+    but by full text, or it has the number itself and the only in-stock parts are another maker's
+    spelled with other separators (those are listed after it), it answers with gone, gone_since (the
+    date it left), last_stock and stock null (unknown), plus hint and that next_call; with parts in
+    stock that match, gone_matches counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -2416,6 +2425,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     if mpn and not lcsc:
         if len(mpn) > 100:
             return {"error": "MPN too long (max 100 characters)"}
+        if _has_control_characters(mpn):  # a NUL broke the full-text query (an exception, not a reply)
+            return dict(_CONTROL_CHARACTERS)
         db = get_db()
         match_info: dict[str, Any] = {}
         results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info, with_prices=True)
@@ -2426,7 +2437,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             # The part asked for left the snapshot: answer from what the catalog had, pointing to the live check
             reply = {"mpn": mpn, "data_as_of": db.scraped_at(), "prices_as_of": db.prices_as_of(),
                      "price_tiers_as_of": db.price_tiers_as_of(), "total": len(listed),
-                     **_match_flags(matched, info), "results": listed, **info}
+                     **_match_flags(matched, info), "results": listed, **_public(info)}
             if note := _subcategory_note(listed):
                 reply["note"] = " ".join(filter(None, [reply.get("note"), note]))
             reply["hint"] = _GONE_HINT
@@ -2457,10 +2468,10 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             "total": len(results),
             **_match_flags(results, match_info),
             "results": results,
-            **match_info,
+            **_public(match_info),
         }
-        if note := _subcategory_note(results):
-            reply["note"] = note
+        if note := _subcategory_note(results):  # after the match's own note (related parts), never instead
+            reply["note"] = " ".join(filter(None, [reply.get("note"), note]))
         if gone:  # gone parts numbered so too: counted only, the reply is about the parts in stock
             reply["gone_matches"] = len(gone)
         return reply
@@ -2483,26 +2494,44 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
 
 # What a gone row is, once per jlc_get_part(mpn) or jlc_get_parts reply that has one
 _GONE_HINT = ("gone parts left the daily snapshot (stock >= 10) on gone_since: their stock fell under 10 or JLCPCB "
-              "stopped listing them, so stock is null (unknown); last_stock and price are from the last scrape "
-              "that listed them. jlc_get_part(lcsc=...) checks one live.")
+              "stopped listing them, so stock is null (unknown); last_stock is from the last scrape that listed "
+              "them, and price the last 1-piece price the snapshot had for them (refreshed weekly). "
+              "jlc_get_part(lcsc=...) checks one live.")
+
+
+def _public(info: dict[str, Any]) -> dict[str, Any]:
+    """Match info as a reply gives it: without get_by_mpn's private keys (db.lookup.VIA)."""
+    return {key: value for key, value in info.items() if not key.startswith("_")}
 
 
 def _mpn_answer(mpn: str, in_stock: list[dict[str, Any]], in_info: dict[str, Any], gone: list[dict[str, Any]],
                 gone_info: dict[str, Any]) -> tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
     """How an MPN lookup answers, as (kind, parts listed, match info, parts that match it):
     "found": in-stock parts match (their match info; gone ones are only counted). "gone": parts
-    numbered so left the snapshot and none in stock matches but by full text: the gone ones first,
-    the in-stock related ones after them, which the note describes. "none": neither."""
-    if in_stock and not (gone and in_info.get("match") == "related"):
+    numbered so left the snapshot and none in stock matches but by full text (related, or an
+    alternative the full text found), or the gone part has the number itself and the only parts in
+    stock are another maker's spelled with other separators (Molex's 2081001 gone, TE's 208100-1 in
+    stock): the gone ones first, the in-stock ones after them, which the note describes. "none": neither."""
+    full_text = in_info.get("match") == "related" or in_info.get(VIA) == "related"
+    other_makers_spelling = (in_info.get("match") == "separators" and "match" not in gone_info and not any(
+        makers_match(part.get("manufacturer"), kept.get("manufacturer")) for part in in_stock for kept in gone))
+    if in_stock and not (gone and (full_text or other_makers_spelling)):
         return "found", in_stock, in_info, in_stock
     if not gone:
         return "none", [], {}, []
     info = dict(gone_info)
-    if in_stock:
+    if in_stock and full_text:
+        start = in_info["matched_mpn"] if in_info.get("match") == "alternative" else mpn.strip()
         lead = (f"'{mpn.strip()}' itself left the snapshot (the gone parts, listed first); the parts after it "
-                "are in stock, and their part numbers start with it or their text mentions it, so check the "
-                "package and manufacturer.")
+                f"are in stock, and their part numbers start with '{start}' or their text mentions it, so check "
+                "the package and manufacturer.")
         info["note"] = " ".join(filter(None, [info.get("note"), related_note(in_stock, lead)]))
+    elif in_stock:
+        makers = ", ".join(dict.fromkeys(part["manufacturer"] or "an unnamed maker" for part in in_stock[:3]))
+        info["note"] = " ".join(filter(None, [info.get("note"), (
+            f"'{mpn.strip()}' itself left the snapshot (the gone parts, listed first); the parts after it are "
+            f"in stock from another maker ({makers}), numbered the same apart from separators "
+            f"('{in_info.get('matched_mpn')}'), so check they're the same part before substituting.")]))
     return "gone", [*gone, *in_stock], info, gone
 
 
@@ -2517,38 +2546,65 @@ def _match_flags(results: list[dict[str, Any]], match_info: dict[str, Any]) -> d
 # Once per jlc_get_parts reply rather than on each of up to 50 rows
 _GET_PARTS_NOT_FOUND_HINT = (
     "not_found parts aren't in the daily snapshot, which lists in-stock parts only (stock >= 10): "
-    "jlc_get_part(lcsc=...) looks a code up live, and jlc_stock_check(query=...) finds low or zero stock.")
+    "jlc_get_part(lcsc=...) looks a code up live, and jlc_stock_check(query=...) finds low or zero stock. "
+    "Part numbers match only as themselves (or with other separators, packing codes or aliases), never by "
+    "their text: for a value such as 10k or 100nF, jlc_search finds parts.")
+
+# The fields of each part an MPN row lists (up to 10 per line, so 50 lines stay small); a part's
+# description and category are in its LCSC code's row or jlc_get_part
+_PARTS_MATCH_KEYS = ("lcsc", "model", "manufacturer", "package", "stock", "price", "prices", "library_type",
+                     "preferred", "gone", "gone_since", "last_stock")
+
+# MPN lookups: (in-stock parts, their match info, gone parts, their match info)
+PartsLookup = tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]], dict[str, Any]]
+
+
+def _parts_lookup(db: Any, mpn: str, maker: str | None, cache: dict[tuple[str, str | None], PartsLookup]) -> PartsLookup:
+    """An MPN's sure matches for jlc_get_parts (no full-text guesses), in stock and gone, for the
+    maker given (None: any), each (number, maker) looked up once a call. The maker narrows every
+    match step, so another maker's exact number doesn't hide this maker's other spelling."""
+    key = (mpn, maker.casefold() if maker else None)
+    if key not in cache:
+        keep = (lambda name: makers_match(name, maker)) if maker else None
+        info: dict[str, Any] = {}
+        gone_info: dict[str, Any] = {}
+        found = db.get_by_mpn(mpn, match_info=info, full_text=False, maker=keep)
+        gone = db.get_sold_out_by_mpn(mpn, match_info=gone_info, maker=keep)
+        cache[key] = (found, info, gone, gone_info)
+    return cache[key]
 
 
 def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]],
-                       found: list[dict[str, Any]], found_info: dict[str, Any], gone: list[dict[str, Any]],
+                       everyone: list[dict[str, Any]] | None, gone: list[dict[str, Any]],
                        rows: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """An MPN's jlc_get_parts row, shaped like jlc_get_part(mpn)'s reply. answer is _mpn_answer's for
-    the parts narrowed to the maker given (if any): the first GET_PARTS_MAX_MATCHES listed are shown
-    and total counts all. found are the in-stock parts before that narrowing (found_info their match
-    info), gone the gone matches after it (counted in gone_matches when in-stock parts answer)."""
+    the maker given (if any): the first GET_PARTS_MAX_MATCHES listed are shown, with
+    _PARTS_MATCH_KEYS only, and total counts all. everyone: the in-stock parts of every maker, when
+    the maker given has none in stock (their makers are other_manufacturers); gone the gone matches
+    (counted in gone_matches when in-stock parts answer)."""
     kind, listed, info, matched = answer
     row: dict[str, Any] = {"mpn": mpn, "total": len(listed)}
-    # Other makers list the number in stock (not only full-text related parts)
-    others = list(dict.fromkeys(p["manufacturer"] for p in found))[:GET_PARTS_MAX_MATCHES]
+    # Other makers list the number in stock
+    others = list(dict.fromkeys(p["manufacturer"] for p in everyone or []))[:GET_PARTS_MAX_MATCHES]
     if kind == "none":
         row.update(results=[], not_found=True)
-        # Listed, but only under other makers: their parts are numbered so, not merely full-text
-        # related (a JSMSEMI "-JSM" copy found by its text doesn't list the number), as below
-        if found and found_info.get("match") != "related":
+        if others:
             row["other_manufacturers"] = others
         return row
-    info = dict(info)
-    if "matched_mpn" in info and info.get("match") != "alternative":
-        info["matched_mpn"] = matched[0]["model"]  # get_by_mpn names its first match, maybe another maker's
     row.update(_match_flags(matched, info))
-    row["results"] = [dict(rows[p["lcsc"]]) for p in listed[:GET_PARTS_MAX_MATCHES] if p["lcsc"] in rows]
-    row.update(info)
+    row["results"] = [{key: rows[p["lcsc"]][key] for key in _PARTS_MATCH_KEYS if key in rows[p["lcsc"]]}
+                      for p in listed[:GET_PARTS_MAX_MATCHES] if p["lcsc"] in rows]
+    row.update(_public(info))
     if kind == "found" and gone:
         row["gone_matches"] = len(gone)
-    elif kind == "gone" and found and len(listed) == len(matched) and found_info.get("match") != "related":
+    elif kind == "gone" and others and len(listed) == len(matched):
         row["other_manufacturers"] = others  # gone for the maker given; others list it in stock
     return row
+
+
+def _code_as_mpn_note(code: str) -> str:
+    return (f"'{code}' isn't an LCSC code in the snapshot or among the parts that left it, so it was "
+            "looked up as a part number.")
 
 
 @mcp.tool(
@@ -2561,21 +2617,25 @@ def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[s
     )
 )
 @offload(COMPONENT_POOL)
-def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
+def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
     """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot
     (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
     live request. For one part's live stock and prices and its datasheet, use jlc_get_part.
     Reply: data_as_of (stock), prices_as_of (weekly 1-piece price), price_tiers_as_of (the daily
     scrape's quantity tiers in prices; null when this server has none), counts (found, gone,
     not_found, error), hint once when any part is gone or not found, and results in input order,
-    each with input (as given). An LCSC code's row has jlc_get_part's fields: lcsc, model,
-    manufacturer, package, stock, price, prices (quantity tiers; the 1-piece price alone when there
-    are none), library_type, preferred, pcba_type, category, subcategory, description; a part that
-    left the snapshot (under 10 or no longer listed) has stock null, gone, gone_since (the date it
-    left) and last_stock instead of pcba_type; or not_found. An MPN's row is like jlc_get_part(mpn):
-    mpn, total, up to 10 results (most stock first, same fields; gone ones as jlc_get_part(mpn)
-    lists them), exact, ambiguous and match info, gone_matches; or not_found, with
-    other_manufacturers when only other makers list it in stock. An unusable input has error.
+    each with input (as given; a long one cut at 100 characters). An LCSC code's row has
+    jlc_get_part's fields: lcsc, model, manufacturer, package, stock, price, prices (quantity tiers;
+    the 1-piece price alone when there are none), library_type, preferred, pcba_type, category,
+    subcategory, description; a part that left the snapshot (under 10 or no longer listed) has stock
+    null, gone, gone_since (the date it left) and last_stock instead of pcba_type; or not_found (a
+    plain code string not listed is also tried as a part number, with a note). An MPN's row is like
+    jlc_get_part(mpn): mpn, total, up to 10 results (most stock first: lcsc, model, manufacturer,
+    package, stock, price, prices, library_type, preferred, and the gone fields; gone ones as
+    jlc_get_part(mpn) lists them), exact, ambiguous and match info, gone_matches; or not_found, with
+    other_manufacturers when only other makers list it in stock. MPNs match only as themselves (or
+    by separators, packing codes, aliases or a BOM line's alternatives), never by full text: search
+    values with jlc_search. An unusable input has error.
 
     Args:
         parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
@@ -2586,7 +2646,7 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
     if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
         try:
             items = json.loads(items)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, RecursionError):  # nested past Python's limit: not a parts list either
             return _argument_error("parts", ValueError("not a valid JSON array"),
                                    ["LCSC code", "MPN", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
@@ -2599,34 +2659,56 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
     # Inputs read as part_lifecycle reads them; a valid LCSC code wins over an MPN given with it
     entries = [_lifecycle_entry(item) for item in items]
     db = get_db()
+    cache: dict[tuple[str, str | None], PartsLookup] = {}
+
+    def answer(mpn: str, maker: str | None) -> tuple[Any, ...] | None:
+        """(_mpn_answer for the maker given, its gone matches, every maker's in-stock parts when the
+        maker given has none), or None when the database failed on this number alone."""
+        try:
+            mine, mine_info, gone, gone_info = _parts_lookup(db, mpn, maker, cache)
+            result = _mpn_answer(mpn, mine, mine_info, gone, gone_info)
+            everyone = _parts_lookup(db, mpn, None, cache)[0] if maker and not mine else None
+        except sqlite3.Error:
+            logger.exception("jlc_get_parts: lookup failed for one part number")
+            return None
+        return result, gone, everyone
+
+    def rows_for(codes: list[str], gone_codes: list[str]) -> dict[str, dict[str, Any]]:
+        rows = db.get_snapshot_rows(codes) if codes else {}
+        # LCSC codes the snapshot doesn't list may be gone; one more read only when there are any
+        gone_codes = [*gone_codes, *(code for code, part in rows.items() if part is None)]
+        gone_rows = db.get_sold_out_rows(gone_codes) if gone_codes else {}
+        return {code: part for code, part in [*gone_rows.items(), *rows.items()] if part}  # never both
+
+    def listed_codes(result: tuple[Any, ...] | None, codes: list[str], gone_codes: list[str]) -> None:
+        for part in result[0][1][:GET_PARTS_MAX_MATCHES] if result else ():
+            (gone_codes if part.get("gone") else codes).append(part["lcsc"])
+
     try:
-        found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # each MPN looked up once
-        gone_found: dict[str, tuple[list[dict[str, Any]], dict[str, Any]]] = {}  # and its gone matches
-        answers: list[tuple[Any, ...] | None] = []  # per MPN entry: _mpn_answer for the maker given, its gone matches
+        answers: list[tuple[Any, ...] | None] = []  # per MPN entry: answer(); None for code entries
         codes: list[str] = []
         gone_codes: list[str] = []
         for entry in entries:
-            answer = None
+            result = None
             if entry.error is None and entry.lcsc:
                 codes.append(entry.lcsc)
             elif entry.error is None and entry.mpn:
-                if entry.mpn not in found:
-                    match_info: dict[str, Any] = {}
-                    found[entry.mpn] = (db.get_by_mpn(entry.mpn, match_info=match_info), match_info)
-                    gone_info: dict[str, Any] = {}
-                    gone_found[entry.mpn] = (db.get_sold_out_by_mpn(entry.mpn, match_info=gone_info), gone_info)
-                (mine, mine_info), (gone, gone_info) = found[entry.mpn], gone_found[entry.mpn]
-                if entry.maker:
-                    mine = [p for p in mine if makers_match(p.get("manufacturer"), entry.maker)]
-                    gone = [p for p in gone if makers_match(p.get("manufacturer"), entry.maker)]
-                answer = (_mpn_answer(entry.mpn, mine, mine_info, gone, gone_info), gone)
-                for part in answer[0][1][:GET_PARTS_MAX_MATCHES]:
-                    (gone_codes if part.get("gone") else codes).append(part["lcsc"])
-            answers.append(answer)
-        rows = db.get_snapshot_rows(codes)
-        # LCSC codes the snapshot doesn't list may be gone; one more read only when there are any
-        gone_codes.extend(code for code, part in rows.items() if part is None)
-        gone_rows = db.get_sold_out_rows(gone_codes) if gone_codes else {}
+                result = answer(entry.mpn, entry.maker)
+                listed_codes(result, codes, gone_codes)
+            answers.append(result)
+        listed = rows_for(codes, gone_codes)
+        # A plain code string neither lists may be a part number (2SC945 is sold as "C945"): asked as one
+        as_mpn: dict[int, tuple[Any, ...]] = {}
+        codes, gone_codes = [], []
+        for index, entry in enumerate(entries):
+            if (entry.error is None and entry.lcsc and not entry.mpn and isinstance(entry.input, str)
+                    and entry.lcsc not in listed):
+                result = answer(entry.lcsc, None)
+                if result and result[0][0] != "none":
+                    as_mpn[index] = result
+                    listed_codes(result, codes, gone_codes)
+        if codes or gone_codes:
+            listed.update(rows_for(codes, gone_codes))
         data_as_of, prices_as_of, tiers_as_of = db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
     except (OSError, sqlite3.Error):
         logger.exception("jlc_get_parts: catalog lookup failed")
@@ -2634,20 +2716,27 @@ def jlc_get_parts(parts: list[str | dict[str, Any]] | str) -> dict:
 
     # found: in the snapshot (stock >= 10); gone: answered from the parts kept after they left it
     counts = {"found": 0, "gone": 0, "not_found": 0, "error": 0}
-    listed = {code: part for code, part in [*gone_rows.items(), *rows.items()] if part}  # never both
     results = []
-    for entry, answer in zip(entries, answers):
+    for index, (entry, result) in enumerate(zip(entries, answers)):
         row: dict[str, Any] = {"input": entry.input}
-        if entry.error is not None:
+        if index in as_mpn:
+            result = as_mpn[index]
+            row.update(_get_parts_mpn_row(entry.lcsc, result[0], result[2], result[1], listed))
+            row["note"] = " ".join(filter(None, [row.get("note"), _code_as_mpn_note(entry.lcsc)]))
+            counts[result[0][0]] += 1
+        elif entry.error is not None:
             row.update(entry.error)
             counts["error"] += 1
         elif entry.lcsc:
             part = listed.get(entry.lcsc)
             row.update(part or {"lcsc": entry.lcsc, "not_found": True})
             counts["not_found" if not part else "gone" if part.get("gone") else "found"] += 1
+        elif result is None:  # the database failed on this number; the others are answered
+            row["error"] = "Database not available"
+            counts["error"] += 1
         else:
-            (kind, *_), gone = answer
-            row.update(_get_parts_mpn_row(entry.mpn, answer[0], *found[entry.mpn], gone, listed))
+            (kind, *_), gone, everyone = result
+            row.update(_get_parts_mpn_row(entry.mpn, result[0], everyone, gone, listed))
             counts["not_found" if kind == "none" else kind] += 1
         results.append(row)
     reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of,
@@ -2746,8 +2835,11 @@ async def jlc_find_alternatives(
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
     savings.order_total uses price breaks at component_quantity (boards * placements) from the
-    original's live prices and the candidates' snapshot (savings.price_tiers_as_of). If either lacks
-    tiers, both use qty 1; savings.price_basis says which. savings.unit_price_diff stays at qty 1;
+    original's live prices and the candidates' snapshot (savings.price_tiers_as_of) once that
+    quantity reaches a break above either part's first; a part below its second break, or both when
+    either lacks tiers, uses its qty-1 price; savings.price_basis says which (price_tiers_as_of is
+    null for qty 1, so at the default quantity order_total is assembly_fee plus unit_price_diff).
+    savings.unit_price_diff stays at qty 1;
     original_unit_price_at_quantity, replacement_unit_price_at_quantity and unit_price_diff_at_quantity
     in savings give the prices and difference used for order_total. Ranking still uses qty-1 prices.
     summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
@@ -2766,8 +2858,8 @@ async def jlc_find_alternatives(
             eligible candidates; extended fallback examples use only the remaining budget.
             Leaves out unknowns; summary.footprint_filter describes limits and lookup failures.
         limit: Max entries per verified/unverified list (max 50)
-        board_quantity: Number of boards for project savings (default 1)
-        placements_per_board: Original part placements per board (default 1)
+        board_quantity: Number of boards for project savings (default 1, max 1,000,000)
+        placements_per_board: Original part placements per board (default 1, max 1,000,000)
         land_compatible: True for a board whose copper is already made: compares the top 30
             candidates' EasyEDA footprint pads with the original's and adds land (fits, turn,
             max_offset_mm, renumbered); parts that fit as drawn with the same pad numbers come first.
@@ -3087,28 +3179,59 @@ async def digikey_get_part(product_number: str) -> dict:
         return {"error": "DigiKey part lookup failed. Check server logs for details."}
 
 
+# A NUL broke jlc_get_parts' whole batch (SQLite's full-text query); tabs and line breaks inside
+# a number are pasting accidents, not part numbers
+_CONTROL_CHARACTERS = {"error": "Invalid part: control characters (a NUL, tab or line break) can't be in a part "
+                                 "number, maker or LCSC code"}
+_ECHO_MAX = 100  # characters of an input echoed back (part_lifecycle and jlc_get_parts' input)
+
+
+def _has_control_characters(text: str) -> bool:
+    return any(unicodedata.category(c) == "Cc" for c in text)
+
+
+def _echo_input(item: Any) -> Any:
+    """An input as a reply's input echoes it: as given, except a string over 100 characters (its
+    first 100 and "...") or anything else whose JSON is over 200 (the first 100 characters of that
+    JSON and "...", as text), so a long or deeply nested input isn't sent back whole."""
+    if isinstance(item, str):
+        return item if len(item) <= _ECHO_MAX else item[:_ECHO_MAX] + "..."
+    try:
+        text = json.dumps(item, ensure_ascii=False)
+    except (TypeError, ValueError, RecursionError):
+        return "..."
+    return item if len(text) <= 2 * _ECHO_MAX else text[:_ECHO_MAX] + "..."
+
+
 def _lifecycle_entry(item: Any) -> Entry:
-    """One part_lifecycle input as an Entry, with its error if it can't be looked up."""
+    """One part_lifecycle or jlc_get_parts input as an Entry (input: _echo_input's), with its error
+    if it can't be looked up. A malformed lcsc beside an MPN (a BOM's "N/A" in its LCSC column) is
+    set aside, and the MPN looked up."""
+    echo = _echo_input(item)
     if isinstance(item, str):
         text = item.strip()
         fields = (None, None, text) if re.fullmatch(r"[Cc][0-9]{1,12}", text) else (text, None, None)
     elif isinstance(item, dict) and all(isinstance(item.get(k), (str, type(None))) for k in ("mpn", "manufacturer", "lcsc")):
         fields = (item.get("mpn"), item.get("manufacturer"), item.get("lcsc"))
     else:
-        return Entry(item, error={"error": 'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'})
+        return Entry(echo, error={"error": 'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'})
     mpn, maker, lcsc = ((value or "").strip() or None for value in fields)
     if lcsc and not re.fullmatch(r"C[0-9]{1,12}", lcsc.upper()):
-        return Entry(item, error={"error": "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead"})
+        if not mpn:
+            return Entry(echo, error={"error": "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead"})
+        lcsc = None
     if not mpn and not lcsc:
-        return Entry(item, error={"error": "Give a part number or an LCSC code"})
+        return Entry(echo, error={"error": "Give a part number or an LCSC code"})
     if mpn and len(mpn) > 100:
-        return Entry(item, error={"error": "MPN too long (max 100 characters)"})
+        return Entry(echo, error={"error": "MPN too long (max 100 characters)"})
     if maker and len(maker) > 100:
-        return Entry(item, error={"error": "Manufacturer too long (max 100 characters)"})
+        return Entry(echo, error={"error": "Manufacturer too long (max 100 characters)"})
+    if any(value and _has_control_characters(value) for value in (mpn, maker)):
+        return Entry(echo, error=dict(_CONTROL_CHARACTERS))
     if mpn and is_placeholder_mpn(mpn):
-        return Entry(item, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
+        return Entry(echo, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
                                   "not_sent": "placeholder"})
-    return Entry(item, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
+    return Entry(echo, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
 
 
 def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
@@ -3131,7 +3254,7 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
         openWorldHint=True,
     )
 )
-async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
+async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
     digikey_get_part for lifecycle. Readings are kept 90 days (unknown: a week; not listed: 30
@@ -3142,9 +3265,9 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
     neither lists, or to a distributor that hasn't listed the maker's parts lately: unknown with
     not_sent (value: "10k"; lcsc_code; placeholder; length: not 3-40 characters; not_ascii;
     maker_not_carried).
-    Reply: results in input order: input (as given), mpn, manufacturer, status, raw (the
-    distributor's wording; Mouser states none for most active parts: "not stated by Mouser"),
-    source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
+    Reply: results in input order: input (as given; a long one cut at 100 characters), mpn,
+    manufacturer, status, raw (the distributor's wording; Mouser states none for most active parts:
+    "not stated by Mouser"), source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
     (neither lists it), retry_after, lookup_failed, not_sent, error (unusable input, such as an MPN
     with "|"), or makers: each maker's reading, when several list the number and none was given,
     or only other makers do. status_counts counts the statuses.
@@ -3161,7 +3284,7 @@ async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
     if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
         try:
             items = json.loads(items)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, RecursionError):  # nested past Python's limit: not a parts list either
             return _argument_error("parts", ValueError("not a valid JSON array"),
                                    ["MPN", "LCSC code", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
@@ -3637,6 +3760,7 @@ async def health(request):
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
         "database_pressure": pressure,
         "platform_ranges": _platform_ranges_info,
+        "price_tiers": _price_tiers_info,
     }
     if stuck:
         reply["problem"] = (f"a database job has waited {pressure['oldest_wait_seconds']:.0f} s to start "

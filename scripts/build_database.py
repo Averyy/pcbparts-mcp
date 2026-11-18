@@ -20,6 +20,7 @@ import json
 import sqlite3
 import sys
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -510,18 +511,41 @@ def load_easyeda_pads(conn: sqlite3.Connection, rows: dict[str, PadsRow]) -> int
     return len(rows)
 
 
-def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path) -> tuple[int, str | None, str | None]:
+# A price tiers file's scrape time must fall in this window (UTC) to load: before 2025 nothing
+# wrote one, and a time days ahead is a bad clock or a hand-made header
+PRICE_TIERS_EARLIEST = datetime(2025, 1, 1, tzinfo=timezone.utc)
+PRICE_TIERS_MAX_AHEAD = timedelta(days=2)
+
+
+def _price_tiers_time(text: str, now: datetime) -> str:
+    """The file header's scrape time in UTC ISO form ("2026-11-17T22:00:00+00:00"; a time without a
+    zone is read as UTC), or ValueError when it can't be put in UTC or is implausible, so the
+    server never has to read a time it can't use (_iso_utc gave up on "0001-01-01T00:00:00+14:00")."""
+    try:
+        moment = datetime.fromisoformat(text)
+        moment = moment.replace(tzinfo=timezone.utc) if moment.tzinfo is None else moment.astimezone(timezone.utc)
+    except (ValueError, OverflowError) as exc:
+        raise ValueError(f"scraped_at {text!r} isn't a usable time ({exc})") from None
+    if not PRICE_TIERS_EARLIEST <= moment <= now + PRICE_TIERS_MAX_AHEAD:
+        raise ValueError(f"scraped_at {text!r} is before 2025 or more than 2 days ahead")
+    return moment.isoformat()
+
+
+def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path,
+                     now: datetime | None = None) -> tuple[int, str | None, str | None]:
     """Load the scrape's price breaks (catalog/price_tiers.tsv.gz) into price_tiers, one row per
     part listed in components, as pack_tiers text. The table is always created. The file is
     optional (it isn't in git: the image build downloads it as an Actions artifact), so a missing
-    or malformed one leaves the table empty instead of failing the build, all or nothing. Returns
-    (parts loaded, the file's scrape time or None, why nothing was loaded or None)."""
+    or malformed one leaves the table empty instead of failing the build, all or nothing: any error
+    reading it (JSON nested past Python's limit raises RecursionError, not ValueError), or a scrape
+    time that isn't plausible (_price_tiers_time; now: the build's time, for tests). Returns
+    (parts loaded, the file's scrape time in UTC or None, why nothing was loaded or None)."""
     conn.execute("CREATE TABLE price_tiers (lcsc TEXT PRIMARY KEY, tiers TEXT NOT NULL) WITHOUT ROWID")
     path = catalog_dir / PRICE_TIERS_FILE
     if not path.exists():
         return 0, None, f"no {PRICE_TIERS_FILE}"
     try:
-        scraped_at = price_tiers_scraped_at(path)
+        scraped_at = _price_tiers_time(price_tiers_scraped_at(path), now or datetime.now(timezone.utc))
         batch = []
         for code, breaks in read_price_tiers(path):
             batch.append((code, pack_tiers(breaks)))
@@ -529,9 +553,9 @@ def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path) -> tuple[int, 
                 conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
                 batch = []
         conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
-    except (ValueError, sqlite3.IntegrityError) as exc:
+    except Exception as exc:  # an optional file: whatever is wrong with it, the build goes on without it
         conn.execute("DELETE FROM price_tiers")
-        return 0, None, f"{PRICE_TIERS_FILE} not loaded: {exc}"
+        return 0, None, f"{PRICE_TIERS_FILE} not loaded: {type(exc).__name__}: {exc}"
     # A file from another day's scrape (an older artifact) lists parts this catalog doesn't
     conn.execute("DELETE FROM price_tiers WHERE lcsc NOT IN (SELECT lcsc FROM components)")
     count = conn.execute("SELECT COUNT(*) FROM price_tiers").fetchone()[0]

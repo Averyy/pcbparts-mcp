@@ -318,8 +318,19 @@ def read_price_tiers(path: Path) -> Iterator[tuple[str, list[tuple[int, float]]]
 
 def sold_out_row(part: dict, gone_since: str) -> dict:
     """A catalog part (read_catalog's row) as a sold-out row: what the catalog had for it, minus its
-    attributes and flags, plus gone_since ("g", an ISO date)."""
-    return {"l": part["l"], "g": gone_since, **{key: part.get(key) for key in SOLD_OUT_KEYS[2:]}}
+    attributes and flags, plus gone_since ("g", an ISO date). write_catalog checks fewer types than
+    a sold-out row needs, so a value the row can't hold is made one, with a warning, rather than
+    failing every scrape until the part is listed again: text fields (model, maker, package,
+    description) that aren't strings become their text, an unknown library type "e" (extended)."""
+    row = {"l": part["l"], "g": gone_since, **{key: part.get(key) for key in SOLD_OUT_KEYS[2:]}}
+    for key in ("m", "f", "p", "d"):
+        if row[key] is not None and not isinstance(row[key], str):
+            logger.warning("Sold-out part %s: %r %r stored as text", row["l"], key, row[key])
+            row[key] = json.dumps(row[key], ensure_ascii=False) if isinstance(row[key], (dict, list)) else str(row[key])
+    if row["t"] not in (None, "b", "p", "e"):
+        logger.warning("Sold-out part %s: library type %r stored as extended", row["l"], row["t"])
+        row["t"] = "e"
+    return row
 
 
 def _check_sold_out_row(row: object) -> dict:

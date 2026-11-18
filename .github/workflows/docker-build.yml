@@ -31,26 +31,38 @@ jobs:
         uses: actions/checkout@v7
 
       # Price breaks (data/catalog/price_tiers.tsv.gz) aren't in git: each daily scrape uploads them
-      # as the price-tiers artifact, kept 7 days. Take the newest from a run on this repository's
-      # main (a fork's pull request can upload an artifact with the same name). This step never
-      # fails the build: without the file, replies give the 1-piece price only.
+      # as the price-tiers artifact, kept 7 days. Take the one from the scrape workflow's newest run
+      # on main that has one: only that workflow uploads it, so a fork's pull request artifact of the
+      # same name can't be picked, and runs of any status count, since the scrape run that triggers
+      # this build is still finishing its last step. Each request is bounded (timeout 120) and so is
+      # the step. This step never fails the build: without the file, replies give the 1-piece price only.
       - name: Download price tiers
         continue-on-error: true
+        timeout-minutes: 5
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
-          warn() { echo "::warning title=No price tiers::$1; the image gives the 1-piece price only"; }
+          warn() {
+            echo "::warning title=No price tiers::$1; the image gives the 1-piece price only"
+            echo "Price tiers: none ($1)" >> "$GITHUB_STEP_SUMMARY"
+          }
           dir="$RUNNER_TEMP/price-tiers"
           rm -rf "$dir" && mkdir -p "$dir"
-          if ! id=$(gh api "repos/$REPO/actions/artifacts?name=price-tiers&per_page=100" --jq '
-              [.artifacts[] | select(.expired == false and .workflow_run.head_branch == "main"
-                and .workflow_run.head_repository_id == .workflow_run.repository_id)]
-              | sort_by(.created_at) | last | .id // empty'); then
-            warn "listing the artifacts failed"; exit 0
+          if ! runs=$(timeout 120 gh api "repos/$REPO/actions/workflows/scrape-components.yml/runs?branch=main&per_page=10" \
+              --jq '.workflow_runs[] | select(.head_repository.id == .repository.id) | .id'); then
+            warn "listing the scrape runs failed"; exit 0
           fi
-          if [ -z "$id" ]; then warn "no unexpired price-tiers artifact from main"; exit 0; fi
-          if ! gh api "repos/$REPO/actions/artifacts/$id/zip" > "$dir/price-tiers.zip"; then
+          id=""
+          for run in $runs; do
+            if ! id=$(timeout 120 gh api "repos/$REPO/actions/runs/$run/artifacts?name=price-tiers" \
+                --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty'); then
+              warn "listing scrape run $run's artifacts failed"; exit 0
+            fi
+            if [ -n "$id" ]; then break; fi
+          done
+          if [ -z "$id" ]; then warn "no unexpired price-tiers artifact in the scrape's last 10 runs on main"; exit 0; fi
+          if ! timeout 120 gh api "repos/$REPO/actions/artifacts/$id/zip" > "$dir/price-tiers.zip"; then
             warn "downloading artifact $id failed"; exit 0
           fi
           if ! unzip -q -o "$dir/price-tiers.zip" price_tiers.tsv.gz -d "$dir" || ! gzip -t "$dir/price_tiers.tsv.gz"; then
@@ -61,8 +73,10 @@ jobs:
             "#scraped_at"*) ;;
             *) warn "artifact $id's price_tiers.tsv.gz has no #scraped_at line"; exit 0 ;;
           esac
+          parts=$(gzip -cd "$dir/price_tiers.tsv.gz" | tail -n +2 | cut -f1 | uniq | wc -l | tr -d ' ') || parts="?"
           mv "$dir/price_tiers.tsv.gz" data/catalog/price_tiers.tsv.gz
-          echo "Price tiers from artifact $id: ${header#*$'\t'}"
+          echo "Price tiers from artifact $id (scrape run $run): ${header#*$'\t'}, $parts parts"
+          echo "Price tiers: $parts parts, scraped ${header#*$'\t'} (artifact $id, scrape run $run)" >> "$GITHUB_STEP_SUMMARY"
 
       # OpenAI's ChatGPT connector addresses get the AI platforms' higher per-address rate limit
       # (platform_ranges.py). OpenAI says the list can change, so each build takes a fresh copy when

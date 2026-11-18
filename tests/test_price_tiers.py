@@ -11,7 +11,7 @@ import sqlite3
 import subprocess
 import sys
 from contextlib import closing
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -29,7 +29,7 @@ from pcbparts_mcp.db.lookup import snapshot_prices
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 import scrape_components as scrape  # noqa: E402
-from build_database import build_database  # noqa: E402
+from build_database import build_database, load_price_tiers  # noqa: E402
 from search_baseline import offline  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
@@ -61,14 +61,24 @@ class TestScrapedBreaks:
         assert "$t" not in part and part["$"] is None
 
     @pytest.mark.parametrize("later", [{"startNumber": 1, "productPrice": 0.09},  # quantity twice
-                                       {"startNumber": "10", "productPrice": 0.09},
+                                       {"startNumber": "ten", "productPrice": 0.09},
+                                       {"startNumber": "10.5", "productPrice": 0.09},
+                                       {"startNumber": 10.5, "productPrice": 0.09},
+                                       {"startNumber": True, "productPrice": 0.09},
                                        {"startNumber": 10, "productPrice": None},
                                        {"startNumber": 0, "productPrice": 0.09},
                                        {"startNumber": 10, "productPrice": float("nan")},
-                                       None], ids=["twice", "text", "noprice", "zero", "nan", "null"])
+                                       None], ids=["twice", "word", "halftext", "half", "bool", "noprice", "zero",
+                                                   "nan", "null"])
     def test_a_malformed_break_leaves_the_one_price(self, later):
         part = scrape.transform_part(api_item("C1", [{"startNumber": 1, "productPrice": 0.1}, later]), 7)
         assert "$t" not in part and part["$"] == 0.1  # an optional file never fails the scrape
+
+    @pytest.mark.parametrize("quantities", [("1", "100"), (1.0, 100.0), (" 1 ", "100.0")], ids=["text", "float", "spaced"])
+    def test_whole_number_quantities_in_other_forms(self, quantities):
+        """Every part's breaks vanished without a word if JLCPCB sent startNumber as text or 1.0."""
+        prices = [{"startNumber": qty, "productPrice": price} for qty, price in zip(quantities, (0.1, 0.08))]
+        assert scrape.transform_part(api_item("C1", prices), 7)["$t"] == "1:0.1,100:0.08"
 
 
 def _part(code, price=0.1, tiers=None, sub=2, stock=50):
@@ -114,6 +124,35 @@ class TestScrapeOutputs:
         assert set(manifest["carried_forward"]) == {"1", "2", "3"}
         codes = [code for code, _ in read_price_tiers(tmp_path / "catalog" / PRICE_TIERS_FILE)]
         assert len(codes) == 50 and all(code.startswith("C4") for code in codes)
+
+    def test_manifest_counts_the_parts_with_breaks(self, tmp_path):
+        rows = [_part("C10", 0.5, "1:0.5,100:0.4"), _part("C9", 0.2, "1:0.2"), _part("C11", None)]
+        manifest = scrape.write_scrape_outputs(tmp_path, CATEGORIES, {"resistors": rows}, scrape.ScrapeProgress(), now=FIRST)
+        assert manifest["price_tiers_parts"] == 2
+        assert json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))["price_tiers_parts"] == 2
+
+    def test_few_breaks_warn(self, tmp_path, caplog):
+        rows = [_part(f"C{n}", 0.1, "1:0.1" if n < 8 else None) for n in range(1, 11)]  # 7 of 10 priced parts
+        scrape.write_scrape_outputs(tmp_path, CATEGORIES, {"resistors": rows}, scrape.ScrapeProgress(), now=FIRST)
+        assert "::warning title=Few price tiers::7 of 10 priced parts have price breaks" in caplog.text
+        caplog.clear()
+        rows = [_part(f"C{n}", 0.1, "1:0.1") for n in range(1, 11)]
+        scrape.write_scrape_outputs(tmp_path, CATEGORIES, {"resistors": rows}, scrape.ScrapeProgress(), now=FIRST)
+        assert "Few price tiers" not in caplog.text
+
+    def test_a_failed_write_never_fails_the_scrape(self, tmp_path, monkeypatch, caplog):
+        def broken(path, tiers, scraped_at):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"\x1f\x8b partial")
+            raise OSError(28, "No space left on device")
+
+        monkeypatch.setattr(scrape, "write_price_tiers", broken)
+        rows = [_part("C10", 0.5, "1:0.5,100:0.4")]
+        manifest = scrape.write_scrape_outputs(tmp_path, CATEGORIES, {"resistors": rows}, scrape.ScrapeProgress(), now=FIRST)
+        assert not (tmp_path / "catalog" / PRICE_TIERS_FILE).exists()  # no partial file for the upload
+        assert manifest["price_tiers_parts"] == 0 and manifest["total_parts"] == 1
+        assert (tmp_path / "catalog" / "prices.tsv").read_text(encoding="utf-8") == "C10\t0.5\n"
+        assert "::warning title=Price tiers not written::OSError" in caplog.text
 
     def test_no_breaks_no_file(self, tmp_path):
         scrape.write_scrape_outputs(tmp_path, CATEGORIES, {"resistors": [_part("C1", 0.5, "1:0.5")]},
@@ -255,6 +294,68 @@ class TestDatabaseBuild:
         assert "price_tiers.tsv.gz not loaded" in capsys.readouterr().out
 
 
+    @pytest.mark.parametrize("header", ["0001-01-01T00:00:00+14:00", "2024-12-31T23:59:59+00:00",
+                                        "2999-01-01T00:00:00+00:00", "9999-12-31T23:59:59-14:00"],
+                             ids=["year1", "early", "ahead", "year9999"])
+    def test_implausible_scrape_time_loads_nothing(self, tmp_path, header, capsys):
+        """The server read the header's time when it opened the database: "0001-01-01T00:00:00+14:00"
+        can't be put in UTC, so it raised OverflowError at startup."""
+        data = _data_dir(tmp_path, tiers_text=f"#scraped_at\t{header}\nC25531\t1\t0.5\n")
+        stats = build_database(data, data / "c.db", verbose=False)
+        assert (stats["price_tier_parts"], stats["price_tiers_scraped_at"]) == (0, None)
+        assert _meta(data / "c.db") == ({"price_tiers_loaded": "0", "price_tiers_parts": "0"}, [])
+        assert "price_tiers.tsv.gz not loaded" in capsys.readouterr().out
+
+    @pytest.mark.parametrize("header,utc", [("2026-11-17T17:00:00-05:00", "2026-11-17T22:00:00+00:00"),
+                                            ("2026-11-17T22:00:00", "2026-11-17T22:00:00+00:00")],
+                             ids=["offset", "naive"])
+    def test_scrape_time_stored_in_utc(self, tmp_path, header, utc):
+        data = _data_dir(tmp_path, tiers_text=f"#scraped_at\t{header}\nC25531\t1\t0.5\n")
+        with closing(sqlite3.connect(":memory:")) as conn:
+            conn.execute("CREATE TABLE components (lcsc TEXT)")
+            conn.execute("INSERT INTO components VALUES ('C25531')")
+            now = datetime(2026, 11, 18, tzinfo=timezone.utc)
+            assert load_price_tiers(conn, data / "catalog", now=now) == (1, utc, None)
+            assert load_price_tiers_ahead(conn, data / "catalog", header) == (0, None)
+
+    def test_any_error_reading_the_file_loads_nothing(self, tmp_path, monkeypatch):
+        """JSON nested past Python's limit raises RecursionError (not ValueError), which failed the image build."""
+        import build_database as build
+
+        def too_deep(path):
+            yield "C2", [(1, 0.5)]
+            raise RecursionError("maximum recursion depth exceeded while decoding a JSON array")
+
+        monkeypatch.setattr(build, "read_price_tiers", too_deep)
+        data = _data_dir(tmp_path)
+        stats = build_database(data, data / "c.db", verbose=False)
+        assert stats["total_parts"] == 3 and stats["price_tier_parts"] == 0
+        assert _meta(data / "c.db") == ({"price_tiers_loaded": "0", "price_tiers_parts": "0"}, [])
+
+    def test_server_opens_a_database_with_an_unusable_time(self, tmp_path):
+        data = _data_dir(tmp_path)
+        build_database(data, data / "c.db", verbose=False)
+        with closing(sqlite3.connect(data / "c.db")) as conn:  # as a build before this check could write it
+            conn.execute("UPDATE metadata SET value = '0001-01-01T00:00:00+14:00' WHERE key = 'price_tiers_scraped_at'")
+            conn.commit()
+        db = ComponentDatabase(db_path=data / "c.db", data_dir=data)
+        try:
+            assert db.price_tiers_as_of() is None and db.price_tiers_parts() == 0  # no breaks, no crash
+            assert db.scraped_at() == "2026-11-18T22:00:00Z"
+        finally:
+            db.close()  # before the temporary directory goes (Windows)
+
+
+def load_price_tiers_ahead(conn, catalog_dir, header):
+    """load_price_tiers four days before the header's time: refused as ahead of the build's clock."""
+    moment = datetime.fromisoformat(header)
+    moment = moment.replace(tzinfo=timezone.utc) if moment.tzinfo is None else moment
+    conn.execute("DROP TABLE price_tiers")
+    loaded, scraped_at, why = load_price_tiers(conn, catalog_dir, now=moment - timedelta(days=4))
+    assert "more than 2 days ahead" in why
+    return loaded, scraped_at
+
+
 @pytest.fixture(scope="module")
 def databases(tmp_path_factory):
     dbs = {}
@@ -359,14 +460,20 @@ class TestHandOver:
         patterns = [line for line in lines if line and not line.startswith("#")]
         assert patterns[-1] == f"!data/catalog/{PRICE_TIERS_FILE}"  # the last match wins
 
-    def test_scrape_uploads_it_before_the_push(self):
+    def test_scrape_uploads_it_after_the_push_and_before_the_deploy(self):
+        """After the push, so a stalled upload never costs the day's commit (the push uses
+        GITHUB_TOKEN and starts no build); before "Trigger deploy", whose build downloads it."""
         steps = yaml.safe_load((ROOT / ".github/workflows/scrape-components.yml").read_text(encoding="utf-8"))["jobs"]["scrape"]["steps"]
         names = [step.get("name") for step in steps]
         upload = steps[names.index("Upload price tiers")]
-        assert names.index("Check part count") < names.index("Upload price tiers") < names.index("Commit and push data files")
+        assert (names.index("Check part count") < names.index("Commit and push data files")
+                < names.index("Upload price tiers") < names.index("Trigger deploy"))
+        assert "if" not in upload  # uploaded with or without a data change, once the commit step succeeded
         assert upload["uses"].startswith("actions/upload-artifact@v") and upload["continue-on-error"] is True
+        assert 1 <= upload["timeout-minutes"] <= 10
         assert upload["with"] == {"name": "price-tiers", "path": f"data/catalog/{PRICE_TIERS_FILE}", "retention-days": 7,
                                   "if-no-files-found": "warn", "compression-level": 0, "overwrite": True}
+        assert "sleep 120" in steps[names.index("Trigger deploy")]["run"]
 
     def test_build_downloads_it_without_failing(self):
         job = yaml.safe_load((ROOT / ".github/workflows/docker-build.yml").read_text(encoding="utf-8"))["jobs"]["build-and-push"]
@@ -374,9 +481,13 @@ class TestHandOver:
         names = [step.get("name") for step in job["steps"]]
         download = job["steps"][names.index("Download price tiers")]
         assert names.index("Checkout repository") < names.index("Download price tiers") < names.index("Build and push Docker image")
-        assert download["continue-on-error"] is True
+        assert download["continue-on-error"] is True and 1 <= download["timeout-minutes"] <= 10
         script = download["run"]
-        assert "artifacts?name=price-tiers" in script and 'head_branch == "main"' in script
-        assert f"data/catalog/{PRICE_TIERS_FILE}" in script
+        # The scrape workflow's own runs on main (a fork's pull request can upload an artifact with the
+        # same name, and over 100 newer ones pushed main's off an unpaginated artifact list), any status
+        assert "actions/workflows/scrape-components.yml/runs?branch=main" in script and "status=" not in script
+        assert "actions/runs/$run/artifacts?name=price-tiers" in script and "repos/$REPO/actions/artifacts?" not in script
+        assert script.count("gh api") == script.count("timeout 120 gh api") == 3  # no request can hang the step
+        assert f"data/catalog/{PRICE_TIERS_FILE}" in script and "GITHUB_STEP_SUMMARY" in script
         # every failure warns and ends the step successfully
-        assert script.count('warn "') == script.count("exit 0") == 5 and "exit 1" not in script
+        assert script.count('warn "') == script.count("exit 0") == 6 and "exit 1" not in script

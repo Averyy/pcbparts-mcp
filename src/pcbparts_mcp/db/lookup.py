@@ -1,6 +1,8 @@
 """Component lookup functions for the database."""
 
 import sqlite3
+from collections.abc import Callable
+from itertools import islice
 from typing import Any
 
 from ..catalog_files import unpack_tiers
@@ -12,6 +14,12 @@ from ..search.mpn import (
 )
 
 
+# match_info's private key (never in a reply: callers drop keys starting with "_"): an
+# "alternative" match whose annotated candidate itself matched only by full text ("related"), so
+# the parts are full-text guesses although match says alternative
+VIA = "_via"
+
+
 def get_by_mpn(
     conn: sqlite3.Connection,
     mpn: str,
@@ -19,6 +27,8 @@ def get_by_mpn(
     *,
     match_info: dict[str, Any] | None = None,
     sold_out: bool = False,
+    full_text: bool = True,
+    maker: Callable[[str | None], bool] | None = None,
 ) -> list[dict[str, Any]]:
     """Find an MPN, preserving exact/normalized/FTS precedence within a candidate.
 
@@ -27,6 +37,11 @@ def get_by_mpn(
     alternatives tried. Optional reply metadata leaves list callers unchanged.
     sold_out=True looks in the parts kept after they left the snapshot instead (sold_out_part rows, most
     stock when last listed first), by the same rules except full-text search, which they're outside.
+    full_text=False leaves out full-text search too (jlc_get_parts: sure matches only).
+    maker: which manufacturer names to keep (jlc_get_parts' maker given). Each step keeps only those
+    makers' parts before deciding it matched, so another maker's exact match doesn't hide this
+    maker's own spelling ("1N4007G" from Comchip is its "1N4007-G"); full text keeps 10 of them.
+    match_info[VIA] = "related" marks an alternative found by full text (private: see VIA).
     """
     if match_info is not None:
         match_info.clear()
@@ -39,7 +54,7 @@ def get_by_mpn(
     def parts(rows):
         unique = {}
         for row in rows:
-            if row["lcsc"] not in unique:
+            if row["lcsc"] not in unique and (maker is None or maker(row["manufacturer"])):
                 unique[row["lcsc"]] = to_dict(row, subcategories)
         return list(unique.values())
 
@@ -107,16 +122,18 @@ def get_by_mpn(
 
         # 4. Existing FTS queries, variants, stock order and limit are unchanged,
         # except that an LCSC-shaped input doesn't match other parts' LCSC codes.
-        for variant in () if sold_out else variants:
+        for variant in () if sold_out or not full_text else variants:
             escaped = variant.replace('"', '""')
             columns = "{mpn manufacturer description} : " if lcsc_code else ""
-            results = parts(conn.execute(
+            rows = conn.execute(
                 """SELECT c.* FROM components c
                    JOIN components_fts f ON c.lcsc = f.lcsc
                    WHERE f.components_fts MATCH ?
-                   ORDER BY c.stock DESC, c.lcsc
-                   LIMIT 10""", [f'{columns}"{escaped}"*'],
-            ))
+                   ORDER BY c.stock DESC, c.lcsc""" + ("" if maker else "\n                   LIMIT 10"),
+                [f'{columns}"{escaped}"*'],
+            )
+            # The maker's first 10, not the first 10 of every maker narrowed down
+            results = parts(islice((row for row in rows if maker(row["manufacturer"])), 10) if maker else rows)
             if results:
                 return results, {"match": "related", "note": related_note(
                     results, f"No exact match for '{candidate}'. These parts' part numbers start with it "
@@ -157,6 +174,8 @@ def get_by_mpn(
             if vendors := ALTERNATIVE_MANUFACTURERS.get(mpn_key(candidate)):
                 results = [part for part in results if part['manufacturer'] in vendors]
             if results:
+                if info.get("match") == "related":
+                    info[VIA] = "related"
                 info.update(match="alternative", matched_mpn=candidate)
                 break
     if match_info is not None and results:
@@ -271,7 +290,8 @@ def sold_out_part(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) ->
     its stock fell under 10 or JLCPCB stopped listing it) in row_to_dict's shape for what is kept:
     stock unknown (None) and no specs, plus gone, gone_since (the UTC date of the first daily
     scrape it was missing from) and last_stock (its stock in the last scrape that listed it). price
-    is the 1-piece price that scrape had."""
+    is the last 1-piece price the snapshot had for it (prices.tsv, refreshed weekly: it can be up to
+    a week older than last_stock)."""
     library_type = {"b": "basic", "p": "preferred", "e": "extended"}.get(row["library_type"], row["library_type"])
     subcategory_info = subcategories.get(row["subcategory_id"], {})
     category, subcategory = subcategory_info.get("category_name"), subcategory_info.get("name")

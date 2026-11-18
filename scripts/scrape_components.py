@@ -131,6 +131,18 @@ def slugify(name: str) -> str:
     return slug.strip("-")
 
 
+def _break_quantity(value: Any) -> int | None:
+    """A price break's startNumber as a whole number: an int, or a float or numeric text that is one
+    (100.0, "100"; JSON doesn't promise JLCPCB keeps sending ints), else None."""
+    if type(value) is int:
+        return value
+    if type(value) is float and math.isfinite(value) and value.is_integer():
+        return int(value)
+    if isinstance(value, str) and re.fullmatch(r"[0-9]{1,12}(\.0+)?", value.strip()):
+        return int(float(value))
+    return None
+
+
 def price_tiers(prices: list[dict[str, Any]]) -> str | None:
     """Every price break JLCPCB listed, by quantity, as pack_tiers text ("1:0.0228,300:0.0176"), the
     prices rounded like the 1-piece "$" price; None without any. A malformed break (a quantity that
@@ -140,12 +152,41 @@ def price_tiers(prices: list[dict[str, Any]]) -> str | None:
     for tier in prices:
         if not isinstance(tier, dict):
             return None
-        qty, price = tier.get("startNumber"), tier.get("productPrice")
-        if (type(qty) is not int or qty < 1 or qty in breaks or type(price) not in (int, float)
+        qty, price = _break_quantity(tier.get("startNumber")), tier.get("productPrice")
+        if (qty is None or qty < 1 or qty in breaks or type(price) not in (int, float)
                 or not math.isfinite(price) or price < 0):
             return None
         breaks[qty] = round(price, 4)
     return pack_tiers((qty, breaks[qty]) for qty in sorted(breaks)) or None
+
+
+# Under this share of priced parts with price breaks, the scrape warns (in the workflow's
+# annotations): JLCPCB sending them another way would otherwise empty the file without a word
+PRICE_TIERS_MIN_SHARE = 0.9
+
+
+def write_price_tiers_file(path: Path, tiers: dict[str, str], scraped_at: str, priced: int) -> int:
+    """Write today's price breaks (catalog/price_tiers.tsv.gz), or remove the file when there are
+    none. It's optional, so this never fails the scrape: a write that fails removes its partial
+    file and warns. Returns the parts written (0 when nothing was)."""
+    written = 0
+    try:
+        if tiers:
+            written = write_price_tiers(path, tiers, scraped_at)
+        else:
+            path.unlink(missing_ok=True)  # never an older scrape's breaks beside today's catalog
+    except Exception as exc:  # disk full, a break the writer refuses: the 1-piece prices still publish
+        logger.warning(f"::warning title=Price tiers not written::{type(exc).__name__}: {exc}; "
+                       "replies give the 1-piece price only until the next scrape")
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            pass
+        return 0
+    if priced and written < PRICE_TIERS_MIN_SHARE * priced:
+        logger.warning(f"::warning title=Few price tiers::{written:,} of {priced:,} priced parts have price "
+                       f"breaks (under {PRICE_TIERS_MIN_SHARE:.0%}): check how JLCPCB sends componentPrices")
+    return written
 
 
 def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
@@ -746,14 +787,11 @@ def write_scrape_outputs(
     # uploads the file as an Actions artifact for the image build. Parts carried over a scrape gap
     # have none, so replies give them the 1-piece price only.
     tiers = {part["l"]: part["$t"] for parts in unique_results.values() for part in parts if part.get("$t")}
-    tiers_path = catalog_dir / PRICE_TIERS_FILE
-    if tiers:
-        write_price_tiers(tiers_path, tiers, now.isoformat())
-    else:
-        tiers_path.unlink(missing_ok=True)  # never an older scrape's breaks beside today's catalog
-    without = sum(1 for parts in unique_results.values() for part in parts
-                  if part.get("$") is not None and not part.get("$t"))
-    logger.info(f"Price breaks: {len(tiers):,} parts" + (f" ({without:,} priced parts without them)" if without else ""))
+    priced = sum(1 for parts in unique_results.values() for part in parts if part.get("$") is not None)
+    tier_parts = write_price_tiers_file(catalog_dir / PRICE_TIERS_FILE, tiers, now.isoformat(), priced)
+    without = priced - sum(1 for parts in unique_results.values() for part in parts
+                           if part.get("$") is not None and part.get("$t"))
+    logger.info(f"Price breaks: {tier_parts:,} parts" + (f" ({without:,} priced parts without them)" if without else ""))
 
     # Generate manifest
     logger.info("")
@@ -766,6 +804,8 @@ def write_scrape_outputs(
         "total_parts": progress.total_parts,
         # Parts kept in catalog/sold_out/, not in total_parts or the categories' counts
         **({"sold_out_parts": len(sold_out)} if sold_out is not None else {}),
+        # Parts in catalog/price_tiers.tsv.gz (not committed): 0 when the file wasn't written
+        "price_tiers_parts": tier_parts,
         "categories": {},
     }
 
