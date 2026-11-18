@@ -37,7 +37,7 @@ Clients that only run local commands (Copilot for Xcode): `{"command": "npx", "a
 - Recorded low-stock observations for one LCSC code or a BOM's list of up to 50: `jlc_stock_history`; missing scrape records are not confirmed stockouts.
 - One part's live details: `jlc_get_part(lcsc=...)`. A manufacturer part number to JLCPCB parts: `jlc_get_part(mpn=...)`.
 - Replacement for a part: get its LCSC code (from `jlc_get_part(mpn=...)` if needed), then `jlc_find_alternatives(lcsc=...)`.
-- Mouser or DigiKey data: `mouser_get_part`, `digikey_get_part`, only when the user wants that distributor.
+- Mouser or DigiKey data: `mouser_get_part`, `digikey_get_part`, only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's data); their shared daily limits often run out.
 - Pins and footprint pads: `jlc_get_pinout`. KiCad files: `cse_get_kicad` (slow).
 - How real boards wire an IC: `board_search(component=...)`, then `board_get(slug, focus=IC)`.
 - Choosing a sensor: `sensor_recommend`. Design guidance: `get_design_rules`.

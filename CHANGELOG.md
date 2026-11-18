@@ -4,6 +4,10 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.0 (unreleased)
+
+- `mouser_get_part` and `digikey_get_part` descriptions, the server instructions and llms.txt now say to use them only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing, or the user asked for that distributor's own stock, price or lifecycle), since their shared daily limits often run out: on 2026-11-18 both were spent by 8:20 AM EST.
+
 ## 0.9.5 (2026-11-18)
 
 Changed replies: `digikey_get_part` for JST part numbers ending in `(LF)` or `(SN)`; `jlc_find_alternatives` has a new `land_compatible` argument, and connector alternatives list `land pattern and pin 1 position` as unchecked with a `summary.land_note`; `jlc_stock_history` takes a list of codes. Existing arguments and single-code replies are unchanged.

@@ -218,7 +218,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's data): their shared daily limits often run out; batch Mouser lookups. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -2332,9 +2332,10 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts. Use only when the user wants Mouser data;
-    find parts with jlc_search first. Shared daily limit: batch up to 10 parts per call (one
-    request). Don't retry a quota error.
+    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out,
+    so use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
+    asked for Mouser's own stock, price or lifecycle. Batch up to 10 parts per call (one request).
+    Don't retry a quota error.
     Reply: lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
     Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some the
     maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status (it
@@ -2373,9 +2374,10 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(product_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part. Use only when the user wants DigiKey data;
-    find parts with jlc_search first. Shared daily limit, one part per call: don't check whole
-    BOMs. Don't retry a quota error.
+    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out, so
+    use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
+    asked for DigiKey's own stock, price or lifecycle. One part per call: don't check whole BOMs.
+    Don't retry a quota error.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status.
