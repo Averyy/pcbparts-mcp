@@ -1,20 +1,34 @@
-"""Mouser Search API v2 client."""
+"""Mouser Search API v2 client.
+
+Answers are kept per part number in distributor_store.py for MOUSER_CACHE_TTL (3 days; not found a
+day), so a batch reuses parts other calls fetched and sends only the rest. Mouser matches loosely and
+doesn't say which part number each result is for, so results are matched back to the numbers asked
+(_attribute): a number whose results can't all be put down to it alone isn't kept on its own, and the
+whole batch is kept under its joined numbers instead. Concurrent one-part lookups share one request
+(_pooled). Every answer's lifecycle goes into the lifecycle store.
+"""
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
-from typing import Any, TYPE_CHECKING
+import time
+from dataclasses import dataclass, field
+from typing import Any, Callable, TYPE_CHECKING
 
 import httpx
 
 from . import stats
-from .cache import TTLCache
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
-    MOUSER_CACHE_TTL,
+    MOUSER_NOT_FOUND_TTL,
+    MOUSER_POOL_WINDOW,
 )
+from .distributor_store import DistributorStore
+from .lifecycle import MOUSER_NOT_STATED, Reading, mouser_status, utc_text
+from .search.mpn import mpn_key
 
 if TYPE_CHECKING:
     from .cache import DailyQuota
@@ -82,13 +96,80 @@ def _part_key(number: str | None) -> str:
     return re.sub(r"[^A-Z0-9]", "", (number or "").upper())
 
 
+def _touches(result: dict[str, Any], number: str) -> bool:
+    """Whether a result can be one of Mouser's loose matches for the number: its Mouser PN or MPN is
+    the number or starts with it, or the number ends with its MPN (a Mouser PN such as 595-LM358P).
+    Mouser matches loosely: "LM358P" finds LM358P and LM358PE4."""
+    asked = _part_key(number)
+    if not asked:
+        return False
+    mouser, mpn = _part_key(result.get("part_number")), _part_key(result.get("mfr_part_number"))
+    return mouser.startswith(asked) or mpn.startswith(asked) or bool(mpn) and asked.endswith(mpn)
+
+
+def _identifies(result: dict[str, Any], number: str) -> bool:
+    """Whether the result is the number itself (its MPN or Mouser PN, compared with mpn_key)."""
+    key = mpn_key(number)
+    return bool(key) and key in (mpn_key(result.get("mfr_part_number") or ""), mpn_key(result.get("part_number") or ""))
+
+
 def _not_found(numbers: list[str], results: list[dict[str, Any]]) -> list[str]:
-    """The asked numbers no result matches: none has it as Mouser PN or starts its MPN with it
-    (Mouser matches loosely: "LM358P" finds LM358P and LM358PE4)."""
-    keys = [(_part_key(r.get("part_number")), _part_key(r.get("mfr_part_number"))) for r in results]
-    return [n for n in numbers if not any(
-        mouser == _part_key(n) or mpn.startswith(_part_key(n)) or _part_key(n).endswith(mpn) and mpn
-        for mouser, mpn in keys)]
+    """The asked numbers no result matches (Mouser leaves out numbers it doesn't find)."""
+    return [n for n in numbers if not any(_touches(r, n) for r in results)]
+
+
+def _attribute(numbers: list[str], results: list[dict[str, Any]]
+               ) -> tuple[dict[str, list[dict]], list[str | None], list[dict], set[str]]:
+    """Match one request's results to the numbers asked (distinct by cache key).
+
+    Returns each number's results (every result that can be its loose match), each result's owner
+    (the one number it is, by mpn_key, else the only number it can match; None when that's unclear),
+    the results that match no number (extras), and the clean numbers: those whose results all belong
+    to them alone, which may be kept per part. A result that matches no number could belong to any,
+    so then none is clean. One number owns everything Mouser returned for it.
+    """
+    if len(numbers) == 1:
+        return {numbers[0]: list(results)}, [numbers[0]] * len(results), [], {numbers[0]}
+    touched = [[n for n in numbers if _touches(r, n)] for r in results]
+    owners: list[str | None] = []
+    for result, matches in zip(results, touched):
+        exact = [n for n in numbers if _identifies(result, n)]
+        owners.append(exact[0] if len(exact) == 1 else matches[0] if not exact and len(matches) == 1 else None)
+    per = {n: [r for r, matches in zip(results, touched) if n in matches] for n in numbers}
+    extras = [r for r, matches in zip(results, touched) if not matches]
+    clean = set() if extras else {
+        n for n in numbers if all(owner == n for owner, matches in zip(owners, touched) if n in matches)}
+    return per, owners, extras, clean
+
+
+def _cache_key(number: str) -> str:
+    """A part number's key in the answer store: as given, ignoring case and outer spaces."""
+    return number.strip().upper()
+
+
+@dataclass
+class PartAnswer:
+    """What Mouser returned for one part number: the results that can be its matches, whether any
+    really matches it (else the reply's not_found names it), and when Mouser answered."""
+    results: list[dict[str, Any]]
+    matched: bool
+    fetched_at: float
+
+    def as_json(self) -> dict[str, Any]:
+        return {"results": self.results, "matched": self.matched}
+
+    @classmethod
+    def from_json(cls, data: dict[str, Any], fetched_at: float) -> PartAnswer:
+        return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at)
+
+
+@dataclass
+class _PoolBatch:
+    """One-part lookups waiting to go out together (_pooled)."""
+    caller: str | None
+    future: asyncio.Future
+    numbers: dict[str, str] = field(default_factory=dict)  # cache key -> the number as first given
+    started: bool = False
 
 
 def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
@@ -145,6 +226,7 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
         "product_url": part.get("ProductDetailUrl"),
         "rohs": part.get("ROHSStatus", ""),
         "lifecycle": lifecycle,
+        "lifecycle_status": mouser_status(lifecycle)[0],
         "parameters": parameters,
         "min_qty": int(part.get("Min", 1) or 1),
         "unit_weight_g": _parse_unit_weight_g(part),
@@ -153,13 +235,25 @@ def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
 
 
 class MouserClient:
-    """Async client for Mouser Search API v2."""
+    """Async client for Mouser Search API v2.
 
-    def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | None = None):
+    store: the answer and lifecycle store shared with DigiKeyClient and part_lifecycle (the server
+    passes one); without one the client keeps its own in memory. pool_window: seconds a one-part
+    lookup waits for others to share its request (sleep is injectable for tests)."""
+
+    def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | None = None,
+                 store: DistributorStore | None = None, clock: Callable[[], float] = time.time,
+                 pool_window: float = MOUSER_POOL_WINDOW, sleep: Callable[[float], Any] = asyncio.sleep):
         self._api_key = api_key
         self._client: httpx.AsyncClient | None = None
-        self._cache = TTLCache(ttl=MOUSER_CACHE_TTL)
         self._quota = quota
+        self._owns_store = store is None
+        self._store = DistributorStore(clock=clock) if store is None else store
+        self._pool_window = pool_window
+        self._sleep = sleep
+        self._pool: _PoolBatch | None = None
+        self._tasks: set[asyncio.Task] = set()  # pool sends in flight (kept so they aren't collected)
+        self._waiting: set[asyncio.Future] = set()  # pooled batches not answered yet
 
     def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
@@ -242,51 +336,214 @@ class MouserClient:
         if bad:
             return {"error": "Each Mouser part number must be 3-40 characters: "
                              + ", ".join(repr(n[:50]) for n in bad[:3])}
-        query = "|".join(numbers)
+        distinct: dict[str, str] = {}
+        for number in numbers:  # once each, as first spelled
+            distinct.setdefault(_cache_key(number), number)
+        numbers = list(distinct.values())
 
-        # Batches are cached too: an identical batch within the hour costs no request. Each part of a
-        # batch can't be cached on its own, since Mouser matches loosely and doesn't say which input
-        # each result came from.
-        cache_key = f"mouser:{query}"
-        cached = self._cache.get(cache_key)
-        if cached is not None:
+        answers, extras, error = await self._answers(numbers, caller)
+        if error is not None:
+            return error
+        results: list[dict[str, Any]] = []
+        seen = set()
+        for result in [r for n in numbers for r in answers[_cache_key(n)].results] + extras:
+            identity = (result.get("part_number"), result.get("mfr_part_number"), result.get("manufacturer"))
+            if identity not in seen:
+                seen.add(identity)
+                results.append(result)
+        reply: dict[str, Any] = {"results": results, "total": len(results)}
+        # Mouser leaves out numbers it doesn't find, so in a batch of 10 a missing part looked checked
+        if missing := [n for n in numbers if not answers[_cache_key(n)].matched]:
+            reply["not_found"] = missing
+        # The oldest answer used: parts fetched by other calls can be up to MOUSER_CACHE_TTL old
+        reply["observed_at"] = utc_text(min(answer.fetched_at for answer in answers.values()))
+        return reply
+
+    async def lookup(self, numbers: list[str], caller: str | None = None
+                     ) -> tuple[dict[str, PartAnswer] | None, dict[str, Any] | None]:
+        """Each number's answer, as get_part finds it (store first, then one request for the rest),
+        or a limit error. numbers: up to 10 distinct numbers of 3-40 characters (part_lifecycle)."""
+        answers, _, error = await self._answers(numbers, caller)
+        if error is not None:
+            return None, error
+        return {n: answers[_cache_key(n)] for n in numbers}, None
+
+    def retry_after(self) -> int:
+        """Seconds until Mouser may be asked again (60 when the limits don't say)."""
+        return (self._quota.retry_after() if self._quota else None) or 60
+
+    async def _answers(self, numbers: list[str], caller: str | None
+                       ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
+        """Answers by cache key from the store, then from Mouser for the numbers it doesn't have:
+        one request (a lone number waits to share it, _pooled). Also the results matching no number
+        asked (they're returned to the caller, not kept per part), or a limit error."""
+        answers: dict[str, PartAnswer] = {}
+        missing = []
+        for number in numbers:
+            stored = self._store.get_answer("mouser", _cache_key(number))
+            if stored is not None:
+                answers[_cache_key(number)] = PartAnswer.from_json(*stored)
+            else:
+                missing.append(number)
+        extras: list[dict[str, Any]] = []
+        # A batch kept whole (its numbers couldn't all be kept one by one): this call's numbers, or
+        # the ones it still needs, sent together before
+        for key in dict.fromkeys((_batch_key(numbers), _batch_key(missing))) if missing and len(numbers) > 1 else ():
+            if (stored := self._store.get_answer("mouser", key)) is None:
+                continue
+            batch, fetched_at = stored
+            try:
+                kept = {_cache_key(n): PartAnswer.from_json(batch["answers"][_cache_key(n)], fetched_at) for n in missing}
+            except (KeyError, TypeError, AttributeError):  # not expected: ask Mouser again
+                continue
+            # The batch lives as long as a found answer; a part it didn't find is good for a day only
+            if self._store.now() - fetched_at >= MOUSER_NOT_FOUND_TTL and any(not a.results for a in kept.values()):
+                continue
+            answers.update(kept)
+            extras = list(batch.get("extras") or [])
+            missing = []
+            break
+        if not missing:
             stats.usage.record_distributor("mouser", "cached")
-            return cached
+            return answers, extras, None
+        if len(missing) == 1:
+            fresh, more, error = await self._pooled(missing[0], caller)
+        else:
+            fresh, more, error = await self._fetch(missing, caller)
+        if error is not None:
+            return {}, [], error
+        answers.update(fresh)
+        return answers, extras + more, None
 
-        # Check daily quota (after cache so cache hits don't count)
+    async def _fetch(self, numbers: list[str], caller: str | None, pooled: bool = False
+                     ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
+        """One request for these numbers (distinct by cache key). Keeps each clean number's answer,
+        or, for a caller's own batch with an unclear result, the batch under its joined numbers
+        (a pooled request's numbers come from different calls, so that key would never be asked
+        again); and every result's lifecycle that can be put down to one number."""
+        # Check daily quota (after the store so stored answers don't count)
         if self._quota:
             quota_error = self._quota.check(caller)
             if quota_error:
                 stats.usage.record_distributor("mouser", "rate_limited")
-                return quota_error
+                return {}, [], quota_error
         stats.usage.record_distributor("mouser", "sent")
 
         body = {
             "SearchByPartRequest": {
-                "mouserPartNumber": query,
+                "mouserPartNumber": "|".join(numbers),
                 "partSearchOptions": "None",
             }
         }
-
         try:
             data = await self._post("/search/partnumber", body)
         except MouserRateLimited as e:
-            return {"error": str(e)}
-        search_results = data.get("SearchResults", {})
-        parts = search_results.get("Parts", [])
+            return {}, [], {"error": str(e)}
+        fetched_at = self._store.now()
+        parts = (data.get("SearchResults") or {}).get("Parts") or []
+        results = [_normalize_part(p) for p in parts if isinstance(p, dict)]
 
-        results = [_normalize_part(p) for p in parts]
-        result = {"results": results, "total": len(parts)}
-        # Mouser leaves out numbers it doesn't find, so in a batch of 10 a missing part looked checked
-        if missing := _not_found(numbers, results):
-            result["not_found"] = missing
+        per, owners, extras, clean = _attribute(numbers, results)
+        answers = {}
+        for number in numbers:
+            answer = PartAnswer(per[number], any(_touches(r, number) for r in per[number]), fetched_at)
+            answers[_cache_key(number)] = answer
+            if number in clean:
+                self._store.put_answer("mouser", _cache_key(number), answer.as_json(), bool(answer.results), fetched_at)
+        if len(numbers) > 1 and not pooled and len(clean) < len(numbers):
+            self._store.put_answer("mouser", _batch_key(numbers), {
+                "answers": {key: answer.as_json() for key, answer in answers.items()}, "extras": extras,
+            }, bool(results), fetched_at)
 
-        self._cache.set(cache_key, result)
+        readings = [Reading(r["mfr_part_number"], r.get("manufacturer") or "", "mouser", r["lifecycle_status"],
+                            r.get("lifecycle") or MOUSER_NOT_STATED, fetched_at)
+                    for r, owner in zip(results, owners) if owner is not None and r.get("mfr_part_number")]
+        self._store.put_readings(readings)
+        for number in clean:
+            if not any(_identifies(r, number) for r in per[number]):
+                self._store.put_not_listed(number, "mouser", fetched_at)
+        return answers, extras, None
 
-        return result
+    async def _pooled(self, number: str, caller: str | None
+                      ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
+        """One number's answer from a request shared with other one-part lookups that start within
+        pool_window (up to 10 numbers; a full batch goes at once). A result matching none of the
+        numbers goes back only to lookups whose number nothing matched."""
+        key = _cache_key(number)
+        batch = self._pool
+        if batch is None or (key not in batch.numbers and len(batch.numbers) >= MOUSER_MAX_BATCH):
+            batch = self._pool = _PoolBatch(caller, asyncio.get_running_loop().create_future())
+            batch.future.add_done_callback(_consume_exception)
+            self._waiting.add(batch.future)
+            batch.future.add_done_callback(self._waiting.discard)
+            self._spawn(self._send_after_window(batch))
+        batch.numbers.setdefault(key, number)
+        if len(batch.numbers) >= MOUSER_MAX_BATCH and not batch.started:
+            self._spawn(self._send(batch))  # full: no need to wait (the window's end then sends nothing)
+        # shield: one caller giving up (a cancelled tool call) mustn't cancel the others' request
+        answers, extras, error = await asyncio.shield(batch.future)
+        if error is not None:
+            return {}, [], error
+        answer = answers[key]
+        return {key: answer}, (extras if not answer.matched else []), None
+
+    def _spawn(self, coro) -> asyncio.Task:
+        task = asyncio.create_task(coro)
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
+        return task
+
+    async def _send_after_window(self, batch: _PoolBatch) -> None:
+        try:
+            await self._sleep(self._pool_window)
+        except asyncio.CancelledError:  # close(): nothing will send this batch now
+            if self._pool is batch:
+                self._pool = None
+            if not batch.started and not batch.future.done():
+                batch.future.cancel()
+            raise
+        await self._send(batch)
+
+    async def _send(self, batch: _PoolBatch) -> None:
+        if batch.started:
+            return
+        batch.started = True
+        if self._pool is batch:
+            self._pool = None  # later lookups start a new batch
+        try:
+            result = await self._fetch(list(batch.numbers.values()), batch.caller, pooled=len(batch.numbers) > 1)
+        except asyncio.CancelledError:
+            if not batch.future.done():
+                batch.future.cancel()
+            raise
+        except Exception as e:  # each waiting lookup raises it, as its own request would have
+            if not batch.future.done():
+                batch.future.set_exception(e)
+        else:
+            if not batch.future.done():
+                batch.future.set_result(result)
 
     async def close(self) -> None:
-        """Close the HTTP client."""
+        """Close the HTTP client (and the store, if this client made its own). Lookups still waiting
+        for a pooled request are cancelled (a task cancelled before it starts can't do that itself)."""
+        self._pool = None
+        for future in list(self._waiting):
+            future.cancel()
+        for task in list(self._tasks):
+            task.cancel()
         if self._client:
             await self._client.aclose()
             self._client = None
+        if self._owns_store:
+            self._store.close()
+
+
+def _batch_key(numbers: list[str]) -> str:
+    """A batch's key in the answer store, for numbers that couldn't be kept one by one."""
+    return "batch:" + "|".join(_cache_key(n) for n in numbers)
+
+
+def _consume_exception(future: asyncio.Future) -> None:
+    """Mark a pooled request's exception as seen, so it isn't logged when every waiter gave up."""
+    if not future.cancelled():
+        future.exception()

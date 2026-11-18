@@ -7,24 +7,24 @@ import logging
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 import httpx
 
 from . import stats
-from .cache import DailyQuota, Pacer, QuotaPool, TTLCache, _header_int
+from .cache import DailyQuota, Pacer, QuotaPool, _header_int
 from .config import (
     DIGIKEY_CLIENT_ID,
     DIGIKEY_CLIENT_SECRET,
     DIGIKEY_BASE_URL,
     DIGIKEY_TOKEN_URL,
-    DIGIKEY_CACHE_TTL,
-    DIGIKEY_NOT_FOUND_TTL,
     DIGIKEY_PER_SECOND,
     DIGIKEY_LOCALE_SITE,
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
+from .distributor_store import DistributorStore
+from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
 
 logger = logging.getLogger(__name__)
 
@@ -150,6 +150,8 @@ def _normalize_product(product: dict[str, Any], product_number: str = "") -> dic
     lifecycle = status.get("Status", "Unknown")
     if product.get("Discontinued"):
         lifecycle = "Discontinued"
+    lifecycle_status, _ = digikey_status(status.get("Status"), bool(product.get("Discontinued")),
+                                         bool(product.get("EndOfLife")))
 
     result = {
         "source": "digikey",
@@ -165,10 +167,13 @@ def _normalize_product(product: dict[str, Any], product_number: str = "") -> dic
         "product_url": product.get("ProductUrl"),
         "rohs": classifications.get("RohsStatus", ""),
         "lifecycle": lifecycle,
+        "lifecycle_status": lifecycle_status,
         "parameters": parameters,
         "min_qty": min_qty,
         "currency": DIGIKEY_LOCALE_CURRENCY,
     }
+    if buy_by := last_buy_date(product.get("DateLastBuyChance")):
+        result["last_buy_date"] = buy_by
     packaging = (chosen.get("PackageType") or {}).get("Name")
     if packaging:
         result["packaging"] = packaging
@@ -191,12 +196,17 @@ class DigiKeyClient:
         quota: DailyQuota | QuotaPool | None = None,
         per_second: float = DIGIKEY_PER_SECOND,
         second_app: tuple[str, str] | None = None,
+        store: DistributorStore | None = None,
+        clock: Callable[[], float] = time.time,
     ):
+        """store: the answer and lifecycle store shared with MouserClient and part_lifecycle (the
+        server passes one); without one the client keeps its own in memory."""
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:
             self._apps.append(DigiKeyApp(*second_app))
         self._http: httpx.AsyncClient | None = None
-        self._cache = TTLCache(ttl=DIGIKEY_CACHE_TTL)
+        self._owns_store = store is None
+        self._store = DistributorStore(clock=clock) if store is None else store
         self._quota = QuotaPool([quota]) if isinstance(quota, DailyQuota) else quota
         if self._quota and len(self._quota.quotas) != len(self._apps):
             raise ValueError("Each DigiKey app needs its own daily quota")
@@ -378,14 +388,27 @@ class DigiKeyClient:
         Returns:
             Dict with results list and total (consistent with Mouser format)
         """
+        return (await self.lookup(product_number, caller))[0]
+
+    def retry_after(self) -> int:
+        """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
+        return (self._quota.retry_after() if self._quota else None) or 60
+
+    async def lookup(self, product_number: str, caller: str | None = None) -> tuple[dict[str, Any], str, float]:
+        """get_part's reply, what it was ("found", "not_found", "limited" or "invalid") and when
+        DigiKey answered (part_lifecycle)."""
         product_number = product_number.strip()
         if not product_number:
-            return {"error": "Give a DigiKey or manufacturer part number."}
-        cache_key = f"digikey:{product_number}"
-        cached = self._cache.get(cache_key)
-        if cached is not None:
+            return {"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now()
+        # Kept per number, ignoring case: DigiKey's search ignores it, and so does its match (_same_mpn)
+        cache_key = product_number.upper()
+        stored = self._store.get_answer("digikey", cache_key)
+        if stored is not None:
             stats.usage.record_distributor("digikey", "cached")
-            return cached
+            answer, fetched_at = stored
+            if answer.get("not_found"):
+                return _not_found_reply(product_number), "not_found", fetched_at
+            return answer, "found", fetched_at
 
         # Cache hits cost no quota. Each attempt gets the app's token and its pacer slot, then checks
         # every limit and pause, counts the request and sends it with that token, with no await from
@@ -395,19 +418,19 @@ class DigiKeyClient:
         for attempt in range(2):
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
                 stats.usage.record_distributor("digikey", "rate_limited")
-                return paused
+                return paused, "limited", self._store.now()
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
                 app_index, token = await self._ready_app()
             except DigiKeyRateLimited as e:  # a pause began during a token request
                 stats.usage.record_distributor("digikey", "rate_limited")
-                return {"error": str(e)}
+                return {"error": str(e)}, "limited", self._store.now()
             if self._quota:
                 app_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
                     stats.usage.record_distributor("digikey", "rate_limited")
-                    return quota_error
+                    return quota_error, "limited", self._store.now()
             stats.usage.record_distributor("digikey", "sent")
             try:
                 data = await self._request("POST", "/search/keyword", app_index=app_index, token=token, json={
@@ -420,12 +443,13 @@ class DigiKeyClient:
             except DigiKeyDailyLimited as e:
                 if attempt == 0 and app_index == 0 and len(self._apps) == 2:
                     continue
-                return {"error": str(e)}
+                return {"error": str(e)}, "limited", self._store.now()
             except DigiKeyRateLimited as e:
-                return {"error": str(e)}
+                return {"error": str(e)}, "limited", self._store.now()
             except DigiKeyNotFound:
                 data = {}
             break
+        fetched_at = self._store.now()
 
         # DigiKey PN exact matches can have a different MPN; trust ExactMatches in full.
         candidates = list(data.get("ExactMatches") or [])
@@ -443,24 +467,39 @@ class DigiKeyClient:
         products.sort(key=lambda p: p.get("QuantityAvailable") or 0, reverse=True)
 
         if not products:
-            # Cached too, so asking again for a wrong or partial number costs no request
-            not_found = {"error": f"Part not found: {product_number}"}
-            if not product_number.upper().endswith("-ND"):
-                not_found["hint"] = ("DigiKey has no exact match for this number. If you have it, "
-                                     "try the DigiKey part number "
-                                     "(usually ending in -ND).")
-            self._cache.set(cache_key, not_found, ttl=DIGIKEY_NOT_FOUND_TTL)
-            return not_found
+            # Kept too (a day), so asking again for a wrong or partial number costs no request
+            self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
+            self._store.put_not_listed(product_number, "digikey", fetched_at)
+            return _not_found_reply(product_number), "not_found", fetched_at
 
-        result = {
-            "results": [_normalize_product(p, product_number) for p in products],
-            "total": len(products),
-        }
-        self._cache.set(cache_key, result)
-        return result
+        results = [_normalize_product(p, product_number) for p in products]
+        result = {"results": results, "total": len(products), "observed_at": utc_text(fetched_at)}
+        self._store.put_answer("digikey", cache_key, result, True, fetched_at)
+        # Each part's lifecycle, filed under the number asked too: DigiKey's match can drop JST's
+        # (LF)(SN) endings or take a DigiKey PN, so the asked number can differ from the MPN
+        readings = []
+        for part, product in zip(results, products):
+            if part["mfr_part_number"]:
+                status, raw = digikey_status((product.get("ProductStatus") or {}).get("Status"),
+                                             bool(product.get("Discontinued")), bool(product.get("EndOfLife")))
+                readings.append(Reading(part["mfr_part_number"], part["manufacturer"], "digikey", status, raw,
+                                        fetched_at, last_buy_date=part.get("last_buy_date")))
+        self._store.put_readings(readings, also_as=product_number)
+        return result, "found", fetched_at
 
     async def close(self) -> None:
-        """Close the HTTP client."""
+        """Close the HTTP client (and the store, if this client made its own)."""
         if self._http:
             await self._http.aclose()
             self._http = None
+        if self._owns_store:
+            self._store.close()
+
+
+def _not_found_reply(product_number: str) -> dict[str, Any]:
+    not_found = {"error": f"Part not found: {product_number}"}
+    if not product_number.upper().endswith("-ND"):
+        not_found["hint"] = ("DigiKey has no exact match for this number. If you have it, "
+                             "try the DigiKey part number "
+                             "(usually ending in -ND).")
+    return not_found

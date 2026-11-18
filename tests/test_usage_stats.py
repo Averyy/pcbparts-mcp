@@ -5,7 +5,6 @@ import ast
 import asyncio
 import datetime
 import json
-import time
 from pathlib import Path
 
 import httpx
@@ -46,8 +45,8 @@ class FakeDigiKey:
         return self.responses.pop(0)
 
 
-def digikey(fake: FakeDigiKey, quota: DailyQuota | None = None) -> DigiKeyClient:
-    client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota)
+def digikey(fake: FakeDigiKey, quota: DailyQuota | None = None, clock=None) -> DigiKeyClient:
+    client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota, **({"clock": clock} if clock else {}))
     client._http = httpx.AsyncClient(transport=httpx.MockTransport(fake))
     return client
 
@@ -149,14 +148,27 @@ class TestDigiKeyNotFound:
         assert first["error"] == "Part not found: 209"
         assert "-ND" in first["hint"]
 
-    async def test_not_found_is_kept_ten_minutes(self):
-        fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT))
-        client = digikey(fake)
+    async def test_not_found_is_kept_a_day(self):
+        """0.10.0: a day, and found answers 3 days (they were 10 minutes and an hour, in memory)."""
+        clock = Clock()
+        fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT),
+                           httpx.Response(404), httpx.Response(200, json=PRODUCT))
+        client = digikey(fake, clock=clock)
         assert "error" in await client.get_part("NOPE1")  # the 404
         assert "results" in await client.get_part("LM358P")
-        left = {key: expires - time.time() for key, (expires, _) in client._cache._data.items()}
-        assert 590 < left["digikey:NOPE1"] <= 600
-        assert 3590 < left["digikey:LM358P"] <= 3600
+        clock.advance(86400 - 1)
+        await client.get_part("NOPE1")
+        await client.get_part("LM358P")
+        assert fake.product_requests == 2
+        clock.advance(1)
+        assert "error" in await client.get_part("NOPE1")  # asked again
+        assert fake.product_requests == 3
+        clock.advance(2 * 86400 - 1)
+        await client.get_part("LM358P")
+        assert fake.product_requests == 3
+        clock.advance(1)
+        assert "results" in await client.get_part("LM358P")
+        assert fake.product_requests == 4
 
     async def test_empty_product_is_a_cached_not_found(self):
         fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": []}))
@@ -403,7 +415,7 @@ class TestServerWiring:
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
                 await client.call_tool("not_a_tool", {})
-            assert len(stats.usage.tools) == 15
+            assert len(stats.usage.tools) == 16
         day = stats.usage.summary()["days"][0]
         assert day["tools"]["get_design_rules"]["ok"] == 1
         assert day["tools"]["digikey_get_part"]["failed"] == 1  # not configured: this server can't do it
@@ -604,6 +616,14 @@ ERROR_REPLIES = {
     "Give at least one Mouser or manufacturer part number.": "bad_request",
     "Mouser takes up to {} part numbers per call, separated by |; got {}. Split the batch.": "bad_request",
     "Each Mouser part number must be 3-40 characters: {}": "bad_request",
+    # part_lifecycle (0.10.0): per-part errors in results, and the call's own
+    "Mouser API key not configured, nor DigiKey API credentials. Set MOUSER_API_KEY, or DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET, in environment.": "failed",
+    'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}': "bad_request",
+    'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}': "bad_request",
+    "Invalid part: '{}' is a BOM placeholder (not fitted or not chosen), not a part number": "bad_request",
+    "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead": "bad_request",
+    "Give a part number or an LCSC code": "bad_request",
+    "Manufacturer too long (max 100 characters)": "bad_request",
     "Part not found: {}": "not_found",
     "Part {} not found": "not_found",
     "Board '{}' not found": "not_found",

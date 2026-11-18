@@ -355,6 +355,19 @@ class DailyQuota:
             self._api_limit = limit
         self._save()
 
+    def retry_after(self) -> int | None:
+        """Whole seconds until check() can let a request out (a pause, the day's limit, our
+        per-minute cap), or None when one may go now."""
+        self._maybe_reset()
+        now = self._clock()
+        waits = [self._paused_until - now]
+        if self._count >= self._limit:
+            waits.append(_next_utc_midnight(now) - now)
+        if self._minute is not None:
+            waits.append(self._minute.wait_seconds())
+        wait = max(waits)
+        return math.ceil(wait) if wait > 0 else None
+
     @property
     def remaining(self) -> int:
         self._maybe_reset()
@@ -438,6 +451,18 @@ class QuotaPool:
 
     def paused_error(self) -> dict | None:
         return self.penalty_error() or (self.daily_error() if self._active_index() is None else None)
+
+    def retry_after(self) -> int | None:
+        """Whole seconds until acquire() can let a request out (a shared penalty, every app's day,
+        the shared minute), or None when one may go now."""
+        now = self._first.now()
+        waits = [self._penalty()[0] - now]
+        if self._active_index() is None:
+            waits.append(min(self._daily_reset_at(q) for q in self.quotas) - now)
+        if self._minute is not None:
+            waits.append(self._minute.wait_seconds())
+        wait = max(waits)
+        return math.ceil(wait) if wait > 0 else None
 
     def acquire(self, caller: str | None = None) -> tuple[int | None, dict | None]:
         error = self.paused_error()

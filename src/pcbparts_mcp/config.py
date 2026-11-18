@@ -129,7 +129,17 @@ JLCPCB_MAX_ROTATIONS = 10  # Max fingerprint rotations on 403
 # Mouser API
 MOUSER_API_KEY = os.getenv("MOUSER_API_KEY", "")
 MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
-MOUSER_CACHE_TTL = 3600
+# Mouser/DigiKey answers (stock, prices, lifecycle) are kept per part number for 3 days, in
+# distributor_store.py (on the cache volume when DISTRIBUTOR_STORE_PATH is set): clients that
+# re-read each part about daily got nothing from a day's cache; 3 days answers about 2 in 3 and
+# shares one request between callers. Replies carry observed_at, so callers see the age.
+MOUSER_CACHE_TTL = 3 * 86400
+# "Part not found" answers are kept for less time: one that wasn't really about the part (an API
+# glitch, a part listed later) hides that part for at most this long
+MOUSER_NOT_FOUND_TTL = 86400
+# Concurrent one-part Mouser lookups that start within this many seconds share one request (up to 10
+# part numbers), so separate callers' lookups cost one request instead of several
+MOUSER_POOL_WINDOW = 0.1
 
 # DigiKey API
 DIGIKEY_CLIENT_ID = os.getenv("DIGIKEY_CLIENT_ID", "")
@@ -138,10 +148,16 @@ DIGIKEY_CLIENT_ID_2 = os.getenv("DIGIKEY_CLIENT_ID_2", "")
 DIGIKEY_CLIENT_SECRET_2 = os.getenv("DIGIKEY_CLIENT_SECRET_2", "")
 DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
 DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
-DIGIKEY_CACHE_TTL = 3600
-# "Part not found" answers are kept for less time: a 404 that wasn't really about the part
-# (an API glitch) hides that part for at most this long
-DIGIKEY_NOT_FOUND_TTL = 600
+DIGIKEY_CACHE_TTL = 3 * 86400  # as MOUSER_CACHE_TTL
+DIGIKEY_NOT_FOUND_TTL = 86400  # as MOUSER_NOT_FOUND_TTL
+
+# Lifecycle store (distributor_store.py, part_lifecycle): every lifecycle status Mouser or DigiKey
+# states, by maker and MPN. A status changes rarely and with notice (JEDEC JESD48: at least 6 months
+# from a discontinuation notice to the last order), so it's kept 90 days; "not listed" and unknown
+# statuses a week. part_lifecycle takes up to this many parts a call.
+LIFECYCLE_TTL = 90 * 86400
+LIFECYCLE_UNKNOWN_TTL = 7 * 86400
+LIFECYCLE_MAX_PARTS = 50
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
 DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
@@ -160,6 +176,10 @@ DIGIKEY_PER_SECOND = 5
 # Docker image sets /app/cache/distributor_quota.json (the pcbparts-cache volume). Unset means
 # memory only: every restart starts the day's count from 0, while DigiKey keeps counting.
 DISTRIBUTOR_QUOTA_PATH = os.getenv("DISTRIBUTOR_QUOTA_PATH", "")
+# Mouser/DigiKey answers and the lifecycle store (distributor_store.py), a SQLite file kept across
+# restarts. The Docker image sets /app/cache/distributor.db (the pcbparts-cache volume). Unset means
+# memory only: a restart empties both.
+DISTRIBUTOR_STORE_PATH = os.getenv("DISTRIBUTOR_STORE_PATH", "")
 # Anonymous daily usage counts served at /mcp/stats (stats.py), kept across restarts. The Docker image
 # sets /app/cache/usage_stats.json (the pcbparts-cache volume). Unset means memory only.
 USAGE_STATS_PATH = os.getenv("USAGE_STATS_PATH", "")

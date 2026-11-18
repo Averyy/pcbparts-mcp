@@ -675,8 +675,11 @@ class TestMouserBatches:
         assert sent == ["595-LM358P|NE555P"]
         assert await client.get_part("595-LM358P|NE555P") == first  # same batch: from the cache
         assert sent == ["595-LM358P|NE555P"] and q.status()["used_today"] == 1
-        await client.get_part("NE555P|595-LM358P")  # a different batch is a new request
-        assert len(sent) == 2
+        # 0.10.0: each part is kept on its own, so the same parts in another order cost nothing
+        assert (await client.get_part("NE555P|595-LM358P"))["results"] == first["results"]
+        assert len(sent) == 1
+        await client.get_part("NE555P|LM358DR")  # only the part not kept yet is sent
+        assert sent == ["595-LM358P|NE555P", "LM358DR"]
 
     async def test_ten_is_fine(self, clock):
         sent, handler = self.recording()

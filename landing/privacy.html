@@ -252,7 +252,9 @@
             <p>When your AI assistant calls one of our tools, it sends the arguments for that call: for example a search query such as <code>10uF 0805 capacitor</code>, a part number such as <code>C2040</code> or <code>STM32F103C8T6</code>, filters, or a board or sensor name. We use them only to answer that call. We never receive your conversation, your files, or your AI assistant's memory, only the arguments your assistant chooses to send. Please don't put personal information in part searches.</p>
             <p>Parts of some answers are cached to keep the service fast and to stay within our suppliers' rate limits. Caches are keyed by the part number or search text and contain no IP address or other identifier:</p>
             <ul>
-                <li>Distributor, JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
+                <li>JLCPCB, LCSC and EasyEDA answers are reused for up to 24 hours. They are held in memory only, so a server restart clears them.</li>
+                <li>Mouser and DigiKey answers (stock, prices and lifecycle) are stored on our server's disk by part number and reused for up to 3 days (a day when the part wasn't found). They hold only the part numbers asked and the distributors' answers.</li>
+                <li>Lifecycle statuses that Mouser and DigiKey state (for example active, not recommended for new designs, or obsolete) are stored on disk by manufacturer and part number for up to 90 days (a week when a distributor doesn't list the part or states no usable status), and used to answer anyone who asks about that part. Each holds the part number, the manufacturer, the status, the distributor's wording and when it was checked.</li>
                 <li>SamacSys ComponentSearchEngine search text and results, and KiCad files, are stored on our server's disk and reused for up to one year (a week for a search where some parts had no model). Expired entries are deleted the next time the server starts.</li>
                 <li>EasyEDA answers about whether a part has a footprint are stored on disk with no fixed end date, since they rarely change. Each holds the part number, the answer, EasyEDA's symbol and footprint IDs, and when it was checked.</li>
                 <li>EasyEDA footprint pad positions, used to compare a replacement part's footprint with the original's, are stored on disk by footprint ID with no fixed end date, since footprints rarely change.</li>
@@ -310,6 +312,8 @@
                         <tr><td>On-disk ECAD and KiCad caches (no user identifiers)</td><td>Reused for up to one year (a week for searches where some parts had no model); expired entries deleted at the next restart</td></tr>
                         <tr><td>On-disk EasyEDA footprint answers (part numbers, the answer, EasyEDA IDs, when checked; no user identifiers)</td><td>No fixed end date</td></tr>
                         <tr><td>On-disk EasyEDA footprint pads (footprint IDs and pad positions; no user identifiers)</td><td>No fixed end date</td></tr>
+                        <tr><td>On-disk Mouser and DigiKey answers (part numbers and the distributors' answers; no user identifiers)</td><td>Reused for up to 3 days (a day for parts not found); expired entries deleted within an hour</td></tr>
+                        <tr><td>On-disk lifecycle statuses (part numbers, manufacturers, statuses, when checked; no user identifiers)</td><td>Up to 90 days (a week when a part isn't listed or its status is unknown); expired entries deleted within an hour</td></tr>
                         <tr><td>Mouser and DigiKey daily lookup counts and pauses (no user identifiers)</td><td>Replaced each UTC day</td></tr>
                         <tr><td>Emails you send us</td><td>As long as needed to handle your request</td></tr>
                     </tbody>

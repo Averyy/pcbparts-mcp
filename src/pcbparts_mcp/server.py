@@ -35,11 +35,13 @@ from .config import (
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
-    CSE_STORE_PATH,
+    CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS,
 )
 from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
+from .distributor_store import DistributorStore
+from .lifecycle import Entry, LifecycleLookup, STATUSES
 from .cse import CSEClient
 from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
@@ -66,6 +68,9 @@ _client: JLCPCBClient | None = None
 _mouser_client: MouserClient | None = None
 _digikey_client: DigiKeyClient | None = None
 _cse_client: CSEClient | None = None
+# Mouser/DigiKey answers and lifecycle readings, shared by both clients and part_lifecycle
+_distributor_store: DistributorStore | None = None
+_distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
 _distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
@@ -81,6 +86,7 @@ HEALTH_STORE_COUNT_TTL = 60
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
+    global _distributor_store, _distributor_stored
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
 
     # Build/load DB on startup (not on first request)
@@ -136,13 +142,21 @@ async def lifespan(app):
     # Mouser/DigiKey daily request counts, kept across restarts when DISTRIBUTOR_QUOTA_PATH is set
     quota_store = QuotaStore(DISTRIBUTOR_QUOTA_PATH) if DISTRIBUTOR_QUOTA_PATH else None
     _distributor_quotas.clear()
+    # Their answers (3 days) and lifecycle readings (90 days), kept across restarts when
+    # DISTRIBUTOR_STORE_PATH is set
+    _distributor_store = DistributorStore(DISTRIBUTOR_STORE_PATH or None)
+    _distributor_stored = (float("-inf"), None)
+    _distributor_store.prune()
+    stored = _distributor_store.counts()
+    logger.info(f"Distributor store: {stored['answers']:,} answers and {stored['lifecycle']:,} lifecycle readings "
+                + (f"kept in {DISTRIBUTOR_STORE_PATH}" if stored["kept_across_restarts"] else "(memory only)"))
 
     # Initialize Mouser client if API key is configured
     if MOUSER_API_KEY:
         mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=MOUSER_PER_MINUTE,
                                   own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
         _distributor_quotas["mouser"] = mouser_quota
-        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota)
+        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota, store=_distributor_store)
         logger.info(f"Mouser client initialized (requests today: {mouser_quota.status()['used_today']})")
 
     # Initialize DigiKey client if credentials are configured
@@ -159,7 +173,8 @@ async def lifespan(app):
                       for index in range(2 if second_app else 1)]
         digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE)
         _distributor_quotas["digikey"] = digikey_quota
-        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota, second_app=second_app)
+        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota,
+                                        second_app=second_app, store=_distributor_store)
         counts = ", ".join(str(q.status()["used_today"]) for q in app_quotas)
         logger.info(f"DigiKey client initialized: {len(app_quotas)} app(s) (requests today: {counts})")
 
@@ -194,6 +209,9 @@ async def lifespan(app):
         await _mouser_client.close()
     if _digikey_client:
         await _digikey_client.close()
+    if _distributor_store:
+        _distributor_store.close()
+        _distributor_store = None
     if _client:
         await _client.close()
     await run_db(COMPONENT_POOL, close_db)
@@ -204,13 +222,17 @@ async def lifespan(app):
 
 async def _every_minute() -> None:
     """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)
-    and save the usage counts."""
+    and save the usage counts; every hour, drop expired Mouser/DigiKey answers from the store."""
+    minutes = 0
     while True:
         await asyncio.sleep(60)
+        minutes += 1
         try:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
             stats.usage.save()
+            if minutes % 60 == 0 and _distributor_store is not None:
+                _distributor_store.prune()
         except Exception:
             logger.exception("Minute task failed; trying again in a minute")
 
@@ -218,7 +240,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's data): their shared daily limits often run out; batch Mouser lookups. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -325,6 +347,8 @@ def _call_outcome(result: Any) -> str:
         return "ok"
     if content.get("error"):
         return _error_kind(str(content["error"]))
+    if "status_counts" in content:
+        return _lifecycle_outcome(content)
     if "parts" in content and "what_is_recorded" in content:
         # Single history replies count as ok even with no events or snapshot stock. A batch
         # follows that rule if any valid code was answered; all-invalid codes are bad_request.
@@ -336,6 +360,29 @@ def _call_outcome(result: Any) -> str:
     if any(key in content and not content[key] for key in ("results", "matched_files")):
         return "not_found"
     return "ok"
+
+
+def _lifecycle_errors(content: dict) -> list[str]:
+    """part_lifecycle's per-part errors (inputs that couldn't be looked up)."""
+    return [str(row["error"]) for row in content.get("results") or [] if isinstance(row, dict) and row.get("error")]
+
+
+def _lifecycle_outcome(content: dict) -> str:
+    """part_lifecycle answers every part, unknown when it can't: ok when any has a reading; else
+    what kept the rest unknown (a limit, a failed lookup, or neither distributor lists them). When
+    no part could be looked up, the parts' own errors decide (a catalog outage fails, LCSC codes
+    not in the catalog are not found, the rest were invalid)."""
+    rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
+    if not rows:
+        kinds = {_error_kind(error) for error in _lifecycle_errors(content)}
+        return "failed" if "failed" in kinds else "not_found" if "not_found" in kinds else "bad_request"
+    if any(row.get("status") != "unknown" or "source" in row or row.get("makers") for row in rows):
+        return "ok"
+    if any("retry_after" in row for row in rows):
+        return "rate_limited"
+    if any(row.get("lookup_failed") for row in rows):
+        return "failed"
+    return "not_found"
 
 
 def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
@@ -354,6 +401,11 @@ def _empty_reason(content: dict) -> str:
         return reason
     if "alternatives" in content:
         return "no_alternatives"
+    if "status_counts" in content:  # part_lifecycle: neither distributor lists the parts
+        for error in _lifecycle_errors(content):  # or, with nothing looked up, LCSC codes not in the catalog
+            if reason := _first_reason(_NOT_FOUND_REASONS, error):
+                return reason
+        return "part_not_found"
     if content.get("total") and not content.get("results"):
         return "offset_past_end"
     blocking = {item.get("constraint") for item in (content.get("why_empty") or {}).get("blocking") or []}
@@ -385,6 +437,9 @@ def _call_reason(outcome: str, content: dict, error: Exception | None) -> str:
         return "exception"
     if outcome == "not_found":
         return _empty_reason(content)
+    if "status_counts" in content and not content.get("error"):
+        reasons = (_first_reason(_FAILED_REASONS, error) for error in _lifecycle_errors(content))
+        return next(filter(None, reasons), "lifecycle_lookup_failed")
     return _first_reason(_FAILED_REASONS, str(content.get("error") or "")) or "unexpected_error"
 
 
@@ -1925,8 +1980,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB availability;
     lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
-    assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
-    digikey_get_part return lifecycle (Mouser's is null where it states none). jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
+    assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; part_lifecycle gives it
+    from Mouser and DigiKey, for one part or a BOM. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
@@ -2334,12 +2389,14 @@ def _redact(message: str, *secrets: str) -> str:
 async def mouser_get_part(part_number: str) -> dict:
     """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out,
     so use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
-    asked for Mouser's own stock, price or lifecycle. Batch up to 10 parts per call (one request).
-    Don't retry a quota error.
-    Reply: lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
-    Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some the
-    maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status (it
-    listed AP2553W6-7 as NRND); the maker's site decides.
+    asked for Mouser's own stock or price. For lifecycle, use part_lifecycle (a whole BOM per call).
+    Batch up to 10 parts per call (one request). Don't retry a quota error.
+    Reply: each part's answer is kept up to 3 days (not found: a day); observed_at is the oldest
+    one's time. lifecycle is Mouser's status where it states one (Not Recommended for New Designs,
+    End of Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including
+    some the maker marks NRND (AP2553W6-7); lifecycle_status is active, nrnd, last_time_buy, obsolete
+    or unknown (null is active). digikey_get_part's lifecycle is DigiKey's product status (it listed
+    AP2553W6-7 as NRND); the maker's site decides.
     not_found lists the given numbers no result matches (Mouser skips them without saying).
     A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
 
@@ -2376,11 +2433,13 @@ async def mouser_get_part(part_number: str) -> dict:
 async def digikey_get_part(product_number: str) -> dict:
     """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out, so
     use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
-    asked for DigiKey's own stock, price or lifecycle. One part per call: don't check whole BOMs.
-    Don't retry a quota error.
+    asked for DigiKey's own stock or price. One part per call: don't check whole BOMs; for
+    lifecycle use part_lifecycle. Don't retry a quota error.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
-    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status.
+    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
+    lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date is DigiKey's
+    last order date where given. Answers are kept up to 3 days (not found: a day; observed_at).
     A number several makers use returns each maker's listing, most stock first.
 
     Args:
@@ -2401,6 +2460,110 @@ async def digikey_get_part(product_number: str) -> dict:
     except Exception as e:
         logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {_redact(str(e))}")
         return {"error": "DigiKey part lookup failed. Check server logs for details."}
+
+
+def _lifecycle_entry(item: Any) -> Entry:
+    """One part_lifecycle input as an Entry, with its error if it can't be looked up."""
+    if isinstance(item, str):
+        text = item.strip()
+        fields = (None, None, text) if re.fullmatch(r"[Cc][0-9]{1,12}", text) else (text, None, None)
+    elif isinstance(item, dict) and all(isinstance(item.get(k), (str, type(None))) for k in ("mpn", "manufacturer", "lcsc")):
+        fields = (item.get("mpn"), item.get("manufacturer"), item.get("lcsc"))
+    else:
+        return Entry(item, error={"error": 'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'})
+    mpn, maker, lcsc = ((value or "").strip() or None for value in fields)
+    if lcsc and not re.fullmatch(r"C[0-9]{1,12}", lcsc.upper()):
+        return Entry(item, error={"error": "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead"})
+    if not mpn and not lcsc:
+        return Entry(item, error={"error": "Give a part number or an LCSC code"})
+    if mpn and len(mpn) > 100:
+        return Entry(item, error={"error": "MPN too long (max 100 characters)"})
+    if maker and len(maker) > 100:
+        return Entry(item, error={"error": "Manufacturer too long (max 100 characters)"})
+    if mpn and is_placeholder_mpn(mpn):
+        return Entry(item, error={"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number"})
+    return Entry(item, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Part Lifecycle (BOM)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def part_lifecycle(parts: list[str | dict[str, Any]] | str) -> dict:
+    """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
+    last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
+    digikey_get_part for lifecycle. Readings are kept 90 days (not listed: a week) for every caller; a
+    part not kept yet is looked up on Mouser, then DigiKey if Mouser doesn't list it, within their
+    shared daily limits. When those are spent it comes back unknown with retry_after (seconds); kept
+    parts still answer.
+    Reply: results in input order: input (as given), mpn, manufacturer, status, raw (the
+    distributor's wording; Mouser states none for most active parts: "not stated by Mouser"),
+    source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
+    (neither lists it), retry_after, lookup_failed, error (unusable input), or makers: each maker's
+    reading, when several list the number and none was given, or only other makers do.
+    status_counts counts the statuses.
+
+    Args:
+        parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
+            catalog snapshot) or {"mpn", "manufacturer"} (the maker picks among parts sharing a
+            number; "lcsc" also works). A list or a JSON array string.
+    """
+    if not _mouser_client and not _digikey_client:
+        return {"error": "Mouser API key not configured, nor DigiKey API credentials. Set MOUSER_API_KEY, "
+                         "or DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET, in environment."}
+    items: Any = parts
+    if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
+        try:
+            items = json.loads(items)
+        except json.JSONDecodeError:
+            return _argument_error("parts", ValueError("not a valid JSON array"),
+                                   ["MPN", "LCSC code", '{"mpn", "manufacturer"}', "list or JSON array of these"])
+    if not isinstance(items, list):
+        items = [items]
+    if not items:
+        return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
+    if error := _check_list_cap("parts", items, LIFECYCLE_MAX_PARTS):
+        return error
+
+    entries = [_lifecycle_entry(item) for item in items]
+    codes = list(dict.fromkeys(e.lcsc for e in entries if e.error is None and e.lcsc and not (e.mpn and e.maker)))
+    if codes:  # an LCSC code's MPN and maker from the catalog snapshot
+        try:
+            catalog = await run_db(COMPONENT_POOL, get_db().get_by_lcsc_batch, codes)
+        except Exception:
+            logger.exception("part_lifecycle: catalog lookup failed")
+            catalog = None
+        for entry in entries:
+            if entry.lcsc not in codes or entry.error is not None:
+                continue
+            part = catalog.get(entry.lcsc) if catalog is not None else None
+            if catalog is None:
+                entry.error = {"error": "Database not available"}
+            elif not part:
+                if not entry.mpn:
+                    entry.error = {"error": f"Part {entry.lcsc} not found",
+                                   "hint": "The catalog snapshot lists in-stock parts (stock >= 10) only: give its MPN "
+                                           "and manufacturer instead."}
+            else:
+                entry.mpn = entry.mpn or part.get("model") or None
+                entry.maker = entry.maker or part.get("manufacturer") or None
+                if not entry.mpn:
+                    entry.error = {"error": "Give a part number or an LCSC code"}
+
+    store = _distributor_store or (_mouser_client or _digikey_client)._store
+    results = await LifecycleLookup(store, _mouser_client, _digikey_client).answer(entries, caller=_caller_ip())
+    counts = dict.fromkeys(STATUSES, 0)
+    for result in results:
+        counts[result["status"]] += 1
+    reply: dict[str, Any] = {"results": results, "total": len(results), "status_counts": counts}
+    if waits := [result["retry_after"] for result in results if "retry_after" in result]:
+        reply["retry_after"] = min(waits)
+    return reply
 
 
 @mcp.tool(
@@ -2796,6 +2959,20 @@ def _cse_store_counts() -> dict[str, int] | None:
     return counts
 
 
+def _distributor_store_counts() -> dict[str, Any] | None:
+    """Stored Mouser/DigiKey answers and lifecycle readings, refreshed at most every
+    HEALTH_STORE_COUNT_TTL. None before startup."""
+    global _distributor_stored
+    if _distributor_store is None:
+        return None
+    counted_at, counts = _distributor_stored
+    now = time.monotonic()
+    if now - counted_at >= HEALTH_STORE_COUNT_TTL or counts is None:
+        counts = _distributor_store.counts()
+        _distributor_stored = (now, counts)
+    return counts
+
+
 # Health check endpoint
 async def health(request):
     return JSONResponse({
@@ -2804,6 +2981,7 @@ async def health(request):
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
         "cse_stored": _cse_store_counts(),
+        "distributor_stored": _distributor_store_counts(),
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
     })
 

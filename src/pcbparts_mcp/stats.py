@@ -58,7 +58,7 @@ REASONS = frozenset({
     "service_not_ready", "not_configured", "no_pcba_types", "query_too_complex", "board_db_failed", "jlcpcb_waf",
     "jlcpcb_unavailable", "easyeda_failed", "mouser_failed", "digikey_failed", "cse_auth_failed", "cse_lookup_failed",
     "cse_download_http_4xx", "cse_download_http_5xx", "cse_download_http", "cse_download_network",
-    "cse_download_too_large", "cse_invalid_zip", "exception", "unexpected_error",
+    "cse_download_too_large", "cse_invalid_zip", "lifecycle_lookup_failed", "exception", "unexpected_error",
     "other",  # a label not listed above
 })
 # How the checks behind jlc_search's why_empty went
