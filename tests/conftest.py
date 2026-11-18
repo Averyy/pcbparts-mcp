@@ -32,4 +32,6 @@ def _no_real_footprint_store(monkeypatch):
     monkeypatch.setattr(server, "USAGE_STATS_PATH", "")
     for name in ("MOUSER_API_KEY", "DIGIKEY_CLIENT_ID", "DIGIKEY_CLIENT_SECRET", "DIGIKEY_CLIENT_ID_2", "DIGIKEY_CLIENT_SECRET_2"):
         monkeypatch.setattr(server, name, "")
+    monkeypatch.setattr(server, "MOUSER_EXTRA_API_KEYS", [])
+    monkeypatch.setattr(server, "MOUSER_KEY_WARNINGS", [])
     monkeypatch.setattr(stats, "usage", stats.UsageStats())

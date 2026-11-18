@@ -27,11 +27,11 @@ from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, stats
-from .cache import DailyQuota, QuotaPool, QuotaStore
+from .cache import DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
-    DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2,
+    DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
@@ -151,13 +151,24 @@ async def lifespan(app):
     logger.info(f"Distributor store: {stored['answers']:,} answers and {stored['lifecycle']:,} lifecycle readings "
                 + (f"kept in {DISTRIBUTOR_STORE_PATH}" if stored["kept_across_restarts"] else "(memory only)"))
 
-    # Initialize Mouser client if API key is configured
+    # Initialize Mouser client if API key is configured. Optional extra keys (MOUSER_API_KEY_2,
+    # _3, ...) are each used only after the previous key's day is spent (MouserKeyPool); the
+    # warnings name ignored variables, never a key.
+    for warning in MOUSER_KEY_WARNINGS:
+        logger.warning(warning)
     if MOUSER_API_KEY:
-        mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=MOUSER_PER_MINUTE,
-                                  own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+        key_quotas = [DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store,
+                                 store_key="Mouser" if index == 0 else f"Mouser#{index + 1}",
+                                 own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+                      for index in range(1 + len(MOUSER_EXTRA_API_KEYS))]
+        mouser_quota = MouserKeyPool(key_quotas, per_minute=MOUSER_PER_MINUTE)
         _distributor_quotas["mouser"] = mouser_quota
-        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota, store=_distributor_store)
-        logger.info(f"Mouser client initialized (requests today: {mouser_quota.status()['used_today']})")
+        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota, store=_distributor_store,
+                                      extra_keys=MOUSER_EXTRA_API_KEYS)
+        counts = ", ".join(str(q.status()["used_today"]) for q in key_quotas)
+        logger.info(f"Mouser client initialized: {len(key_quotas)} key(s) (requests today: {counts})")
+    elif MOUSER_EXTRA_API_KEYS:
+        logger.warning("Extra Mouser keys are set without MOUSER_API_KEY: Mouser lookups are off")
 
     # Initialize DigiKey client if credentials are configured
     second_app = None
@@ -2368,10 +2379,11 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
 
 
 def _redact(message: str, *secrets: str) -> str:
-    """Distributor error text goes back to anonymous callers: blank out our credentials in case the
-    API ever echoes them."""
-    for secret in sorted(set(secrets) | {DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
-                                        DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2}, key=len, reverse=True):
+    """Distributor error text goes back to anonymous callers: blank out our credentials (every
+    Mouser key and DigiKey app) in case the API ever echoes them."""
+    credentials = {MOUSER_API_KEY, *MOUSER_EXTRA_API_KEYS,
+                   DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2}
+    for secret in sorted(set(secrets) | credentials, key=len, reverse=True):
         if secret:
             message = message.replace(secret, "[redacted]")
     return message
@@ -2413,11 +2425,11 @@ async def mouser_get_part(part_number: str) -> dict:
     try:
         return await _mouser_client.get_part(part_number, caller=_caller_ip())
     except (MouserError, MouserAPIError) as e:  # our own message or Mouser's
-        message = _redact(str(e), MOUSER_API_KEY)  # in the log as in the reply
+        message = _redact(str(e))  # every key, in the log as in the reply
         logger.error(f"Mouser part lookup failed: {type(e).__name__}: {message}")
         return {"error": f"Mouser part lookup failed: {message}"}
     except Exception as e:
-        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {_redact(str(e), MOUSER_API_KEY)}")
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {_redact(str(e))}")
         return {"error": "Mouser part lookup failed. Check server logs for details."}
 
 

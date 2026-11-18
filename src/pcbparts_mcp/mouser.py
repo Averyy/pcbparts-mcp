@@ -6,6 +6,10 @@ doesn't say which part number each result is for, so results are matched back to
 (_attribute): a number whose results can't all be put down to it alone isn't kept on its own, and the
 whole batch is kept under its joined numbers instead. Concurrent one-part lookups share one request
 (_pooled). Every answer's lifecycle goes into the lifecycle store.
+
+Each request picks its API key as it goes out (Mouser takes the key in the query string): the first
+key until its day is spent, then the next (MouserKeyPool). A daily refusal from Mouser moves the
+request on to the next key.
 """
 
 from __future__ import annotations
@@ -14,12 +18,14 @@ import asyncio
 import logging
 import re
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any, Callable, TYPE_CHECKING
+from typing import Any, Callable
 
 import httpx
 
 from . import stats
+from .cache import DailyQuota, MouserKeyPool, QuotaPool
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
@@ -29,9 +35,6 @@ from .config import (
 from .distributor_store import DistributorStore
 from .lifecycle import MOUSER_NOT_STATED, Reading, mouser_status, utc_text
 from .search.mpn import mpn_key
-
-if TYPE_CHECKING:
-    from .cache import DailyQuota
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +48,11 @@ class MouserError(ValueError):
 
 class MouserRateLimited(MouserError):
     """Mouser refused for its own daily or per-minute limit (1,000 a day, 30 a minute)."""
+
+
+class MouserKeySpent(MouserRateLimited):
+    """Mouser refused one key for its daily limit while another key can still send: the request
+    goes out again on that key (_fetch). The message is the refused key's own pause."""
 
 
 class MouserAPIError(Exception):
@@ -239,14 +247,20 @@ class MouserClient:
 
     store: the answer and lifecycle store shared with DigiKeyClient and part_lifecycle (the server
     passes one); without one the client keeps its own in memory. pool_window: seconds a one-part
-    lookup waits for others to share its request (sleep is injectable for tests)."""
+    lookup waits for others to share its request (sleep is injectable for tests). extra_keys:
+    more API keys (MOUSER_API_KEY_2, ...), each used once the previous key's day is spent; quota
+    then needs one DailyQuota per key (a MouserKeyPool). One DailyQuota is a pool of one key."""
 
-    def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | None = None,
+    def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | QuotaPool | None = None,
                  store: DistributorStore | None = None, clock: Callable[[], float] = time.time,
-                 pool_window: float = MOUSER_POOL_WINDOW, sleep: Callable[[float], Any] = asyncio.sleep):
-        self._api_key = api_key
+                 pool_window: float = MOUSER_POOL_WINDOW, sleep: Callable[[float], Any] = asyncio.sleep,
+                 extra_keys: Sequence[str] = ()):
+        self._keys = [api_key, *extra_keys]
         self._client: httpx.AsyncClient | None = None
-        self._quota = quota
+        self._quota = MouserKeyPool([quota]) if isinstance(quota, DailyQuota) else quota
+        # Without a quota there's nothing to choose a key by: one key only
+        if len(self._quota.quotas if self._quota is not None else [None]) != len(self._keys):
+            raise ValueError("Each Mouser API key needs its own daily quota")
         self._owns_store = store is None
         self._store = DistributorStore(clock=clock) if store is None else store
         self._pool_window = pool_window
@@ -260,19 +274,33 @@ class MouserClient:
             self._client = httpx.AsyncClient(timeout=15.0)
         return self._client
 
-    async def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
-        """Make an authenticated POST request to Mouser API.
+    def _redact(self, text: str) -> str:
+        """Mouser's own error text goes back to callers and into logs: blank out every key in case
+        Mouser echoes one."""
+        for key in sorted({k for k in self._keys if k}, key=len, reverse=True):
+            text = text.replace(key, "[redacted]")
+        return text
+
+    async def _post(self, path: str, body: dict[str, Any], key_index: int = 0) -> dict[str, Any]:
+        """Make an authenticated POST request to Mouser API with the key the quota just reserved
+        (no await between the reservation and the send).
 
         Note: Mouser API v2 requires apiKey as a query parameter (their design).
         """
-        url = f"{MOUSER_BASE_URL}{path}?apiKey={self._api_key}"
+        url = f"{MOUSER_BASE_URL}{path}?apiKey={self._keys[key_index]}"
+        key_quota = self._quota.quotas[key_index] if self._quota is not None else None
         try:
-            response = await self._get_client().post(url, json=body)
+            client = self._get_client()  # built first, so the minute counts from the send
+            if self._quota is not None:
+                self._quota.mark_sent()
+            response = await client.post(url, json=body)
         except httpx.HTTPError:
             # Sanitize: httpx exceptions may include the full URL with API key
             raise MouserError("Mouser API request failed (network/connection error)")
-        if self._quota is not None:
-            self._quota.note_response(response.status_code, response.headers)
+        if key_quota is not None:
+            # Only this key's: a daily count in the headers is that key's; a 429's per-minute
+            # pause pauses every key anyway (QuotaPool._penalty)
+            key_quota.note_response(response.status_code, response.headers)
         try:
             data = response.json()
         except ValueError:
@@ -286,33 +314,40 @@ class MouserClient:
         # rate-limit headers and doesn't say when the daily count resets.
         limit = next((e for e in errors if e.get("Code") == "TooManyRequests"), None)
         if limit is not None or response.status_code == 429:
-            raise MouserRateLimited(self._refused_for_limit(limit))
+            raise self._refused_for_limit(limit, key_index)
         if errors:
             err = errors[0]
-            raise MouserAPIError(err.get("Code") or "", err.get("Message") or "Unknown Mouser API error")
+            raise MouserAPIError(self._redact(str(err.get("Code") or "")),
+                                 self._redact(str(err.get("Message") or "Unknown Mouser API error")))
         # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
         if response.status_code >= 400:
             raise MouserError(f"Mouser API returned HTTP {response.status_code}")
         if not isinstance(data, dict):
             raise MouserError("Mouser API returned an unreadable response")
-        if self._quota is not None:
-            self._quota.clear_expired_pause()
+        if key_quota is not None:
+            key_quota.clear_expired_pause()
         return data
 
-    def _refused_for_limit(self, err: dict | None) -> str:
-        """Pause for the limit Mouser named and return the error to show."""
+    def _refused_for_limit(self, err: dict | None, key_index: int = 0) -> MouserRateLimited:
+        """Pause for the limit Mouser named and return the error to raise. A daily refusal pauses
+        only the key that got it (until 00:00 UTC, then hourly); while another key can send, that's
+        MouserKeySpent, and the request goes out again on it. A per-minute refusal pauses every key
+        (QuotaPool counts a "burst" pause on any key as the pool's)."""
         text = " ".join(str(err.get(key) or "") for key in ("Message", "ResourceKey")).lower() if err else ""
         if self._quota is not None:
+            key_quota = self._quota.quotas[key_index]
             if "day" in text:
-                self._quota.pause_daily_unknown_reset()
+                key_quota.pause_daily_unknown_reset()
             elif err is not None:  # a TooManyRequests that isn't the daily limit: its per-minute one
-                self._quota.pause(self._quota.now() + 60, "burst")
-            # a bare 429 already paused for its Retry-After (note_response)
+                key_quota.pause(key_quota.now() + 60, "burst")
+            # a bare 429 already paused for its Retry-After, or its day (note_response)
             paused = self._quota.paused_error()
             if paused:
-                return paused["error"]
-        detail = (err.get("Message") if err else None) or "HTTP 429"
-        return f"Mouser is limiting requests ({detail}). Try again later."
+                return MouserRateLimited(paused["error"])
+            if own := key_quota.paused_error():  # only this key's day is over
+                return MouserKeySpent(own["error"])
+        detail = self._redact(str((err.get("Message") if err else None) or "HTTP 429"))
+        return MouserRateLimited(f"Mouser is limiting requests ({detail}). Try again later.")
 
     async def get_part(self, part_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up part(s) by Mouser part number or MPN.
@@ -421,24 +456,33 @@ class MouserClient:
         or, for a caller's own batch with an unclear result, the batch under its joined numbers
         (a pooled request's numbers come from different calls, so that key would never be asked
         again); and every result's lifecycle that can be put down to one number."""
-        # Check daily quota (after the store so stored answers don't count)
-        if self._quota:
-            quota_error = self._quota.check(caller)
-            if quota_error:
-                stats.usage.record_distributor("mouser", "rate_limited")
-                return {}, [], quota_error
-        stats.usage.record_distributor("mouser", "sent")
-
         body = {
             "SearchByPartRequest": {
                 "mouserPartNumber": "|".join(numbers),
                 "partSearchOptions": "None",
             }
         }
-        try:
-            data = await self._post("/search/partnumber", body)
-        except MouserRateLimited as e:
-            return {}, [], {"error": str(e)}
+        # Each attempt reserves a request on the key it will use (after the store, so stored
+        # answers don't count) and sends it with no await in between, so concurrent lookups can't
+        # overdraw a key. One more attempt, on the next key, only after a daily refusal (the refused
+        # key stays out for the day): at most as many requests as there are keys.
+        for attempt in range(len(self._keys)):
+            key_index = 0
+            if self._quota:
+                key_index, quota_error = self._quota.acquire(caller)
+                if quota_error:
+                    stats.usage.record_distributor("mouser", "rate_limited")
+                    return {}, [], quota_error
+            stats.usage.record_distributor("mouser", "sent")
+            try:
+                data = await self._post("/search/partnumber", body, key_index)
+            except MouserKeySpent as e:
+                if attempt + 1 < len(self._keys):
+                    continue
+                return {}, [], {"error": str(e)}
+            except MouserRateLimited as e:
+                return {}, [], {"error": str(e)}
+            break
         fetched_at = self._store.now()
         parts = (data.get("SearchResults") or {}).get("Parts") or []
         results = [_normalize_part(p) for p in parts if isinstance(p, dict)]

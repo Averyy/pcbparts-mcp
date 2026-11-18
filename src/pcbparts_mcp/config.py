@@ -1,6 +1,8 @@
 """Configuration for PCB Parts MCP server."""
 
 import os
+import re
+from collections.abc import Mapping
 from pathlib import Path
 
 # Recorded stock events, built offline from the gzipped JSONL files in data/history/.
@@ -128,6 +130,38 @@ JLCPCB_MAX_ROTATIONS = 10  # Max fingerprint rotations on 403
 
 # Mouser API
 MOUSER_API_KEY = os.getenv("MOUSER_API_KEY", "")
+
+
+def mouser_extra_keys(environ: Mapping[str, str], first: str = "") -> tuple[list[str], list[str]]:
+    """Optional extra Mouser API keys, each used only after the previous key's day is spent
+    (MouserKeyPool): MOUSER_API_KEY_2, MOUSER_API_KEY_3, ... read in order until one is unset or
+    blank. Returns the keys and a warning for each MOUSER_API_KEY_<n> that's set but not used:
+    after that gap (MOUSER_API_KEY_3 without MOUSER_API_KEY_2), or repeating an earlier key. The
+    warnings name variables only, never a key."""
+    keys: list[str] = []
+    seen = {first.strip()} if first.strip() else set()
+    warnings: list[str] = []
+    used: set[str] = set()
+    number = 2
+    while key := (environ.get(f"MOUSER_API_KEY_{number}") or "").strip():
+        name = f"MOUSER_API_KEY_{number}"
+        used.add(name)
+        if key in seen:
+            warnings.append(f"{name} is ignored: it's the same key as an earlier Mouser key")
+        else:
+            seen.add(key)
+            keys.append(key)
+        number += 1
+    stop = f"MOUSER_API_KEY_{number}"
+    for name in sorted((n for n, value in environ.items()
+                        if re.fullmatch(r"MOUSER_API_KEY_\d+", n) and n not in used and (value or "").strip()),
+                       key=lambda n: int(n.rsplit("_", 1)[1])):
+        warnings.append(f"{name} is ignored: extra Mouser keys are read from MOUSER_API_KEY_2 up, in order, "
+                        f"until one is missing ({stop} is)")
+    return keys, warnings
+
+
+MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS = mouser_extra_keys(os.environ, MOUSER_API_KEY)
 MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
 # Mouser/DigiKey answers (stock, prices, lifecycle) are kept per part number for 3 days, in
 # distributor_store.py (on the cache volume when DISTRIBUTOR_STORE_PATH is set): clients that
