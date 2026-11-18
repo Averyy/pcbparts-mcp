@@ -167,8 +167,11 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
 | `HTTP_HOST` | `0.0.0.0` | Bind address: `127.0.0.1` or `::1` for localhost only, `::` for every IPv6 interface, or a specific IPv4 or IPv6 address. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only, and a localhost bind inside the container can't be reached from outside it |
 | `HTTP_PORT` | `8080` | Server port |
-| `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
-| `PLATFORM_RATE_LIMIT` | `1000` | Requests per minute per IP for addresses in the AI platforms' published ranges (many users share each one) |
+| `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP (an IPv6 address's /64 counts as one) |
+| `PLATFORM_RATE_LIMIT` | `1000` | Requests per minute per IP for addresses in the AI platforms' published ranges (many users share each one); never less than `RATE_LIMIT_REQUESTS` |
+| `DB_BUSY_MAX_WAITING` | `12` | Refuse new tool calls (`server_busy`) while a database pool has this many calls waiting to start, counting calls accepted whose tool hasn't started |
+| `DB_BUSY_MAX_WAIT_SECONDS` | `0.5` | ...or while its oldest call has waited this long. Set both very large (`1000000`) to turn the cap off |
+| `DB_STUCK_WAIT_SECONDS` | `60` | `/health` answers 503 (unhealthy) while a database call has waited this long to start (a stuck worker) |
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges, comma-separated; empty gives them the normal limit |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's ChatGPT connectors list ([openai.com/chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json)); the image build refreshes the committed copy; empty gives them the normal limit |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |
@@ -179,14 +182,14 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | Keeps SamacSys searches and KiCad files across restarts |
 | `DISTRIBUTOR_STORE_PATH` | `/app/cache/distributor.db` in Docker | Keeps Mouser/DigiKey answers (3 days) and lifecycle readings (90 days) across restarts |
 
-These five cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`.
+These five cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`. A numeric setting that isn't a number, or is out of range, is replaced by its default (or its lowest allowed value) and the server logs a warning at startup.
 
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
-- **Rate limit:** 100 requests a minute per IP; 1,000 for addresses in Anthropic's and OpenAI's published ranges (claude.ai and ChatGPT connectors), which many users share
-- **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`), requests sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers caches gave instead (`upstream`), Mouser/DigiKey part numbers asked in total and distinct (`parts_asked`), and requests the per-IP rate limit turned away (`per_ip_refusals`). No IPs, queries or part numbers are kept.
+- **Rate limit:** 100 requests a minute per IP (an IPv6 /64 counts as one); 1,000 for addresses in Anthropic's and OpenAI's published ranges (claude.ai and ChatGPT connectors), which many users share
+- **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today, database pressure, the AI platforms' address lists and when OpenAI's was made); HTTP 503 while a database call has waited a minute to start
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`), requests sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers caches gave instead (`upstream`), Mouser/DigiKey part numbers asked in total and distinct (`parts_asked`), requests the rate limit or the busy cap turned away (`per_ip_refusals`: `total` and by group, `everyone_else`, `platform_ranges`, `server_busy` and `too_many_clients`), and how many times the server started each day (`restarts`). No IPs, queries or part numbers are kept.
 
 ## Privacy
 

@@ -7,14 +7,16 @@ by the shared limits). For calls that found nothing or failed, the reason, from 
 (REASONS); and how the checks behind jlc_search's why_empty went. From 0.10.0 also the requests sent to
 the other services we call and the answers their caches saved (UPSTREAM_SOURCES), how many part numbers
 were looked up with Mouser and DigiKey and how many of them were different, and the HTTP requests the
-per-IP rate limit turned away. No IPs, queries or part numbers are kept: callers and distinct part
-numbers are counted through salted hashes held in memory for the current day only, with a new random
-salt each day. A restart starts a new set, so a caller or part seen before and after one on the same
-day counts twice.
+rate limit or the busy cap turned away. No IPs, queries or part numbers are kept: callers and distinct
+part numbers are counted through salted hashes held in memory for the current day only, with a new
+random salt each day. A restart starts a new set, so a caller or part seen before and after one on the
+same day counts twice; each day's `restarts` (from 0.10.0) says how many there were.
 
 The server writes the counts to USAGE_STATS_PATH (a JSON file on the cache volume) every minute and
-at shutdown; unset means memory only. The file keeps a year; /mcp/stats shows the last 30 days. Nothing here raises on a bad or unwritable file, like
-QuotaStore.
+at shutdown; unset means memory only. The file keeps a year; /mcp/stats shows the last 30 days. Nothing
+here raises on a bad or unwritable file, like QuotaStore: a file that can't be read is moved aside
+(USAGE_STATS_PATH.corrupt, one kept) before counting starts from 0, so the next save can't overwrite
+it, and a day's fields this version doesn't know (a newer version's) are kept as they are.
 """
 
 import datetime
@@ -87,17 +89,22 @@ UPSTREAM_EVENTS = ("sent", "retries", "cached", "rate_limited")
 # them, and the different ones (by mpn_key), counted through salted hashes kept in memory for the day
 PARTS_ASKED = ("mouser", "digikey")
 MAX_DISTINCT_PARTS = 100_000  # distinct part numbers counted a day per distributor; later ones aren't
-# HTTP requests the per-IP rate limit (server.RateLimitMiddleware) turned away, by the group of the
-# address (RateLimitMiddleware._refusal_group()): everyone_else at the normal limit, platform_ranges
-# for the AI platforms' published addresses (Anthropic, OpenAI) at PLATFORM_RATE_LIMIT.
-# server_busy is shared database pressure, regardless of the caller's address group. Kept in
-# per_ip_refusals for an additive change to the existing refusal totals; never stores IPs.
-REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy")
+# HTTP requests server.RateLimitMiddleware turned away (429), by RateLimitMiddleware._refusal_group():
+# per_ip_rate_limit refusals by the group of the address, everyone_else at the normal limit and
+# platform_ranges for the AI platforms' published addresses (Anthropic, OpenAI) at
+# PLATFORM_RATE_LIMIT; server_busy (shared database pressure) and too_many_clients (the address
+# table was full) regardless of address. All are in per_ip_refusals and its total (the name predates
+# the last two); never stores IPs.
+REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_clients")
 
 
 def _new_day() -> dict[str, Any]:
     return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {},
-            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}}
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0}
+
+
+# The fields of a day this version writes; any other field in the file is a newer version's, kept as is
+_DAY_FIELDS = frozenset(_new_day())
 
 
 def _int(value: Any) -> int:
@@ -109,7 +116,9 @@ def _dict(value: Any) -> dict:
 
 
 def _clean_day(day: dict) -> dict[str, Any]:
-    """A day read from the file, with anything malformed dropped, so counting can't fail on it."""
+    """A day read from the file, with anything malformed dropped, so counting can't fail on it.
+    Fields this version doesn't know are carried through untouched, so going back to an older
+    version and forward again doesn't lose them."""
     clean = _new_day()
     for name, counts in _dict(day.get("tools")).items():
         if isinstance(counts, dict):
@@ -143,6 +152,9 @@ def _clean_day(day: dict) -> dict[str, Any]:
     # None: not recorded (0.6.3 had no hours), so record_call() marks the hours before it as unknown
     clean["hours"] = ([None if h is None else _int(h) for h in hours]
                       if isinstance(hours, list) and len(hours) == 24 else None)
+    # None: not counted (a day saved before 0.10.0)
+    clean["restarts"] = None if day.get("restarts") is None else _int(day["restarts"])
+    clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
     return clean
 
 
@@ -199,20 +211,42 @@ class UsageStats:
         self._parts = {name: _SeenToday(MAX_DISTINCT_PARTS) for name in PARTS_ASKED}
 
     def open(self, path: str | Path) -> None:
-        """Load the counts kept in path and write them there from now on."""
+        """Load the counts kept in path and write them there from now on. A file that can't be
+        read, or has no days, is moved aside to <path>.corrupt (replacing an older one) first, so
+        the next save can't overwrite it; if it can't be moved either, nothing is written to path."""
         self.path = Path(path)
         try:
             data = json.loads(self.path.read_text(encoding="utf-8"))
         except FileNotFoundError:
             return
-        except (OSError, ValueError) as e:
-            logger.warning(f"Usage stats file {self.path} unreadable ({e}); counting starts from 0")
+        except (OSError, ValueError, RecursionError) as e:
+            if self.path.is_file():
+                self._set_aside(f"unreadable ({type(e).__name__}: {e})")
+            else:  # not a file (a directory, a path under a file): there's nothing to keep, and saves fail
+                logger.warning(f"Usage stats file {self.path} unreadable ({e}); counting starts from 0")
             return
         days = data.get("days") if isinstance(data, dict) else None
         if not isinstance(days, dict):
-            logger.warning(f"Usage stats file {self.path} has no days; counting starts from 0")
+            self._set_aside("has no days")
             return
         self._days = {str(date): _clean_day(day) for date, day in days.items() if isinstance(day, dict)}
+
+    def _set_aside(self, problem: str) -> None:
+        aside = self.path.with_name(self.path.name + ".corrupt")
+        try:
+            os.replace(self.path, aside)
+        except OSError as e:
+            logger.warning(f"Usage stats file {self.path} {problem}, and it can't be moved aside ({e}); counting "
+                           "starts from 0, kept in memory only, so the file isn't overwritten")
+            self.path = None
+            return
+        logger.warning(f"Usage stats file {self.path} {problem}; moved to {aside} and counting starts from 0")
+
+    def record_start(self) -> None:
+        """The server started: one more restart today (a restart resets the hashes behind callers
+        and parts_asked.distinct, so those can count a caller or part twice on such a day)."""
+        day = self._day()
+        day["restarts"] = (day["restarts"] or 0) + 1
 
     def _today(self) -> str:
         return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date().isoformat()
@@ -320,7 +354,10 @@ class UsageStats:
         tmp = self.path.with_name(self.path.name + ".tmp")
         try:
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            tmp.write_text(json.dumps({"days": self._days}, sort_keys=True), encoding="utf-8")
+            with open(tmp, "w", encoding="utf-8") as out:
+                out.write(json.dumps({"days": self._days}, sort_keys=True))
+                out.flush()
+                os.fsync(out.fileno())  # on disk before it replaces the old file, so a crash can't leave it empty
             os.replace(tmp, self.path)
         except OSError as e:
             if self.ok:  # once per failure streak
@@ -387,6 +424,7 @@ class UsageStats:
                 "upstream": _upstream_view(day["upstream"]),
                 "parts_asked": dict(sorted(day["parts_asked"].items())),
                 "per_ip_refusals": _refusals_view(day["per_ip_refusals"]),
+                "restarts": day["restarts"],
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -422,10 +460,15 @@ class UsageStats:
                       "limits turned them away (total; skipped ones aren't counted), and how many "
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
                       "held in memory, so a restart counts them again; not in totals, which can't add them across "
-                      "days). per_ip_refusals: HTTP requests admission control turned away (429), total and by "
-                      "group (platform_ranges: addresses in the AI platforms' published ranges, which have a "
-                      "higher limit; everyone_else: every other caller; server_busy: shared database queue "
-                      "pressure, regardless of address); null on days before it was counted."),
+                      "days). per_ip_refusals: HTTP requests admission control turned away (429): total (all "
+                      "of the groups) and by group: per-address rate limit refusals by address group "
+                      "(platform_ranges: addresses in the AI platforms' published ranges, which have a "
+                      "higher limit; everyone_else: every other caller), then, regardless of address, "
+                      "server_busy (shared database queue pressure) and too_many_clients (the server was "
+                      "tracking as many addresses as it can); null on days before it was counted. "
+                      "restarts (from 0.10.0; null before): how many times the server started that day; "
+                      "callers and parts_asked distinct count a caller or part seen on both sides of a "
+                      "restart twice."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,

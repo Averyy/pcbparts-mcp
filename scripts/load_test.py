@@ -1,5 +1,7 @@
 """Load test for a LOCAL pcbparts-mcp container: how many database-served tool calls a minute it
 sustains (todo-platform-rate-limits.md). A tool, not a unit test; never point it at pcbparts.dev.
+It refuses a pcbparts.dev --url in any spelling, and any host other than this machine unless given
+--allow-remote (another machine of your own).
 
 Each tool call is what a stateless MCP client sends: initialize, the initialized notification and
 tools/call, three HTTP requests. Calls arrive at a fixed rate per step (open loop, like many
@@ -29,6 +31,7 @@ p95 below --p95-limit (2s), and no other requests fail. The upstream guard still
 
 import argparse
 import asyncio
+import ipaddress
 import json
 import math
 import random
@@ -38,6 +41,7 @@ import sys
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -95,6 +99,27 @@ class Inputs:
         if kind == "jlc_stock_history_batch":
             return "jlc_stock_history", {"lcsc": rng.sample(self.lcsc, min(len(self.lcsc), rng.randint(10, 50)))}
         return kind, dict(rng.choice(self.by_tool[kind]))
+
+
+def check_target(url: str, allow_remote: bool = False) -> None:
+    """Refuse any pcbparts.dev host (in any case, with or without a trailing dot, subdomains too),
+    even with --allow-remote, and any host that isn't this machine (localhost or a loopback
+    address) without it."""
+    try:
+        host = (urlsplit(url).hostname or "").rstrip(".").lower()
+    except ValueError:
+        host = ""
+    if not host:
+        raise SystemExit(f"not a URL with a host: {url!r}")
+    if host.endswith("pcbparts.dev"):
+        raise SystemExit("this is for a local container only, never pcbparts.dev")
+    try:
+        loopback = ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        loopback = host == "localhost" or host.endswith(".localhost")
+    if not loopback and not allow_remote:
+        raise SystemExit(f"{host} isn't this machine; this is for a local container (--allow-remote for "
+                         "another machine of your own)")
 
 
 def check_database_only(tool: str, arguments: dict) -> None:
@@ -283,6 +308,8 @@ async def run_step(client, headers, inputs: Inputs, mix: dict[str, int], rate: f
 async def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--url", default="http://127.0.0.1:18080")
+    parser.add_argument("--allow-remote", action="store_true",
+                        help="allow a --url host other than this machine (never pcbparts.dev)")
     parser.add_argument("--rates", default="60,120,240", help="calls a minute for each step, comma-separated")
     parser.add_argument("--step-seconds", type=float, default=60)
     parser.add_argument("--mix", choices=sorted(MIXES), default="traffic")
@@ -298,8 +325,7 @@ async def main() -> int:
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--out", help="append one JSON line per step here")
     args = parser.parse_args()
-    if re.search(r"pcbparts\.dev", args.url):
-        raise SystemExit("this is for a local container only")
+    check_target(args.url, args.allow_remote)
 
     rng = random.Random(args.seed)
     inputs = Inputs(rng)

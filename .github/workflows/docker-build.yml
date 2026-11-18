@@ -67,8 +67,11 @@ jobs:
       # OpenAI's ChatGPT connector addresses get the AI platforms' higher per-address rate limit
       # (platform_ranges.py). OpenAI says the list can change, so each build takes a fresh copy when
       # it checks out (platform_ranges.py, standard library only) and otherwise keeps the committed
-      # one. Prod deploys on every push to main, the daily scrape's included, so the list is about a
-      # day old at most; the server itself never downloads it. This step never fails the build.
+      # one. Prod deploys on every push to main, the daily scrape's included, so when the download
+      # succeeds the list is about a day old; when it fails, this warns and the committed copy stays
+      # (/health shows the list's creation date). The server never downloads it. This step never
+      # fails the build. The check's output is downloaded text: it's printed as one line of at most
+      # 300 characters, so nothing in it can start a workflow command (::error::, ::add-mask::).
       - name: Refresh OpenAI's address list
         continue-on-error: true
         run: |
@@ -76,11 +79,14 @@ jobs:
           dir="$RUNNER_TEMP/openai-ranges"
           committed=data/platform_ranges/openai-chatgpt-connectors.json
           rm -rf "$dir" && mkdir -p "$dir"
-          if ! curl -fsSL --max-time 30 --retry 2 --max-filesize 1000000 -o "$dir/list.json" \
-              https://openai.com/chatgpt-connectors.json; then
+          if ! curl -fsSL --proto '=https' --proto-redir '=https' --max-time 30 --retry 2 --max-filesize 1000000 \
+              -o "$dir/list.json" https://openai.com/chatgpt-connectors.json; then
             warn "downloading it failed"; exit 0
           fi
-          if ! summary=$(python3 -I src/pcbparts_mcp/platform_ranges.py "$dir/list.json" 2>&1); then
+          checked=0
+          summary=$(python3 -I src/pcbparts_mcp/platform_ranges.py "$dir/list.json" 2>&1) || checked=$?
+          summary=$(printf '%s' "$summary" | tr -c '[:print:]' ' ' | cut -c1-300)
+          if [ "$checked" -ne 0 ]; then
             warn "the download isn't a usable list: $summary"; exit 0
           fi
           if cmp -s "$dir/list.json" "$committed"; then

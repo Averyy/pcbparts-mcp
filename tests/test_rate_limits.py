@@ -5,7 +5,9 @@ ASGI test clients and a fake clock."""
 
 import asyncio
 import datetime
+import ipaddress
 import json
+import logging
 from pathlib import Path
 
 import httpx
@@ -16,9 +18,10 @@ from starlette.middleware import Middleware
 from starlette.responses import PlainTextResponse, StreamingResponse
 from starlette.routing import Route
 
-from pcbparts_mcp import server
+from pcbparts_mcp import server, stats
 from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally
 from pcbparts_mcp.db_worker import DatabasePressure
+from pcbparts_mcp.platform_ranges import PlatformRanges
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 18, 20, 5, tzinfo=UTC).timestamp()
@@ -55,7 +58,8 @@ async def _ok(request):
 
 def app_with(limit: int, clock: Clock, cls=server.RateLimitMiddleware) -> Starlette:
     routes = [Route("/mcp", _ok, methods=["POST"]), Route("/health", _ok), Route("/mcp/stats", _ok)]
-    return Starlette(routes=routes, middleware=[Middleware(cls, requests_per_minute=limit, clock=clock)])
+    return Starlette(routes=routes, middleware=[Middleware(cls, requests_per_minute=limit, clock=clock,
+                                                           wall_clock=clock)])
 
 
 def client(app) -> httpx.AsyncClient:
@@ -161,8 +165,11 @@ class TestHeaders:
 
 
 class TestTooManyClients:
-    async def test_new_addresses_wait(self, clock, tally, monkeypatch):
+    async def test_new_addresses_wait(self, clock, tally, monkeypatch, caplog):
         monkeypatch.setattr(server.RateLimitMiddleware, "MAX_TRACKED_IPS", 2)
+        usage = stats.UsageStats(clock=clock)
+        monkeypatch.setattr(stats, "usage", usage)
+        caplog.set_level(logging.WARNING, logger="pcbparts_mcp.server")
         async with client(app_with(10, clock)) as c:
             assert (await post(c, A)).status_code == 200
             clock.advance(10)
@@ -179,7 +186,128 @@ class TestTooManyClients:
             assert (await post(c, C)).json()["retry_after"] == 50  # now B leaves first
             clock.advance(50)  # B's last request is a minute old
             assert limits(await post(c, C)) == ("10", "9", "60")
-        assert sum(tally._counts.values()) == 2
+        # Their own group in /mcp/stats and one warning a minute, not the per-IP hourly line
+        # (the refused addresses are new ones, so their tally says nothing)
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {
+            "total": 2, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 2}
+        assert sum(tally._counts.values()) == 0
+        warnings = [r.getMessage() for r in caplog.records if "too_many_clients" in r.getMessage()]
+        assert len(warnings) == 1 and "1 refused since the last warning" in warnings[0]
+
+    def test_warning_at_most_once_a_minute(self, clock, monkeypatch, caplog):
+        monkeypatch.setattr(server.RateLimitMiddleware, "MAX_TRACKED_IPS", 1)
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        limiter = server.RateLimitMiddleware(None, requests_per_minute=10, clock=clock, wall_clock=clock,
+                                             platform_addresses=PlatformRanges())
+        limiter._allowance(A)
+        caplog.set_level(logging.WARNING, logger="pcbparts_mcp.server")
+        for n in range(5):
+            clock.advance(10)
+            limiter._allowance(A)  # A stays tracked, so the others stay out
+            allowance = limiter._allowance(f"198.51.100.{n}")
+            assert allowance.refused == "too_many_clients"
+            limiter._count_refusal(f"198.51.100.{n}", allowance.refused)
+        warnings = [r.getMessage() for r in caplog.records]
+        assert len(warnings) == 1 and "1 refused since the last warning" in warnings[0]
+        clock.advance(20)  # a minute after the first warning
+        limiter._allowance(A)
+        limiter._count_refusal(C, limiter._allowance(C).refused)
+        assert len(caplog.records) == 2 and "5 refused since the last warning" in caplog.records[1].getMessage()
+
+    def test_no_scan_of_every_address(self, clock, monkeypatch):
+        """A refused new address costs O(1), not two passes over all 10,000 tracked addresses
+        (request_counts is kept in order of last requests, so the stalest is first)."""
+        class Counting(dict):
+            seen = 0
+
+            def items(self):
+                for item in super().items():
+                    Counting.seen += 1
+                    yield item
+
+            def values(self):
+                for value in super().values():
+                    Counting.seen += 1
+                    yield value
+
+        monkeypatch.setattr(server.RateLimitMiddleware, "MAX_TRACKED_IPS", 500)
+        limiter = server.RateLimitMiddleware(None, requests_per_minute=10, clock=clock, wall_clock=clock,
+                                             platform_addresses=PlatformRanges())
+        limiter.request_counts = Counting()
+        for n in range(500):
+            limiter._allowance(f"10.0.{n // 256}.{n % 256}")
+        Counting.seen = 0
+        for n in range(100):
+            assert limiter._allowance(f"10.9.0.{n}").refused == "too_many_clients"
+        assert Counting.seen <= 2 * 100
+        clock.advance(61)  # every tracked address is stale: dropped oldest first as needed
+        assert limiter._allowance("10.9.1.1").refused is None
+        assert limiter._allowance("10.0.0.0").refused is None
+
+
+V6_A, V6_A2, V6_B = "2001:db8:1:2::1", "2001:db8:1:2:ffff:ffff:ffff:ffff", "2001:db8:1:3::1"
+
+
+class TestIPv6:
+    def test_one_allowance_per_slash_64(self, clock):
+        limiter = server.RateLimitMiddleware(None, requests_per_minute=2, clock=clock, wall_clock=clock,
+                                             platform_addresses=PlatformRanges())
+        assert [limiter._allowance(ip).refused for ip in (V6_A, V6_A2, V6_A)] == [None, None, "per_ip_rate_limit"]
+        assert limiter._allowance(V6_B).refused is None  # the next /64 is someone else
+        assert list(limiter.request_counts) == ["2001:db8:1:2::/64", "2001:db8:1:3::/64"]
+        # IPv4 by the full address; IPv4-mapped IPv6 is that IPv4 address
+        assert [limiter._allowance(ip).refused for ip in ("192.0.2.1", "::ffff:192.0.2.1", "192.0.2.2")] == [
+            None, None, None]
+        assert limiter.request_counts["192.0.2.1"] == [clock.now, clock.now]
+        assert limiter._limit_key("unknown") == "unknown"
+
+    def test_platform_ipv6_counted_alone(self, clock):
+        ranges = PlatformRanges({"openai": [ipaddress.ip_network("2001:db8:1:2::/64")]})
+        limiter = server.RateLimitMiddleware(None, requests_per_minute=1, platform_per_minute=1, clock=clock,
+                                             wall_clock=clock, platform_addresses=ranges)
+        assert [limiter._allowance(ip).refused for ip in (V6_A, V6_A2)] == [None, None]
+
+    async def test_one_slash_64_cant_fill_the_table(self, clock, monkeypatch):
+        monkeypatch.setattr(server.RateLimitMiddleware, "MAX_TRACKED_IPS", 3)
+        async with client(app_with(100, clock)) as c:
+            replies = [await post(c, f"2001:db8:1:2::{n:x}") for n in range(50)]
+            assert {r.status_code for r in replies} == {200}
+            assert limits(replies[-1]) == ("100", "50", "60")  # one allowance for the /64
+            assert (await post(c, A)).status_code == 200  # room for others
+            refused = await post(c, V6_B)
+            assert refused.status_code == 200
+            assert (await post(c, B)).json()["reason"] == "too_many_clients"  # 3 tracked: A, two /64s
+
+
+class TestClocks:
+    async def test_window_ignores_wall_clock_steps(self):
+        """The window runs on a monotonic clock: a wall-clock step back (an NTP correction) neither
+        lengthens nor shortens a refusal; only resets_at follows the wall clock."""
+        window, wall = Clock(1000.0), Clock()
+        app = Starlette(routes=[Route("/mcp", _ok, methods=["POST"])],
+                        middleware=[Middleware(server.RateLimitMiddleware, requests_per_minute=1, clock=window,
+                                               wall_clock=wall)])
+        async with client(app) as c:
+            assert (await post(c)).status_code == 200
+            window.advance(30)
+            wall.advance(-3600)  # an hour back
+            refused = await post(c)
+            assert refused.json()["retry_after"] == 30
+            assert refused.json()["resets_at"] == "2026-11-18T19:05:30Z"  # the wall clock's now + 30 s
+            window.advance(30)
+            assert (await post(c)).status_code == 200
+
+
+class TestPlatformLimitFloor:
+    def test_platform_never_below_normal(self, clock):
+        """A self-hoster's RATE_LIMIT_REQUESTS above PLATFORM_RATE_LIMIT doesn't give the AI
+        platforms' shared addresses less than everyone else."""
+        ranges = PlatformRanges({"anthropic": [ipaddress.ip_network("160.79.104.0/21")]})
+        limiter = server.RateLimitMiddleware(None, requests_per_minute=5000, platform_per_minute=1000,
+                                             clock=clock, wall_clock=clock, platform_addresses=ranges)
+        assert (limiter._limit_for("160.79.104.10"), limiter._limit_for(A)) == (5000, 5000)
+        limiter.platform_per_minute = 9000
+        assert (limiter._limit_for("160.79.104.10"), limiter._limit_for(A)) == (9000, 5000)
 
 
 class TestRealApp:
@@ -240,10 +368,18 @@ async def test_stream_not_buffered(clock, under_pressure):
     if under_pressure:
         for _ in range(8):
             pressure.enqueue(server.COMPONENT_POOL)
+    deadlines = []
+
+    class Watched(server.RateLimitMiddleware):
+        async def _peek_body(self, receive, deadline, headers):
+            deadlines.append(deadline)  # the body was read, with the pressure deadline or none
+            return await super()._peek_body(receive, deadline, headers)
+
     app = Starlette(routes=[Route("/mcp", sse, methods=["POST"])],
                     middleware=[Middleware(server.BodySizeLimitMiddleware),  # prod's order
-                                Middleware(server.RateLimitMiddleware, requests_per_minute=5, clock=clock,
-                                           pressure=pressure)])
+                                Middleware(Watched, requests_per_minute=5, clock=clock, wall_clock=clock,
+                                           pressure=pressure, busy_max_waiting=8, busy_max_wait=0.25,
+                                           busy_body_timeout=60)])
     sent = []
 
     async def send(message):
@@ -274,3 +410,4 @@ async def test_stream_not_buffered(clock, under_pressure):
         b"5", b"4", b"60")
     assert [m["body"] for m in sent[1:] if m.get("body")] == [b"event: message\ndata: 1\n\n",
                                                              b"event: message\ndata: 2\n\n"]
+    assert deadlines == ([60] if under_pressure else [None])  # the busy case really was under pressure

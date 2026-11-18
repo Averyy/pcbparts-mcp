@@ -1,6 +1,7 @@
 """JLCPCB API client for searching electronic components."""
 
 import asyncio
+import contextvars
 import heapq
 import logging
 import math
@@ -169,6 +170,13 @@ DATASHEET_SIGNINGS_PER_MINUTE = 20
 DATASHEET_LINK_CACHE_MAX = 5000
 # A part without a datasheet PDF isn't looked up again for this long
 DATASHEET_MISSING_TTL = 600
+
+
+# Seeded footprint answers read ahead for a batch of footprint checks (JLCPCBClient._footprint_seeds),
+# by LCSC code, for the checks gathered in this context: one database job for the batch instead of one
+# per part, so a single find_alternatives call can't queue 15 jobs and trip the busy cap by itself.
+_prefetched_seeds: contextvars.ContextVar[dict[str, FootprintAnswer | None] | None] = contextvars.ContextVar(
+    "pcbparts_prefetched_seeds", default=None)
 
 
 class DatasheetLinkBusy(ValueError):
@@ -759,10 +767,37 @@ class JLCPCBClient:
             if len(self._easyeda_cache) >= int(EASYEDA_CACHE_MAX_SIZE * 0.9):
                 self._cleanup_easyeda_cache_unlocked()
 
+    async def _footprint_seeds(self, codes: list[str]) -> dict[str, FootprintAnswer | None] | None:
+        """The seeded footprint answers for these LCSC codes, read in ONE database job (None without a
+        seed). For _prefetched_seeds; a code whose lookup fails is left out and looked up alone."""
+        lookup = self._easyeda_seed
+        codes = sorted({code for code in (c.strip().upper() for c in codes)
+                        if code.startswith("C") and code[1:].isascii() and code[1:].isdigit()})
+        if lookup is None or not codes:
+            return None
+
+        def read_all() -> dict[str, FootprintAnswer | None]:
+            seeds = {}
+            for code in codes:
+                try:
+                    seeds[code] = lookup(code)
+                except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+                    logger.warning(f"EasyEDA footprint seed lookup failed for {code}: {type(e).__name__}: {e}")
+            return seeds
+
+        try:
+            return await run_db(COMPONENT_POOL, read_all)
+        except Exception as e:
+            logger.warning(f"EasyEDA footprint seed lookups failed: {type(e).__name__}: {e}")
+            return None
+
     async def _stored_footprint(self, lcsc: str, now: float) -> dict[str, Any] | None:
         """A footprint answer from the store or seed that can be served without asking EasyEDA."""
         seed = None
-        if self._easyeda_seed is not None:
+        prefetched = _prefetched_seeds.get()
+        if prefetched is not None and lcsc in prefetched:
+            seed = prefetched[lcsc]
+        elif self._easyeda_seed is not None:
             try:
                 seed = await run_db(COMPONENT_POOL, self._easyeda_seed, lcsc)
             except Exception as e:  # the seed is an optimization; a broken one must not break lookups
@@ -1929,7 +1964,12 @@ class JLCPCBClient:
 
             async def check_footprints(parts, budget, fallback=False):
                 window = [p for p in parts[:budget] if p.get("lcsc")]
-                checks = await asyncio.gather(*[self._check_easyeda_footprint(p["lcsc"]) for p in window])
+                # The window's seed answers in one database job, not one per part (_prefetched_seeds)
+                token = _prefetched_seeds.set(await self._footprint_seeds([p["lcsc"] for p in window]))
+                try:
+                    checks = await asyncio.gather(*[self._check_easyeda_footprint(p["lcsc"]) for p in window])
+                finally:
+                    _prefetched_seeds.reset(token)
                 footprint_stage["checked"] += len(window)
                 footprint_stage["fallback_checked" if fallback else "eligible_checked"] += len(window)
                 footprint_stage["not_checked_cap"] += max(0, len(parts) - budget)

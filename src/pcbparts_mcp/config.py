@@ -1,9 +1,38 @@
 """Configuration for PCB Parts MCP server."""
 
+import math
 import os
 import re
 from collections.abc import Mapping
 from pathlib import Path
+
+# Problems with numeric settings (a value that isn't a number, or is out of range), each naming the
+# variable and the value used instead; the server logs them at startup. A bad value no longer stops
+# the server from importing this module.
+CONFIG_WARNINGS: list[str] = []
+
+
+def number_setting(name: str, default: int | float, minimum: int | float,
+                   environ: Mapping[str, str] = os.environ, warnings: list[str] = CONFIG_WARNINGS) -> int | float:
+    """The environment variable `name` as a number of default's type (int or float). Unset or blank:
+    the default. Not a number (`1,000`, `1e3` for an int), or not finite: the default, with a
+    warning. Below minimum: minimum, with a warning."""
+    raw = (environ.get(name) or "").strip()
+    if not raw:
+        return default
+    kind = type(default)
+    try:
+        value = kind(raw)
+    except ValueError:
+        warnings.append(f"{name}={raw!r} isn't a{'n integer' if kind is int else ' number'}; using {default}")
+        return default
+    if not math.isfinite(value):
+        warnings.append(f"{name}={raw!r} isn't a finite number; using {default}")
+        return default
+    if value < minimum:
+        warnings.append(f"{name}={raw!r} is below {minimum}; using {minimum}")
+        return minimum
+    return value
 
 # Recorded stock events, built offline from the gzipped JSONL files in data/history/.
 STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
@@ -17,21 +46,29 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = int(os.getenv("HTTP_PORT", "8080"))
-RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", "100"))
+# Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1
+RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
 # The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
 # per address instead of RATE_LIMIT_REQUESTS: claude.ai and ChatGPT connectors call from them for
 # many users at once. 1,000 (about 330 tool calls) is about half what the 1-CPU server is estimated to
 # sustain for database-served calls (scripts/load_test.py, 2026-11-18: about 1,800 a minute with
-# the CPU scaled to the VPS), so one busy platform address can't take the whole server.
-PLATFORM_RATE_LIMIT = int(os.getenv("PLATFORM_RATE_LIMIT", "1000"))
-# Shed new tools/call requests if ANY database pool has this many jobs waiting to start, or its
-# oldest has waited this many seconds. Measured 2026-11-18 at a third of a CPU (the VPS estimate,
+# the CPU scaled to the VPS), so one busy platform address can't take the whole server. Never less
+# than RATE_LIMIT_REQUESTS (RateLimitMiddleware._limit_for takes the larger).
+PLATFORM_RATE_LIMIT = number_setting("PLATFORM_RATE_LIMIT", 1000, 1)
+# Shed new tools/call requests if ANY database pool has this many jobs waiting to start (counting
+# tool calls admitted that haven't started yet), or its oldest has waited this many seconds.
+# Measured 2026-11-18 at a third of a CPU (the VPS estimate,
 # knee ~600 calls/min): 8 / 0.25 s kept accepted p95 near 1.5 s past the knee but refused 11-17%
 # of calls at 360-600 a minute; 16 / 1.0 s refused ~1% at 360 but let accepted p95 reach ~2.5 s.
 # Without a cap, 840 a minute collapsed to p95 12.8 s. 12 / 0.5 s sits between; the CPU quota
-# exaggerates queueing at moderate load, so check prod's server_busy counts and tune by env.
-DB_BUSY_MAX_WAITING = max(1, int(os.getenv("DB_BUSY_MAX_WAITING", "12")))
-DB_BUSY_MAX_WAIT_SECONDS = max(0.001, float(os.getenv("DB_BUSY_MAX_WAIT_SECONDS", "0.5")))
+# exaggerates queueing at moderate load, so check prod's server_busy counts and tune by env. To turn
+# the cap off, set both very large (1000000).
+DB_BUSY_MAX_WAITING = number_setting("DB_BUSY_MAX_WAITING", 12, 1)
+DB_BUSY_MAX_WAIT_SECONDS = number_setting("DB_BUSY_MAX_WAIT_SECONDS", 0.5, 0.001)
+# /health answers 503 (unhealthy) while a database job has waited this long to start: a worker is
+# stuck (queries have no timeout), and every tools/call would be refused as busy until a restart.
+# Far above anything the busy cap lets a normal spike reach (it sheds new calls at 0.5 s).
+DB_STUCK_WAIT_SECONDS = number_setting("DB_STUCK_WAIT_SECONDS", 60.0, 1.0)
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit
 ANTHROPIC_IP_RANGES = [r.strip() for r in os.getenv("ANTHROPIC_IP_RANGES", "160.79.104.0/21,153.61.208.0/20").split(",")

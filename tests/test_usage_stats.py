@@ -261,7 +261,7 @@ class TestUsageStats:
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
             "distributors": {}, "reasons": {}, "why_empty": {},
-            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0}}
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
@@ -363,6 +363,68 @@ class TestUsageStats:
         usage.record_distributor("mouser", "sent")
         day = usage.summary()["days"][0]
         assert day["tools"]["jlc_search"]["calls"] == 1 and day["distributors"]["mouser"]["sent"] == 1
+
+    @pytest.mark.parametrize("content", [b"{not json", b"\xff\xfe", b"[" * 100_000, b'{"other": 1}', b"[]"],
+                             ids=["json", "utf8", "nested", "nodays", "list"])
+    def test_unreadable_file_is_moved_aside_not_overwritten(self, tmp_path, content):
+        """A file that can't be read is kept as usage.json.corrupt (one kept) before counting starts
+        from 0, so the next save can't overwrite a year of counts."""
+        path, aside = tmp_path / "usage.json", tmp_path / "usage.json.corrupt"
+        aside.write_bytes(b"an older one")
+        path.write_bytes(content)
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        assert usage.summary()["days"] == []
+        assert aside.read_bytes() == content and not path.exists()
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        assert json.loads(path.read_text(encoding="utf-8"))["days"] and aside.read_bytes() == content
+        assert usage.summary()["kept_across_restarts"] is True
+
+    def test_unknown_day_fields_survive_a_save(self, tmp_path):
+        """A newer version's fields are kept through this version's saves, so a rollback and a
+        redeploy don't erase them."""
+        path = tmp_path / "usage.json"
+        day = {"tools": {"jlc_search": {"calls": 1, "ok": 1, "ms": 5}}, "hours": [0] * 24, "callers": 1,
+               "future_counts": {"x": [1, 2]}, "per_ip_refusals": {"everyone_else": 1}}
+        path.write_text(json.dumps({"days": {"2026-10-17": day}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        saved = json.loads(path.read_text(encoding="utf-8"))["days"]["2026-10-17"]
+        assert saved["future_counts"] == {"x": [1, 2]} and saved["tools"]["jlc_search"]["calls"] == 2
+        assert "future_counts" not in usage.summary()["days"][0]  # kept, not shown
+
+    def test_save_syncs_before_replacing(self, tmp_path, monkeypatch):
+        events = []
+        real_fsync, real_replace = stats.os.fsync, stats.os.replace
+        monkeypatch.setattr(stats.os, "fsync", lambda fd: (events.append("fsync"), real_fsync(fd))[1])
+        monkeypatch.setattr(stats.os, "replace", lambda a, b: (events.append("replace"), real_replace(a, b))[1])
+        usage = UsageStats(clock=Clock())
+        usage.open(tmp_path / "usage.json")
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        assert events == ["fsync", "replace"]
+
+    def test_restarts_per_day(self, tmp_path):
+        """Each start counts on its UTC day, beside the callers and distinct part numbers it can
+        double; days saved before 0.10.0 show null."""
+        path, clock = tmp_path / "usage.json", Clock()
+        path.write_text(json.dumps({"days": {"2026-10-16": {"callers": 3}}}), encoding="utf-8")
+        for _ in range(2):
+            usage = UsageStats(clock=clock)
+            usage.open(path)
+            usage.record_start()
+            usage.record_call("jlc_search", "ok", 1, caller="203.0.113.7")
+            usage.save()
+        today, before = usage.summary()["days"]
+        assert (today["restarts"], today["callers"]) == (2, 2)  # one caller, counted on each side
+        assert before["restarts"] is None
+        clock.advance(86400)
+        usage.record_call("jlc_search", "ok", 1)
+        assert usage.summary()["days"][0]["restarts"] == 0  # running since yesterday
+        assert "restarts" in usage.summary()["about"]
 
     def test_unwritable_file_keeps_counting_in_memory(self, tmp_path):
         blocker = tmp_path / "file"
@@ -535,6 +597,7 @@ class TestServerWiring:
             await client.call_tool("get_design_rules", {"topic": "usb"})
         saved = json.loads(path.read_text(encoding="utf-8"))["days"]
         assert next(iter(saved.values()))["tools"]["get_design_rules"]["calls"] == 1
+        assert saved[max(saved)]["restarts"] >= 1  # the lifespan counts its start
 
 
 # --- Error sorting: every error message in the code, and the kind it counts as ---

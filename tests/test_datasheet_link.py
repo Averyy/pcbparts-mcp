@@ -1,6 +1,7 @@
 """Short datasheet links (0.8.0): jlc_get_part's datasheet_pdf was a ~1.2KB signed link that
 expired in 30 minutes; it is now /mcp/datasheet/<lcsc>, which signs a fresh link on each visit."""
 
+import re
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
@@ -117,6 +118,13 @@ class TestRoute:
         async with http:
             reply = await http.get("/mcp/datasheet/C429")
         assert reply.headers["retry-after"] == "17" and reply.json()["retry_after"] == 17
+        # The fields every 429 has (llms.txt), with this budget's own reason
+        body = reply.json()
+        assert body["reason"] == "datasheet_rate_limit" and body["reason"] in server.RATE_LIMIT_REASONS
+        assert re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", body["resets_at"])
+        assert body["tell_user"] == ("pcbparts makes at most 20 new datasheet links a minute for all its users; "
+                                     "try again in 17 seconds.")
+        assert body["error"].startswith("This server signs at most 20")
 
     def test_route_is_served(self):
         assert any(getattr(r, "path", None) == "/mcp/datasheet/{lcsc}" for r in server.app.routes)

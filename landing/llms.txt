@@ -4,7 +4,7 @@
 
 - Endpoint: `https://pcbparts.dev/mcp` (Streamable HTTP, stateless)
 - Auth: none
-- Rate limit: 100 requests a minute per IP, with `X-RateLimit-*` headers on replies (see Rate limit)
+- Rate limit: 100 requests a minute per IP (an IPv6 address's /64 counts as one), with `X-RateLimit-*` headers on replies (see Rate limit)
 - Health: `https://pcbparts.dev/health`
 - Source: https://github.com/Averyy/pcbparts-mcp
 
@@ -224,13 +224,14 @@ Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. 
 
 ## Rate limit
 
-Each IP address may send 100 HTTP requests in any rolling minute. An address in the AI platforms' published outbound ranges (Anthropic's, which claude.ai and Claude connectors call from, and OpenAI's ChatGPT connectors list) may send 1,000, since many of their users share each one. Each MCP message (`initialize`, `tools/call`, ...) is one request, so a stateless client's tool call is about three. `/health` is never refused or counted; `/mcp/stats` counts like any request.
+Each IPv4 address, or IPv6 /64 (all the addresses that share its first 64 bits count as one), may send 100 HTTP requests in any rolling minute. An address in the AI platforms' published outbound ranges (Anthropic's, which claude.ai and Claude connectors call from, and OpenAI's ChatGPT connectors list) may send 1,000, since many of their users share each one; it's counted by itself. Each MCP message (`initialize`, `tools/call`, ...) is one request, so a stateless client's tool call is about three. `/health` is never refused or counted; `/mcp/stats` counts like any request. A request body over 1 MB gets HTTP 413 `{error}`, whether its `Content-Length` says so or it's sent in chunks.
 
-- Replies carry `X-RateLimit-Limit` (requests a minute for your address), `X-RateLimit-Remaining` (requests left in the current minute) and `X-RateLimit-Reset` (whole seconds until your oldest counted request leaves the minute, so one more is allowed; 0 when none are counted); `/health` replies too, without counting. Not on the few errors sent before the limit is checked (413 for an oversized body, 421/403 for an unknown Host or Origin).
+- Replies carry `X-RateLimit-Limit` (requests a minute for your address), `X-RateLimit-Remaining` (requests left in the current minute) and `X-RateLimit-Reset` (whole seconds until your oldest counted request leaves the minute, so one more is allowed; 0 when none are counted); `/health` replies too, without counting. Not on the few errors sent before the limit is checked (413 for a declared `Content-Length` over 1 MB, 421/403 for an unknown Host or Origin); a 413 for a body cut off as it arrives has them (it was counted).
 - Over the limit: HTTP 429 with a `Retry-After` header (seconds, at least 1) and a JSON body `{error, retry_after, reason, resets_at, tell_user}`: `retry_after` is the same seconds, `resets_at` that moment in UTC (ISO 8601), `tell_user` one sentence to show the user, `reason` why:
   - `per_ip_rate_limit`: your address sent its limit in the last minute.
   - `too_many_clients`: the server is serving as many addresses as it can at once; not caused by your use.
-  - `server_busy`: a database worker pool is overloaded (12 calls waiting, or the oldest waiting 0.5 s, by default). Only new `tools/call` requests are refused for this reason; `initialize`, notifications, `tools/list` and other methods still pass this check. Live lookups waiting on upstream services don't contribute to database pressure. Wait the short computed `retry_after` (2-5 seconds); for this refusal `X-RateLimit-Remaining` is 0 and `X-RateLimit-Reset` is that retry delay. It counts against your address's allowance like an answered request, so retrying faster than `retry_after` runs into `per_ip_rate_limit`. While the server is busy, a request body that hasn't all arrived within 2 seconds gets this refusal too. `/health` and `/mcp/stats` never get it.
+  - `server_busy`: a database worker pool is overloaded (12 calls waiting, counting `tools/call` requests accepted whose tool hasn't started yet, or the oldest waiting 0.5 s, by default). Only new `tools/call` requests are refused for this reason; `initialize`, notifications, `tools/list` and other methods still pass this check. Live lookups waiting on upstream services don't contribute to database pressure. Wait the short computed `retry_after` (2-5 seconds); for this refusal `X-RateLimit-Remaining` is 0 and `X-RateLimit-Reset` is that retry delay. It counts against your address's allowance like an answered request, so retrying faster than `retry_after` runs into `per_ip_rate_limit`. While the server is busy, a request body that hasn't all arrived within 2 seconds gets this refusal too. `/health` and `/mcp/stats` never get it.
+  - `datasheet_rate_limit`: only from `/mcp/datasheet/<lcsc>` (`jlc_get_part`'s `datasheet_pdf` link): the server signs at most 20 new datasheet links a minute for all its users; not caused by your use. Its `X-RateLimit-*` headers still describe your address. A `datasheet_pdf` link `jlc_get_part` returned in the last 25 minutes opens without signing.
 - Requests refused for `per_ip_rate_limit` or `too_many_clients` aren't counted (a `server_busy` one is): wait `retry_after` seconds, then send again. For heavy use, self-host: https://github.com/Averyy/pcbparts-mcp#self-hosting
 
 ## Quotas

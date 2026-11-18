@@ -33,9 +33,22 @@ OPENAI_SHORTEST_PREFIX = {4: 12, 6: 32}
 OPENAI_MAX_ADDRESSES = {4: 2 ** 22, 6: 2 ** 100}  # four /12s; sixteen /32s
 
 
+# The characters an ISO 8601 creationTime is made of, and its longest plausible length. Anything
+# else is dropped (created None): the value is printed in CI logs and the server log, where text
+# such as a newline followed by "::error::" would be read as a GitHub workflow command.
+_TIME_CHARACTERS = frozenset("0123456789T:.+Z-")
+_TIME_LENGTH = 40
+
+
 class OpenAIList(NamedTuple):
     prefixes: list[Network]
-    created: str | None  # the file's creationTime, as given
+    created: str | None  # the file's creationTime, when it looks like one (only ISO 8601 characters)
+
+
+def _created(value: Any) -> str | None:
+    if isinstance(value, str) and 1 <= len(value) <= _TIME_LENGTH and set(value) <= _TIME_CHARACTERS:
+        return value
+    return None
 
 
 def parse_openai_list(data: Any) -> OpenAIList:
@@ -57,17 +70,17 @@ def parse_openai_list(data: Any) -> OpenAIList:
         keys = [key for key in OPENAI_PREFIX_KEYS if isinstance(entry, dict) and key in entry]
         if len(keys) != 1:
             raise ValueError(f"prefix {number} doesn't have exactly one of ipv4Prefix and ipv6Prefix: "
-                             f"{str(entry)[:80]}")
+                             f"{repr(entry)[:80]}")
         key = keys[0]
         value = entry[key]
         if not isinstance(value, str) or "/" not in value:
-            raise ValueError(f"prefix {number} ({key}) isn't an address/length: {str(value)[:80]}")
+            raise ValueError(f"prefix {number} ({key}) isn't an address/length: {repr(value)[:80]}")
         try:
             network = ipaddress.ip_network(value.strip(), strict=False)
         except ValueError as e:
             raise ValueError(f"prefix {number} ({key}): {e}") from None
         if network.version != OPENAI_PREFIX_KEYS[key]:
-            raise ValueError(f"prefix {number} is under {key} but is IPv{network.version}: {value}")
+            raise ValueError(f"prefix {number} is under {key} but is IPv{network.version}: {value!r}")
         if network.prefixlen < OPENAI_SHORTEST_PREFIX[network.version]:
             raise ValueError(f"prefix {number} ({network}) is wider than a "
                              f"/{OPENAI_SHORTEST_PREFIX[network.version]}: not a plausible connector range")
@@ -78,13 +91,18 @@ def parse_openai_list(data: Any) -> OpenAIList:
         if size > most:
             raise ValueError(f"the IPv{version} prefixes cover {size:,} addresses, more than {most:,}: "
                              "not a plausible connector list")
-    created = data.get("creationTime")
-    return OpenAIList(prefixes, created if isinstance(created, str) else None)
+    return OpenAIList(prefixes, _created(data.get("creationTime")))
 
 
 def read_openai_list(path: str | Path) -> OpenAIList:
-    """Read and check OpenAI's list from a file. Raises OSError or ValueError."""
-    return parse_openai_list(json.loads(Path(path).read_text(encoding="utf-8")))
+    """Read and check OpenAI's list from a file (UTF-8, with or without a byte order mark).
+    Raises OSError or ValueError, also for JSON nested too deeply to parse."""
+    text = Path(path).read_text(encoding="utf-8-sig")
+    try:
+        data = json.loads(text)
+    except RecursionError:
+        raise ValueError("JSON nested too deeply") from None
+    return parse_openai_list(data)
 
 
 def parse_ranges(values: Iterable[str]) -> tuple[list[Network], list[str]]:
@@ -135,6 +153,7 @@ class Loaded(NamedTuple):
     ranges: PlatformRanges
     summary: str  # one line for the startup log
     warnings: list[str]
+    openai_created: str | None = None  # the OpenAI list's creationTime (None: unknown or not loaded)
 
 
 def load(anthropic: Iterable[str], openai_file: str | Path | None) -> Loaded:
@@ -142,6 +161,7 @@ def load(anthropic: Iterable[str], openai_file: str | Path | None) -> Loaded:
     not used). Never raises: a bad Anthropic value is skipped and a missing or bad OpenAI file
     leaves OpenAI out, each with a warning, and those addresses get the normal limit."""
     warnings = []
+    openai_list = None
     anthropic_ranges, problems = parse_ranges(anthropic)
     warnings += [f"ANTHROPIC_IP_RANGES: skipped {problem}" for problem in problems]
     openai_ranges: list[Network] = []
@@ -150,15 +170,17 @@ def load(anthropic: Iterable[str], openai_file: str | Path | None) -> Loaded:
     else:
         try:
             openai_list = read_openai_list(openai_file)
-        except (OSError, ValueError) as e:
-            warnings.append(f"OpenAI's address list {openai_file} can't be used ({e}): "
+        except Exception as e:  # never raises: OSError, ValueError, or anything unforeseen
+            openai_list = None
+            warnings.append(f"OpenAI's address list {openai_file} can't be used ({type(e).__name__}: {e}): "
                             "OpenAI's addresses get the normal limit")
             openai_note = "OpenAI's list not loaded"
         else:
             openai_ranges = openai_list.prefixes
             openai_note = f"{len(openai_ranges)} OpenAI (list created {openai_list.created or 'at an unknown time'})"
     summary = f"{len(anthropic_ranges)} Anthropic, {openai_note}"
-    return Loaded(PlatformRanges({"anthropic": anthropic_ranges, "openai": openai_ranges}), summary, warnings)
+    return Loaded(PlatformRanges({"anthropic": anthropic_ranges, "openai": openai_ranges}), summary, warnings,
+                  openai_list.created if openai_list else None)
 
 
 def main(argv: list[str]) -> int:
@@ -169,8 +191,8 @@ def main(argv: list[str]) -> int:
         return 2
     try:
         openai_list = read_openai_list(argv[0])
-    except (OSError, ValueError) as e:
-        print(f"not a usable OpenAI address list: {e}", file=sys.stderr)
+    except Exception as e:  # OSError, ValueError, or anything unforeseen: never a traceback in CI
+        print(f"not a usable OpenAI address list: {type(e).__name__}: {e}", file=sys.stderr)
         return 1
     print(f"{len(openai_list.prefixes)} prefixes, created {openai_list.created or 'unknown'}")
     return 0

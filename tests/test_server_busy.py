@@ -5,6 +5,7 @@ import contextvars
 import datetime
 import json
 import logging
+import math
 import runpy
 import types
 from concurrent.futures import Future
@@ -157,6 +158,52 @@ class TestPressure:
         settings = runpy.run_path(config.__file__)
         assert (settings["DB_BUSY_MAX_WAITING"], settings["DB_BUSY_MAX_WAIT_SECONDS"]) == (3, 0.5)
 
+    @pytest.mark.parametrize("name,value,used,warned", [
+        ("DB_BUSY_MAX_WAIT_SECONDS", "inf", 0.5, True),  # was accepted: OverflowError on every POST
+        ("DB_BUSY_MAX_WAIT_SECONDS", "nan", 0.5, True),
+        ("DB_BUSY_MAX_WAIT_SECONDS", "0", 0.001, True),
+        ("DB_BUSY_MAX_WAIT_SECONDS", " 1.5 ", 1.5, False),
+        ("DB_BUSY_MAX_WAITING", "12.5", 12, True),  # was a ValueError at import
+        ("DB_BUSY_MAX_WAITING", "", 12, False),
+        ("DB_BUSY_MAX_WAITING", "1000000", 1000000, False),  # how to turn the cap off (with the wait)
+        ("DB_STUCK_WAIT_SECONDS", "-1", 1.0, True),
+        ("DB_STUCK_WAIT_SECONDS", "300", 300.0, False),
+    ], ids=["inf", "nan", "zero", "float", "intfloat", "blank", "off", "neg", "stuck"])
+    def test_bad_settings_fall_back(self, monkeypatch, name, value, used, warned):
+        monkeypatch.setenv(name, value)
+        settings = runpy.run_path(config.__file__)
+        assert settings[name] == used and type(settings[name]) is type(used)
+        assert any(w.startswith(f"{name}=") for w in settings["CONFIG_WARNINGS"]) is warned
+
+    def test_huge_or_infinite_wait_never_overflows(self):
+        pressure, pool = DatabasePressure(Clock()), object()
+        for _ in range(3):
+            pressure.enqueue(pool)
+        assert pressure.retry_after(1, math.inf) == 5
+        assert pressure.retry_after(1, 1e308) == 5
+        assert pressure.retry_after(10**6, 10**6) == 0  # both very large: the cap is off
+
+    def test_reservations_count_as_waiting(self):
+        """Tool calls admitted but not started count as one more waiting job in every pool, have
+        no age, and are released once."""
+        clock, pool = Clock(), object()
+        pressure = DatabasePressure(clock)
+        held = [pressure.reserve() for _ in range(7)]
+        assert pressure.retry_after(8, 0.25) == 0
+        token = pressure.enqueue(pool)
+        assert pressure.retry_after(8, 0.25) == 2  # 1 queued + 7 admitted
+        held[0].release()
+        held[0].release()  # idempotent
+        assert (pressure.reserved, pressure.retry_after(8, 0.25)) == (6, 0)
+        pressure.discard(pool, token)
+        held += [pressure.reserve() for _ in range(2)]
+        assert pressure.retry_after(8, 0.25) == 2  # 8 admitted, nothing queued yet
+        clock.advance(10)
+        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0, "admitted_not_started": 8}
+        for reservation in held:
+            reservation.release()
+        assert (pressure.reserved, pressure.retry_after(8, 0.25)) == (0, 0)
+
 
 @pytest.fixture
 def busy(monkeypatch):
@@ -180,10 +227,14 @@ def app_for(busy, **kwargs):
     # The thresholds these tests are written for, independent of the configured defaults
     kwargs.setdefault("busy_max_waiting", 8)
     kwargs.setdefault("busy_max_wait", 0.25)
+    # In-process bodies arrive at once; a long deadline keeps a slow CI runner from racing the real
+    # 2 s one (the slow-body test sets its own)
+    kwargs.setdefault("busy_body_timeout", 60)
     return Starlette(routes=[Route("/mcp", echo, methods=["POST", "GET"]), Route("/health", echo),
                              Route("/mcp/stats", echo)],
                      middleware=[Middleware(server.BodySizeLimitMiddleware),
-                                 Middleware(server.RateLimitMiddleware, clock=busy.clock, **kwargs)])
+                                 Middleware(server.RateLimitMiddleware, clock=busy.clock, wall_clock=busy.clock,
+                                            **kwargs)])
 
 
 def client(app):
@@ -303,7 +354,7 @@ class TestBusyHTTP:
             assert (await c.post("/mcp", json=CALL)).json()["reason"] == "server_busy"
             assert (await c.get("/health")).status_code == 200
             counts = (await c.get("/mcp/stats")).json()["days"][0]["per_ip_refusals"]
-            assert counts == {"total": 1, "everyone_else": 0, "platform_ranges": 0, "server_busy": 1}
+            assert counts == {"total": 1, "everyone_else": 0, "platform_ranges": 0, "server_busy": 1, "too_many_clients": 0}
 
     async def test_threshold_overrides(self, busy):
         async with client(app_for(busy, busy_max_waiting=9, busy_max_wait=0.5)) as c:
@@ -342,6 +393,27 @@ class TestBusyHTTP:
                                  headers={} if declared is None else {"Content-Length": declared})
         assert reply.status_code == 413 and reply.json() == {"error": "Request body too large"}
         assert read is (declared != "1000001")  # declared-size guard runs before body inspection
+        # A body read and cut off was charged, so its 413 says where the address stands; a declared
+        # size is refused before the limiter sees it
+        assert reply.headers.get("x-ratelimit-remaining") == (None if declared == "1000001" else "99")
+
+    async def test_disconnect_reply_carries_rate_headers(self, busy):
+        app = app_for(busy)
+        messages = [{"type": "http.request", "body": b'{"jsonrpc":', "more_body": True}, {"type": "http.disconnect"}]
+        sent = []
+
+        async def receive():
+            return messages.pop(0) if messages else {"type": "http.disconnect"}
+
+        async def send(message):
+            sent.append(message)
+
+        scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1", "method": "POST",
+                 "scheme": "http", "path": "/mcp", "raw_path": b"/mcp", "root_path": "", "query_string": b"",
+                 "headers": [(b"host", b"localhost")], "client": ("203.0.113.7", 5000), "server": ("localhost", 80)}
+        await app(scope, receive, send)
+        headers = dict(sent[0]["headers"])
+        assert sent[0]["status"] == 400 and headers[b"x-ratelimit-remaining"] == b"99"
 
     async def test_stats_saved_per_day_without_ips_and_hourly_log(self, busy, tmp_path, caplog):
         path = tmp_path / "usage.json"
@@ -366,9 +438,18 @@ class TestBusyHTTP:
 
     async def test_busy_streamable_mcp_replays_cheap_method(self, busy):
         mcp = FastMCP("busy-test")
+        deadlines = []
+
+        class Watched(server.RateLimitMiddleware):
+            async def _peek_body(self, receive, deadline, headers):
+                deadlines.append(deadline)
+                return await super()._peek_body(receive, deadline, headers)
+
+        # The fixture's 8 queued jobs reach these thresholds (the configured 12 wouldn't)
         app = mcp.http_app(path="/mcp", stateless_http=True,
                            middleware=[Middleware(server.BodySizeLimitMiddleware),
-                                       Middleware(server.RateLimitMiddleware, clock=busy.clock)])
+                                       Middleware(Watched, clock=busy.clock, wall_clock=busy.clock,
+                                                  busy_max_waiting=8, busy_max_wait=0.25, busy_body_timeout=60)])
         async with app.router.lifespan_context(app):
             async with client(app) as c:
                 reply = await c.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "initialize",
@@ -377,6 +458,156 @@ class TestBusyHTTP:
                                      headers={"Accept": "application/json, text/event-stream"})
         assert reply.status_code == 200 and reply.headers["content-type"].startswith("text/event-stream")
         assert '"name":"busy-test"' in reply.text
+        assert deadlines == [60]  # read under pressure, then replayed
+
+    async def test_simultaneous_burst_is_bounded(self, busy):
+        """Calls admitted but not started yet count: a burst that arrives at once can't all pass
+        the check before any of it is queued (each was admitted on an empty queue before 0.10.0's
+        reservations)."""
+        for token in busy.tokens:
+            busy.pressure.discard(busy.pool, token)  # a healthy server
+        inside, release = [], asyncio.Event()
+        three_in = asyncio.Event()
+
+        async def held(request):
+            body = await request.body()
+            if json.loads(body)["method"] == "tools/call":
+                inside.append(1)
+                if len(inside) == 3:
+                    three_in.set()
+                await release.wait()  # admitted, not started: as between admission and the tool's first run_db
+            return Response(body, media_type="application/json")
+
+        app = Starlette(routes=[Route("/mcp", held, methods=["POST"])],
+                        middleware=[Middleware(server.BodySizeLimitMiddleware),
+                                    Middleware(server.RateLimitMiddleware, clock=busy.clock, wall_clock=busy.clock,
+                                               busy_max_waiting=3, busy_max_wait=0.25, busy_body_timeout=60)])
+        async with client(app) as c:
+            first = [asyncio.create_task(c.post("/mcp", json=CALL, headers={"X-Forwarded-For": f"203.0.113.{n}"}))
+                     for n in range(3)]
+            await asyncio.wait_for(three_in.wait(), 30)
+            assert busy.pressure.reserved == 3
+            late = [await asyncio.wait_for(c.post("/mcp", json=CALL, headers={"X-Forwarded-For": f"198.51.100.{n}"}), 30)
+                    for n in range(2)]
+            assert [r.json()["reason"] for r in late] == ["server_busy", "server_busy"]
+            cheap = await c.post("/mcp", json={"jsonrpc": "2.0", "id": 9, "method": "tools/list"})
+            assert cheap.status_code == 200  # other methods still pass
+            release.set()
+            assert [(await task).status_code for task in first] == [200] * 3
+        assert busy.pressure.reserved == 0  # released as each request ended
+
+    async def test_reservation_released_as_the_tool_starts(self, busy):
+        """AdmittedCallMiddleware releases a call's reservation as its tool starts, so a live
+        lookup waiting on the network never holds one: four in flight, with room for two."""
+        assert any(isinstance(m, server.AdmittedCallMiddleware) for m in server.mcp.middleware)
+        for token in busy.tokens:
+            busy.pressure.discard(busy.pool, token)
+        entered = [asyncio.Event() for _ in range(4)]
+        release = asyncio.Event()
+        mcp = FastMCP("reserve-test")
+        mcp.add_middleware(server.AdmittedCallMiddleware())
+
+        @mcp.tool
+        async def lookup(n: int) -> str:
+            entered[n].set()
+            await release.wait()  # a network wait
+            return "done"
+
+        app = mcp.http_app(path="/mcp", stateless_http=True,
+                           middleware=[Middleware(server.BodySizeLimitMiddleware),
+                                       Middleware(server.RateLimitMiddleware, clock=busy.clock, wall_clock=busy.clock,
+                                                  busy_max_waiting=2, busy_max_wait=0.25, busy_body_timeout=60)])
+        headers = {"Accept": "application/json, text/event-stream"}
+        async with app.router.lifespan_context(app):
+            async with client(app) as c:
+                tasks = []
+                for n in range(4):
+                    call = {**CALL, "params": {"name": "lookup", "arguments": {"n": n}}}
+                    tasks.append(asyncio.create_task(c.post("/mcp", json=call, headers=headers)))
+                    await asyncio.wait_for(entered[n].wait(), 30)
+                    assert busy.pressure.reserved == 0
+                release.set()
+                replies = await asyncio.gather(*tasks)
+        assert [r.status_code for r in replies] == [200] * 4
+        assert all('"done"' in r.text for r in replies)
+
+    async def test_body_charged_before_it_is_read(self, busy):
+        """Under pressure, one address's concurrent bodies are bounded by its allowance: each POST
+        is charged before its body is read (a dry run let them all buffer at once)."""
+        started, stall = [], asyncio.Event()
+
+        def body(n):
+            async def chunks():
+                started.append(n)
+                yield b'{"jsonrpc":"2.0",'
+                await stall.wait()
+                yield json.dumps(CALL)[1:].encode()
+            return chunks()
+
+        async with client(app_for(busy, requests_per_minute=2)) as c:
+            tasks = [asyncio.create_task(c.post("/mcp", content=body(n))) for n in range(3)]
+            done, _ = await asyncio.wait(tasks, timeout=30, return_when=asyncio.FIRST_COMPLETED)
+            assert [task.result().json()["reason"] for task in done] == ["per_ip_rate_limit"]
+            assert len(started) == 2
+            stall.set()
+            replies = await asyncio.gather(*tasks)
+        assert sorted(r.json()["reason"] for r in replies) == ["per_ip_rate_limit", "server_busy", "server_busy"]
+        assert busy.usage.summary()["days"][0]["per_ip_refusals"]["server_busy"] == 2  # charged once each
+
+    async def test_chunked_body_limited_without_pressure(self, busy):
+        """A body with no Content-Length is counted as it arrives even when the server isn't busy
+        (before 0.10.0 only a declared length was checked then)."""
+        for token in busy.tokens:
+            busy.pressure.discard(busy.pool, token)
+        read = []
+
+        async def chunks():
+            for n in range(3):
+                read.append(n)
+                yield b"x" * 600_000
+
+        async with client(app_for(busy)) as c:
+            reply = await c.post("/mcp", content=chunks())
+        assert reply.status_code == 413 and reply.json() == {"error": "Request body too large"}
+        assert read == [0, 1]  # not read past the limit
+        assert reply.headers["x-ratelimit-remaining"] == "99"  # charged, and says so
+
+    @pytest.mark.parametrize("sizes,status", [((600, 300), 200), ((600, 600), 413)], ids=["under", "over"])
+    async def test_body_guard_counts_streamed_bytes(self, sizes, status):
+        """BodySizeLimitMiddleware on its own: any route's chunked body is held to the limit."""
+        app = Starlette(routes=[Route("/upload", echo, methods=["POST"])],
+                        middleware=[Middleware(server.BodySizeLimitMiddleware, max_bytes=1000)])
+
+        async def chunks():
+            for size in sizes:
+                yield b"x" * size
+
+        async with client(app) as c:
+            reply = await c.post("/upload", content=chunks())
+        assert reply.status_code == status
+        assert len(reply.content) == sum(sizes) if status == 200 else reply.json() == {"error": "Request body too large"}
+
+    async def test_health_shows_pressure_and_fails_only_when_stuck(self, busy):
+        """/health shows the pools' pressure, and answers 503 once a job has waited
+        DB_STUCK_WAIT_SECONDS to start (a stuck worker), so the container's healthcheck fails; a
+        busy spike's waits are far below that."""
+        assert config.DB_STUCK_WAIT_SECONDS >= 100 * config.DB_BUSY_MAX_WAIT_SECONDS
+        async with client(server.create_app()) as c:
+            reply = await c.get("/health")
+            assert reply.status_code == 200 and reply.json()["status"] == "healthy"
+            assert reply.json()["database_pressure"] == {
+                "waiting": 8, "oldest_wait_seconds": 0.0, "admitted_not_started": 0,
+                "unhealthy_after_seconds": config.DB_STUCK_WAIT_SECONDS}
+            busy.clock.advance(config.DB_STUCK_WAIT_SECONDS - 1)  # far past any spike: still healthy
+            assert (await c.get("/health")).status_code == 200
+            busy.clock.advance(1)
+            stuck = await c.get("/health")
+            assert stuck.status_code == 503
+            assert stuck.json()["status"] == "unhealthy" and "stuck worker" in stuck.json()["problem"]
+            assert stuck.json()["version"]  # the rest is still there
+            for token in busy.tokens:
+                busy.pressure.discard(busy.pool, token)
+            assert (await c.get("/health")).json()["status"] == "healthy"
 
 
 async def test_live_network_waits_do_not_count(monkeypatch):

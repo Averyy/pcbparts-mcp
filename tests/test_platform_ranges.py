@@ -8,6 +8,7 @@ import ipaddress
 import json
 import logging
 import os
+import runpy
 import subprocess
 import sys
 from pathlib import Path
@@ -147,6 +148,47 @@ class TestOpenAIList:
             *({"ipv6Prefix": f"2001:{n:x}::/32"} for n in range(16))]
         assert len(parse_openai_list(openai_json(*entries)).prefixes) == 21
 
+    @pytest.mark.parametrize("created, kept", [
+        ("2026-11-06T18:26:55.215535", True), ("2026-11-06T18:26:55+00:00", True), ("2026-11-06", True),
+        ("x\n::error::forged", False), ("::add-mask::secret", False), ("2026-11-06 18:26", False),
+        ("", False), ("1" * 41, False), (20261106, False), (None, False),
+    ], ids=["iso", "offset", "date", "newline", "mask", "space", "empty", "long", "number", "none"])
+    def test_creation_time_only_when_it_looks_like_one(self, created, kept):
+        """creationTime is printed in CI logs and the server log: text that isn't an ISO time
+        (a newline and ::error::, say) could be read as a workflow command, so it's dropped."""
+        parsed = parse_openai_list({"creationTime": created, "prefixes": [{"ipv4Prefix": "1.2.3.0/24"}]})
+        assert parsed.created == (created if kept else None)
+
+    @pytest.mark.parametrize("entry", [{"ipv4Prefix": "1.2.3.0/24\n::error::x"}, {"x": "y\n::error::x"},
+                                       {"ipv4Prefix": "2001:db8::/32\n::error::x"}], ids=["value", "entry", "version"])
+    def test_errors_never_print_a_raw_newline(self, entry):
+        with pytest.raises(ValueError) as error:
+            parse_openai_list(openai_json(entry))
+        assert "\n" not in str(error.value)
+
+    def test_deep_nesting_and_byte_order_mark(self, tmp_path, capsys):
+        """JSON nested past Python's recursion limit is a ValueError (load() never raises, and the CI
+        check prints a reason, not a traceback); a UTF-8 byte order mark is fine."""
+        nested = write(tmp_path / "nested.json", "[" * 100_000 + "]" * 100_000)
+        with pytest.raises(ValueError, match="nested"):
+            platform_ranges.read_openai_list(nested)
+        loaded = load(ANTHROPIC, nested)
+        assert loaded.ranges.counts["openai"] == 0 and "can't be used" in loaded.warnings[0]
+        assert platform_ranges.main([str(nested)]) == 1
+        assert "not a usable OpenAI address list" in capsys.readouterr().err
+        bom = tmp_path / "bom.json"
+        bom.write_bytes(b"\xef\xbb\xbf" + json.dumps(openai_json({"ipv4Prefix": "1.2.3.0/24"})).encode())
+        assert platform_ranges.read_openai_list(bom).prefixes == nets("1.2.3.0/24")
+
+    def test_load_never_raises(self, tmp_path, monkeypatch):
+        def broken(path):
+            raise RuntimeError("unforeseen")
+
+        monkeypatch.setattr(platform_ranges, "read_openai_list", broken)
+        loaded = load(ANTHROPIC, tmp_path / "x.json")
+        assert loaded.ranges.counts == {"anthropic": 2, "openai": 0}
+        assert "RuntimeError: unforeseen" in loaded.warnings[0]
+
     def test_committed_copy(self):
         """The fallback copy the image ships when CI can't refresh it, and config's default."""
         parsed = platform_ranges.read_openai_list(COMMITTED)
@@ -171,6 +213,11 @@ class TestOpenAIList:
         assert "committed=data/platform_ranges/openai-chatgpt-connectors.json" in workflow
         assert "https://openai.com/chatgpt-connectors.json" in workflow
         assert workflow.index("Refresh OpenAI's address list") < workflow.index("Build and push Docker image")
+        step = workflow[workflow.index("Refresh OpenAI's address list"):workflow.index("Log in to the Container")]
+        assert "--proto '=https' --proto-redir '=https'" in step  # never a plain-http redirect
+        # The check's output (downloaded text) becomes one printable line before it's echoed
+        assert "tr -c '[:print:]' ' ' | cut -c1-300" in step
+        assert "about a day old at most" not in step
         dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
         assert "COPY --chown=appuser:appuser data/platform_ranges/ /app/data/platform_ranges/" in dockerfile
 
@@ -187,6 +234,7 @@ class TestLoad:
         path = write(tmp_path / "openai.json", openai_json({"ipv4Prefix": "100.31.168.162/32"}))
         loaded = load(ANTHROPIC, path)
         assert loaded.warnings == []
+        assert loaded.openai_created == "2026-11-06T18:26:55.215535"
         assert loaded.ranges.counts == {"anthropic": 2, "openai": 1}
         assert loaded.summary == "2 Anthropic, 1 OpenAI (list created 2026-11-06T18:26:55.215535)"
         assert "160.79.104.1" in loaded.ranges and "100.31.168.162" in loaded.ranges
@@ -245,6 +293,22 @@ class TestSettings:
         got = self.settings(ANTHROPIC_IP_RANGES="", OPENAI_IP_RANGES_FILE="")
         assert (got["anthropic"], got["openai"]) == ([], "")
 
+    @pytest.mark.parametrize("name,value,used,warned", [
+        ("PLATFORM_RATE_LIMIT", "", 1000, False),  # empty: the default (was a ValueError at import)
+        ("PLATFORM_RATE_LIMIT", "1,000", 1000, True),
+        ("PLATFORM_RATE_LIMIT", "1e3", 1000, True),
+        ("PLATFORM_RATE_LIMIT", "0", 1, True),  # 0 refused every platform request
+        ("PLATFORM_RATE_LIMIT", "2500", 2500, False),
+        ("RATE_LIMIT_REQUESTS", "-5", 1, True),
+        ("RATE_LIMIT_REQUESTS", "abc", 100, True),
+        ("RATE_LIMIT_REQUESTS", " 250 ", 250, False),
+    ], ids=["empty", "comma", "exp", "zero", "ok", "neg", "text", "padded"])
+    def test_bad_limits_fall_back(self, monkeypatch, name, value, used, warned):
+        monkeypatch.setenv(name, value)
+        settings = runpy.run_path(config.__file__)
+        assert settings[name] == used
+        assert any(w.startswith(f"{name}=") for w in settings["CONFIG_WARNINGS"]) is warned
+
 
 # The middleware
 
@@ -274,7 +338,8 @@ async def _ok(request):
 def app_with(clock: Clock, normal: int = 2, platform: int = 4, ranges: PlatformRanges | None = RANGES) -> Starlette:
     return Starlette(routes=[Route("/mcp", _ok, methods=["POST"]), Route("/health", _ok)],
                      middleware=[Middleware(server.RateLimitMiddleware, requests_per_minute=normal, clock=clock,
-                                            platform_per_minute=platform, platform_addresses=ranges)])
+                                            wall_clock=clock, platform_per_minute=platform,
+                                            platform_addresses=ranges)])
 
 
 def client(app) -> httpx.AsyncClient:
@@ -318,7 +383,7 @@ class TestMiddleware:
             f"same AI platform; try again in 60 seconds, or run your own copy for heavy use: {SELF_HOSTING_URL}")
         assert other[-1].json()["tell_user"].startswith("pcbparts allows 2 requests a minute per address; try again")
         # The refusals are split by group in /mcp/stats, without IPs
-        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 1, "platform_ranges": 2, "server_busy": 0}
+        assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 1, "platform_ranges": 2, "server_busy": 0, "too_many_clients": 0}
 
     async def test_thousands_in_tell_user(self):
         clock = Clock()
@@ -365,10 +430,14 @@ class TestMiddleware:
 
     async def test_real_app(self):
         """The app as served: the committed OpenAI copy and Anthropic's ranges from config."""
-        openai_address = str(platform_ranges.read_openai_list(COMMITTED).prefixes[0].network_address)
+        committed = platform_ranges.read_openai_list(COMMITTED)
+        openai_address = str(committed.prefixes[0].network_address)
         async with client(server.create_app()) as c:
             for ip in ("160.79.104.10", "153.61.208.1", openai_address):
                 health = await c.get("/health", headers={"X-Forwarded-For": ip})
                 assert limits(health)[0] == str(server.PLATFORM_RATE_LIMIT), ip
             health = await c.get("/health", headers={"X-Forwarded-For": OTHER})
             assert limits(health)[0] == str(server.RATE_LIMIT_REQUESTS)
+        # /health says which OpenAI list the server runs with, so a refresh that keeps failing shows
+        assert health.json()["platform_ranges"] == {
+            "anthropic": 2, "openai": len(committed.prefixes), "openai_list_created": committed.created}

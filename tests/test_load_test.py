@@ -1,5 +1,6 @@
 """Offline checks for the load-test's busy classification and verification mode."""
 
+import asyncio
 import importlib.util
 import json
 import types
@@ -102,3 +103,30 @@ async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):
 def test_busy_mode_does_not_bypass_database_only_guard():
     with pytest.raises(SystemExit, match="could send a live request"):
         load.check_database_only("jlc_get_part", {"lcsc": "C1"})
+
+
+@pytest.mark.parametrize("url,allow_remote,ok", [
+    ("http://127.0.0.1:18080", False, True), ("http://localhost:18080", False, True),
+    ("http://[::1]:18080", False, True),
+    ("https://PCBPARTS.DEV/mcp", False, False), ("https://pcbparts.dev./mcp", True, False),
+    ("https://www.pcbparts.dev", True, False), ("http://192.168.1.20:18080", False, False),
+    ("http://192.168.1.20:18080", True, True), ("not a url", True, False),
+], ids=["v4", "localhost", "v6", "upper", "dot", "sub", "lan", "lan-ok", "junk"])
+def test_target_guard(url, allow_remote, ok):
+    """Only this machine unless --allow-remote, and never pcbparts.dev in any spelling."""
+    if ok:
+        load.check_target(url, allow_remote)
+    else:
+        with pytest.raises(SystemExit):
+            load.check_target(url, allow_remote)
+
+
+def test_main_refuses_prod_before_any_request(monkeypatch):
+    monkeypatch.setattr(load.sys, "argv", ["load_test.py", "--url", "https://PcbParts.dev", "--allow-remote"])
+
+    def no_requests(*args, **kwargs):
+        pytest.fail("sent a request")
+
+    monkeypatch.setattr(load, "upstream_sent", no_requests)
+    with pytest.raises(SystemExit, match="never pcbparts.dev"):
+        asyncio.run(load.main())

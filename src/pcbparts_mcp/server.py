@@ -2,9 +2,11 @@
 
 import asyncio
 import contextlib
+import contextvars
 import datetime
 import functools
 import inspect
+import ipaddress
 import json
 import logging
 import math
@@ -23,7 +25,6 @@ from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
 from pydantic import BeforeValidator, Field
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
@@ -32,7 +33,7 @@ from . import __version__, platform_ranges, stats
 from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
-    DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS,
+    DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS, DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
     HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
@@ -41,14 +42,15 @@ from .config import (
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
 )
-from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
+from .client import DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
 from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
 from .cse import CSEClient
 from .mounting import english_package
-from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, database_pressure, offload, run_db
+from .db_worker import (BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, Reservation, database_pressure,
+                        offload, run_db)
 from .db import get_db, close_db
 from .db.lookup import related_note
 from .history_db import get_history_db, close_history_db
@@ -86,6 +88,9 @@ _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (tim
 # appear; /mcp/stats counts them without IPs; the privacy page describes both lines)
 _refused_callers = CallerTally("Per-IP rate limit", what="refusals")
 _busy_refused_callers = CallerTally("Server busy limit", what="refusals")
+# The AI platforms' address lists as loaded at startup (_load_platform_ranges), for /health: how many
+# ranges each has and when OpenAI's list was made. None before the app starts.
+_platform_ranges_info: dict[str, Any] | None = None
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -98,6 +103,8 @@ async def lifespan(app):
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
     global _distributor_store, _distributor_stored
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
+    for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
+        logger.warning(warning)
 
     # Build/load DB on startup (not on first request)
     db = get_db()
@@ -209,6 +216,7 @@ async def lifespan(app):
     # Anonymous daily usage counts for /mcp/stats
     if USAGE_STATS_PATH:
         stats.usage.open(USAGE_STATS_PATH)
+    stats.usage.record_start()  # this day's restarts, beside its callers and distinct part numbers
     stats.usage.tools = {tool.name for tool in await mcp.list_tools(run_middleware=False)}
     logger.info(f"Usage stats: {f'kept in {USAGE_STATS_PATH}' if USAGE_STATS_PATH else 'memory only'}")
     minute_task = asyncio.create_task(_every_minute())
@@ -553,18 +561,41 @@ mcp.add_middleware(UsageStatsMiddleware())
 
 # The per-IP rate limit counts each address's requests over a rolling window of this many seconds
 RATE_LIMIT_WINDOW = 60
-# Under database pressure the rate limit reads a POST's body to see whether it's a tools/call: a body
-# that hasn't all arrived within this many seconds is refused as server_busy (MCP calls are a few KB)
+# Under database pressure the body of a POST to /mcp (read to tell a tools/call from cheaper
+# methods) must arrive within this many seconds: a slower one is refused as server_busy (MCP calls
+# are a few KB). Without pressure there's no deadline, as when the SDK read bodies itself.
 BUSY_BODY_READ_SECONDS = 2.0
 
-# Why the per-IP rate limit refused a request: the `reason` in its 429 body (llms.txt lists them).
+# Why a request was refused: the `reason` in its 429 body (llms.txt lists them).
 # Add reasons, never rename one: clients branch on them.
 RATE_LIMIT_REASONS = {
     "per_ip_rate_limit": "this address sent its limit of requests in the last minute",
     "too_many_clients": "the server is tracking as many addresses as it can (MAX_TRACKED_IPS); "
                         "not about this address's use",
     "server_busy": "a database worker pool has too many waiting calls, or its oldest wait is too long",
+    "datasheet_rate_limit": "the short datasheet links' shared budget for new links (/mcp/datasheet) is spent; "
+                            "not about this address's use",
 }
+
+# The busy check's reservation for the tools/call being handled (RateLimitMiddleware), released by
+# AdmittedCallMiddleware as the tool starts. The tool runs in a copy of the request's context.
+_admitted_call: contextvars.ContextVar[Reservation | None] = contextvars.ContextVar(
+    "pcbparts_admitted_call", default=None)
+
+
+class AdmittedCallMiddleware(FastMCPMiddleware):
+    """Releases the busy check's reservation for this tools/call (RateLimitMiddleware) as the tool
+    starts: from then on a database tool's work counts as waiting jobs (its first run_db is queued
+    as it starts), and a live lookup's network waits never count."""
+
+    async def on_call_tool(self, context, call_next):
+        reservation = _admitted_call.get()
+        if reservation is not None:
+            reservation.release()
+        return await call_next(context)
+
+
+mcp.add_middleware(AdmittedCallMiddleware())
 
 
 class _Allowance(NamedTuple):
@@ -574,7 +605,7 @@ class _Allowance(NamedTuple):
     remaining: int  # requests left in the current window, this one counted; 0 when refused
     reset: int  # whole seconds until the oldest counted request leaves the window, so one more is
     #             allowed (0: none counted); refused: until one request would be allowed again (>= 1)
-    at: float  # when it was decided (the middleware's clock, epoch seconds)
+    at: float  # when it was decided, epoch seconds (the middleware's wall clock), for resets_at
     refused: str | None = None  # why it was refused (a RATE_LIMIT_REASONS key); None: allowed
 
 
@@ -584,19 +615,24 @@ def _utc_iso(timestamp: float) -> str:
 
 def _load_platform_ranges() -> platform_ranges.PlatformRanges:
     """The AI platforms' address ranges from config (ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE),
-    logged. RateLimitMiddleware calls this once, when the app starts and Starlette builds it."""
+    logged, and kept for /health. RateLimitMiddleware calls this once, when the app starts and
+    Starlette builds it."""
+    global _platform_ranges_info
     loaded = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE)
     for warning in loaded.warnings:
         logger.warning(warning)
-    logger.info(f"Platform address ranges: {loaded.summary}; {PLATFORM_RATE_LIMIT:,} requests a minute per "
+    limit = max(PLATFORM_RATE_LIMIT, RATE_LIMIT_REQUESTS)
+    logger.info(f"Platform address ranges: {loaded.summary}; {limit:,} requests a minute per "
                 f"platform address, {RATE_LIMIT_REQUESTS:,} for others")
+    _platform_ranges_info = {**loaded.ranges.counts, "openai_list_created": loaded.openai_created}
     return loaded.ranges
 
 
 class RateLimitMiddleware:
-    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per IP, and
-    PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's and
-    OpenAI's published ranges), the limit _limit_for() gives each address.
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per address,
+    and PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's
+    and OpenAI's published ranges), the limit _limit_for() gives each address. An IPv4 address is
+    counted by itself and an IPv6 address by its /64 (_limit_key()), except a platform address.
 
     Every reply it sees says where the address stands: X-RateLimit-Limit (requests a minute),
     X-RateLimit-Remaining (left in the current window) and X-RateLimit-Reset (whole seconds until
@@ -605,22 +641,29 @@ class RateLimitMiddleware:
     retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
     sentence a client can show). Requests the per-IP limit refuses aren't counted. /health isn't
     limited or counted; its headers show where the address stands. /mcp/stats is limited and
-    counted like any request (as before 0.10.0), but never refused as server_busy.
+    counted like any request (as before 0.10.0), but never refused as server_busy. The window runs
+    on a monotonic clock, so a wall-clock step can't stretch or shorten it; only resets_at reads
+    the wall clock.
 
     Database queue pressure also sheds NEW tools/call requests with server_busy. Only database
-    offloads contribute pressure: live lookups waiting on upstream services don't fill this cap.
-    A busy refusal counts against the address's allowance like an answered request, so an address
-    that keeps sending through an overload runs into its per-IP limit too; while pressure lasts, a
-    POST's body (read to tell a tools/call from cheaper methods) has BUSY_BODY_READ_SECONDS to
-    arrive. Pure ASGI so response chunks pass straight through, including SSE streams.
+    offloads contribute pressure, and tool calls admitted whose tool hasn't started yet (a
+    reservation, so a simultaneous burst can't all pass before any of it is queued): live lookups
+    waiting on upstream services don't fill this cap. Every POST to /mcp is charged to the
+    address's allowance before its body is read, then its body is read whole (bounded by
+    MAX_REQUEST_BODY_BYTES; the SDK reads it whole anyway) and replayed to the SDK, so a busy
+    refusal counts like an answered request and an address that keeps sending through an overload
+    runs into its per-IP limit too. Under pressure the body has BUSY_BODY_READ_SECONDS to arrive.
+    Pure ASGI so response chunks pass straight through, including SSE streams.
 
     Includes protections against memory exhaustion from IP spoofing:
-    - Maximum tracked IPs limit (10,000): past it, new addresses are refused (too_many_clients)
-      while the addresses already tracked carry on
-    - Periodic cleanup of stale IPs
+    - Maximum tracked addresses (10,000): past it, new addresses are refused (too_many_clients)
+      while the addresses already tracked carry on, with a warning in the log at most once a minute
+    - Stale addresses dropped as they go stale, oldest first (request_counts is kept in order of
+      each address's last counted request, so no step scans every address)
 
-    Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP) and in the hourly
-    most-refused-IPs log line (_refused_callers).
+    Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP, by _refusal_group()) and,
+    except too_many_clients, in an hourly most-refused log line (_refused_callers, or
+    _busy_refused_callers for server_busy).
     """
 
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
@@ -630,7 +673,8 @@ class RateLimitMiddleware:
                  platform_addresses: platform_ranges.PlatformRanges | None = None,
                  pressure=None, busy_max_waiting: int = DB_BUSY_MAX_WAITING,
                  busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS,
-                 busy_body_timeout: float = BUSY_BODY_READ_SECONDS):
+                 busy_body_timeout: float = BUSY_BODY_READ_SECONDS,
+                 wall_clock: Callable[[], float] | None = None):
         self.app = app
         self.pressure = database_pressure if pressure is None else pressure
         self.busy_max_waiting = busy_max_waiting
@@ -642,12 +686,20 @@ class RateLimitMiddleware:
         # when the app starts
         self.platform_addresses = (platform_addresses if platform_addresses is not None
                                    else _load_platform_ranges())
-        self._clock = clock  # epoch seconds; None: time.time()
+        self._clock = clock  # seconds for the window; None: time.monotonic()
+        self._wall_clock = wall_clock  # epoch seconds for resets_at; None: time.time()
+        # Counted requests per _limit_key(), in order of each key's last counted request (a counted
+        # request moves its key to the end), so the stalest key is always first
         self.request_counts: dict[str, list[float]] = {}
         self._last_cleanup = self._now()
+        self._too_many_refused = 0  # too_many_clients refusals since the last warning
+        self._too_many_warned_at = float("-inf")
 
     def _now(self) -> float:
-        return self._clock() if self._clock is not None else time.time()
+        return self._clock() if self._clock is not None else time.monotonic()
+
+    def _wall(self) -> float:
+        return self._wall_clock() if self._wall_clock is not None else time.time()
 
     def _get_client_ip(self, request) -> str:
         return _client_ip(request)
@@ -658,19 +710,37 @@ class RateLimitMiddleware:
 
     def _limit_for(self, client_ip: str) -> int:
         """Requests a minute this address may send: PLATFORM_RATE_LIMIT for an AI platform's
-        address, RATE_LIMIT_REQUESTS for any other. The check, the headers and the 429 all use
-        this."""
-        return self.platform_per_minute if self._is_platform(client_ip) else self.requests_per_minute
+        address (never less than RATE_LIMIT_REQUESTS), RATE_LIMIT_REQUESTS for any other. The
+        check, the headers and the 429 all use this."""
+        if self._is_platform(client_ip):
+            return max(self.platform_per_minute, self.requests_per_minute)
+        return self.requests_per_minute
+
+    def _limit_key(self, client_ip: str) -> str:
+        """What the address is counted under: an IPv4 address by itself (an IPv4-mapped IPv6
+        address is its IPv4 address), an IPv6 address by its /64, the usual allocation to one
+        subscriber, so its 2**64 addresses can't each get an allowance and fill the table; except
+        an AI platform's address, which is published and counted by itself."""
+        try:
+            address = ipaddress.ip_address(client_ip.strip())
+        except ValueError:  # "unknown", a hostname, garbage
+            return client_ip
+        if address.version == 6:
+            if address.ipv4_mapped is not None:
+                return str(address.ipv4_mapped)
+            if not self._is_platform(client_ip):
+                return str(ipaddress.IPv6Network((address, 64), strict=False))
+        return str(address)
 
     def _cleanup_stale_ips(self, now: float) -> None:
-        """Remove IPs with no request left in the window. Called periodically."""
+        """Remove addresses with no request left in the window: the first ones, as request_counts
+        is in order of last requests, so this stops at the first that still counts."""
         window_start = now - RATE_LIMIT_WINDOW
-        stale_ips = [
-            ip for ip, timestamps in self.request_counts.items()
-            if not timestamps or timestamps[-1] <= window_start
-        ]
-        for ip in stale_ips:
-            del self.request_counts[ip]
+        while self.request_counts:
+            key, timestamps = next(iter(self.request_counts.items()))
+            if timestamps and timestamps[-1] > window_start:
+                break
+            del self.request_counts[key]
 
     @staticmethod
     def _reset_seconds(timestamps: list[float], limit: int, now: float) -> int:
@@ -684,40 +754,41 @@ class RateLimitMiddleware:
         return max(1, math.ceil(leaves_at - now))
 
     def _seconds_until_untracked(self, now: float) -> int:
-        """With MAX_TRACKED_IPS addresses tracked, whole seconds until the first of them goes stale
-        and frees a place (at least 1)."""
-        last = min((timestamps[-1] for timestamps in self.request_counts.values() if timestamps),
-                   default=now)
+        """With MAX_TRACKED_IPS addresses tracked, whole seconds until the first of them (the one
+        with the oldest last request) goes stale and frees a place (at least 1)."""
+        first = next(iter(self.request_counts.values()), None)
+        last = first[-1] if first else now
         return max(1, math.ceil(last + RATE_LIMIT_WINDOW - now))
 
-    def _allowance(self, client_ip: str, *, count: bool = True, dry_run: bool = False) -> _Allowance:
-        """Judge and count a request. count=False only looks (exempt routes); dry_run checks
-        without charging, so an exhausted address is refused before reading its body under pressure."""
+    def _allowance(self, client_ip: str, *, count: bool = True) -> _Allowance:
+        """Judge and count a request. count=False only looks (exempt routes)."""
         now = self._now()
         window_start = now - RATE_LIMIT_WINDOW
         limit = self._limit_for(client_ip)
+        key = self._limit_key(client_ip)
 
         if count:
             # Periodic cleanup every minute to remove stale IPs
             if now - self._last_cleanup > RATE_LIMIT_WINDOW:
                 self._cleanup_stale_ips(now)
                 self._last_cleanup = now
-            # A new address while tracking too many: aggressive cleanup, then refuse it if still
+            # A new address while tracking too many: drop the stale ones, then refuse it if still
             # full, to prevent memory exhaustion. Addresses already tracked carry on.
-            if client_ip not in self.request_counts and len(self.request_counts) >= self.MAX_TRACKED_IPS:
+            if key not in self.request_counts and len(self.request_counts) >= self.MAX_TRACKED_IPS:
                 self._cleanup_stale_ips(now)
                 if len(self.request_counts) >= self.MAX_TRACKED_IPS:
-                    return _Allowance(limit, 0, self._seconds_until_untracked(now), now, "too_many_clients")
+                    return _Allowance(limit, 0, self._seconds_until_untracked(now), self._wall(), "too_many_clients")
 
-        timestamps = [t for t in self.request_counts.get(client_ip, ()) if t > window_start]
+        timestamps = [t for t in self.request_counts.get(key, ()) if t > window_start]
         # Checked before adding the current request; a refused request isn't counted
         refused = count and len(timestamps) >= limit
-        if count and not dry_run:
+        if count:
             if not refused:
                 timestamps.append(now)
-            self.request_counts[client_ip] = timestamps
+                self.request_counts.pop(key, None)  # re-added at the end: the newest last request
+            self.request_counts[key] = timestamps
         remaining = 0 if refused else max(0, limit - len(timestamps))
-        return _Allowance(limit, remaining, self._reset_seconds(timestamps, limit, now), now,
+        return _Allowance(limit, remaining, self._reset_seconds(timestamps, limit, now), self._wall(),
                           "per_ip_rate_limit" if refused else None)
 
     @staticmethod
@@ -750,94 +821,110 @@ class RateLimitMiddleware:
     def _refusal_group(self, client_ip: str, reason: str | None = None) -> str:
         """Which stats.REFUSAL_GROUPS group a refused address counts under: platform_ranges for an
         AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest; server_busy for
-        database pressure regardless of address."""
-        if reason == "server_busy":
-            return "server_busy"
+        database pressure and too_many_clients for a full address table, regardless of address."""
+        if reason in ("server_busy", "too_many_clients"):
+            return reason
         return "platform_ranges" if self._is_platform(client_ip) else "everyone_else"
 
     def _count_refusal(self, client_ip: str, reason: str | None = None) -> None:
-        """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused-IPs log line.
-        Counting never breaks the reply."""
+        """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused log line, or for
+        too_many_clients, the once-a-minute warning (those addresses are new, so a tally of them
+        says nothing). Counting never breaks the reply."""
         try:
             stats.usage.record_refusal(self._refusal_group(client_ip, reason))
         except Exception:
             logger.exception("Usage stats: couldn't count a rate-limit refusal")
         try:
-            tally = _busy_refused_callers if reason == "server_busy" else _refused_callers
-            tally.record(client_ip)
+            if reason == "too_many_clients":
+                self._warn_too_many_clients()
+            else:
+                tally = _busy_refused_callers if reason == "server_busy" else _refused_callers
+                tally.record(self._limit_key(client_ip))
         except Exception:
-            logger.exception("Couldn't note a rate-limit refusal for the hourly log line")
+            logger.exception("Couldn't note a rate-limit refusal for the log")
+
+    def _warn_too_many_clients(self) -> None:
+        """A warning for the first too_many_clients refusal and then at most once a minute while
+        they go on, with the number since the last one."""
+        now = self._now()
+        self._too_many_refused += 1
+        if now - self._too_many_warned_at >= RATE_LIMIT_WINDOW:
+            logger.warning(f"Per-IP rate limit: tracking {len(self.request_counts):,} addresses "
+                           f"(MAX_TRACKED_IPS {self.MAX_TRACKED_IPS:,}), so new addresses are refused "
+                           f"(too_many_clients): {self._too_many_refused:,} refused since the last warning")
+            self._too_many_warned_at, self._too_many_refused = now, 0
 
     def _busy_refusal(self, client_ip: str, wait: int) -> JSONResponse:
-        """The server_busy 429, charged to the address's allowance like an answered request (so a
-        flood during an overload also meets the per-IP limit); the per-IP 429 instead when that
-        charge finds the address out of requests."""
-        charged = self._allowance(client_ip)
-        if charged.refused:
-            self._count_refusal(client_ip)
-            return self._refusal(charged, shared=self._is_platform(client_ip))
+        """The server_busy 429. The request was already charged to the address's allowance (like an
+        answered request, so a flood during an overload also meets the per-IP limit)."""
         self._count_refusal(client_ip, "server_busy")
-        return self._refusal(_Allowance(self._limit_for(client_ip), 0, wait, self._now(), "server_busy"))
+        return self._refusal(_Allowance(self._limit_for(client_ip), 0, wait, self._wall(), "server_busy"))
 
-    async def _peek_body(self, receive) -> bytes | Response | None:
-        """The request's whole body, read under database pressure, or the reply that ends it here:
-        413 past MAX_REQUEST_BODY_BYTES (Content-Length may be absent or false, so the actual bytes
-        are counted; the outer body-size guard rejects oversized declared lengths before this read),
-        an empty 400 when the client disconnects (nobody reads it and the server drops it, but the
-        middleware above expects a response: BaseHTTPMiddleware raises "No response returned."
-        without one), or None when it hasn't all arrived within busy_body_timeout."""
+    async def _peek_body(self, receive, deadline: float | None, headers: dict[str, str]) -> bytes | Response | None:
+        """The request's whole body, or the reply that ends it here (with headers, the address's
+        X-RateLimit-* headers, since it was charged): 413 past MAX_REQUEST_BODY_BYTES (Content-Length
+        may be absent or false, so the actual bytes are counted; the outer body-size guard rejects
+        oversized declared lengths before this read), an empty 400 when the client disconnects
+        (nobody reads it and the server drops it, but the middleware above expects a response), or
+        None when it hasn't all arrived within deadline seconds (None: no deadline)."""
         body = bytearray()
         try:
-            async with asyncio.timeout(self.busy_body_timeout):
+            async with asyncio.timeout(deadline):
                 while True:
                     message = await receive()
                     if message["type"] == "http.disconnect":
-                        return Response(status_code=400)
+                        return Response(status_code=400, headers=headers)
                     chunk = message.get("body", b"")
                     if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
-                        return JSONResponse({"error": "Request body too large"}, status_code=413)
+                        return JSONResponse({"error": "Request body too large"}, status_code=413, headers=headers)
                     body.extend(chunk)
                     if not message.get("more_body", False):
                         return bytes(body)
         except TimeoutError:
             return None
 
+    @staticmethod
+    def _replay(body: bytes, receive):
+        """receive() for the SDK: the body read once, then the client's own messages (disconnect)."""
+        replay: bytes | None = body
+
+        async def receive_body():
+            nonlocal replay
+            if replay is not None:
+                message = {"type": "http.request", "body": replay, "more_body": False}
+                replay = None
+                return message
+            return await receive()
+
+        return receive_body
+
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         request = Request(scope)
         client_ip = self._get_client_ip(request)
+        reservation: Reservation | None = None
         if request.url.path == "/health":  # not limited or counted
             allowance = self._allowance(client_ip, count=False)
         else:
+            # Charged before any body is read: an exhausted address is refused without reading it,
+            # and one address's concurrent bodies are bounded by its allowance
+            allowance = self._allowance(client_ip)
+            if allowance.refused:
+                self._count_refusal(client_ip, allowance.refused)
+                return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
             # /mcp/stats is limited per address like other requests; only POST /mcp can be busy
-            if (request.method == "POST" and request.url.path in ("/mcp", "/mcp/")
-                    and self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)):
-                allowance = self._allowance(client_ip, dry_run=True)
-                if allowance.refused:
-                    self._count_refusal(client_ip)
-                    return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
-                # Peek only under pressure, then replay the body once to the SDK, which still
-                # validates JSON-RPC
-                body = await self._peek_body(receive)
+            if request.method == "POST" and request.url.path in ("/mcp", "/mcp/"):
+                pressured = bool(self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait))
+                body = await self._peek_body(receive, self.busy_body_timeout if pressured else None,
+                                             self._headers(allowance))
                 if body is None:  # too slow while the server is overloaded: refused as busy
                     wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait) or 2
                     return await self._busy_refusal(client_ip, wait)(scope, receive, send)
-                if isinstance(body, Response):  # 413, or the client left: charged as it would be unpressured
-                    self._allowance(client_ip)
+                if isinstance(body, Response):  # 413, or the client left
                     return await body(scope, receive, send)
-                original_receive = receive
-                replay = body
-
-                async def receive_body():
-                    nonlocal replay
-                    if replay is not None:
-                        message = {"type": "http.request", "body": replay, "more_body": False}
-                        replay = None
-                        return message
-                    return await original_receive()
-
-                receive = receive_body
+                # Replayed once to the SDK, which still validates JSON-RPC
+                receive = self._replay(body, receive)
                 try:
                     payload = json.loads(body)
                 except (ValueError, RecursionError):
@@ -847,10 +934,8 @@ class RateLimitMiddleware:
                     wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)
                     if wait:
                         return await self._busy_refusal(client_ip, wait)(scope, receive, send)
-            allowance = self._allowance(client_ip)
-            if allowance.refused:
-                self._count_refusal(client_ip)
-                return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
+                    # Counted as demand until the tool starts (AdmittedCallMiddleware) or the request ends
+                    reservation = self.pressure.reserve()
 
         async def send_headers(message):
             if message["type"] == "http.response.start":
@@ -859,7 +944,14 @@ class RateLimitMiddleware:
                              for name, value in self._headers(allowance).items())]}
             await send(message)
 
-        await self.app(scope, receive, send_headers)
+        if reservation is None:
+            return await self.app(scope, receive, send_headers)
+        token = _admitted_call.set(reservation)
+        try:
+            await self.app(scope, receive, send_headers)
+        finally:
+            reservation.release()
+            _admitted_call.reset(token)
 
 
 def _client_ip(request) -> str:
@@ -3529,15 +3621,27 @@ def _distributor_store_counts() -> dict[str, Any] | None:
 
 # Health check endpoint
 async def health(request):
-    return JSONResponse({
-        "status": "healthy",
+    """The server's state. 503 (status "unhealthy") while a database job has waited
+    DB_STUCK_WAIT_SECONDS to start: a worker is stuck and every tools/call is refused as busy, so
+    the container's healthcheck fails; a busy spike can't get there (the busy cap sheds new calls
+    long before)."""
+    pressure = {**database_pressure.summary(), "unhealthy_after_seconds": DB_STUCK_WAIT_SECONDS}
+    stuck = pressure["oldest_wait_seconds"] >= DB_STUCK_WAIT_SECONDS
+    reply = {
+        "status": "unhealthy" if stuck else "healthy",
         "service": "pcbparts-mcp",
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
         "cse_stored": _cse_store_counts(),
         "distributor_stored": _distributor_store_counts(),
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
-    })
+        "database_pressure": pressure,
+        "platform_ranges": _platform_ranges_info,
+    }
+    if stuck:
+        reply["problem"] = (f"a database job has waited {pressure['oldest_wait_seconds']:.0f} s to start "
+                            "(a stuck worker?); tool calls are refused as busy until it moves")
+    return JSONResponse(reply, status_code=503 if stuck else 200)
 
 
 async def datasheet_redirect(request):
@@ -3549,8 +3653,14 @@ async def datasheet_redirect(request):
     try:
         url = await _client.datasheet_pdf_url(lcsc)
     except DatasheetLinkBusy as e:
-        return JSONResponse({"error": str(e), "retry_after": e.retry_after}, status_code=429,
-                            headers={"Retry-After": str(e.retry_after)})
+        # The per-IP limiter's 429 fields (llms.txt), with this budget's own reason
+        wait = e.retry_after
+        seconds = f"{wait} second{'' if wait == 1 else 's'}"
+        return JSONResponse({"error": str(e), "retry_after": wait, "reason": "datasheet_rate_limit",
+                             "resets_at": _utc_iso(math.ceil(time.time() + wait)),
+                             "tell_user": f"pcbparts makes at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet "
+                                          f"links a minute for all its users; try again in {seconds}."},
+                            status_code=429, headers={"Retry-After": str(wait)})
     except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout: details stay in the log
         logger.warning(f"Datasheet link for {lcsc} failed: {e}")
         return JSONResponse({"error": "The datasheet source didn't answer; try again later"}, status_code=502)
@@ -3571,22 +3681,65 @@ async def usage_stats(request):
                         headers={"Cache-Control": "public, max-age=60"})
 
 
-class BodySizeLimitMiddleware(BaseHTTPMiddleware):
-    """Reject requests whose declared body exceeds max_bytes (memory-amplification guard).
-
-    MCP JSON-RPC calls are a few KB; the limit is far above any legitimate request.
-    Requests without a Content-Length (chunked) are passed through.
-    """
+class BodySizeLimitMiddleware:
+    """Reject request bodies over max_bytes with a 413 (memory-amplification guard): a declared
+    Content-Length before anything is read, and the bytes actually received, so a chunked body or
+    a false Content-Length can't run past it either. Past the limit the app is told the client left
+    (so it stops reading) and its reply is replaced by the 413, which keeps any X-RateLimit-*
+    headers that reply had (RateLimitMiddleware charged the request). MCP JSON-RPC calls are a few
+    KB; the limit is far above any legitimate request. Pure ASGI, so streamed replies pass straight
+    through."""
 
     def __init__(self, app, max_bytes: int = MAX_REQUEST_BODY_BYTES):
-        super().__init__(app)
+        self.app = app
         self.max_bytes = max_bytes
 
-    async def dispatch(self, request, call_next):
-        content_length = request.headers.get("content-length")
+    @staticmethod
+    def _too_large(headers: list[tuple[bytes, bytes]] = ()) -> JSONResponse:
+        response = JSONResponse({"error": "Request body too large"}, status_code=413)
+        response.raw_headers.extend(headers)
+        return response
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        content_length = Request(scope).headers.get("content-length")
         if content_length and content_length.isdigit() and int(content_length) > self.max_bytes:
-            return JSONResponse({"error": "Request body too large"}, status_code=413)
-        return await call_next(request)
+            return await self._too_large()(scope, receive, send)
+        received = 0
+        too_large = started = False
+        kept_headers: list[tuple[bytes, bytes]] = []
+
+        async def counted_receive():
+            nonlocal received, too_large
+            if too_large:
+                return {"type": "http.disconnect"}
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    too_large = True
+                    return {"type": "http.disconnect"}
+            return message
+
+        async def guarded_send(message):
+            nonlocal started
+            if too_large and not started:  # the 413 replaces the app's reply to the cut-off body
+                if message["type"] == "http.response.start":
+                    kept_headers[:] = [(name, value) for name, value in message.get("headers", ())
+                                       if name.lower().startswith(b"x-ratelimit-")]
+                return
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, counted_receive, guarded_send)
+        except Exception:
+            if not too_large or started:
+                raise  # the app's own failure; a cut-off body's (the client "left") is answered below
+        if too_large and not started:
+            await self._too_large(kept_headers)(scope, receive, send)
 
 
 # Create ASGI app
@@ -3653,6 +3806,10 @@ def main():
         host=HTTP_HOST,
         port=HTTP_PORT,
         lifespan="on",
+        # uvicorn turns these on by default (trusting X-Forwarded-For from FORWARDED_ALLOW_IPS,
+        # 127.0.0.1 unless set), which would put callers' IPs on every access-log line if the proxy
+        # ever connected from there; _client_ip() reads X-Forwarded-For itself
+        proxy_headers=False,
     )
 
 
