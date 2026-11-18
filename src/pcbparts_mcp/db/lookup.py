@@ -205,7 +205,7 @@ def snapshot_prices(price: float | None, tiers: str | None) -> list[dict[str, An
     return None
 
 
-def _price_tiers(conn: sqlite3.Connection, codes: list[str]) -> dict[str, str]:
+def get_price_tiers(conn: sqlite3.Connection, codes: list[str]) -> dict[str, str]:
     """price_tiers rows for these LCSC codes, in chunks under SQLite's variable limit."""
     found: dict[str, str] = {}
     for start in range(0, len(codes), 500):
@@ -218,7 +218,7 @@ def _price_tiers(conn: sqlite3.Connection, codes: list[str]) -> dict[str, str]:
 def add_snapshot_prices(conn: sqlite3.Connection, parts: list[dict[str, Any]], with_tiers: bool) -> list[dict[str, Any]]:
     """row_to_dict parts with prices (snapshot_prices) right after price, where the part has one.
     with_tiers: the database has price breaks loaded (ComponentDatabase.price_tiers_as_of)."""
-    tiers = _price_tiers(conn, list(dict.fromkeys(p["lcsc"] for p in parts))) if with_tiers and parts else {}
+    tiers = get_price_tiers(conn, list(dict.fromkeys(p["lcsc"] for p in parts))) if with_tiers and parts else {}
     priced = []
     for part in parts:
         prices = snapshot_prices(part.get("price"), tiers.get(part["lcsc"]))

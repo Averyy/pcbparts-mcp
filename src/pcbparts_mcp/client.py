@@ -297,6 +297,8 @@ class JLCPCBClient:
         # Database parts that can meet a part's compatibility rules (set by the server); find_alternatives
         # adds them to its live search, which only sees the best-stocked parts with the same primary value
         self._alternative_candidates: Callable[..., list[dict[str, Any]]] | None = None
+        self._alternative_price_tiers: Callable[[list[str]], dict[str, str]] | None = None
+        self._price_tiers_as_of: str | None = None
         self._subcategory_parts: Callable[..., list[dict[str, Any]]] | None = None
         # lcsc -> answer that replaces an older store or seed answer in this process: a re-check
         # marker once the part's symbol UUID stopped working, then the live answer if the store
@@ -515,6 +517,13 @@ class JLCPCBClient:
     def set_subcategory_parts(self, lookup: Callable[..., list[dict[str, Any]]]) -> None:
         """Use every maker's parts for RF similar parts (ComponentDatabase.subcategory_parts)."""
         self._subcategory_parts = lookup
+
+    def set_alternative_price_tiers(
+        self, lookup: Callable[[list[str]], dict[str, str]], as_of: str | None,
+    ) -> None:
+        """Use snapshot price breaks for alternatives savings, fetched as one batch."""
+        self._alternative_price_tiers = lookup
+        self._price_tiers_as_of = as_of
 
     def easyeda_store_size(self) -> int | None:
         """Answers in the footprint store, or None when there's no usable store (memory only)."""
@@ -2019,11 +2028,21 @@ class JLCPCBClient:
 
         # Build response (different structure for supported vs unsupported)
         if is_supported:
+            candidate_tiers = {}
+            if top_scored and self._alternative_price_tiers is not None:
+                try:
+                    candidate_tiers = await run_db(
+                        COMPONENT_POOL, self._alternative_price_tiers,
+                        [part["lcsc"] for _, part, _, _ in top_scored],
+                    )
+                except Exception as exc:
+                    logger.warning("Alternative price tiers lookup failed: %s", exc)
             response = build_response(
                 original, top_scored, subcategory_name or "", primary_attr, primary_value, effective_limit,
                 unverified_alternatives=top_unverified, library_type=library_type,
                 extended_count=extended_count, board_quantity=board_quantity, placements_per_board=placements_per_board,
                 extended_examples=extended_examples,
+                candidate_price_tiers=candidate_tiers, price_tiers_as_of=self._price_tiers_as_of,
             )
         else:
             response = build_unsupported_response(

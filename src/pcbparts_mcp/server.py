@@ -114,6 +114,7 @@ async def lifespan(app):
     # and, for RF parts, at every maker's parts in the subcategory to check against the original's band
     _client.set_subcategory_parts(db.subcategory_parts)
     tiers_as_of = db.price_tiers_as_of()
+    _client.set_alternative_price_tiers(db.get_price_tiers, tiers_as_of)
     logger.info(f"Price tiers: scraped {tiers_as_of}" if tiers_as_of else
                 "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only")
     _easyeda_seeded = db.easyeda_seed_size()
@@ -2534,6 +2535,11 @@ async def jlc_find_alternatives(
     Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
+    savings.order_total uses price breaks at component_quantity (boards * placements) from the
+    original's live prices and the candidates' snapshot (savings.price_tiers_as_of). If either lacks
+    tiers, both use qty 1; savings.price_basis says which. savings.unit_price_diff stays at qty 1;
+    original_unit_price_at_quantity, replacement_unit_price_at_quantity and unit_price_diff_at_quantity
+    in savings give the prices and difference used for order_total. Ranking still uses qty-1 prices.
     summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
     library/package eligibility, footprint and land-check outcomes/cap omissions and per-list output truncation.
     Connector alternatives list "land pattern and pin 1 position" as unchecked: makers' footprints for

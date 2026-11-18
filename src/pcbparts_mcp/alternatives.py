@@ -10,6 +10,7 @@ This module provides intelligent alternative finding that:
 import re
 from typing import Any, Callable
 from .catalog_evidence import multi_diode, reviewed_specs
+from .catalog_files import unpack_tiers
 from .land import CONNECTOR_LAND_UNCHECKED
 
 # Import shared parsers from the unified parsers module
@@ -1859,6 +1860,28 @@ def _extended_examples_hint(examples: list[dict[str, Any]], count: int) -> str:
     return f"; the best are in extended_examples: {named}. Rerun with library_type=\"extended\"{more}"
 
 
+def _live_tiers(prices: Any) -> list[tuple[int, float]]:
+    """A live jlc_get_part reply's prices ([{"qty": "100+", "price": 0.012}, ...]) as (quantity,
+    price) pairs. A tier that can't be read is skipped, so a malformed one never fails the call."""
+    tiers = []
+    for tier in prices if isinstance(prices, list) else []:
+        try:
+            quantity = int(str(tier["qty"]).strip().removesuffix("+"))
+            price = float(tier["price"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if quantity >= 1:
+            tiers.append((quantity, price))
+    return tiers
+
+
+def unit_price_at_quantity(
+    price: float | None, tiers: list[tuple[int, float]], quantity: int,
+) -> float | None:
+    """Use the largest eligible quantity break, or the qty-1 price without one."""
+    return max((tier for tier in tiers if tier[0] <= quantity), default=(0, price), key=lambda tier: tier[0])[1]
+
+
 def build_response(
     original: dict[str, Any],
     scored_alternatives: list[tuple[int, dict[str, Any], dict[str, int], dict[str, Any]]],
@@ -1873,6 +1896,8 @@ def build_response(
     board_quantity: int = 1,
     placements_per_board: int = 1,
     extended_examples: list[dict[str, Any]] | None = None,
+    candidate_price_tiers: dict[str, str] | None = None,
+    price_tiers_as_of: str | None = None,
 ) -> dict[str, Any]:
     """Build the find_alternatives response for a supported subcategory.
 
@@ -1936,6 +1961,14 @@ def build_response(
         best_price = best_part.get("price")
         price_diff = round(orig_price - best_price, 8) if orig_price is not None and best_price is not None else None
         component_quantity = board_quantity * placements_per_board
+        original_tiers = _live_tiers(original.get("prices"))
+        packed_tiers = (candidate_price_tiers or {}).get(best_part.get("lcsc"))
+        replacement_tiers = unpack_tiers(packed_tiers) if packed_tiers else []
+        use_tiers = bool(original_tiers and replacement_tiers)
+        original_at_quantity = unit_price_at_quantity(orig_price, original_tiers, component_quantity) if use_tiers else orig_price
+        replacement_at_quantity = unit_price_at_quantity(best_price, replacement_tiers, component_quantity) if use_tiers else best_price
+        price_diff_at_quantity = (round(original_at_quantity - replacement_at_quantity, 8)
+                                  if original_at_quantity is not None and replacement_at_quantity is not None else None)
         savings = {
             "assembly_fee": assembly_savings,
             "is_estimate": True,
@@ -1944,11 +1977,16 @@ def build_response(
             "fee_basis": "rounded legacy estimate; confirm the current assembly quote",
 
             "unit_price_diff": price_diff,
+            "original_unit_price_at_quantity": original_at_quantity,
+            "replacement_unit_price_at_quantity": replacement_at_quantity,
+            "unit_price_diff_at_quantity": price_diff_at_quantity,
+            "price_basis": "price breaks at component_quantity" if use_tiers else "qty 1",
+            "price_tiers_as_of": price_tiers_as_of,
             "board_quantity": board_quantity,
             "placements_per_board": placements_per_board,
             "component_quantity": component_quantity,
-            "order_total": round(assembly_savings + price_diff * component_quantity, 4) if price_diff is not None else None,
-            "note": "Rounded Economic loading-fee estimate ($3 per extended type), not a current quote; Standard assembly has different fees. Fees are per unique part type per order, assuming the original type is removed and the replacement type is newly added. Unit prices use qty 1 tiers, not order quotes.",
+            "order_total": round(assembly_savings + price_diff_at_quantity * component_quantity, 4) if price_diff_at_quantity is not None else None,
+            "note": "Rounded Economic loading-fee estimate ($3 per extended type), not a current quote; Standard assembly has different fees. Fees are per unique part type per order, assuming the original type is removed and the replacement type is newly added. Order totals use price breaks at component_quantity when both parts have tiers; otherwise both use qty 1. Original tiers are live; replacement tiers are from the snapshot at price_tiers_as_of. These are estimates, not order quotes.",
         }
 
     # Comparison helper
@@ -2004,7 +2042,7 @@ def build_response(
         "basic_preferred_count": no_fee_count,
         "message": message,
         "is_supported_category": True,
-        "price_note": "Prices shown are unit price at qty 1 tier",
+        "price_note": "Part prices and unit_price_diff use the qty 1 tier; savings.order_total uses price breaks at component_quantity when both parts have tiers, otherwise qty 1 (see savings.price_basis)",
     }
     if extended_examples and not alternatives:
         summary["extended_examples"] = extended_examples

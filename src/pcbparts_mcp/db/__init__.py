@@ -26,7 +26,7 @@ from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
 from .lookup import (
-    add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows, get_sold_out_rows,
+    add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_price_tiers, get_snapshot_rows, get_sold_out_rows,
 )
 from .categories import (
     CandidateBatch,
@@ -206,6 +206,17 @@ class ComponentDatabase:
         1-piece price only, as of prices_as_of)."""
         self._ensure_db()
         return self._price_tiers_as_of
+
+    @serialized
+    def get_price_tiers(self, lcsc_codes: list[str]) -> dict[str, str]:
+        """Packed snapshot tiers for a batch of parts; absent parts have no tiers.
+
+        Alternatives lists have at most 50 parts, so all their tiers take one query.
+        """
+        self._ensure_db()
+        if self._price_tiers_as_of is None:
+            return {}
+        return get_price_tiers(self._conn, list(dict.fromkeys(lcsc_codes)))
 
     def english_packages(self) -> bool:
         """Whether the database was built with packages in English (english_package), since 0.8.15."""
