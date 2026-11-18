@@ -25,7 +25,9 @@ from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
-from .lookup import add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows
+from .lookup import (
+    add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_snapshot_rows, get_sold_out_rows,
+)
 from .categories import (
     CandidateBatch,
     get_subcategory_name,
@@ -89,6 +91,7 @@ class ComponentDatabase:
         self._prices_as_of: str | None = None
         self._price_tiers_as_of: str | None = None  # None: no price breaks loaded (built without the file)
         self._english_packages = False
+        self._has_sold_out = False  # built since 0.10.0: parts kept after they sold out
 
     @serialized
     def _ensure_db(self) -> None:
@@ -132,6 +135,10 @@ class ComponentDatabase:
                 "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'package_spellings'").fetchone() is not None
             if not self._english_packages:
                 limitations.append("package names keep JLCPCB's Chinese words, unlike live replies")
+            self._has_sold_out = self._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sold_out'").fetchone() is not None
+            if not self._has_sold_out:
+                limitations.append("sold-out parts aren't kept, so lookups miss them")
             if limitations:
                 logger.warning(
                     "Component database %s predates this version: %s. "
@@ -558,6 +565,30 @@ class ComponentDatabase:
         if with_prices:
             parts = add_snapshot_prices(self._conn, parts, self._price_tiers_as_of is not None)
         return self._snapshot_parts(parts)
+
+    @serialized
+    def get_sold_out_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
+                            with_prices: bool = False) -> list[dict[str, Any]]:
+        """Parts kept after they sold out (stock 0, sold_out, gone_since, last_stock: lookup.sold_out_part)
+        that match a part number by get_by_mpn's rules, without full-text matches. with_prices adds
+        prices: the last 1-piece price. [] for a database built before 0.10.0."""
+        self._ensure_db()
+        if match_info is not None:
+            match_info.clear()
+        if not self._conn or not self._has_sold_out:
+            return []
+        parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info, sold_out=True)
+        if with_prices:
+            parts = add_snapshot_prices(self._conn, parts, False)  # no price breaks are kept for them
+        return self._snapshot_parts(parts)
+
+    @serialized
+    def get_sold_out_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
+        """jlc_get_parts' rows for sold-out parts (lookup.get_sold_out_rows), None for codes not kept."""
+        self._ensure_db()
+        if not self._conn or not self._has_sold_out:
+            return {code.upper(): None for code in lcsc_codes}
+        return get_sold_out_rows(self._conn, lcsc_codes, self._subcategories)
 
     @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:

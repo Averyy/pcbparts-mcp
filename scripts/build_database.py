@@ -5,7 +5,8 @@ Build SQLite database from scraped JLCPCB component data.
 Reads sorted part, stock and price files from data/catalog/ and creates a searchable
 SQLite database with FTS5 full-text search. The scrape's price breaks
 (data/catalog/price_tiers.tsv.gz, not in git) are loaded when present; without them the build
-still succeeds and replies give the 1-piece price only.
+still succeeds and replies give the 1-piece price only. Parts that sold out (data/catalog/sold_out/)
+go into their own table, outside search.
 
 Usage:
     python scripts/build_database.py [--data-dir PATH] [--output PATH]
@@ -26,7 +27,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.catalog_files import (
-    PRICE_TIERS_FILE, pack_tiers, price_tiers_scraped_at, read_catalog, read_price_tiers,
+    PRICE_TIERS_FILE, pack_tiers, price_tiers_scraped_at, read_catalog, read_price_tiers, read_sold_out,
 )
 from pcbparts_mcp.mounting import english_package  # noqa: E402
 from pcbparts_mcp.parsers import (
@@ -537,6 +538,49 @@ def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path) -> tuple[int, 
     return (count, scraped_at, None) if count else (0, None, f"{PRICE_TIERS_FILE} lists no catalog part")
 
 
+def load_sold_out(conn: sqlite3.Connection, catalog_dir: Path) -> int:
+    """Load the parts kept after they sold out (catalog/sold_out/, committed; none without it) into
+    sold_out: a slim table apart from components, so search, its counts and full-text search never
+    see them; jlc_get_parts, jlc_get_part(mpn) and jlc_stock_history read it. Always created. Runs
+    before the components load, so a malformed file fails the build at once. Returns the rows loaded."""
+    conn.execute("""
+        CREATE TABLE sold_out (
+            lcsc TEXT PRIMARY KEY,
+            mpn TEXT,
+            manufacturer TEXT,
+            package TEXT,
+            library_type TEXT CHECK(library_type IN ('b', 'p', 'e')),
+            subcategory_id INTEGER,
+            price REAL,
+            description TEXT,
+            last_stock INTEGER,
+            gone_since TEXT NOT NULL
+        )
+    """)
+    insert = "INSERT INTO sold_out VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    batch = []
+    count = 0
+    for row in read_sold_out(catalog_dir):
+        batch.append((row["l"], row["m"], row["f"], english_package(row["p"]), row["t"], row["c"], row["$"],
+                      row["d"], row["s"], row["g"]))
+        if len(batch) >= 5000:
+            conn.executemany(insert, batch)
+            count += len(batch)
+            batch = []
+    conn.executemany(insert, batch)
+    return count + len(batch)
+
+
+def index_sold_out(conn: sqlite3.Connection) -> int:
+    """After the components load: drop sold-out rows the catalog lists (a part back in stock is a
+    catalog part; the scrape drops them too), then index part numbers as components are. Returns the
+    rows kept."""
+    conn.execute("DELETE FROM sold_out WHERE lcsc IN (SELECT lcsc FROM components)")
+    conn.execute("CREATE INDEX idx_sold_out_mpn_lower ON sold_out(LOWER(mpn))")
+    conn.execute(f"CREATE INDEX idx_sold_out_mpn_key ON sold_out({MPN_KEY_SQL})")
+    return conn.execute("SELECT COUNT(*) FROM sold_out").fetchone()[0]
+
+
 def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     """
     Build SQLite database from compressed JSON files.
@@ -589,6 +633,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     pads = read_easyeda_pads(data_dir)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
+    sold_out_read = load_sold_out(conn, data_dir / "catalog")
 
     # Build CREATE TABLE with precomputed attribute columns
     numeric_cols_sql = ",\n            ".join(ATTRIBUTE_COLUMNS)
@@ -820,6 +865,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
     seed_rows = load_easyeda_seed(conn, seed)
     pads_rows = load_easyeda_pads(conn, pads)
+    sold_out_rows = index_sold_out(conn)
+    conn.execute("INSERT OR REPLACE INTO metadata VALUES ('sold_out_parts', ?)", (str(sold_out_rows),))
     # Whether replies have every price break, and from which scrape (they may be older or newer
     # than the catalog's stock): ComponentDatabase.price_tiers_as_of()
     tier_parts, tiers_scraped_at, tiers_missing = load_price_tiers(conn, catalog_dir)
@@ -832,6 +879,8 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         print(f"WARNING: {tiers_missing}; replies list the 1-piece price only")
     if verbose:
         print(f"EasyEDA footprint seed: {seed_rows:,} rows; footprint pads: {pads_rows:,}")
+        print(f"Sold-out parts: {sold_out_rows:,}" + (f" ({sold_out_read - sold_out_rows:,} dropped: "
+              "the catalog lists them)" if sold_out_read > sold_out_rows else ""))
         if tier_parts:
             print(f"Price breaks: {tier_parts:,} parts, scraped {tiers_scraped_at}")
         print("Optimizing database...")
@@ -884,6 +933,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         "easyeda_pads_rows": pads_rows,
         "price_tier_parts": tier_parts,
         "price_tiers_scraped_at": tiers_scraped_at,
+        "sold_out_parts": sold_out_rows,
         "categories": len(category_counts),
         "category_counts": category_counts,
         "db_size_bytes": db_size,

@@ -12,7 +12,7 @@ import re
 import shutil
 import zlib
 from collections.abc import Iterable, Iterator
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -27,6 +27,16 @@ _STORED_APART = ("s", "$", "$t")
 # it). Not in git (.gitignore): the scrape workflow hands it to the image build as an Actions artifact.
 PRICE_TIERS_FILE = "price_tiers.tsv.gz"
 _TIERS_HEADER = "#scraped_at\t"
+# Parts that dropped out of the catalog (missing from a daily scrape, not a scrape gap), kept until a
+# scrape lists them again (scrape_components.update_sold_out writes them, build_database.py loads
+# them into the sold_out table). Committed: one file per month they went missing in (YYYY-MM.jsonl),
+# so no file nears the size limit however long they stay; each line one part as a JSON array,
+# sorted by LCSC code.
+SOLD_OUT_DIR = "sold_out"
+# A sold-out row's fields, in file order: the part file's keys (stock and 1-piece price as the last
+# scrape that listed it had them) plus "g", gone_since: the UTC date of the first scrape it was missing from
+SOLD_OUT_KEYS = ("l", "g", "s", "$", "t", "c", "m", "f", "p", "d")
+_SOLD_OUT_NAME = re.compile(r"[0-9]{4}-[0-9]{2}\.jsonl")
 
 
 def _lcsc_key(code: str) -> tuple[int | float, str]:
@@ -304,3 +314,94 @@ def read_price_tiers(path: Path) -> Iterator[tuple[str, list[tuple[int, float]]]
             raise ValueError(f"{path} line {number}: malformed price tier ({exc})") from exc
     if code is not None:
         yield code, breaks
+
+
+def sold_out_row(part: dict, gone_since: str) -> dict:
+    """A catalog part (read_catalog's row) as a sold-out row: what the catalog had for it, minus its
+    attributes and flags, plus gone_since ("g", an ISO date)."""
+    return {"l": part["l"], "g": gone_since, **{key: part.get(key) for key in SOLD_OUT_KEYS[2:]}}
+
+
+def _check_sold_out_row(row: object) -> dict:
+    """The row as a dict of SOLD_OUT_KEYS, or ValueError naming what's wrong with it."""
+    if isinstance(row, list):
+        if len(row) != len(SOLD_OUT_KEYS):
+            raise ValueError(f"expected {len(SOLD_OUT_KEYS)} fields")
+        row = dict(zip(SOLD_OUT_KEYS, row))
+    if not isinstance(row, dict) or not _valid_code(row.get("l")):
+        raise ValueError("a sold-out part needs an LCSC code")
+    code, gone = row["l"], row.get("g")
+    try:
+        if not (isinstance(gone, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", gone)):
+            raise ValueError
+        date.fromisoformat(gone)
+    except ValueError:
+        raise ValueError(f"{code}: gone_since must be an ISO date, not {gone!r}") from None
+    if row.get("s") is not None and type(row["s"]) is not int:
+        raise ValueError(f"{code}: invalid stock {row['s']!r}")
+    price = row.get("$")
+    if price is not None and (type(price) not in (int, float) or not math.isfinite(price)):
+        raise ValueError(f"{code}: invalid price {price!r}")
+    if row.get("t") not in (None, "b", "p", "e"):
+        raise ValueError(f"{code}: invalid library type {row['t']!r}")
+    if type(row.get("c")) is not int or row["c"] < 0:
+        raise ValueError(f"{code}: invalid subcategory {row.get('c')!r}")
+    for key in ("m", "f", "p", "d"):
+        if row.get(key) is not None and not isinstance(row[key], str):
+            raise ValueError(f"{code}: invalid {key!r} {row[key]!r}")
+    return {key: row.get(key) for key in SOLD_OUT_KEYS}
+
+
+def write_sold_out(catalog_dir: Path, rows: dict[str, dict]) -> dict[str, int]:
+    """Replace catalog_dir/SOLD_OUT_DIR with these rows ({LCSC: sold_out_row}): one YYYY-MM.jsonl per
+    month of gone_since, each part a JSON array in SOLD_OUT_KEYS order, sorted by LCSC code.
+    Byte-identical for the same rows; no rows, no files. Returns the rows written per file name."""
+    by_month: dict[str, list[dict]] = {}
+    for code, row in rows.items():
+        row = _check_sold_out_row(row)
+        if row["l"] != code:
+            raise ValueError(f"sold-out row for {code} names {row['l']}")
+        by_month.setdefault(row["g"][:7], []).append(row)
+    directory = catalog_dir / SOLD_OUT_DIR
+    if directory.exists():
+        shutil.rmtree(directory)
+    counts = {}
+    for month, month_rows in sorted(by_month.items()):
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / f"{month}.jsonl"
+        with path.open("w", encoding="utf-8", newline="\n") as stream:
+            for row in sorted(month_rows, key=lambda row: _lcsc_key(row["l"])):
+                stream.write(json.dumps([row[key] for key in SOLD_OUT_KEYS], separators=(",", ":"),
+                                        ensure_ascii=False) + "\n")
+        _check_size(path)
+        counts[path.name] = len(month_rows)
+    return counts
+
+
+def read_sold_out(catalog_dir: Path) -> Iterator[dict]:
+    """Yield the sold-out rows (dicts of SOLD_OUT_KEYS) as write_sold_out wrote them, oldest month
+    first, nothing when the directory is missing. A malformed line, a row in the wrong month's file,
+    out of LCSC order or listed twice raises ValueError with the file and line."""
+    directory = catalog_dir / SOLD_OUT_DIR
+    if not directory.is_dir():
+        return
+    seen: set[str] = set()
+    for path in sorted(directory.glob("*.jsonl")):
+        if not _SOLD_OUT_NAME.fullmatch(path.name):
+            raise ValueError(f"{path}: sold-out files are named YYYY-MM.jsonl")
+        previous = None
+        for number, line in _lines(path):
+            try:
+                row = _check_sold_out_row(json.loads(line))
+                code = row["l"]
+                if row["g"][:7] != path.stem:
+                    raise ValueError(f"{code}: gone_since {row['g']} is not in this file's month")
+                if previous is not None and _lcsc_key(code) <= _lcsc_key(previous):
+                    raise ValueError(f"{code} out of LCSC order")
+                if code in seen:
+                    raise ValueError(f"duplicate LCSC {code}")
+            except ValueError as exc:  # json.JSONDecodeError included
+                raise ValueError(f"{path} line {number}: malformed sold-out row ({exc})") from exc
+            previous = code
+            seen.add(code)
+            yield row

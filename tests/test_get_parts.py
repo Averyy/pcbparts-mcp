@@ -107,7 +107,7 @@ class TestCodeRows:
             "subcategory": "Operational Amplifier", "description": "Dual op amp SOIC-8 Operational Amplifier ROHS"}
         assert cap["input"] == " C1525 " and cap["lcsc"] == "C1525" and cap["description"] == "100nF 16V X7R 0402"
         assert missing == {"input": "C99999999", "lcsc": "C99999999", "not_found": True}
-        assert reply["counts"] == {"found": 2, "not_found": 1, "error": 0} and reply["total"] == 3
+        assert reply["counts"] == {"found": 2, "sold_out": 0, "not_found": 1, "error": 0} and reply["total"] == 3
         assert "jlc_get_part(lcsc=...)" in reply["hint"] and "jlc_stock_check" in reply["hint"]
         assert "data_source" not in json.dumps(reply)  # the times are given once, at the top
 
@@ -170,7 +170,7 @@ class TestMpnRows:
         reply = await get_parts(["ZZQ9981XK", "C7950"])
         assert reply["results"][0] == {"input": "ZZQ9981XK", "mpn": "ZZQ9981XK", "total": 0, "results": [],
                                        "not_found": True}
-        assert reply["counts"] == {"found": 1, "not_found": 1, "error": 0} and "hint" in reply
+        assert reply["counts"] == {"found": 1, "sold_out": 0, "not_found": 1, "error": 0} and "hint" in reply
 
     async def test_the_maker_narrows_the_matches(self, db):
         mine, loose, other = (await get_parts([
@@ -237,7 +237,7 @@ class TestInputs:
         assert errors[4] == "MPN too long (max 100 characters)"
         assert errors[5] == "Manufacturer too long (max 100 characters)"
         assert reply["results"][2]["input"] == {"mpn": 5} and reply["results"][7]["model"] == "LM358DR2G"
-        assert reply["counts"] == {"found": 1, "not_found": 0, "error": 7}
+        assert reply["counts"] == {"found": 1, "sold_out": 0, "not_found": 0, "error": 7}
         for error in errors[:7]:
             assert server._error_kind(error) == "bad_request"
 

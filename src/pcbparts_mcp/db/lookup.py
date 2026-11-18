@@ -4,6 +4,7 @@ import sqlite3
 from typing import Any
 
 from ..catalog_files import unpack_tiers
+from ..mounting import detect_mounting_type
 from ..search.result import row_to_dict
 from ..search.mpn import (
     ALTERNATIVE_MANUFACTURERS, LCSC_CODE, MPN_ALIASES, MPN_KEY_SQL, PACKING_RULES,
@@ -17,33 +18,38 @@ def get_by_mpn(
     subcategories: dict[int, dict[str, Any]],
     *,
     match_info: dict[str, Any] | None = None,
+    sold_out: bool = False,
 ) -> list[dict[str, Any]]:
     """Find an MPN, preserving exact/normalized/FTS precedence within a candidate.
 
     Additional recoveries compare separator keys and curated vendor packing or
     ordering aliases. Only after the full input misses are annotations and
     alternatives tried. Optional reply metadata leaves list callers unchanged.
+    sold_out=True looks in the parts kept after they sold out instead (sold_out_part rows, most
+    stock when last listed first), by the same rules except full-text search, which they're outside.
     """
     if match_info is not None:
         match_info.clear()
     mpn = mpn.strip()
     if not mpn:
         return []
+    table, order = ("sold_out", "last_stock DESC, lcsc") if sold_out else ("components", "stock DESC, lcsc")
+    to_dict = sold_out_part if sold_out else row_to_dict
 
     def parts(rows):
         unique = {}
         for row in rows:
             if row["lcsc"] not in unique:
-                unique[row["lcsc"]] = row_to_dict(row, subcategories)
+                unique[row["lcsc"]] = to_dict(row, subcategories)
         return list(unique.values())
 
     def keyed(candidate, vendors=()):
-        sql = f"SELECT * FROM components WHERE {MPN_KEY_SQL} = ?"
+        sql = f"SELECT * FROM {table} WHERE {MPN_KEY_SQL} = ?"
         params = [mpn_key(candidate)]
         if vendors:
             sql += f" AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(vendors))})"
             params.extend(vendors)
-        return parts(conn.execute(sql + " ORDER BY stock DESC, lcsc", params))
+        return parts(conn.execute(sql + f" ORDER BY {order}", params))
 
     def matched(results, kind):
         info = {"match": kind, "matched_mpn": results[0]["model"]}
@@ -53,13 +59,13 @@ def get_by_mpn(
     # full-text matches or alternatives.
     if is_placeholder_mpn(mpn):
         return parts(conn.execute(
-            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [mpn],
+            f"SELECT * FROM {table} WHERE LOWER(mpn) = LOWER(?) ORDER BY {order}", [mpn],
         ))
 
     def find(candidate):
         # 1. Keep the existing exact query and stock ordering unchanged.
         results = parts(conn.execute(
-            "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [candidate],
+            f"SELECT * FROM {table} WHERE LOWER(mpn) = LOWER(?) ORDER BY {order}", [candidate],
         ))
         if results:
             return results, {}
@@ -73,7 +79,7 @@ def get_by_mpn(
         variants = normalize_mpn(candidate)
         for variant in variants[1:]:
             results = parts(conn.execute(
-                "SELECT * FROM components WHERE LOWER(mpn) = LOWER(?) ORDER BY stock DESC, lcsc", [variant],
+                f"SELECT * FROM {table} WHERE LOWER(mpn) = LOWER(?) ORDER BY {order}", [variant],
             ))
             if not results:
                 results = keyed(variant)
@@ -91,7 +97,7 @@ def get_by_mpn(
         # An LCSC code passed as an MPN finds that part, not parts whose codes start with it.
         lcsc_code = LCSC_CODE.fullmatch(candidate) is not None
         if lcsc_code:
-            results = parts(conn.execute("SELECT * FROM components WHERE lcsc = ?", [candidate.upper()]))
+            results = parts(conn.execute(f"SELECT * FROM {table} WHERE lcsc = ?", [candidate.upper()]))
             if results:
                 info = matched(results, "lcsc")[1]
                 info["note"] = (f"'{candidate}' is an LCSC code, not a part number; this is that part. "
@@ -101,7 +107,7 @@ def get_by_mpn(
 
         # 4. Existing FTS queries, variants, stock order and limit are unchanged,
         # except that an LCSC-shaped input doesn't match other parts' LCSC codes.
-        for variant in variants:
+        for variant in () if sold_out else variants:
             escaped = variant.replace('"', '""')
             columns = "{mpn manufacturer description} : " if lcsc_code else ""
             results = parts(conn.execute(
@@ -132,9 +138,9 @@ def get_by_mpn(
                 continue
             prefix = source['base']
             rows = conn.execute(
-                f"SELECT * FROM components WHERE {MPN_KEY_SQL} >= ? AND {MPN_KEY_SQL} < ? "
+                f"SELECT * FROM {table} WHERE {MPN_KEY_SQL} >= ? AND {MPN_KEY_SQL} < ? "
                 f"AND manufacturer COLLATE NOCASE IN ({','.join('?' * len(rule.manufacturers))}) "
-                "ORDER BY stock DESC, lcsc",
+                f"ORDER BY {order}",
                 [prefix, prefix + "\uffff", *rule.manufacturers],
             )
             results = parts(row for row in rows
@@ -252,6 +258,63 @@ def snapshot_row(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> 
     if part.get("no_datasheet"):
         row_part["no_datasheet"] = True
     return row_part
+
+
+def sold_out_part(row: sqlite3.Row, subcategories: dict[int, dict[str, Any]]) -> dict[str, Any]:
+    """A part kept after it sold out (the sold_out table) in row_to_dict's shape for what is kept:
+    stock 0 and no specs, plus sold_out, gone_since (the UTC date of the first daily scrape it was
+    missing from) and last_stock (its stock in the last scrape that listed it). price is the
+    1-piece price that scrape had."""
+    library_type = {"b": "basic", "p": "preferred", "e": "extended"}.get(row["library_type"], row["library_type"])
+    subcategory_info = subcategories.get(row["subcategory_id"], {})
+    category, subcategory = subcategory_info.get("category_name"), subcategory_info.get("name")
+    return {
+        "lcsc": row["lcsc"],
+        "model": row["mpn"],
+        "manufacturer": row["manufacturer"],
+        "package": row["package"],
+        "stock": 0,
+        "price": row["price"],
+        "library_type": library_type,
+        "preferred": library_type == "preferred",
+        "category": category,
+        "subcategory": subcategory,
+        "subcategory_id": row["subcategory_id"],
+        "mounting_type": detect_mounting_type(row["package"], category=category, subcategory=subcategory),
+        "description": row["description"],
+        "sold_out": True,
+        "gone_since": row["gone_since"],
+        "last_stock": row["last_stock"],
+    }
+
+
+# jlc_get_parts' sold-out rows: snapshot_row's fields (prices after price) and the sold-out ones
+_SOLD_OUT_ROW_KEYS = ("lcsc", "model", "manufacturer", "package", "stock", "price", "library_type", "preferred",
+                      "category", "subcategory", "description", "sold_out", "gone_since", "last_stock")
+
+
+def get_sold_out_rows(
+    conn: sqlite3.Connection,
+    lcsc_codes: list[str],
+    subcategories: dict[int, dict[str, Any]],
+) -> dict[str, dict[str, Any] | None]:
+    """Sold-out parts for LCSC codes (upper-cased, de-duplicated, in order) in one query, as
+    jlc_get_parts lists them (snapshot_row's fields, stock 0, prices the last 1-piece price, plus
+    sold_out, gone_since and last_stock); None for codes not kept. Raises ValueError beyond
+    MAX_BATCH_SIZE codes."""
+    codes = list(dict.fromkeys(code.upper() for code in lcsc_codes))
+    if len(codes) > MAX_BATCH_SIZE:
+        raise ValueError(f"Batch size {len(codes)} exceeds maximum of {MAX_BATCH_SIZE}. Split into smaller batches.")
+    results: dict[str, dict[str, Any] | None] = dict.fromkeys(codes)
+    if codes:
+        for row in conn.execute(f"SELECT * FROM sold_out WHERE lcsc IN ({','.join('?' * len(codes))})", codes):
+            part = sold_out_part(row, subcategories)
+            listed = {key: part[key] for key in _SOLD_OUT_ROW_KEYS[:6]}
+            if (prices := snapshot_prices(part["price"], None)) is not None:
+                listed["prices"] = prices
+            listed.update((key, part[key]) for key in _SOLD_OUT_ROW_KEYS[6:])
+            results[row["lcsc"]] = listed
+    return results
 
 
 def get_snapshot_rows(

@@ -3,8 +3,9 @@
 Scrape all JLCPCB components for local database.
 
 Uses concurrent workers with wafer for anti-detection HTTP to avoid rate limiting.
-Outputs a sorted catalog with separate stock and weekly price files, plus every part's price
-breaks from this scrape (catalog/price_tiers.tsv.gz, not committed).
+Outputs a sorted catalog with separate stock and weekly price files, the parts that dropped out
+of it, kept until a scrape lists them again (catalog/sold_out/), plus every part's price breaks
+from this scrape (catalog/price_tiers.tsv.gz, not committed).
 
 Usage:
     python scripts/scrape_components.py [--resume] [--workers N]
@@ -35,7 +36,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.config import DEFAULT_MIN_STOCK
 from pcbparts_mcp.catalog_files import (
-    PRICE_TIERS_FILE, pack_tiers, read_catalog, read_prices, write_catalog, write_price_tiers,
+    PRICE_TIERS_FILE, pack_tiers, read_catalog, read_prices, read_sold_out, sold_out_row, write_catalog,
+    write_price_tiers, write_sold_out,
 )
 
 # Configure logging for scraper output
@@ -618,6 +620,35 @@ def carry_over_gaps(
     return carried, record
 
 
+def update_sold_out(
+    previous_parts: Iterable[tuple[str, dict[str, Any]]],
+    today_codes: set[str],
+    previous_sold_out: Iterable[dict[str, Any]],
+    today: str,
+) -> tuple[dict[str, dict[str, Any]], dict[str, int]]:
+    """The sold-out parts after today's scrape, by LCSC code, and how they changed.
+
+    A part in the previous catalog that today's catalog doesn't list (`today_codes`: the scraped
+    parts plus any carried over a scrape gap, so a gap's parts only count once carry_over_gaps gives
+    them up) is sold out from `today`, with the details the previous catalog had for it. A part
+    already sold out stays as it was (its gone_since too) until a scrape lists it again, then it's
+    dropped: it's a catalog part again. Returns (rows, {"new", "back", "kept"}).
+    """
+    rows: dict[str, dict[str, Any]] = {}
+    back = 0
+    for row in previous_sold_out:
+        if row["l"] in today_codes:
+            back += 1
+        else:
+            rows[row["l"]] = row
+    new = 0
+    for _, part in previous_parts:  # streamed: only the missing parts are kept
+        if part["l"] not in today_codes:
+            rows[part["l"]] = sold_out_row(part, today)
+            new += 1
+    return rows, {"new": new, "back": back, "kept": len(rows)}
+
+
 # === Main Scraper ===
 
 def write_scrape_outputs(
@@ -660,6 +691,21 @@ def write_scrape_outputs(
         except Exception:
             raise RuntimeError("Stock history generation failed; published data unchanged") from None
 
+    # Parts gone from the catalog since the last scrape are kept at stock 0 until a scrape lists them
+    # again (catalog/sold_out/, committed). Read from the previous catalog before write_catalog replaces it.
+    sold_out: dict[str, dict[str, Any]] | None = None
+    if results:
+        try:
+            today_codes = {part.get("l") for parts in results.values() for part in parts}
+            previous_parts = (read_catalog(catalog_dir, prices=(catalog_dir / "prices.tsv").exists())
+                              if (catalog_dir / "stock.tsv").exists() else ())
+            sold_out, sold_out_changes = update_sold_out(previous_parts, today_codes, read_sold_out(catalog_dir),
+                                                         now.date().isoformat())
+        except Exception as exc:
+            raise RuntimeError(f"Sold-out parts update failed ({exc}); published data unchanged") from exc
+        logger.info(f"Sold out: {sold_out_changes['new']:,} new, {sold_out_changes['back']:,} back in stock, "
+                    f"{sold_out_changes['kept']:,} kept")
+
     # Keep the first occurrence globally, visiting sorted category slugs as before.
     seen_lcsc: set[str] = set()
     total_dupes = 0
@@ -693,6 +739,8 @@ def write_scrape_outputs(
             prices[code] = stored if stored is not None else part.get("$")
     progress.category_counts = write_catalog(catalog_dir, unique_results, prices)
     progress.total_parts = sum(progress.category_counts.values())
+    if sold_out is not None:
+        write_sold_out(catalog_dir, sold_out)
 
     # Today's price breaks for every part that has them, out of git (.gitignore): the scrape workflow
     # uploads the file as an Actions artifact for the image build. Parts carried over a scrape gap
@@ -716,6 +764,8 @@ def write_scrape_outputs(
         "prices_updated_at": prices_updated_at,
         "stock_threshold": STOCK_THRESHOLD,
         "total_parts": progress.total_parts,
+        # Parts kept in catalog/sold_out/, not in total_parts or the categories' counts
+        **({"sold_out_parts": len(sold_out)} if sold_out is not None else {}),
         "categories": {},
     }
 
