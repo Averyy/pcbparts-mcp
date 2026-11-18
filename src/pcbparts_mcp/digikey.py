@@ -400,6 +400,7 @@ class DigiKeyClient:
         product_number = product_number.strip()
         if not product_number:
             return {"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now()
+        stats.usage.record_parts_asked("digikey", [product_number])
         # Kept per number, ignoring case: DigiKey's search ignores it, and so does its match (_same_mpn)
         cache_key = product_number.upper()
         stored = self._store.get_answer("digikey", cache_key)

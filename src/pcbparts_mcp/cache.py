@@ -105,10 +105,13 @@ class CallerTally:
     over (flush_if_due(), which the server calls every minute) or at shutdown (flush()). Hours
     without requests log nothing. At most max_callers IPs are tracked an hour; the rest count as
     "other". Requests sent with a later app or key (a QuotaPool's) are also counted by its number;
-    unit names them in the line ("app" for DigiKey, "key" for Mouser)."""
+    unit names them in the line ("app" for DigiKey, "key" for Mouser). what says what was counted
+    ("requests sent" for Mouser/DigiKey, "refusals" for the per-IP rate limit's)."""
 
-    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000, top: int = 5):
+    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000, top: int = 5,
+                 what: str = "requests sent"):
         self._name = name
+        self._what = what
         self._clock = clock
         self._max_callers = max_callers
         self._top = top
@@ -143,7 +146,7 @@ class CallerTally:
             top = ", ".join(f"{caller} {count}" for caller, count in self._counts.most_common(self._top))
             later = ", ".join(f"{self.unit} {index + 1}: {count}" for index, count in sorted(self._apps.items())
                               if index and count)
-            logger.info(f"{self._name} requests sent {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
+            logger.info(f"{self._name} {self._what} {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
                         f"{sum(self._counts.values())} from {len(self._counts)} IPs; top: {top}"
                         + (f" ({later})" if later else ""))
         self._counts.clear()

@@ -7,7 +7,7 @@ import math
 import re
 import time
 from datetime import datetime, timezone
-from typing import Any, Callable, Literal
+from typing import Any, Awaitable, Callable, Literal
 from urllib.parse import parse_qs, quote, urlparse
 
 import wafer
@@ -64,6 +64,7 @@ from .config import (
     PART_CACHE_TTL,
     PART_CACHE_MAX_SIZE,
 )
+from . import stats
 from .catalog_evidence import annotate_catalog, catalog_gap_note
 from .cache import Cooldown, SlidingWindowBudget
 from .subcategory_aliases import SUBCATEGORY_ALIASES, resolve_subcategory_name as _resolve_subcategory_name
@@ -94,6 +95,35 @@ _UUID_PATTERN = re.compile(r'^[0-9a-f]{32}$', re.IGNORECASE)
 
 class EasyEDAComponentNotFound(ValueError):
     """EasyEDA has no symbol with this UUID (it answers {"success": false, "code": 404})."""
+
+
+def _count_upstream(source: str, event: str, count: int = 1) -> None:
+    """For /mcp/stats: a request sent to source, an answer its cache gave instead, or a request our
+    budget or pause for it held back (stats.UPSTREAM_EVENTS). Counting never breaks a lookup."""
+    try:
+        stats.usage.record_upstream(source, event, count)
+    except Exception:
+        logger.exception("Usage stats: couldn't count an upstream request")
+
+
+def _wafer_retries(reply: Any) -> int:
+    """The further attempts wafer made on its own for one request, as it reports them on its reply
+    (or on the error carrying one): retries plus fingerprint rotations. 0 for anything else."""
+    if isinstance(reply, BaseException):
+        reply = getattr(reply, "response", None)
+    return sum(n for n in (getattr(reply, "retries", 0), getattr(reply, "rotations", 0)) if type(n) is int)
+
+
+async def _sent(source: str, request: Awaitable[Any]) -> Any:
+    """Await one HTTP request to source, counting it (and wafer's own retries for it) as sent."""
+    _count_upstream(source, "sent")
+    try:
+        response = await request
+    except Exception as e:
+        _count_upstream(source, "retries", _wafer_retries(e))
+        raise
+    _count_upstream(source, "retries", _wafer_retries(response))
+    return response
 
 
 def _normalize_manufacturer_name(name: str) -> str:
@@ -451,7 +481,7 @@ class JLCPCBClient:
         """LCSC's product data for a part (pdfUrl, paramVOList), or None when LCSC has none or
         doesn't answer: the reply then keeps JLCPCB's own (lack of) datasheet and specs."""
         try:
-            response = await self._get_lcsc_session().get(LCSC_PRODUCT_URL, params={"productCode": lcsc})
+            response = await _sent("lcsc", self._get_lcsc_session().get(LCSC_PRODUCT_URL, params={"productCode": lcsc}))
             response.raise_for_status()
             data = response.json()
         except (WaferError, ValueError) as e:
@@ -639,7 +669,7 @@ class JLCPCBClient:
             )
             logger.debug(f"JLCPCB request: {log_keyword}")
             try:
-                response = await session.post(
+                response = await _sent("jlcpcb", session.post(
                     url,
                     json=params,
                     headers={
@@ -649,7 +679,7 @@ class JLCPCBClient:
                         "Sec-Fetch-Mode": "cors",
                         "Sec-Fetch-Dest": "empty",
                     },
-                )
+                ))
             except ChallengeDetected as e:
                 logger.warning(f"JLCPCB WAF challenge ({e.challenge_type}): {log_keyword}")
                 raise ValueError("JLCPCB blocked request with WAF challenge — try again later")
@@ -837,22 +867,27 @@ class JLCPCBClient:
                 timestamp, result, is_error = self._easyeda_cache[lcsc]
                 ttl = EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_FOOTPRINT_CACHE_TTL
                 if now - timestamp < ttl:
+                    _count_upstream("easyeda_products", "cached")  # a cached failure saves a request too
                     return result, "error" if is_error else "cached"
 
         stored = await self._stored_footprint(lcsc, now)
         if stored is not None:
+            _count_upstream("easyeda_products", "cached")
             return stored, "stored"
 
         cooldown = self._easyeda_products_cooldown
         if cooldown.active:
+            _count_upstream("easyeda_products", "rate_limited")
             return unknown_result, "cooldown"
 
         # Use semaphore to limit concurrent requests
         async with self._get_easyeda_semaphore():
             # Check again after waiting: a block may have started while this call was queued
             if cooldown.active:
+                _count_upstream("easyeda_products", "rate_limited")
                 return unknown_result, "cooldown"
             if not self._easyeda_products_budget.try_acquire():
+                _count_upstream("easyeda_products", "rate_limited")
                 # Warn once per window so prod logs show when real traffic outgrows the budget
                 if self._easyeda_products_budget.report_due():
                     logger.warning(
@@ -867,7 +902,7 @@ class JLCPCBClient:
                 # URL-encode the LCSC code for safety
                 url = EASYEDA_COMPONENT_URL.format(lcsc=quote(lcsc, safe=''))
 
-                response = await session.get(url)
+                response = await _sent("easyeda_products", session.get(url))
 
                 # EasyEDA's rate-limit block is a bare CloudFront 403 (429 also counts). Retrying keeps
                 # it going, so pause every footprint check instead. Not cached per part: the cooldown
@@ -996,6 +1031,7 @@ class JLCPCBClient:
                 timestamp, cached_result, is_error = self._easyeda_component_cache[uuid]
                 ttl = EASYEDA_ERROR_CACHE_TTL if is_error else EASYEDA_CACHE_TTL
                 if now - timestamp < ttl:
+                    _count_upstream("easyeda_components", "cached")
                     if is_error:
                         raise cached_result  # Re-raise cached error
                     return cached_result  # type: ignore
@@ -1006,7 +1042,7 @@ class JLCPCBClient:
             try:
                 url = EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=''))
 
-                response = await session.get(url)
+                response = await _sent("easyeda_components", session.get(url))
                 data = response.json() if response.status_code == 200 else None
 
                 # EasyEDA answers a missing symbol with HTTP 200 and {"success": false, "code": 404}
@@ -1378,6 +1414,7 @@ class JLCPCBClient:
             if entry is not None and now - entry[0] < PART_CACHE_TTL and not _pdf_link_expiring(entry[1], now):
                 cached = entry
         if cached is not None:
+            _count_upstream("jlcpcb", "cached")
             timestamp, cached_result = cached
             if cached_result is not None and cached_result.get("has_easyeda_footprint") is None:
                 # The footprint was unknown when this part was cached (EasyEDA error or rate limit).
@@ -1438,13 +1475,16 @@ class JLCPCBClient:
             entry = self._part_cache.get(lcsc)
         part = entry[1] if entry else None
         if part and part.get("datasheet_pdf") and not _pdf_link_expiring(part, now):
+            _count_upstream("jlcpcb", "cached")
             return part["datasheet_pdf"]
         held = self._datasheet_links.get(lcsc)
         if held and (held[0] is None and now < held[1] or held[0] and held[1] - now >= PDF_LINK_MIN_REMAINING):
+            _count_upstream("jlcpcb", "cached")
             return held[0]
 
         self._datasheet_signings = [t for t in self._datasheet_signings if t > now - 60]
         if len(self._datasheet_signings) >= DATASHEET_SIGNINGS_PER_MINUTE:
+            _count_upstream("jlcpcb", "rate_limited")
             # A sweep of LED candidates hit this after ~10 links and only read "try again in a minute"
             wait = max(1, math.ceil(60 - (now - min(self._datasheet_signings))))
             raise DatasheetLinkBusy(
@@ -1487,6 +1527,7 @@ class JLCPCBClient:
         now = time.time()
         cached = self._footprint_pads_cache.get(uuid)
         if cached is not None:
+            _count_upstream("easyeda_pads", "cached")
             return cached[1], "cached"
         stored = self._easyeda_store.get_pads(uuid) if self._easyeda_store is not None else None
         seeded = None
@@ -1500,22 +1541,26 @@ class JLCPCBClient:
                 ((answer, status) for answer, status in ((stored, "stored"), (seeded, "seeded")) if answer),
                 key=lambda pair: pair[0][1])
             self._cache_footprint_pads(uuid, fetched_at, pads)
+            _count_upstream("easyeda_pads", "cached")
             return pads, status
         cooldown = self._easyeda_land_cooldown
         if cooldown.active:
+            _count_upstream("easyeda_pads", "rate_limited")
             return None, "cooldown"
         async with self._get_easyeda_semaphore():
             if cooldown.active:  # a block may have started while this call was queued
+                _count_upstream("easyeda_pads", "rate_limited")
                 return None, "cooldown"
             if not self._easyeda_land_budget.try_acquire():
+                _count_upstream("easyeda_pads", "rate_limited")
                 if self._easyeda_land_budget.report_due():
                     logger.warning(
                         f"EasyEDA land-check budget spent ({EASYEDA_LAND_BUDGET} footprint fetches per "
                         f"{EASYEDA_LAND_WINDOW:.0f}s); comparing only stored footprints until it frees up.")
                 return None, "budget"
             try:
-                response = await self._get_easyeda_land_session().get(
-                    EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe="")))
+                response = await _sent("easyeda_pads", self._get_easyeda_land_session().get(
+                    EASYEDA_SYMBOL_URL.format(uuid=quote(uuid, safe=""))))
                 if response.status_code in (403, 429):
                     pause = cooldown.trip()
                     logger.warning(f"EasyEDA footprint fetch for {uuid} got HTTP {response.status_code}; "

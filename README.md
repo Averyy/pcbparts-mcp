@@ -176,7 +176,7 @@ These five cache and statistics paths are unset outside Docker, which keeps that
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 100 requests a minute per IP
 - **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`), requests sent to JLCPCB, LCSC, EasyEDA and SamacSys and the answers caches gave instead (`upstream`), Mouser/DigiKey part numbers asked in total and distinct (`parts_asked`), and requests the per-IP rate limit turned away (`per_ip_refusals`). No IPs, queries or part numbers are kept.
 
 ## Privacy
 

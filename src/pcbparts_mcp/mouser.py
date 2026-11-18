@@ -412,6 +412,7 @@ class MouserClient:
         """Answers by cache key from the store, then from Mouser for the numbers it doesn't have:
         one request (a lone number waits to share it, _pooled). Also the results matching no number
         asked (they're returned to the caller, not kept per part), or a limit error."""
+        stats.usage.record_parts_asked("mouser", numbers)
         answers: dict[str, PartAnswer] = {}
         missing = []
         for number in numbers:

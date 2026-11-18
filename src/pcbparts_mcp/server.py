@@ -27,7 +27,7 @@ from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, stats
-from .cache import DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
+from .cache import CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
@@ -76,6 +76,9 @@ _distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
+# Requests the per-IP rate limit turned away, per IP, logged as one line for each hour that had any
+# (the only place refused IPs appear; /mcp/stats counts them without IPs)
+_refused_callers = CallerTally("Per-IP rate limit", what="refusals")
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -213,6 +216,7 @@ async def lifespan(app):
         await minute_task
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
+    _refused_callers.flush()
     stats.usage.save()
     if _cse_client:
         await _cse_client.close()
@@ -232,8 +236,9 @@ async def lifespan(app):
 
 
 async def _every_minute() -> None:
-    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)
-    and save the usage counts; every hour, drop expired Mouser/DigiKey answers from the store."""
+    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts and per-IP rate
+    limit refusals (one line each, for hours that had any) and save the usage counts; every hour,
+    drop expired Mouser/DigiKey answers from the store."""
     minutes = 0
     while True:
         await asyncio.sleep(60)
@@ -241,6 +246,7 @@ async def _every_minute() -> None:
         try:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
+            _refused_callers.flush_if_due()
             stats.usage.save()
             if minutes % 60 == 0 and _distributor_store is not None:
                 _distributor_store.prune()
@@ -527,6 +533,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     Includes protections against memory exhaustion from IP spoofing:
     - Maximum tracked IPs limit (10,000)
     - Periodic cleanup of stale IPs
+
+    Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP) and in the hourly
+    most-refused-IPs log line (_refused_callers).
     """
 
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
@@ -584,12 +593,32 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.request_counts[client_ip].append(now)
         return False
 
+    @staticmethod
+    def _refusal_group(client_ip: str) -> str:
+        """Which stats.REFUSAL_GROUPS group a refused address counts under. Every address has the
+        same limit so far; a higher limit for the AI platforms' address ranges would return
+        "platform_ranges" for those (and add it to stats.REFUSAL_GROUPS)."""
+        return "everyone_else"
+
+    def _count_refusal(self, client_ip: str) -> None:
+        """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused-IPs log line.
+        Counting never breaks the reply."""
+        try:
+            stats.usage.record_refusal(self._refusal_group(client_ip))
+        except Exception:
+            logger.exception("Usage stats: couldn't count a rate-limit refusal")
+        try:
+            _refused_callers.record(client_ip)
+        except Exception:
+            logger.exception("Couldn't note a rate-limit refusal for the hourly log line")
+
     async def dispatch(self, request, call_next):
         if request.url.path == "/health":
             return await call_next(request)
 
         client_ip = self._get_client_ip(request)
         if self._check_rate_limit(client_ip):
+            self._count_refusal(client_ip)
             return JSONResponse(
                 status_code=429,
                 content={"error": "Rate limit exceeded", "retry_after": 60},

@@ -260,7 +260,8 @@ class TestUsageStats:
         assert totals["hours"][21] == 12 and sum(totals["hours"]) == 12  # all at 21:xx UTC
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
-            "distributors": {}, "reasons": {}, "why_empty": {}}
+            "distributors": {}, "reasons": {}, "why_empty": {},
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
