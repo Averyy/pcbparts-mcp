@@ -66,7 +66,7 @@ MIXES = {
               "get_design_rules": 10},
 }
 
-# A step is sustained only if at most this share of its answered calls were tool errors (isError)
+# A step is sustained only if at most this share of its answered calls were tool errors (is_tool_error)
 MAX_TOOL_ERROR_SHARE = 0.01
 
 ACCEPT = {"Accept": "application/json, text/event-stream", "Content-Type": "application/json"}
@@ -128,6 +128,27 @@ def check_target(url: str, allow_remote: bool = False) -> None:
 def check_database_only(tool: str, arguments: dict) -> None:
     if tool not in DATABASE_TOOLS or (tool == "jlc_get_part" and arguments.get("lcsc")):
         raise SystemExit(f"refusing {tool}({arguments}): it could send a live request")
+
+
+def is_tool_error(result: dict) -> bool:
+    """Whether a tools/call result is a tool error: isError, or a structured reply (structuredContent,
+    else a text content's JSON object) whose top-level error is set. Most of our tools answer a bad
+    or failed call with {"error": ...} and isError false (board_search's), so isError alone would
+    count those as answers."""
+    if result.get("isError"):
+        return True
+    structured = result.get("structuredContent")
+    if isinstance(structured, dict):
+        return bool(structured.get("error"))
+    for item in result.get("content") or []:
+        if isinstance(item, dict) and item.get("type") == "text":
+            try:
+                body = json.loads(item.get("text") or "")
+            except (TypeError, ValueError):
+                continue
+            if isinstance(body, dict) and body.get("error"):
+                return True
+    return False
 
 
 def sse_messages(reply: httpx.Response) -> list[dict]:
@@ -199,7 +220,7 @@ async def mcp_call(client: httpx.AsyncClient, headers: dict, tool: str, argument
         return None
     result = messages[0]["result"]
     step.ok += 1
-    step.tool_errors += bool(result.get("isError"))
+    step.tool_errors += is_tool_error(result)
     step.latency.append(done - start)
     step.call_latency.append(done - call_start)
     step.per_tool[tool + ("(batch)" if isinstance(arguments.get("lcsc"), list) else "")].append(done - start)
@@ -270,7 +291,7 @@ def summary(step: Step, seconds: float, drain: float, p95_limit: float) -> dict:
         "admission_ok": failed == 0 and step.tool_errors == 0 and step.skipped == 0
                         and p95 is not None and p95 < p95_limit
                         and step.ok > 0 and step.ok + step.busy == step.started,
-        # ok counts every answered call, tool errors (isError) included: a server answering every
+        # ok counts every answered call, tool errors (is_tool_error) included: a server answering every
         # call with an error isn't sustaining the load, while a few odd queries' errors are normal
         "sustained": failed == 0 and step.busy == 0 and step.skipped == 0 and p95 is not None and p95 < p95_limit
                      and step.ok >= 0.95 * step.started and step.tool_errors <= MAX_TOOL_ERROR_SHARE * step.ok,

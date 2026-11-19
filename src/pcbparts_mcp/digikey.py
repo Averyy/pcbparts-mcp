@@ -406,17 +406,19 @@ class DigiKeyClient:
         """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
         return (self._quota.retry_after() if self._quota else None) or 60
 
-    async def lookup(self, product_number: str, caller: str | None = None) -> tuple[dict[str, Any], str, float]:
-        """get_part's reply, what it was ("found", "not_found", "limited" or "invalid") and when
-        DigiKey answered (part_lifecycle). A number DigiKey can't list (search/mpn.py's
-        not_sent_reason: a value such as "10k", an LCSC code, not 3-40 characters...) isn't sent: it
-        gets the not-found reply with not_sent, without a request or the quota."""
+    async def lookup(self, product_number: str, caller: str | None = None) -> tuple[dict[str, Any], str, float, bool]:
+        """get_part's reply, what it was ("found", "not_found", "limited" or "invalid"), when DigiKey
+        answered and whether it answered this lookup's own request (False for an answer read back
+        from the store; part_lifecycle's maker counts take only those). A number DigiKey can't list
+        (search/mpn.py's not_sent_reason: a value such as "10k", an LCSC code, not 3-40
+        characters...) isn't sent: it gets the not-found reply with not_sent, without a request or
+        the quota."""
         product_number = product_number.strip()
         if not product_number:
-            return {"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now()
+            return {"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now(), False
         if reason := not_sent_reason(product_number):
             stats.count_distributor("digikey", "skipped")
-            return _not_sent_reply(product_number, reason), "not_found", self._store.now()
+            return _not_sent_reply(product_number, reason), "not_found", self._store.now(), False
         stats.count_parts_asked("digikey", [product_number])
         # Kept per number, ignoring case: DigiKey's search ignores it, and so does its match (_same_mpn)
         cache_key = product_number.upper()
@@ -425,14 +427,15 @@ class DigiKeyClient:
             stats.count_distributor("digikey", "cached")
             answer, fetched_at = stored
             if answer.get("not_found"):
-                return _not_found_reply(product_number), "not_found", fetched_at
-            return _answering(answer, product_number), "found", fetched_at
+                return _not_found_reply(product_number), "not_found", fetched_at, False
+            return _answering(answer, product_number), "found", fetched_at, False
         # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
         task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
         task.add_done_callback(lambda done: done.cancelled() or done.exception())
-        return await asyncio.shield(task)
+        reply, kind, fetched_at = await asyncio.shield(task)
+        return reply, kind, fetched_at, kind in ("found", "not_found")
 
     async def _fetch(self, product_number: str, caller: str | None, cache_key: str) -> tuple[dict[str, Any], str, float]:
         """lookup() for a number the store doesn't have: one keyword search, within the limits."""

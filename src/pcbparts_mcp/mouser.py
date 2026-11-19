@@ -258,19 +258,28 @@ class PartAnswer:
     that is the part itself while another number filled the reply) that couldn't be asked again
     (_fetch): Mouser may list it. Such answers are never kept, so a kept answer is always checked.
     problem: why a number wasn't checked at all (_one_by_one): the limit error that held its request
-    back, or the error Mouser gave for it asked alone."""
+    back, or the error Mouser gave for it asked alone. complete: False when the reply was cut at
+    Mouser's cap (a number with results there but none that is the part: the part may be past the
+    cap), kept with the answer as "capped". stored: read back from the store, not this request's.
+    part_lifecycle's maker counts take a "not listed" only from a complete answer not stored."""
     results: list[dict[str, Any]]
     matched: bool
     fetched_at: float
     checked: bool = True
     problem: dict[str, Any] | Exception | None = None
+    complete: bool = True
+    stored: bool = False
 
     def as_json(self) -> dict[str, Any]:
-        return {"results": self.results, "matched": self.matched}
+        data: dict[str, Any] = {"results": self.results, "matched": self.matched}
+        if not self.complete:
+            data["capped"] = True
+        return data
 
     @classmethod
     def from_json(cls, data: dict[str, Any], fetched_at: float) -> PartAnswer:
-        return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at)
+        return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at,
+                   complete=not data.get("capped"), stored=True)
 
 
 @dataclass
@@ -761,7 +770,7 @@ class MouserClient:
         for number in numbers:
             matched = any(_touches(r, number) for r in per[number])
             checked = not capped or (bool(per[number]) and number not in again)
-            answer = PartAnswer(per[number], matched, fetched_at, checked)
+            answer = PartAnswer(per[number], matched, fetched_at, checked, complete=not capped)
             answers[_cache_key(number)] = answer
             if number in clean and checked and (matched or not capped):
                 # Its lifetime follows matched, as the reply's not_found does: unrelated results

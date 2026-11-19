@@ -715,6 +715,7 @@ ERROR_REPLIES = {
     "Invalid part: '{}' is a BOM placeholder (not fitted or not chosen), not a part number": "bad_request",
     "Invalid part: an MPN can't contain '|' (give each part on its own)": "bad_request",
     "Invalid part: control characters (a NUL, tab or line break) can't be in a part number, maker or LCSC code": "bad_request",
+    "Invalid part: unpaired surrogate escapes (such as \\ud800) aren't text and can't be in a part number, maker or LCSC code": "bad_request",
     "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead": "bad_request",
     "Give a part number or an LCSC code": "bad_request",
     "Manufacturer too long (max 100 characters)": "bad_request",

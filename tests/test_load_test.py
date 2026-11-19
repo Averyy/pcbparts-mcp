@@ -73,6 +73,46 @@ def test_sustained_needs_answers_not_tool_errors(errors, expected):
     assert load.summary(step, 60, 0, 2)["sustained"] is expected
 
 
+ERROR_TEXT = json.dumps({"error": "Board search failed"})
+TOOL_RESULTS = {
+    "structured": ({"content": [{"type": "text", "text": ERROR_TEXT}],
+                    "structuredContent": {"error": "Board search failed"}, "isError": False}, True),
+    "text_only": ({"content": [{"type": "text", "text": ERROR_TEXT}], "isError": False}, True),
+    "is_error": ({"content": [{"type": "text", "text": "boom"}], "isError": True}, True),
+    "answer": ({"content": [{"type": "text", "text": "{}"}], "structuredContent": {"results": [], "error": None},
+                "isError": False}, False),
+    "row_errors": ({"structuredContent": {"results": [{"input": "DNP", "error": "Invalid part"}],
+                                          "counts": {"error": 1}}, "isError": False}, False),
+    "plain_text": ({"content": [{"type": "text", "text": "error: not JSON"}], "isError": False}, False),
+}
+
+
+@pytest.mark.parametrize("case", list(TOOL_RESULTS), ids=list(TOOL_RESULTS))
+async def test_structured_error_replies_are_tool_errors(monkeypatch, case):
+    """Only isError counted as a tool error, so a structured {"error": ...} reply with isError false
+    (board_search's, most tools') counted as an answer and let a failing server pass both modes. A
+    part's own error inside results is still an answer."""
+    result, is_error = TOOL_RESULTS[case]
+    monkeypatch.setattr(load, "time", types.SimpleNamespace(perf_counter=lambda: 0.0))
+
+    def handle(request):
+        message = json.loads(request.content)
+        if message["method"] == "tools/call":
+            return httpx.Response(200, json={"jsonrpc": "2.0", "id": 2, "result": result})
+        return httpx.Response(202 if message["method"].startswith("notifications/") else 200, json={})
+
+    step = load.Step(100)
+    async with httpx.AsyncClient(base_url="http://localhost", transport=httpx.MockTransport(handle)) as client:
+        for _ in range(100):
+            step.started += 1
+            await load.mcp_call(client, {}, "board_search", {"query": "esp32"}, step)
+    assert (step.ok, step.tool_errors) == (100, 100 if is_error else 0)
+    summary = load.summary(step, 60, 0, 2)
+    assert summary["sustained"] is not is_error  # the default mode
+    step.busy, step.started = 5, 105  # --expect-busy: busy refusals don't excuse tool errors
+    assert load.summary(step, 60, 0, 2)["admission_ok"] is not is_error
+
+
 @pytest.mark.parametrize("case,expected", [("busy", 0), ("no_busy", 2), ("slow", 2), ("upstream", 3)],
                          ids=["busy", "none", "slow", "upstream"])
 async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):

@@ -313,6 +313,47 @@ class TestReviewFixes:
         assert missing == {"input": "C99999999", "lcsc": "C99999999", "not_found": True}
         assert reply["counts"] == {"found": 2, "gone": 0, "not_found": 2, "error": 0}
 
+    async def test_a_database_failure_on_the_code_as_part_number_retry(self, db, monkeypatch):
+        """A plain "C945" not listed as a code is asked as a part number; the database failing on
+        that retry answered not_found instead of the row's error ({"mpn": "C945"} gave the error)."""
+        lookup = db.get_by_mpn
+
+        def flaky(mpn, **kwargs):
+            if mpn == "C945":
+                raise sqlite3.OperationalError("disk I/O error")
+            return lookup(mpn, **kwargs)
+
+        monkeypatch.setattr(db, "get_by_mpn", flaky)
+        reply = await get_parts(["C945", {"mpn": "C945"}, "C7950"])
+        retry, given, code = reply["results"]
+        assert retry == {"input": "C945", "error": "Database not available"}
+        assert given == {"input": {"mpn": "C945"}, "error": "Database not available"}
+        assert code["lcsc"] == "C7950" and "hint" not in reply
+        assert reply["counts"] == {"found": 1, "gone": 0, "not_found": 0, "error": 2}
+        alone = await get_parts(["C945"])
+        assert outcome(alone) == "failed" and server._call_reason("failed", alone, None) == "service_not_ready"
+
+    async def test_unpaired_surrogates_are_one_rows_error(self, db):
+        """An escaped lone surrogate ("\\ud800") in a JSON array string passed the checks, and SQLite's
+        UnicodeEncodeError failed the whole batch; echoed back, it can't be sent as UTF-8 either."""
+        reply = await get_parts('["LM358\\ud800", {"mpn": "LM358", "manufacturer": "T\\udfffI"}, "C7950", '
+                                '{"lcsc": "C1525", "mpn": "X\\ud800", "manufacturer": "\\ud800"}, '
+                                '{"lcsc": "C\\ud8007950"}, "LM358\\ud83d\\ude00"]')
+        rows = reply["results"]
+        assert [row.get("error") for row in rows[:2]] == [server._UNENCODABLE["error"]] * 2
+        assert server._error_kind(rows[0]["error"]) == "bad_request"
+        assert rows[0]["input"] == "LM358\\ud800"  # echoed escaped, so the reply can be sent
+        assert rows[1]["input"] == {"mpn": "LM358", "manufacturer": "T\\udfffI"}
+        assert rows[2]["lcsc"] == "C7950" and rows[3]["lcsc"] == "C1525"  # beside a valid code: set aside
+        assert rows[3]["input"] == {"lcsc": "C1525", "mpn": "X\\ud800", "manufacturer": "\\ud800"}
+        assert rows[4]["error"].startswith("lcsc must be an LCSC C-code")
+        assert rows[5]["not_found"] is True and rows[5]["input"] == "LM358\U0001f600"  # a real pair is text
+        assert reply["counts"] == {"found": 2, "gone": 0, "not_found": 1, "error": 3}
+        json.dumps(reply, ensure_ascii=False).encode("utf-8")  # the whole reply can be sent
+        async with Client(server.mcp) as client:  # and is, through the MCP layer
+            sent = await client.call_tool("jlc_get_parts", {"parts": '["LM358\\ud800", "C7950"]'})
+        assert sent.structured_content["counts"] == {"found": 1, "gone": 0, "not_found": 0, "error": 1}
+
     async def test_deeply_nested_json_is_an_argument_error(self, db, monkeypatch):
         """json.loads raises RecursionError past Python's nesting limit (on the event loop's thread at
         least: how deep a worker thread gets varies by version), which failed the call with an exception."""

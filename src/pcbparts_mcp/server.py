@@ -2734,14 +2734,18 @@ def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
                 listed_codes(result, codes, gone_codes)
             answers.append(result)
         listed = rows_for(codes, gone_codes)
-        # A plain code string neither lists may be a part number (2SC945 is sold as "C945"): asked as one
+        # A plain code string neither lists may be a part number (2SC945 is sold as "C945"): asked as
+        # one. A database failure on that lookup is the row's error, as for an MPN given.
         as_mpn: dict[int, tuple[Any, ...]] = {}
+        retry_failed: set[int] = set()
         codes, gone_codes = [], []
         for index, entry in enumerate(entries):
             if (entry.error is None and entry.lcsc and not entry.mpn and isinstance(entry.input, str)
                     and entry.lcsc not in listed):
                 result = answer(entry.lcsc, None)
-                if result and result[0][0] != "none":
+                if result is None:
+                    retry_failed.add(index)
+                elif result[0][0] != "none":
                     as_mpn[index] = result
                     listed_codes(result, codes, gone_codes)
         if codes or gone_codes:
@@ -2763,6 +2767,9 @@ def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
             counts[result[0][0]] += 1
         elif entry.error is not None:
             row.update(entry.error)
+            counts["error"] += 1
+        elif index in retry_failed:
+            row["error"] = "Database not available"
             counts["error"] += 1
         elif entry.lcsc:
             part = listed.get(entry.lcsc)
@@ -3220,6 +3227,10 @@ async def digikey_get_part(product_number: str) -> dict:
 # a number are pasting accidents, not part numbers
 _CONTROL_CHARACTERS = {"error": "Invalid part: control characters (a NUL, tab or line break) can't be in a part "
                                  "number, maker or LCSC code"}
+# An escaped lone surrogate ("\ud800") in a JSON array string becomes text that can't be encoded:
+# SQLite raised UnicodeEncodeError and failed jlc_get_parts' whole batch
+_UNENCODABLE = {"error": "Invalid part: unpaired surrogate escapes (such as \\ud800) aren't text and can't be in a "
+                         "part number, maker or LCSC code"}
 _ECHO_MAX = 100  # characters of an input echoed back (part_lifecycle and jlc_get_parts' input)
 
 
@@ -3227,17 +3238,39 @@ def _has_control_characters(text: str) -> bool:
     return any(unicodedata.category(c) == "Cc" for c in text)
 
 
+def _encodable(text: str) -> bool:
+    """Whether the text can be sent as UTF-8 (no unpaired surrogate)."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def _sendable(value: Any) -> Any:
+    """value with any text that can't be sent as UTF-8 written as its escapes ("\\ud800"), in dict
+    keys and values and list items too: a reply holding a lone surrogate can't be serialised."""
+    if isinstance(value, str):
+        return value if _encodable(value) else value.encode("utf-8", "backslashreplace").decode("utf-8")
+    if isinstance(value, dict):
+        return {_sendable(key): _sendable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sendable(item) for item in value]
+    return value
+
+
 def _echo_input(item: Any) -> Any:
     """An input as a reply's input echoes it: as given, except a string over 100 characters (its
     first 100 and "...") or anything else whose JSON is over 200 (the first 100 characters of that
-    JSON and "...", as text), so a long or deeply nested input isn't sent back whole."""
+    JSON and "...", as text), so a long or deeply nested input isn't sent back whole; text that
+    can't be sent as UTF-8 (a lone surrogate) is written as its escapes."""
     if isinstance(item, str):
-        return item if len(item) <= _ECHO_MAX else item[:_ECHO_MAX] + "..."
+        return _sendable(item if len(item) <= _ECHO_MAX else item[:_ECHO_MAX] + "...")
     try:
         text = json.dumps(item, ensure_ascii=False)
     except (TypeError, ValueError, RecursionError):
         return "..."
-    return item if len(text) <= 2 * _ECHO_MAX else text[:_ECHO_MAX] + "..."
+    return _sendable(item if len(text) <= 2 * _ECHO_MAX else text[:_ECHO_MAX] + "...")
 
 
 def _entry_problem(mpn: str | None, maker: str | None) -> dict[str, Any] | None:
@@ -3246,6 +3279,8 @@ def _entry_problem(mpn: str | None, maker: str | None) -> dict[str, Any] | None:
         return {"error": "MPN too long (max 100 characters)"}
     if maker and len(maker) > 100:
         return {"error": "Manufacturer too long (max 100 characters)"}
+    if any(value and not _encodable(value) for value in (mpn, maker)):
+        return dict(_UNENCODABLE)
     if any(value and _has_control_characters(value) for value in (mpn, maker)):
         return dict(_CONTROL_CHARACTERS)
     if mpn and is_placeholder_mpn(mpn):

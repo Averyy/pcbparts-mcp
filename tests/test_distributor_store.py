@@ -102,34 +102,72 @@ class TestSchema:
             store.close()
 
 
-class TestMakerLookups:
+def misses(maker, count, at=NOW, start=0):
+    """count different parts of the maker not listed, as part_lifecycle keeps them."""
+    return [(maker, f"P{start + i:04}", False, at) for i in range(count)]
+
+
+class TestMakerParts:
     def test_not_carried_after_enough_misses_and_none_listed(self, store, clock):
-        store.count_maker_lookups("mouser", {"uni royal": (MAKER_SKIP_NOT_LISTED - 1, 0)})
+        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED - 1))
         assert store.makers_not_carried("mouser", {"uni royal"}) == set()
         clock.advance(DAY)
-        store.count_maker_lookups("mouser", {"uni royal": (1, 0)})
+        store.count_maker_parts("mouser", misses("uni royal", 1, clock(), start=MAKER_SKIP_NOT_LISTED))
         assert store.makers_not_carried("mouser", {"uni royal", "texas instruments"}) == {"uni royal"}
         assert store.makers_not_carried("digikey", {"uni royal"}) == set()  # per distributor
 
     def test_one_listed_part_in_the_window_keeps_the_maker(self, store, clock):
-        store.count_maker_lookups("mouser", {"vishay intertech": (50, 0)})
+        store.count_maker_parts("mouser", misses("vishay intertech", 50))
         clock.advance(10 * DAY)
-        store.count_maker_lookups("mouser", {"vishay intertech": (0, 1)})
+        store.count_maker_parts("mouser", [("vishay intertech", "CRCW060310K0FKEA", True, clock())])
         assert store.makers_not_carried("mouser", {"vishay intertech"}) == set()
 
     def test_counts_age_out_so_a_maker_is_asked_again(self, store, clock):
-        store.count_maker_lookups("mouser", {"uni royal": (MAKER_SKIP_NOT_LISTED, 0)})
+        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED))
         clock.advance((MAKER_SKIP_DAYS - 1) * DAY)
         assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}
         clock.advance(DAY)
         assert store.makers_not_carried("mouser", {"uni royal"}) == set()
         store.prune()
-        assert store._conn.execute("SELECT COUNT(*) FROM maker_lookups").fetchone()[0] == 0
+        assert store._conn.execute("SELECT COUNT(*) FROM maker_parts").fetchone()[0] == 0
 
-    def test_no_part_numbers_or_callers_kept(self, store):
-        store.count_maker_lookups("mouser", {"uni royal": (1, 0)})
-        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(maker_lookups)")]
-        assert columns == ["source", "maker_key", "day", "not_listed", "found"]
+    def test_a_part_counts_once(self, store, clock):
+        """Astra review 2026-11-18: the counts added up answers, so one part looked up 20 times
+        (or read back from the store 20 times) was 20 misses. Now each part counts once a day, and
+        different parts are what reach the threshold."""
+        for _ in range(MAKER_SKIP_NOT_LISTED):
+            store.count_maker_parts("mouser", misses("uni royal", 1, clock()) * 2)  # one part, twice a day
+            store.count_maker_parts("mouser", misses("uni royal", 1, clock()))
+            clock.advance(DAY)
+        rows = store._conn.execute("SELECT COUNT(*) FROM maker_parts").fetchone()[0]
+        assert rows == MAKER_SKIP_NOT_LISTED  # one a day
+        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
+        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED - 1, clock(), start=1))
+        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}  # 20 different parts
+
+    def test_listed_wins_and_is_counted_on_its_own_day(self, store, clock):
+        store.count_maker_parts("mouser", misses("nxp semicon", MAKER_SKIP_NOT_LISTED))
+        store.count_maker_parts("mouser", [("nxp semicon", "P0000", True, NOW - 25 * DAY)])
+        store.count_maker_parts("mouser", [("nxp semicon", "P0001", True, NOW - MAKER_SKIP_DAYS * DAY)])  # too old
+        assert store.makers_not_carried("mouser", {"nxp semicon"}) == set()
+        assert store._conn.execute("SELECT COUNT(*) FROM maker_parts WHERE found").fetchone()[0] == 1
+        clock.advance(5 * DAY)  # the listing's day leaves the window; the misses stay
+        assert store.makers_not_carried("mouser", {"nxp semicon"}) == {"nxp semicon"}
+
+    def test_a_kept_reading_of_the_maker_keeps_it(self, store, clock):
+        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED))
+        store.put_readings([reading(source="digikey", observed_at=NOW - DAY)])  # another distributor's
+        store.put_readings([reading(mpn="NOPE1", maker="", status="unknown", raw=None, found=False)])
+        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
+        store.put_readings([reading(maker="Texas Instruments Inc.", observed_at=NOW - (MAKER_SKIP_DAYS - 1) * DAY)])
+        assert store.makers_not_carried("mouser", {"texas instruments"}) == set()
+        clock.advance(DAY)  # that reading is now older than the window
+        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
+
+    def test_parts_and_makers_but_no_callers_kept(self, store):
+        store.count_maker_parts("mouser", misses("uni royal", 1))
+        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(maker_parts)")]
+        assert columns == ["source", "maker_key", "day", "mpn_key", "found"]
 
 
 class TestAnswers:
@@ -218,6 +256,17 @@ class TestReadings:
         store.put_readings([reading(maker="Texas Instruments Inc.", source="digikey", status="obsolete", raw="Obsolete")])
         got = sorted((r.source, r.status) for r in store.readings("LM358P"))
         assert got == [("digikey", "obsolete"), ("mouser", "nrnd")]
+
+    def test_not_listed_is_the_spellings_own(self, store):
+        """DigiKey matches the spelling asked: a miss for LM358-P was found by mpn_key and answered
+        LM358P not_found for 30 days."""
+        store.put_not_listed("LM358-P", "digikey")
+        assert [(r.found, r.source) for r in store.readings(" lm358-p")] == [(False, "digikey")]
+        assert store.readings("LM358P") == [] and store.readings("LM358 P") == []
+        store.put_not_listed("LM358P", "digikey")  # each spelling its own row
+        assert len(store.readings("LM358P")) == len(store.readings("LM358-P")) == 1
+        store.put_readings([reading(source="digikey")])  # a listing drops every spelling's miss
+        assert [r.found for r in store.readings("LM358-P")] == [True]
 
     def test_a_reading_replaces_not_listed_from_that_source_only(self, store):
         store.put_not_listed("X1", "mouser")
