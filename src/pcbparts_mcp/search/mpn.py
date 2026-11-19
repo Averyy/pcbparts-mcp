@@ -44,16 +44,33 @@ NOT_SENT_HINTS = {
     "maker_not_carried": "is by a maker whose parts this distributor hasn't listed lately",
 }
 
-# A plain electrical value, perhaps with a size, dielectric or tolerance: "10k", "4.7uF", "1R",
-# "100nF 50V 0603", "4K7 1%". Each number has at most 4 significant digits (value_digits), so a
-# part number such as Wurth's 9774025151R isn't a value; a part number has more than a number and
-# a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
+# A plain electrical value, perhaps with a size, dielectric, tolerance or rating: "10k", "4.7uF",
+# "1R", "100nF 50V 0603", "4K7 1%". A false "value" means a real part number is never sent, so
+# only these are values (_VALUE_TOKEN):
+# - a resistor code, the multiplier as the decimal point or the suffix: 10k, 4k7, 1R5, 2M2, 0R1, 100R, 4.7k
+# - a number with an SI-prefixed unit: 100nF, 4.7uF/µF, 22pF, 10uH, 1mH, 3.3mA, 2.2kΩ, 8MHz, 100mW
+#   (a whole number takes only the prefixes each unit is written with, in SI case: 1590MA isn't one)
+# - a number with a decimal point and a unit: 1.5A, 3.3V, 0.25W; and ohms written out: 16Ω, 100 ohm
+# A whole number and one unit letter (1590A, Hammond's enclosure; 100V, 220W, 1000F, 47H) is a part
+# number on its own, and counts only beside a value: the 50V of "100nF 50V" (_VALUE_EXTRA). Each
+# number has at most 4 significant digits (value_digits), so Wurth's 9774025151R isn't a value; a
+# part number has more than a number and a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"),
+# so it never matches the whole pattern.
 _VALUE_NUMBER = r"(\d+)(?:\.(\d+))?"
-_VALUE_UNITS = (r"(?:[kmg]?\s?(?:ohms?|Ω)|meg|[rkm]|[pnuµμm]?f|[pnuµμ]|[pnuµμm]?h|[mk]?v|[munµμ]?a|[mk]?w"
-                r"|[kmg]?hz|%)")
-_VALUE_TOKEN = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?{_VALUE_UNITS}|(\d+)[rkm](\d+)|(\d+)/(\d+)\s?w", re.IGNORECASE)
+_OHMS = r"(?:Ω|[Oo]hms?|OHMS?)"
+_VALUE_TOKEN = re.compile(
+    r"(\d+)(?:\.(\d+))?(?:[rRkKmM]|[Mm]eg|MEG)"  # resistor code, the multiplier as the suffix
+    r"|(\d+)[rRkKmM](\d+)"  # the multiplier as the decimal point
+    # a whole number with an SI prefix, each unit with the prefixes it's written with
+    rf"|(\d+)(?:[pnuµμm][Ff]|[nuµμm][Hh]|[nuµμm]A|[mk][Vv]|[mk]W|[mkKMG]{_OHMS}|[kKMG]Hz)"
+    rf"|(\d+)\.(\d+)\s?(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz)|[mkg]?(?:Ω|ohms?))"  # decimal number with a unit
+    rf"|(\d+)\s?{_OHMS}")  # ohms written out
 _VALUE_EXTRA = re.compile(r"01005|0201|0402|0603|0805|1206|1210|1812|2010|2512|x[5-8][rstpv]|c0g|np0|y5v|z5u|smd",
                           re.IGNORECASE)
+# Beside a value only: a tolerance or a rating, a whole number with a unit ("50V" of "100nF 50V")
+_VALUE_RATING = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?(?:%|(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz)))")
+# A unit given apart from its number ("10 k", "100 nF", "16 ohm")
+_VALUE_UNITS = r"(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz|Ω|ohms?)|[rkm]|meg|%)"
 _VALUE_GAP = re.compile(r"[\s,;/]+")
 
 
@@ -64,7 +81,7 @@ def _is_value(text: str) -> bool:
     # "10 k" or "10 kOhm": a number and its unit given apart
     joined: list[str] = []
     for token in tokens:
-        if joined and re.fullmatch(r"(?:±\s?)?\d+(?:\.\d+)?", joined[-1]) and re.fullmatch(_VALUE_UNITS, token, re.I):
+        if joined and re.fullmatch(r"(?:±\s?)?\d+(?:\.\d+)?", joined[-1]) and re.fullmatch(_VALUE_UNITS, token):
             joined[-1] += token
         else:
             joined.append(token)
@@ -74,6 +91,9 @@ def _is_value(text: str) -> bool:
             if not value_digits(*(group for group in match.groups() if group)):
                 return False
             values += 1
+        elif match := _VALUE_RATING.fullmatch(token):
+            if not value_digits(*(group for group in match.groups() if group)):
+                return False
         elif not _VALUE_EXTRA.fullmatch(token):
             return False
     return values > 0

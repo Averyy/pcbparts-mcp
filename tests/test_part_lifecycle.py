@@ -822,6 +822,11 @@ class TestNotSentReason:
         ("10k", "value"), ("4.7k", "value"), ("100nF", "value"), ("4.7uF", "value"), ("1R", "value"),
         ("10k 0402", "value"), ("100nF 50V 0603", "value"), ("4K7 1%", "value"), ("16Ω", "value"),
         ("10 kOhm", "value"), ("22pF/50V", "value"), ("8MHz", "value"),
+        # Astra round 6: resistor codes, SI-prefixed units, decimals with a unit
+        ("4k7", "value"), ("1R5", "value"), ("2M2", "value"), ("0R1", "value"), ("100R", "value"),
+        ("22pF", "value"), ("10uH", "value"), ("1mH", "value"), ("3.3mA", "value"), ("2.2kΩ", "value"),
+        ("4.7µF", "value"), ("1.5A", "value"), ("3.3V", "value"), ("0.25W", "value"), ("100mW", "value"),
+        ("1.5a", "value"), ("10k 50V", "value"), ("100nF 25V X7R", "value"),
         ("DNP", "placeholder"), ("N/A", "placeholder"), ("C7950", "lcsc_code"), ("c2040", "lcsc_code"),
         ("AB", "length"), ("X" * 41, "length"), ("LM358P中文", "not_ascii"), ("ＬＭ358", "not_ascii"),
     ]
@@ -836,12 +841,45 @@ class TestNotSentReason:
         "1N4148", "LM358", "LM358P", "0805B103K500NT", "2N7002", "1N5819", "1N914", "BAT54", "STM32F103C8T6",
         "TPS54331DR", "595-LM358P", "296-1395-5-ND", "B2B-PH-K-S(LF)(SN)", "9774025151R", "885012206095",
         "RC0603FR-0710KL", "AMS1117-3.3", "SS14", "1206", "X7R", "LM358/NOPB", "74HC595", "C1815-Y",
+        # Astra round 6: an integer and one unit letter is a part number (Hammond's 1590A enclosure was
+        # read as 1590 amps and never sent), and so is a "voltage" or "power" with nothing else
+        "1590A", "1590B", "1590BB", "1590BS", "1550A", "100V", "220W", "1000F", "47H", "1590MA",
+        "1590A 0603", "50V 0603", "100V X7R",
     ]
 
     @pytest.mark.parametrize("number", SENT, ids=[f"pn{i}" for i in range(len(SENT))])
     def test_real_part_numbers_are_sent(self, number):
         from pcbparts_mcp.search.mpn import not_sent_reason
         assert not_sent_reason(number) is None
+
+
+class TestIntegerAndUnitLetterIsSent:
+    """Astra review round 6 (2026-11-18): Hammond's 1590A enclosure was taken for 1590 amps, so
+    neither distributor was ever asked about it."""
+
+    async def test_mouser_get_part(self, setup):
+        fake = FakeMouser(mouser_part("1590A", "Hammond Manufacturing"))
+        setup(mouser=fake)
+        reply = await server.mouser_get_part(part_number="1590A|100V")
+        assert fake.sent == ["1590A|100V"] and "not_sent" not in reply
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["1590A"]
+
+    async def test_digikey_get_part(self, setup):
+        fake = FakeDigiKey(dk_product("1590A", "Hammond Manufacturing"), dk_product("1590B", "Hammond Manufacturing"))
+        setup(digikey=fake)
+        for number in ("1590A", "1590B"):
+            reply = await server.digikey_get_part(product_number=number)
+            assert reply["results"][0]["manufacturer"] == "Hammond Manufacturing" and "not_sent" not in reply
+        assert fake.asked == ["1590A", "1590B"]
+
+    async def test_part_lifecycle(self, setup):
+        mouser = FakeMouser(mouser_part("1590A", "Hammond Manufacturing"))
+        setup(mouser=mouser, digikey=FakeDigiKey())
+        rows = (await lifecycle([{"mpn": "1590A", "manufacturer": "Hammond Manufacturing"}, "100V", "10k", "1.5A"]))[
+            "results"]
+        assert (rows[0]["status"], rows[0]["source"]) == ("active", "mouser") and "not_sent" not in rows[0]
+        assert "not_sent" not in rows[1] and [r.get("not_sent") for r in rows[2:]] == ["value", "value"]
+        assert sorted(mouser.sent[0].split("|")) == ["100V", "1590A"]
 
 
 class TestNotSent:
