@@ -398,10 +398,13 @@ class LifecycleLookup:
                 stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
         # The kept listings first, so a maker this call's own parts show listed isn't skipped in it
         self._count_makers(pairs)
+        names: dict[str, set[str]] = {}  # maker key -> the names given for it
+        for entry in entries:
+            if entry.error is None and entry.maker and not entry.not_sent and (key := maker_key(entry.maker)):
+                names.setdefault(key, set()).add(entry.maker)
         for source, client in (("mouser", self._mouser), ("digikey", self._digikey)):
-            makers = {maker_key(e.maker) for e in entries if e.error is None and e.maker and not e.not_sent}
-            if client is not None and makers:
-                not_carried = self._store.makers_not_carried(source, makers)
+            if client is not None and names:
+                not_carried = self._store.makers_not_carried(source, set(names), names)
                 for entry in entries:
                     if entry.maker and maker_key(entry.maker) in not_carried:
                         entry.skip.add(source)

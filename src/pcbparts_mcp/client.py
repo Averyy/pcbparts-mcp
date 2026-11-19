@@ -2113,19 +2113,25 @@ class JLCPCBClient:
 
         No EasyEDA request and no change to the ranking: the alternatives listed footprint
         availability only when the has_easyeda_footprint filter ran, so it took another call each.
-        Parts the seed doesn't know are left without the field (the seed can't prove "none").
+        Parts the seed doesn't know are left without the field (the seed can't prove "none"). The
+        seed answers are read in one database job (_prefetched_seeds): one each was up to 100
+        queued jobs per call, enough to trip the busy cap for everyone else.
         """
         now = time.time()
         parts = [part for key in ("alternatives", "unverified_alternatives", "similar_parts")
                  for part in response.get(key) or []]
         parts += response.get("summary", {}).get("extended_examples") or []
-        for part in parts:
-            lcsc = part.get("lcsc")
-            if not lcsc or "has_easyeda_footprint" in part:
-                continue
-            stored = await self._stored_footprint(lcsc, now)
-            if stored is not None and stored.get("has_easyeda_footprint") is not None:
-                part["has_easyeda_footprint"] = stored["has_easyeda_footprint"]
+        parts = [part for part in parts if part.get("lcsc") and "has_easyeda_footprint" not in part]
+        if not parts:
+            return
+        token = _prefetched_seeds.set(await self._footprint_seeds([part["lcsc"] for part in parts]))
+        try:
+            for part in parts:
+                stored = await self._stored_footprint(part["lcsc"], now)
+                if stored is not None and stored.get("has_easyeda_footprint") is not None:
+                    part["has_easyeda_footprint"] = stored["has_easyeda_footprint"]
+        finally:
+            _prefetched_seeds.reset(token)
 
     def _footprint_filter_note(
         self, candidates: int, checked: int, capped: bool, statuses: list[str], unknown: int | None = None

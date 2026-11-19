@@ -96,3 +96,38 @@ def test_every_json_string_argument_goes_through_the_helper():
                         and isinstance(node.func.value, ast.Name) and node.func.value.id == "json"):
                     callers.add(function.name)
     assert callers == {"_loads_argument", "__call__"}
+
+
+BIG = "1" * 5000  # past Python's 4,300-digit limit for converting an integer's text
+
+
+@pytest.mark.parametrize("tool,arguments", [
+    ("jlc_get_parts", {"parts": f'["C7950", {BIG}]'}),
+    ("part_lifecycle", {"parts": f'["LM358P", {BIG}]'}),
+    ("sensor_recommend", {"measure": f"[{BIG}]"}),
+    ("board_search", {"tag": f"[{BIG}]"}),
+], ids=["get_parts", "lifecycle", "sensor", "board"])
+async def test_an_integer_past_the_digit_limit_is_invalid_json(monkeypatch, tool, arguments):
+    """json.loads raises a plain ValueError (not JSONDecodeError) for an integer over Python's digit
+    limit, which failed these calls with isError. It's invalid JSON like any other: an argument error
+    for the parts lists; measure and tag are then taken as plain text, as for other invalid JSON."""
+    monkeypatch.setattr(server, "_mouser_client", object())  # part_lifecycle parses only with a distributor
+
+    class Unknown:  # sensor and board databases: the text is no measure or tag they know
+        def search(self, **kwargs):
+            value = kwargs.get("measure") or kwargs.get("tag")
+            assert isinstance(value, str) and value.startswith("[1111")
+            error = "Unsupported value for measure: '{}'" if kwargs.get("measure") else "Unsupported tag: '{}'"
+            return {"error": error.format(value[:20]), "results": [], "total": 0}  # as the real ones say
+
+        def get_tag_consensus(self, tag):
+            return None
+
+    monkeypatch.setattr(server, "get_sensor_db", Unknown)
+    monkeypatch.setattr(server, "get_boards_db", Unknown)
+    reply = await getattr(server, tool)(**arguments)
+    if tool in ("jlc_get_parts", "part_lifecycle"):
+        assert reply["error"] == "Invalid parts: not a valid JSON array"
+    else:
+        assert reply["error"].startswith("Unsupported ")
+    assert server._error_kind(reply["error"]) == "bad_request"

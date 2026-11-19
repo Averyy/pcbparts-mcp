@@ -1373,3 +1373,29 @@ class TestMakerEvidence:
         assert bad == {"input": "LM358\\ud800", "status": "unknown", "error": server._UNENCODABLE["error"]}
         assert maker["error"] == server._UNENCODABLE["error"] and maker["input"]["manufacturer"] == "T\\udfffI"
         assert good["status"] == "active" and mouser.sent == ["LM358P"]
+
+
+# --- Astra review round 3, 2026-11-18 ---
+
+class TestListedUnderAnotherName:
+    async def test_a_listing_under_an_equivalent_name_stops_the_skip(self, setup):
+        """The listing check compared maker keys: after 20 misses for "NXP Semicon", DigiKey listing
+        an NXP part under "NXP USA Inc." (key "nxp") didn't stop the skip, so another NXP part came
+        back maker_not_carried with no request. Stored listings are matched with makers_match."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        digikey = FakeDigiKey(dk_product("PCF8574T,118", "NXP USA Inc."), dk_product("PCA9685PW", "NXP USA Inc."))
+        _, _, store, _, _ = setup(digikey=digikey)
+        store.count_maker_parts("digikey", misses("nxp semicon", MAKER_SKIP_NOT_LISTED))
+        assert store.makers_not_carried("digikey", {"nxp semicon"}) == {"nxp semicon"}
+        await server.digikey_get_part(product_number="PCF8574T,118")  # a fresh listing, under DigiKey's name
+        row = (await lifecycle([{"mpn": "PCA9685PW", "manufacturer": "NXP Semicon"}]))["results"][0]
+        assert (row["status"], row["source"]) == ("active", "digikey") and digikey.asked[-1] == "PCA9685PW"
+
+    async def test_only_matching_makers_listings_count(self, setup):
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        digikey = FakeDigiKey(dk_product("LM358P"))
+        _, _, store, _, _ = setup(digikey=digikey)
+        store.count_maker_parts("digikey", misses("uni royal", MAKER_SKIP_NOT_LISTED))
+        await server.digikey_get_part(product_number="LM358P")  # TI's: not UNI-ROYAL's
+        assert store.makers_not_carried("digikey", {"uni royal"}, {"uni royal": {"UNI-ROYAL(Uniroyal Elec)"}}) == {
+            "uni royal"}

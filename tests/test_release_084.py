@@ -89,6 +89,30 @@ class TestNoFeeAlternativesNameExtended:
         assert response["summary"]["extended_examples"][0]["has_easyeda_footprint"] is True
 
 
+    async def test_known_footprints_read_in_one_job(self, monkeypatch):
+        """Astra review round 3 (2026-11-18): 100 returned parts were 100 database jobs."""
+        import pcbparts_mcp.client as client_module
+        from pcbparts_mcp.easyeda_store import FootprintAnswer
+        client = JLCPCBClient()
+        client.set_easyeda_seed(lambda lcsc: None if lcsc == "C7" else FootprintAnswer(True, "a" * 32, "b" * 32, 1.0))
+        jobs = []
+
+        async def run_db(pool, func, *args, **kwargs):
+            jobs.append(func.__name__)
+            return func(*args, **kwargs)
+
+        monkeypatch.setattr(client_module, "run_db", run_db)
+        response = {"alternatives": [{"lcsc": f"C{i}"} for i in range(1, 101)],
+                    "similar_parts": [{"lcsc": "C500", "has_easyeda_footprint": False}],  # already known
+                    "summary": {"extended_examples": [{"lcsc": "C7"}]}}
+        await client._add_known_footprints(response)
+        assert jobs == ["read_all"]
+        assert [p.get("has_easyeda_footprint") for p in response["alternatives"][5:8]] == [True, None, True]
+        assert "has_easyeda_footprint" not in response["summary"]["extended_examples"][0]  # the seed doesn't know it
+        assert response["similar_parts"][0]["has_easyeda_footprint"] is False
+        assert client_module._prefetched_seeds.get() is None
+
+
 class TestSchmittLogic:
     """A no-fee "schmitt trigger logic" search found nothing; the basic 74HC14D is an inverter."""
 

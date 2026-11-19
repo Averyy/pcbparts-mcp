@@ -1275,3 +1275,32 @@ async def test_footprint_seed_lookups_are_one_database_job(real_alternative_reco
     assert footprints["checked"] > 1 and footprints["compatible"] == footprints["checked"]
     assert jobs.count("read_all") == 1 and "seed" not in jobs  # one job, no per-part lookups
     assert client_module._prefetched_seeds.get() is None  # nothing left behind for later checks
+
+
+async def test_known_footprints_are_one_database_job(real_alternative_records, monkeypatch):
+    """Without the footprint filter, every returned part's known footprint was read in a job of its
+    own (_add_known_footprints): up to 100 queued jobs a call, enough to trip the busy cap for other
+    callers. Now the call's seed answers are one job (Astra review round 3, 2026-11-18)."""
+    import pcbparts_mcp.client as client_module
+    from pcbparts_mcp.easyeda_store import FootprintAnswer
+
+    client, original, records, checked = real_alternative_records("C82942")
+
+    def seed(lcsc):
+        return FootprintAnswer(True, "a" * 32, "b" * 32, 1.0)
+
+    client.set_easyeda_seed(seed)
+    jobs = []
+    real_run_db = client_module.run_db
+
+    async def counting_run_db(pool, func, *args, **kwargs):
+        jobs.append(func.__name__)
+        return await real_run_db(pool, func, *args, **kwargs)
+
+    monkeypatch.setattr(client_module, "run_db", counting_run_db)
+    result = await client.find_alternatives(original["lcsc"], limit=10)
+    listed = [part for key in ("alternatives", "unverified_alternatives", "similar_parts")
+              for part in result.get(key) or []]
+    assert len(listed) > 1 and all(part["has_easyeda_footprint"] is True for part in listed)
+    assert jobs.count("read_all") == 1 and "seed" not in jobs and checked == []  # no EasyEDA check either
+    assert client_module._prefetched_seeds.get() is None

@@ -1067,14 +1067,19 @@ def _loads_argument(text: str, check_text: bool = True) -> Any:
     way text that can't be encoded as UTF-8 gets in: the MCP layer refuses a lone surrogate in the
     request itself, but json.loads turns an escaped one ("\\ud800" inside the string) into one,
     which SQLite and the reply's serialisation then fail on. Raises json.JSONDecodeError for
-    invalid JSON, nesting past Python's limit included (its RecursionError failed the call), and
-    with check_text _UnencodableArgument when any string in it can't be encoded, which shows that
-    string escaped, never raw. Without check_text the caller checks each string itself
-    (jlc_get_parts and part_lifecycle make it that row's error)."""
+    invalid JSON, including what json.loads raises otherwise (both failed the call): RecursionError
+    for nesting past Python's limit, and a plain ValueError for an integer over Python's digit limit
+    (sys.get_int_max_str_digits, 4,300). With check_text, raises _UnencodableArgument when any
+    string in it can't be encoded, which shows that string escaped, never raw. Without check_text
+    the caller checks each string itself (jlc_get_parts and part_lifecycle make it that row's
+    error)."""
     try:
         value = json.loads(text)
-    except RecursionError as exc:
-        raise json.JSONDecodeError("nested too deeply", text[:100], 0) from exc
+    except json.JSONDecodeError:
+        raise
+    except (RecursionError, ValueError) as exc:
+        reason = "nested too deeply" if isinstance(exc, RecursionError) else "a number too long"
+        raise json.JSONDecodeError(reason, text[:100], 0) from exc
     if check_text and (bad := _unencodable_text(value)) is not None:
         raise _UnencodableArgument(f"'{_sendable(bad[:60])}' holds an unpaired surrogate escape (\\ud800 to "
                                    "\\udfff without its pair), which isn't text")
