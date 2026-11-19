@@ -14,6 +14,7 @@
 {"l":"C17432984","m":"5220.0143.1","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"1A 250V@AC 500uA Panel Mount Single-Phase Filter - EMC Filters ROHS","a":[["Leakage Current","500uA"],["Length","-"],["Current Rating","1A"],["Height","-"],["Filter Type","Single-Phase Filter"],["Mounting Type","Panel Mount"],["Width","-"],["Voltage - Input","250V@AC"]],"x":0}
 {"l":"C17438639","m":"4301.6207","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[["Leakage Current","-"],["Length","-"],["Current Rating","-"],["Height","-"],["Filter Type","-"],["Mounting Type","-"],["Width","-"],["Voltage - Input","-"]],"x":0}
 {"l":"C17674412","m":"3-100-776","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"10A 250V@AC 500uA Panel Mount Single-Phase Filter - EMC Filters ROHS","a":[["Leakage Current","500uA"],["Length","-"],["Current Rating","10A"],["Height","-"],["Filter Type","Single-Phase Filter"],["Mounting Type","Panel Mount"],["Width","-"],["Voltage - Input","250V@AC"]],"x":0}
+{"l":"C17679236","m":"5220.0623.1","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"250V@AC 500uA 6A Panel Mount - EMC Filters ROHS","a":[["Leakage Current","500uA"],["Length","-"],["Current Rating","6A"],["Height","-"],["Filter Type","-"],["Mounting Type","Panel Mount"],["Width","-"],["Voltage - Input","250V@AC"]],"x":0}
 {"l":"C20110596","m":"3-132-196","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[["Leakage Current","-"],["Length","-"],["Current Rating","-"],["Height","-"],["Filter Type","-"],["Mounting Type","-"],["Width","-"],["Voltage - Input","-"]],"x":0}
 {"l":"C20110628","m":"3-134-880","f":"SCHURTER","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[["Leakage Current","-"],["Length","-"],["Current Rating","10A"],["Height","-"],["Filter Type","-"],["Mounting Type","Panel Mount"],["Width","-"],["Voltage - Input","250V@AC"]],"x":0}
 {"l":"C22490706","m":"1-6609006-8","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}
@@ -21,4 +22,5 @@
 {"l":"C43205291","m":"FN406-6-02","f":"TE Connectivity","p":"Plugin","t":"e","c":3311,"d":"Plugin EMC Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C43532926","m":"RN102-2-02-1M1","f":"TE Connectivity","p":"Plugin","t":"e","c":3311,"d":"Plugin EMC Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C44452410","m":"RN102-0.3-02-12M","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C44452423","m":"RN112-0.6-02-15M","f":"TE Connectivity","p":"Plugin","t":"e","c":3311,"d":"Plugin EMC Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C44452428","m":"RN114-4-02-1M5","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}

@@ -262,6 +262,11 @@
 {"l":"C56145023","m":"CT-2018UGRBC/H-P8-M2","f":"CHONGTIAN","p":"SMD-4P,2x1.8mm","t":"e","c":2115,"d":"SMD-4P,2x1.8mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56145024","m":"CT-3227UGRBC/HW-P8-MX3","f":"CHONGTIAN","p":"SMD-4P,3.2x2.7mm","t":"e","c":2115,"d":"SMD-4P,3.2x2.7mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56145034","m":"CT-3210UGRBC/H-P15-M2","f":"CHONGTIAN","p":"SMD-4P,3.2x1mm","t":"e","c":2115,"d":"SMD-4P,3.2x1mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C56226768","m":"WS2813B-2020-V6","f":"Worldsemi","p":"SMD2020-6P","t":"e","c":2115,"d":"SMD2020-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56267489","m":"CT-2018SURGBC/H-P8-M2","f":"CHONGTIAN","p":"SMD-4P,2x1.8mm","t":"e","c":2115,"d":"SMD-4P,2x1.8mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56267644","m":"CT-1615UGRBC/H-P6-M3","f":"CHONGTIAN","p":"SMD1615-4P","t":"e","c":2115,"d":"SMD1615-4P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56267645","m":"CT-1615UGRBC/HW-P6-M3","f":"CHONGTIAN","p":"SMD1615-4P","t":"e","c":2115,"d":"SMD1615-4P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C56343394","m":"1010GRBH-K5M3P3M3YYDAN-E02MA","f":"Beking Optoelectronics","p":"SMD1010-4P","t":"e","c":2115,"d":"SMD1010-4P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C56343395","m":"1010GRBH-M5S3R3S3YYDAN-E05MA","f":"Beking Optoelectronics","p":"SMD1010-4P","t":"e","c":2115,"d":"SMD1010-4P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C56525235","m":"WS2916A-RGBW-6000K-6500K","f":"Worldsemi","p":"SMD5050-6P","t":"e","c":2115,"d":"SMD5050-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C56525393","m":"WS2916A-RGBW-2700K-3200K","f":"Worldsemi","p":"SMD5050-6P","t":"e","c":2115,"d":"SMD5050-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}

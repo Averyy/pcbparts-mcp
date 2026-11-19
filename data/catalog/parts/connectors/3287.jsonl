@@ -172,6 +172,7 @@
 {"l":"C499128","m":"344112-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C499139","m":"62833-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C499154","m":"794772-4","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
+{"l":"C499158","m":"87077-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C499180","m":"967067-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"1 Sealing plug - Connector Accessories ROHS","a":[["Type","Sealing plug"],["Number of Pins","1"]],"x":0}
 {"l":"C499183","m":"1587828-3","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C499185","m":"2822352-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"Sealing plug - Connector Accessories ROHS","a":[["Type","Sealing plug"]],"x":0}
@@ -885,6 +886,7 @@
 {"l":"C17205110","m":"CAP-WADMSPC1","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17205278","m":"0936010047","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17205353","m":"MS52000-4","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
+{"l":"C17205568","m":"2064620100","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17206015","m":"GT13S-1S-HU","f":"HRS(Hirose)","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17206768","m":"2125161002","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17207842","m":"LF07WBR-C2","f":"HRS(Hirose)","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
@@ -1515,7 +1517,6 @@
 {"l":"C23415614","m":"1897256-2","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C23422178","m":"2325347-4","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C23859216","m":"PYB7042","f":"KEMET","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
-{"l":"C23948666","m":"1587829-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C23964844","m":"3035328","f":"Phoenix Contact","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C24661167","m":"10155475-000LF","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C24663010","m":"10730124","f":"APTIV(Delphi)","p":"-","t":"e","c":3287,"d":"Sealing plug - Connector Accessories ROHS","a":[["Type","Sealing plug"]],"x":0,"n":1}

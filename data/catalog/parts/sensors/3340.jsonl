@@ -21,3 +21,5 @@
 {"l":"C49196608","m":"TS04","f":"Silicore","p":"SOP-14","t":"e","c":3340,"d":"-20℃~+75℃ 100pF 2.5V~5V 4 Supports reset function SOP-14 Capacitive Sensor IC ROHS","a":[["Operating Temperature","-20℃~+75℃"],["Sensor Capacitance Range","100pF"],["Number of Channels","4"],["Supply - Voltage","2.5V~5V"],["Features","Supports reset function"],["Interface","-"]],"x":0}
 {"l":"C53446866","m":"MCP1085S","f":"Mysentech","p":"QFN-24(4x4)","t":"e","c":3340,"d":"Built-in temperature sensor、Supports reset function QFN-24(4x4) Capacitive Sensor IC ROHS","a":[["Features","Built-in temperature sensor、Supports reset function"]],"x":0}
 {"l":"C54839461","m":"MC1081A","f":"Mysentech","p":"TSSOP-16","t":"e","c":3340,"d":"TSSOP-16 Capacitive Sensor IC ROHS","a":[],"x":0}
+{"l":"C56510742","m":"XW01A","f":"Sam&wing","p":"SOT-23-6","t":"e","c":3340,"d":"SOT-23-6 Capacitive Sensor IC ROHS","a":[],"x":0,"n":1}
+{"l":"C56510743","m":"XW01B","f":"Sam&wing","p":"SOT-23-6","t":"e","c":3340,"d":"SOT-23-6 Capacitive Sensor IC ROHS","a":[],"x":0,"n":1}

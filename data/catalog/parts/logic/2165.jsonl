@@ -7,7 +7,7 @@
 {"l":"C516788","m":"MAX6817EUT+T","f":"Analog Devices Inc./Maxim Integrated","p":"SOT-23-6","t":"e","c":2165,"d":"-40℃~+125℃ 2.7V~5.5V 6uA Power-up/reset configuration SOT-23-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Voltage - Supply","2.7V~5.5V"],["Supply Current","6uA"],["Features","Power-up/reset configuration"]],"x":0}
 {"l":"C543032","m":"CD74HC283M96","f":"Texas Instruments","p":"SOIC-16","t":"e","c":2165,"d":"SOIC-16 Specialty Logic ROHS","a":[["Operating Temperature","-55℃~+125℃"],["Number of Channels","4"],["Voltage - Supply","2V~6V"],["Logic Type","Full Adder"]],"x":0}
 {"l":"C546005","m":"74AUP1Z04GW,125","f":"Nexperia","p":"SOT363-2","t":"e","c":2165,"d":"TSSOP-6 Specialty Logic ROHS","a":[],"x":0}
-{"l":"C548474","m":"74LVC1GX04GV,125","f":"Nexperia","p":"SOT457","t":"e","c":2165,"d":"-40℃~+125℃ 1.65V~5.5V TSOP-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Voltage - Supply","1.65V~5.5V"]],"x":0}
+{"l":"C548474","m":"74LVC1GX04GV,125","f":"Nexperia","p":"TSOP-6","t":"e","c":2165,"d":"-40℃~+125℃ 1.65V~5.5V TSOP-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Voltage - Supply","1.65V~5.5V"]],"x":0}
 {"l":"C548477","m":"74LVC1GX04GW-Q100H","f":"Nexperia","p":"TSSOP-6","t":"e","c":2165,"d":"TSSOP-6 Specialty Logic ROHS","a":[],"x":0}
 {"l":"C551315","m":"HEF4007UBT,653","f":"Nexperia","p":"SO-14","t":"e","c":2165,"d":"-40℃~+85℃ 3V~15V SO-14 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Voltage - Supply","3V~15V"]],"x":0}
 {"l":"C561300","m":"XD74LS181","f":"XINLUDA","p":"DIP-24","t":"e","c":2165,"d":"DIP-24 Specialty Logic ROHS","a":[],"x":0}
