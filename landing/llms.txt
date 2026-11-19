@@ -209,10 +209,9 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 - 100 HTTP requests per rolling minute per IPv4 address or IPv6 /64; 1,000 per address in the AI platforms' published ranges (Anthropic's, used by claude.ai and Claude connectors; OpenAI's ChatGPT connectors list).
 - Each MCP message (`initialize`, `tools/call`, ...) counts: a stateless client's tool call is about three. `/health` isn't counted. Bodies over 1 MB: HTTP 413.
 - Replies (`/health`'s too) carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` (seconds until your oldest counted request leaves the minute; 0 with none).
-- Refused: HTTP 429, `Retry-After` and `{error, retry_after, reason, resets_at, tell_user}` (`resets_at`: when, in UTC; `tell_user`: a sentence for the user). Wait `retry_after` seconds, then resend. `per_ip_rate_limit` and `too_many_clients` refusals aren't counted; others are, so retrying sooner hits `per_ip_rate_limit`. `reason`:
+- Refused: HTTP 429, `Retry-After` and `{error, retry_after, reason, resets_at, tell_user}` (`resets_at`: when, in UTC; `tell_user`: a sentence for the user). Wait `retry_after` seconds, then resend. `per_ip_rate_limit` and `too_many_clients` refusals aren't counted; a `datasheet_rate_limit` refusal is, so retrying sooner can hit `per_ip_rate_limit`. `reason`:
   - `per_ip_rate_limit`: your address used its limit.
   - `too_many_clients`: the server is serving as many addresses as it can.
-  - `server_busy`: the database is overloaded; only new `tools/call` requests (or, while busy, bodies slower than 2 s); `retry_after` 2-5 s.
   - `datasheet_rate_limit`: from a `datasheet_pdf` link; at most 20 new links a minute are signed for everyone. Links `jlc_get_part` returned in the last 25 minutes open without one.
 - Heavy use: self-host (Source above).
 

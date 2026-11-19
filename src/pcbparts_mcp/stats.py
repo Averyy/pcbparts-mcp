@@ -7,7 +7,7 @@ by the shared limits). For calls that found nothing or failed, the reason, from 
 (REASONS); and how the checks behind jlc_search's why_empty went. From 0.10.0 also the requests sent to
 the other services we call and the answers their caches saved (UPSTREAM_SOURCES), how many part numbers
 were looked up with Mouser and DigiKey and how many of them were different, and the HTTP requests the
-rate limit or the busy cap turned away. From 0.10.1 also the failed calls and the turned-away requests
+rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the failed calls and the turned-away requests
 in each UTC hour. No IPs, queries or part numbers are kept: callers and distinct part numbers are
 counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
@@ -93,9 +93,10 @@ MAX_DISTINCT_PARTS = 100_000  # distinct part numbers counted a day per distribu
 # HTTP requests server.RateLimitMiddleware turned away (429), by RateLimitMiddleware._refusal_group():
 # per_ip_rate_limit refusals by the group of the address, everyone_else at the normal limit and
 # platform_ranges for the AI platforms' published addresses (Anthropic, OpenAI) at
-# PLATFORM_RATE_LIMIT; server_busy (shared database pressure) and too_many_clients (the address
-# table was full) regardless of address. All are in per_ip_refusals and its total (the name predates
-# the last two); never stores IPs.
+# PLATFORM_RATE_LIMIT; too_many_clients (the address table was full) regardless of address.
+# server_busy holds 0.10.0's busy-cap refusals: the cap was removed in 0.10.1 and nothing counts
+# there now, but days already stored keep their counts, shown and added into totals (always 0 on
+# later days). All are in per_ip_refusals and its total; never stores IPs.
 REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_clients")
 # From 0.10.1, per UTC hour like hours: failed_hours, the tool calls whose outcome was failed, and
 # refused_hours, the requests counted in per_ip_refusals (every group), so a burst can be placed in
@@ -508,7 +509,8 @@ class UsageStats:
                       "of the groups) and by group: per-address rate limit refusals by address group "
                       "(platform_ranges: addresses in the AI platforms' published ranges, which have a "
                       "higher limit; everyone_else: every other caller), then, regardless of address, "
-                      "server_busy (shared database queue pressure) and too_many_clients (the server was "
+                      "server_busy (0.10.0 only: shared database queue pressure; 0 from 0.10.1, which "
+                      "removed that refusal) and too_many_clients (the server was "
                       "tracking as many addresses as it can); null on days before it was counted. "
                       "restarts (from 0.10.0; null before): how many times the server started that day; "
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "

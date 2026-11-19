@@ -301,7 +301,7 @@ class TestUsageStats:
                                      (23, "failed")):
             clock.now = start + hours_later * 3600
             usage.record_call("jlc_search", outcome, 1, reason="jlcpcb_unavailable" if outcome == "failed" else None)
-        for hours_later, group in ((0, "everyone_else"), (5, "server_busy"), (5, "too_many_clients"),
+        for hours_later, group in ((0, "everyone_else"), (5, "everyone_else"), (5, "too_many_clients"),
                                    (23, "platform_ranges")):
             clock.now = start + hours_later * 3600
             usage.record_refusal(group)
@@ -350,7 +350,7 @@ class TestUsageStats:
         assert yesterday["failed_hours"] is None and yesterday["refused_hours"] is None
         clock.advance(3600)  # 22:15: the first failure and refusal since the deploy
         usage.record_call("jlc_search", "failed", 1)
-        usage.record_refusal("server_busy")
+        usage.record_refusal("too_many_clients")
         today = usage.summary()["days"][0]
         assert today["failed_hours"] == [None] * 21 + [0, 1, 0] == today["refused_hours"]
         assert today["tools"]["jlc_search"]["failed"] == 6  # the day's totals still include the hours before
@@ -694,7 +694,7 @@ class TestServerWiring:
         monkeypatch.setattr(stats, "usage", usage)
         usage.record_call("jlc_search", "failed", 5, reason="jlcpcb_unavailable")
         usage.record_call("jlc_search", "ok", 5)
-        usage.record_refusal("server_busy")
+        usage.record_refusal("too_many_clients")
         app = server.create_app()
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:
             body = (await c.get("/mcp/stats")).json()

@@ -1250,8 +1250,8 @@ async def test_real_extended_fallback_uses_only_remaining_budget(real_alternativ
 
 async def test_footprint_seed_lookups_are_one_database_job(real_alternative_records, monkeypatch):
     """A find_alternatives call reads its candidates' seeded footprint answers in one database job
-    per batch of checks, not one each: 15 jobs queued at once tripped the busy cap (12 waiting) on
-    their own (0.10.0)."""
+    per batch of checks, not one each: 15 jobs queued at once put every other caller's database
+    calls behind them (and tripped 0.10.0's busy cap, 12 waiting, on their own)."""
     import pcbparts_mcp.client as client_module
     from pcbparts_mcp.easyeda_store import FootprintAnswer
 
@@ -1279,8 +1279,8 @@ async def test_footprint_seed_lookups_are_one_database_job(real_alternative_reco
 
 async def test_known_footprints_are_one_database_job(real_alternative_records, monkeypatch):
     """Without the footprint filter, every returned part's known footprint was read in a job of its
-    own (_add_known_footprints): up to 100 queued jobs a call, enough to trip the busy cap for other
-    callers. Now the call's seed answers are one job (Astra review round 3, 2026-11-18)."""
+    own (_add_known_footprints): up to 100 queued jobs a call, ahead of other callers' database
+    calls. Now the call's seed answers are one job (Astra review round 3, 2026-11-18)."""
     import pcbparts_mcp.client as client_module
     from pcbparts_mcp.easyeda_store import FootprintAnswer
 

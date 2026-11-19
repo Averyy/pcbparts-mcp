@@ -189,6 +189,29 @@ class TestUsageStats:
         assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 4, "everyone_else": 3, "platform_ranges": 1, "server_busy": 0, "too_many_clients": 0}
         assert REFUSAL_GROUPS == ("everyone_else", "platform_ranges", "server_busy", "too_many_clients")
 
+    def test_stored_busy_refusals_from_0_10_0(self, tmp_path):
+        """0.10.1 removed the busy cap: nothing counts under server_busy any more, but a day 0.10.0
+        stored with busy refusals still loads, shows them and adds them into total and the totals,
+        through saves."""
+        limiter = server.RateLimitMiddleware(None, platform_addresses=server.platform_ranges.PlatformRanges({}))
+        for reason in [*server.RATE_LIMIT_REASONS, None]:
+            assert limiter._refusal_group("203.0.113.7", reason) != "server_busy"
+        path = tmp_path / "usage.json"
+        stored = {"tools": {}, "hours": [0] * 24, "per_ip_refusals": {"everyone_else": 3, "server_busy": 40}}
+        path.write_text(json.dumps({"days": {"2026-11-17": stored, "2026-11-18": stored}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())  # 2026-11-18
+        usage.open(path)
+        usage.record_refusal()  # the upgrade day goes on counting
+        today, yesterday = usage.summary()["days"]
+        assert yesterday["per_ip_refusals"] == {"total": 43, "everyone_else": 3, "platform_ranges": 0, "server_busy": 40,
+                                                "too_many_clients": 0}
+        assert today["per_ip_refusals"]["total"] == 44 and today["per_ip_refusals"]["server_busy"] == 40
+        assert usage.summary()["totals"]["per_ip_refusals"] == {
+            "total": 87, "everyone_else": 7, "platform_ranges": 0, "server_busy": 80, "too_many_clients": 0}
+        usage.save()
+        assert json.loads(path.read_text(encoding="utf-8"))["days"]["2026-11-18"]["per_ip_refusals"] == {
+            "everyone_else": 4, "server_busy": 40}
+
     def test_a_day_without_refusals_shows_none(self):
         usage = UsageStats(clock=Clock())
         usage.record_call("jlc_search", "ok", 1)

@@ -8,10 +8,13 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 
 ### Fixed
 
-- The busy cap refused calls at normal load (`server_busy` 429s, about 0.5% of calls on pcbparts.dev): its defaults were far too low. `DB_BUSY_MAX_WAITING` is now 200 (was 12) and `DB_BUSY_MAX_WAIT_SECONDS` 30 (was 0.5): a call is refused only when it would time out anyway.
+- The busy cap added in 0.10.0 refused calls at normal load (about 0.5% of calls on pcbparts.dev) and is removed: no more `server_busy` 429s.
 
 ### Changed
 
+- `DB_BUSY_MAX_WAITING` and `DB_BUSY_MAX_WAIT_SECONDS` are no longer read.
+- `/health`'s `database_pressure` drops `admitted_not_started`.
+- `/mcp/stats` keeps `per_ip_refusals.server_busy` for days already counted; it stays 0 from now on.
 - `docker-compose.yml`: memory limit 4 GB (was 1 GB; the database alone is about 800 MB) and 3 CPUs (was 1).
 
 ### Added

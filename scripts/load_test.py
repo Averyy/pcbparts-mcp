@@ -22,14 +22,8 @@ Run the container with prod's limits and the per-address limits raised so they d
         --rates 60,120,240,480 --step-seconds 60 --out /tmp/load.jsonl
 
 --xff sends an X-Forwarded-For address (default: one of Anthropic's), so the platform path of the
-rate limiter is the one exercised, as for claude.ai traffic from one address.
-
-This traffic has neither prod's slow searches nor its bursts: never set the busy-cap defaults from it
-(0.10.0's refused prod's normal load). To exercise shedding itself, run at --cpus 0.33 with low
-thresholds (-e DB_BUSY_MAX_WAITING=12 -e DB_BUSY_MAX_WAIT_SECONDS=0.5) and add --expect-busy
---rates 480,720,960,1200. It exits
-nonzero unless some tools/call requests get server_busy 429s, every step's ACCEPTED calls keep
-p95 below --p95-limit (2s), and no other requests fail. The upstream guard still applies.
+rate limiter is the one exercised, as for claude.ai traffic from one address. Any 429 counts as a
+failure (raise the per-address limits as above).
 """
 
 import argparse
@@ -163,11 +157,10 @@ def sse_messages(reply: httpx.Response) -> list[dict]:
 class Step:
     def __init__(self, rate: float):
         self.rate = rate  # calls a minute asked for
-        self.started = self.ok = self.busy = self.tool_errors = self.skipped = 0
+        self.started = self.ok = self.tool_errors = self.skipped = 0
         self.failures: Counter = Counter()
         self.latency: list[float] = []  # whole calls, seconds
         self.call_latency: list[float] = []  # the tools/call request alone
-        self.busy_latency: list[float] = []  # server_busy refusals, tools/call alone
         self.per_tool: dict[str, list[float]] = defaultdict(list)
         self.memory: list[float] = []  # MiB
         self.cpu: list[float] = []  # percent of one CPU
@@ -195,19 +188,6 @@ async def mcp_call(client: httpx.AsyncClient, headers: dict, tool: str, argument
         reply = await client.post("/mcp", headers=call_headers, json={
             "jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": tool, "arguments": arguments}})
         done = time.perf_counter()
-        if reply.status_code == 429:
-            try:
-                body = reply.json()
-            except ValueError:
-                body = {}
-            if isinstance(body, dict) and body.get("reason") == "server_busy":
-                wait = body.get("retry_after")
-                if type(wait) is not int or wait < 1 or reply.headers.get("retry-after") != str(wait):
-                    step.failures["server_busy invalid retry_after"] += 1
-                else:
-                    step.busy += 1
-                    step.busy_latency.append(done - call_start)
-                return None
         if reply.status_code != 200:
             step.failures[f"tools/call HTTP {reply.status_code}"] += 1
             return None
@@ -275,8 +255,6 @@ def summary(step: Step, seconds: float, drain: float, p95_limit: float) -> dict:
     return {
         "target_calls_min": step.rate,
         "started": step.started, "ok": step.ok, "failed": failed, "skipped_inflight_cap": step.skipped,
-        "server_busy": step.busy,
-        "server_busy_p95_ms": ms(percentile(step.busy_latency, 95)),
         "tool_errors": step.tool_errors,
         "achieved_calls_min": round(step.ok / (seconds + drain) * 60),
         "achieved_requests_min": round(3 * step.ok / (seconds + drain) * 60),
@@ -291,12 +269,9 @@ def summary(step: Step, seconds: float, drain: float, p95_limit: float) -> dict:
         "failures": dict(step.failures),
         "memory_max_mib": round(max(step.memory)) if step.memory else None,
         "cpu_avg_pct": round(statistics.mean(step.cpu)) if step.cpu else None,
-        "admission_ok": failed == 0 and step.tool_errors == 0 and step.skipped == 0
-                        and p95 is not None and p95 < p95_limit
-                        and step.ok > 0 and step.ok + step.busy == step.started,
         # ok counts every answered call, tool errors (is_tool_error) included: a server answering every
         # call with an error isn't sustaining the load, while a few odd queries' errors are normal
-        "sustained": failed == 0 and step.busy == 0 and step.skipped == 0 and p95 is not None and p95 < p95_limit
+        "sustained": failed == 0 and step.skipped == 0 and p95 is not None and p95 < p95_limit
                      and step.ok >= 0.95 * step.started and step.tool_errors <= MAX_TOOL_ERROR_SHARE * step.ok,
     }
 
@@ -348,8 +323,6 @@ async def main() -> int:
     parser.add_argument("--timeout", type=float, default=30, help="seconds per HTTP request")
     parser.add_argument("--p95-limit", type=float, default=2.0, help="seconds; a step above it isn't sustained")
     parser.add_argument("--stop-after-unsustained", type=int, default=2)
-    parser.add_argument("--expect-busy", action="store_true",
-                        help="require server_busy 429s and accepted p95 below --p95-limit, with no other failures")
     parser.add_argument("--pause", type=float, default=10, help="seconds between steps")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--out", help="append one JSON line per step here")
@@ -379,8 +352,7 @@ async def main() -> int:
             print(f"STOP: upstream requests were sent during the warm-up: {changed}")
             return 3
 
-        unsustained = total_busy = 0
-        admission_ok = True
+        unsustained = 0
         for rate in [float(r) for r in args.rates.split(",")]:
             step, drain = await run_step(client, headers, inputs, MIXES[args.mix], rate, args.step_seconds,
                                          args.max_inflight, args.container, rng, args.timeout)
@@ -395,21 +367,12 @@ async def main() -> int:
             if result["upstream_sent_rose"]:
                 print(f"STOP: upstream requests were sent: {result['upstream_sent_rose']}")
                 return 3
-            total_busy += step.busy
-            admission_ok = admission_ok and result["admission_ok"]
-            passed = result["admission_ok"] if args.expect_busy else result["sustained"]
-            unsustained = 0 if passed else unsustained + 1
+            unsustained = 0 if result["sustained"] else unsustained + 1
             if unsustained >= args.stop_after_unsustained:
                 print(f"stopping: {unsustained} steps in a row not sustained")
                 break
             await asyncio.sleep(args.pause)
         print(f"upstream/distributor sent after: {await upstream_sent(client, headers) or 'none'}")
-        if args.expect_busy:
-            if not total_busy or not admission_ok:
-                print(f"FAIL: expected busy refusals with accepted p95 < {args.p95_limit}s and no other failures; "
-                      f"server_busy={total_busy}, admission_ok={admission_ok}")
-                return 2
-            print(f"PASS: {total_busy} server_busy refusals; accepted p95 < {args.p95_limit}s at every step")
     return 0
 
 
