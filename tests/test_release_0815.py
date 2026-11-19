@@ -148,7 +148,7 @@ class TestDataAsOf:
     def test_descriptions(self):
         search = _sent(server.jlc_search)
         assert "daily catalog snapshot" in search and "data_as_of" in search and "1-piece price" in search
-        assert "jlc_get_part and jlc_stock_check are live" in search
+        assert "jlc_stock_check and jlc_get_part(live=true) are live" in search  # 0.10.2: the snapshot by default
         assert "live, held up to an hour" in _sent(server.jlc_get_part)
 
 

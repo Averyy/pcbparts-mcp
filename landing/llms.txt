@@ -17,8 +17,8 @@
 ## Which tool
 
 - Find parts: `jlc_search`. Live stock before ordering, or stock under 10: `jlc_stock_check`.
-- One part live: `jlc_get_part(lcsc=...)`; an MPN's JLCPCB parts: `jlc_get_part(mpn=...)`.
-- A BOM (up to 50 codes or MPNs) from the snapshot: `jlc_get_parts`; check live with `jlc_get_part(lcsc=...)` only for a part missing or with stock near the quantity needed.
+- One part: `jlc_get_part(lcsc=...)` (the snapshot; `live=true` for live stock); an MPN's JLCPCB parts: `jlc_get_part(mpn=...)`.
+- A BOM (up to 50 codes or MPNs) from the snapshot: `jlc_get_parts`; check live with `jlc_get_part(lcsc=..., live=true)` only for a part missing or with stock near the quantity needed.
 - Recorded low-stock events: `jlc_stock_history`.
 - A replacement: `jlc_find_alternatives(lcsc=...)`.
 - Mouser or DigiKey: `mouser_get_part`, `digikey_get_part`, only when JLCPCB can't answer or the user asks for that distributor (shared daily limits).
@@ -83,6 +83,7 @@ Live JLCPCB search of the whole catalog (7M+ parts). Matches whole part numbers 
 
 - Arguments: `query` (max 500 characters; one LCSC code returns only that part, with `prices`), `category_name`/`category_id`, `subcategory_name`/`subcategory_id`, `package`/`packages`, `manufacturer`/`manufacturers`, `library_type`, `min_stock` (default 10; 0 includes out of stock), `sort_by` ("quantity" default, "price"), `page` (default 1), `limit` (default 20, 1-100).
 - Reply: `results` (part rows), `page`, `per_page`, `total`, `total_pages`, `has_more`; `hint` when a code matches nothing, or a fragment is inside in-stock part numbers but starts none ("2812": WS2812B).
+- JLCPCB didn't answer: one LCSC code gets its snapshot or gone row (filters not applied) with `live_failed: true`, `live_error`, `note`, `data_as_of`, `prices_as_of`, `price_tiers_as_of`; otherwise `error` and `hint` (`jlc_search` meanwhile).
 
 ### jlc_stock_history
 
@@ -94,12 +95,16 @@ Live JLCPCB search of the whole catalog (7M+ parts). Matches whole part numbers 
 
 ### jlc_get_part
 
-- `lcsc` ("C82899"): live details, cached up to an hour. Wins over `mpn`.
-- `mpn` ("LM358P", max 100 characters): snapshot matches, most stock first, including other dash/space spellings, the maker's packing codes and BOM text ("TL074 OP AMP"), never another grade. Reply `{mpn, results, total, exact, ambiguous, data_as_of, prices_as_of, price_tiers_as_of}`; results are part rows with `prices`. Live stock: `jlc_get_part(lcsc=...)` on a result.
+- `lcsc` ("C82899"): from the snapshot, no request. Live (cached up to an hour) with `live=true`, or when the snapshot doesn't list the code (gone, new). Wins over `mpn`.
+- `live` (default false): applies to `lcsc`; ignored with `mpn`.
+- `mpn` ("LM358P", max 100 characters): snapshot matches, most stock first, including other dash/space spellings, the maker's packing codes and BOM text ("TL074 OP AMP"), never another grade. Reply `{mpn, results, total, exact, ambiguous, data_as_of, prices_as_of, price_tiers_as_of}`; results are part rows with `prices`. Live stock: `jlc_get_part(lcsc=..., live=true)` on a result.
   - `exact`: the number itself matched (ignoring case). `ambiguous`: several parts match (pick by `manufacturer`, `package`). Inexact: `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` (full text) can be other part types, named in `note`.
   - Gone matches (never full text, most `last_stock` first) answer when no in-stock part matches, only full-text ones do, or the gone part has the number itself and the in-stock ones are another maker's with other separators (Molex's 2081001 gone, TE's 208100-1); in-stock matches follow, as `note` says; `hint` and a live-check `next_call` are added. Otherwise in-stock matches answer and `gone_matches` counts the gone ones.
   - No match: `error`, `hint`, `availability: unknown_outside_snapshot`, live-check `next_call`.
-- `lcsc` reply: part row plus `prices`, `datasheet_pdf` (a stable PDF link), `datasheet` (LCSC's viewer page, or null), `maker_datasheet`, `datasheet_note`, `specs_note` (what the listing leaves out), `spec_evidence` (reviewed maker values, conditions, source), `spec_discrepancies` (catalog/document conflicts; catalog specs still used), `lcsc_url`, `min_order`, `reel_qty`, `has_easyeda_footprint` (null unknown, false none), `easyeda_symbol_uuid`, `easyeda_footprint_uuid`. No lifecycle (`part_lifecycle`).
+- `lcsc` reply: part row plus `prices`, `datasheet_pdf` (a stable PDF link; none with `no_datasheet` in the snapshot), `specs_note` (what the listing leaves out), `spec_evidence` (reviewed maker values, conditions, source), `spec_discrepancies` (catalog/document conflicts; catalog specs still used), `has_easyeda_footprint` (null unknown, false none), `easyeda_symbol_uuid`, `easyeda_footprint_uuid`. No lifecycle (`part_lifecycle`).
+  - Snapshot (`data_source.kind` "snapshot"): `data_as_of`, `prices_as_of`, `price_tiers_as_of`, `hint`; EasyEDA fields only where already known.
+  - Live adds `datasheet` (LCSC's viewer page, or null), `maker_datasheet`, `datasheet_note`, `lcsc_url`, `min_order`, `reel_qty`, and LCSC's specs when JLCPCB lists none.
+  - `live_failed: true`: JLCPCB didn't answer; the snapshot reply (or the gone row) instead, with `live_error` and `note`. Neither: the `error`. A live not-found is an `error`.
 
 ### jlc_get_parts
 
@@ -212,7 +217,7 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 - Refused: HTTP 429, `Retry-After` and `{error, retry_after, reason, resets_at, tell_user}` (`resets_at`: when, in UTC; `tell_user`: a sentence for the user). Wait `retry_after` seconds, then resend. `per_ip_rate_limit` and `too_many_clients` refusals aren't counted; a `datasheet_rate_limit` refusal is, so retrying sooner can hit `per_ip_rate_limit`. `reason`:
   - `per_ip_rate_limit`: your address used its limit.
   - `too_many_clients`: the server is serving as many addresses as it can.
-  - `datasheet_rate_limit`: from a `datasheet_pdf` link; at most 20 new links a minute are signed for everyone. Links `jlc_get_part` returned in the last 25 minutes open without one.
+  - `datasheet_rate_limit`: from a `datasheet_pdf` link; at most 20 new links a minute are signed for everyone. Links a live `jlc_get_part` reply gave in the last 25 minutes open without one.
 - Heavy use: self-host (Source above).
 
 ## Quotas

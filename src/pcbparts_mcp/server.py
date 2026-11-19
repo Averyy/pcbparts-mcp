@@ -96,13 +96,21 @@ _price_tiers_info: dict[str, Any] | None = None
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
 HEALTH_STORE_COUNT_TTL = 60
+# The catalog snapshot's scrape time (ComponentDatabase.scraped_at()), read at startup for /health's
+# snapshot (the database doesn't change while the server runs; reading it per request could wait
+# on the connection's lock on the event loop). None before startup or when the database has none.
+_snapshot_as_of: str | None = None
+# /health's snapshot is stale (information only: status and the 503 don't depend on it) when it is
+# older than this: the scrape runs daily, so a day plus the scrape and deploy time
+SNAPSHOT_STALE_HOURS = 30
+_health_clock: Callable[[], float] = time.time  # epoch seconds; replaced in tests
 
 
 @asynccontextmanager
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
-    global _distributor_store, _distributor_stored, _price_tiers_info
+    global _distributor_store, _distributor_stored, _price_tiers_info, _snapshot_as_of
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
     for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
         logger.warning(warning)
@@ -112,6 +120,7 @@ async def lifespan(app):
     db._ensure_db()
     db_stats = db.get_stats()
     logger.info(f"Database ready: {db_stats.get('total_parts', 0)} parts")
+    _snapshot_as_of = db.scraped_at()  # for /health's snapshot
 
     # Load categories from DB (updated daily by scraper, no API call needed)
     _categories = db.get_categories_for_client()
@@ -1061,7 +1070,8 @@ async def jlc_stock_check(
     through large result sets.
     JLCPCB matches whole part numbers and their starts, not text inside them: when no result
     contains a part-number fragment ("2812"), hint names in-stock parts that do (WS2812B). Use
-    jlc_get_part(lcsc=...) for full details.
+    jlc_get_part(lcsc=...) for full details. When JLCPCB doesn't answer, one LCSC code gets the
+    snapshot's row, marked live_failed.
 
     Args:
         query: Keywords (e.g., "ESP32", "10uF 25V", "STM32F103"); one LCSC code ("C5947") returns
@@ -1172,8 +1182,22 @@ async def jlc_stock_check(
         )
     except ValueError as e:
         # Client raises ValueError with actionable messages (rate limited / WAF / timeout).
-        # Return them as a dict so they survive mask_error_details=True.
-        return {"error": str(e)}
+        # Return them as a dict so they survive mask_error_details=True. One LCSC code: the
+        # database's row for it, if it has one, marked live_failed.
+        if not lcsc_code:
+            return {"error": str(e), "hint": _LIVE_SEARCH_DOWN_HINT}
+        # A snapshot row has stock >= 10 (a gone one's is unknown, as its note says): only a higher
+        # min_stock could have left it out
+        filtered = bool(library_type not in (None, "all") or package or parsed_packages or manufacturer or parsed_manufacturers
+                        or resolved_category_id or resolved_subcategory_id or effective_min_stock > DEFAULT_MIN_STOCK)
+        if (reply := await _stock_check_from_database(lcsc_code, str(e), effective_page, effective_limit,
+                                                      filtered)) is not None:
+            stats.count_lcsc_lookup("jlc_stock_check", "fallback")
+            return reply
+        stats.count_lcsc_lookup("jlc_stock_check", "live_failed")
+        return {"error": str(e), "hint": f"The daily snapshot doesn't list {lcsc_code} either; try again later."}
+    if lcsc_code:
+        stats.count_lcsc_lookup("jlc_stock_check", "live")
     if lcsc_code and not result.get("error"):
         exact = [p for p in result.get("results") or [] if (p.get("lcsc") or "").upper() == lcsc_code]
         result.update(results=exact if effective_page == 1 else [], page=effective_page,
@@ -1199,6 +1223,38 @@ async def jlc_stock_check(
                               f"them. In-stock parts with {fragment!r} inside their part number include "
                               f"{', '.join(found)}: search one of those (jlc_stock_check(query={json.dumps(found[0])})).")
     return result
+
+
+# On jlc_stock_check's error when JLCPCB's search doesn't answer (any query but one LCSC code the
+# database has a row for)
+_LIVE_SEARCH_DOWN_HINT = ("JLCPCB's live search didn't answer: meanwhile jlc_search searches the daily snapshot "
+                          "(stock >= 10) and jlc_get_parts looks a BOM's parts up in it; try again later.")
+
+
+async def _stock_check_from_database(code: str, live_error: str, page: int, per_page: int,
+                                     filtered: bool) -> dict[str, Any] | None:
+    """jlc_stock_check(query=code)'s reply when its live search failed: the part's row from the
+    snapshot (or, gone, the one kept after it left) in the live reply's shape, marked live_failed,
+    with the error and a note. filtered: the call gave filters or a min_stock, which aren't applied
+    to it (the note says so). None when the database has no row for it or can't be read."""
+    db = get_db()
+
+    def read() -> tuple[Any, ...]:
+        return db.get_part_snapshot(code, gone=True), db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
+
+    try:
+        part, data_as_of, prices_as_of, tiers_as_of = await run_db(COMPONENT_POOL, read)
+    except (OSError, sqlite3.Error):
+        logger.exception("jlc_stock_check: snapshot lookup failed")
+        return None
+    if part is None:
+        return None
+    note = _live_failed_note(part, data_as_of)
+    if filtered:
+        note += " The filters and min_stock given weren't applied to it."
+    return {"results": [part] if page == 1 else [], "page": page, "per_page": per_page, "total": 1, "total_pages": 1,
+            "has_more": False, "data_as_of": data_as_of, "prices_as_of": prices_as_of,
+            "price_tiers_as_of": tiers_as_of, "live_failed": True, "live_error": live_error, "note": note}
 
 
 def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[SpecFilter] | None:
@@ -1363,8 +1419,8 @@ def jlc_search(
 ) -> dict:
     """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
     Stock is from the daily catalog snapshot, scraped at data_as_of; the 1-piece price is refreshed
-    weekly (prices_as_of; a part new since then has its first scraped price). jlc_get_part and
-    jlc_stock_check are live. Default 20 results; strict=true disables relaxation.
+    weekly (prices_as_of; a part new since then has its first scraped price). jlc_stock_check and
+    jlc_get_part(live=true) are live. Default 20 results; strict=true disables relaxation.
     Reply: filters_applied lists every filter that ran, given or read from the query; parsed shows
     only what the query text gave. relaxed names query words, a
     query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
@@ -2358,39 +2414,41 @@ def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> 
         openWorldHint=False,
     )
 )
-async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
+async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bool = False) -> dict:
     """Full details for one JLCPCB part (all price tiers, datasheet, specs, EasyEDA footprint
     availability), or the JLCPCB parts matching a manufacturer part number.
 
-    Reply: stock and prices are live, held up to an hour; prices lists quantity tiers; datasheet is LCSC's datasheet page (a viewer, null when LCSC
-    has none) and datasheet_pdf the datasheet itself: a short link on this server that redirects to
-    the PDF and stays valid (LCSC's own link when the PDF is LCSC's); maker_datasheet is the manufacturer's own datasheet link where JLCPCB
-    lists one (most TI parts), and datasheet_note says when there is no PDF, or that datasheet_pdf is
-    LCSC's copy when JLCPCB has none (specs come from LCSC too when JLCPCB lists none); specs_note says when LCSC
-    lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC DC-bias
-    loss, an RF cable's end styles, a MOSFET's RDS(on)/Vgs(th) mixing typical and maximum figures,
-    multi-diode loading conditions); spec_evidence cites reviewed manufacturer values and conditions,
-    document identity, printed page and source URL; spec_discrepancies flags catalog/document conflicts
-    without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB availability;
-    lcsc_url is the LCSC product page; pcba_type is "economic" or
-    "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
-    assembly). No lifecycle status: part_lifecycle gives it from Mouser and DigiKey.
-    jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
+    Reply: an LCSC code answers from the daily catalog snapshot (stock >= 10; data_as_of), without
+    min_order, reel_qty, datasheet, maker_datasheet or lcsc_url; live=true, or a code not in the
+    snapshot, asks JLCPCB (live, held up to an hour) and adds them. live_failed: JLCPCB didn't answer,
+    so the snapshot's row answers (note). prices lists quantity tiers; datasheet is LCSC's viewer page
+    (null when LCSC has none) and datasheet_pdf the PDF: a short link on this server that stays valid
+    (LCSC's own link for LCSC's copy); maker_datasheet is the maker's own link where JLCPCB lists one
+    (most TI parts); datasheet_note says when there is no PDF, or that datasheet_pdf is LCSC's copy
+    (specs come from LCSC too when JLCPCB lists none); specs_note says when LCSC lists no specs, or
+    what the listing leaves out for the part type (Isat's definition, MLCC DC-bias loss, RF cable
+    ends, MOSFET RDS(on)/Vgs(th) typical and maximum mixed, multi-diode loading); spec_evidence cites
+    reviewed maker values, conditions and sources; spec_discrepancies flags catalog/document
+    conflicts without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB
+    availability; lcsc_url is the LCSC product page; pcba_type is "economic" or "standard_only"
+    (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard assembly).
+    Lifecycle: part_lifecycle gives it from Mouser and DigiKey. Footprint pads: jlc_get_pinout(lcsc,
+    footprint=true).
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results, total,
     exact (the number itself matched) and ambiguous (several parts match). Non-exact replies
-    add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
-    applicable, and a note naming the part types for related full-text results (and parts another
+    add match (separators, packing, alias, alternative, lcsc or related), matched_mpn, and a note
+    naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
     MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price is refreshed
     weekly (prices_as_of), prices' tiers daily (price_tiers_as_of; null: the 1-piece price only).
     Many parts at once: jlc_get_parts.
-    Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
-    MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
-    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (stock under 10 or
-    delisted) answer when no in-stock part matches but by full text or as another maker's spelling
-    (listed after them): gone, gone_since, last_stock and stock null (unknown), with hint and
-    next_call; otherwise gone_matches counts them.
+    Rows carry data_source (kind/provider/observed_at; a cached live one keeps its time).
+    MPN misses: availability outside the snapshot is unknown; next_call suggests jlc_stock_check with
+    min_stock=0 (not run). Parts that left the snapshot (stock under 10 or delisted) answer when no
+    in-stock part matches but by full text or as another maker's spelling (listed after them): gone,
+    gone_since, last_stock and stock null (unknown), with hint and next_call; otherwise gone_matches
+    counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -2398,6 +2456,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             finds other dash/space spellings, the same manufacturer's other packing codes, and BOM
             entries with notes or alternatives; never a different grade. Finds the JLCPCB
             equivalent of a part from another distributor or a reference design.
+        live: True: lcsc from JLCPCB live, not the snapshot; ignored for mpn (always the snapshot)
     """
     if not lcsc and not mpn:
         return {"error": "Must provide either lcsc or mpn"}
@@ -2457,20 +2516,98 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             reply["gone_matches"] = len(gone)
         return reply
 
-    # LCSC lookup via live API (existing behavior)
+    # LCSC code: the daily snapshot answers, unless live=true or the snapshot doesn't list the part
+    # (it left, or is new or unknown); then JLCPCB does, and the database's row if JLCPCB doesn't answer
     if not _client:
         raise RuntimeError("Client not initialized")
+    code = lcsc.strip().upper()
+    if not LCSC_CODE.fullmatch(code):  # no request, as get_part() makes none for it
+        return {"error": f"Part {lcsc} not found"}
+    if not live and (reply := await _part_from_database(code)) is not None:
+        stats.count_lcsc_lookup("jlc_get_part", "snapshot")
+        return reply
 
     try:
         result = await _client.get_part(lcsc)
-    except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout)
+    except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout), all "JLCPCB didn't answer"
+        if (reply := await _part_from_database(code, live_error=str(e))) is not None:
+            stats.count_lcsc_lookup("jlc_get_part", "fallback")
+            return reply
+        stats.count_lcsc_lookup("jlc_get_part", "live_failed")
         return {"error": str(e)}
+    stats.count_lcsc_lookup("jlc_get_part", "live")
     if not result:
         return {"error": f"Part {lcsc} not found"}
     result = _short_datasheet_link(result)
     if note := _subcategory_note([result]):
         result = {**result, "note": note}
     return result
+
+
+# Once on jlc_get_part(lcsc)'s snapshot reply: where it's from, and what live=true adds
+_SNAPSHOT_HINT = ("From the daily snapshot (stock >= 10) of data_as_of. live=true gives live stock, plus min_order, "
+                  "reel_qty, the datasheet page, maker_datasheet and lcsc_url.")
+_NO_SPECS_IN_SNAPSHOT = ("JLCPCB lists no specs for this part, so searches with spec filters leave it out; "
+                         "live=true adds LCSC's where it has them.")
+
+
+def _snapshot_date(data_as_of: str | None) -> str:
+    """The snapshot's date for a note ("2026-11-19"), or "unknown date" without one."""
+    return data_as_of[:10] if data_as_of else "unknown date"
+
+
+def _live_failed_note(part: dict[str, Any], data_as_of: str | None) -> str:
+    """What a reply the database gave in place of a failed live lookup is (live_failed)."""
+    if part.get("gone"):
+        return (f"JLCPCB didn't answer, so this is what the daily snapshot of {_snapshot_date(data_as_of)} kept: "
+                f"the part left it on {part.get('gone_since')} (stock under 10, or no longer listed), so stock is "
+                "null (unknown) and last_stock is from the last scrape that listed it. Try live again later.")
+    return (f"JLCPCB didn't answer, so this is the daily snapshot of {_snapshot_date(data_as_of)} (stock >= 10 "
+            "then). Try live again later.")
+
+
+async def _part_from_database(code: str, live_error: str | None = None) -> dict[str, Any] | None:
+    """jlc_get_part(lcsc=code)'s reply from the database alone, with no request of any kind: the
+    snapshot's part with the live reply's field names for what the snapshot has (every price
+    break in prices when loaded, this server's datasheet_pdf link unless JLCPCB lists no
+    datasheet, the footprint where it's already known: ComponentDatabase.get_part_snapshot,
+    JLCPCBClient.known_footprint), data_as_of, prices_as_of, price_tiers_as_of and _SNAPSHOT_HINT.
+    With live_error (the live lookup failed): marked live_failed, with that error and a note
+    instead of the hint, and a part kept after it left the snapshot (gone) answers too. None when
+    the database has neither, or can't be read."""
+    db, client = get_db(), _client
+
+    def read() -> tuple[Any, ...]:
+        part = db.get_part_snapshot(code, gone=live_error is not None)
+        seed = client.footprint_seed(code) if part is not None and not part.get("gone") else None
+        return part, seed, db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
+
+    try:
+        part, seed, data_as_of, prices_as_of, tiers_as_of = await run_db(COMPONENT_POOL, read)
+    except (OSError, sqlite3.Error):
+        logger.exception("jlc_get_part: snapshot lookup failed")
+        return None
+    if part is None:
+        return None
+    reply = dict(part)
+    if not reply.get("gone"):
+        if not reply.get("specs") and "specs_note" not in reply:
+            reply["specs_note"] = _NO_SPECS_IN_SNAPSHOT
+        # The live reply's short link, which signs JLCPCB's PDF when visited; none for a part
+        # JLCPCB lists no datasheet for (no_datasheet), where the link would find nothing
+        if not reply.get("no_datasheet") and (base := _datasheet_link_base()):
+            reply["datasheet_pdf"] = f"{base}/mcp/datasheet/{code}"
+        reply.update(await client.known_footprint(code, seed))
+    reply.update(data_as_of=data_as_of, prices_as_of=prices_as_of, price_tiers_as_of=tiers_as_of)
+    notes = [_subcategory_note([reply])]
+    if live_error is None:
+        reply["hint"] = _SNAPSHOT_HINT
+    else:
+        reply.update(live_failed=True, live_error=live_error)
+        notes.append(_live_failed_note(reply, data_as_of))
+    if note := " ".join(filter(None, notes)):
+        reply["note"] = note
+    return reply
 
 
 # What a gone row is, once per jlc_get_part(mpn) or jlc_get_parts reply that has one
@@ -2608,7 +2745,7 @@ PartsItem = Annotated[Any, WithJsonSchema({"anyOf": [{"type": "string"},
 def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot (stock
     >= 10), database only: for BOM refreshes and checking many parts at once. For one part's live
-    stock, prices or datasheet, use jlc_get_part.
+    stock, prices or datasheet, use jlc_get_part(live=true).
     Reply: data_as_of, prices_as_of, price_tiers_as_of, counts (found, gone, not_found, error), hint
     when any part is gone or not found, and results in input order, each with input. An LCSC code's
     row has jlc_get_part's fields (prices: quantity tiers), or not_found; an MPN's row is like
@@ -3743,6 +3880,18 @@ def _distributor_store_counts() -> dict[str, Any] | None:
     return counts
 
 
+def _snapshot_health() -> dict[str, Any]:
+    """/health's snapshot: when the catalog snapshot was scraped, its age in hours (0.1) by
+    _health_clock and whether that's over SNAPSHOT_STALE_HOURS; age and stale null without a
+    readable time."""
+    try:
+        scraped = datetime.datetime.fromisoformat(_snapshot_as_of).timestamp()  # type: ignore[arg-type]
+    except (TypeError, ValueError, OverflowError):
+        return {"data_as_of": _snapshot_as_of, "age_hours": None, "stale": None}
+    age = (_health_clock() - scraped) / 3600
+    return {"data_as_of": _snapshot_as_of, "age_hours": round(age, 1), "stale": age > SNAPSHOT_STALE_HOURS}
+
+
 # Health check endpoint
 async def health(request):
     """The server's state. 503 (status "unhealthy") while a database pool has had jobs waiting and
@@ -3761,6 +3910,7 @@ async def health(request):
         "database_pressure": pressure,
         "platform_ranges": _platform_ranges_info,
         "price_tiers": _price_tiers_info,
+        "snapshot": _snapshot_health(),
     }
     if stuck:
         reply["problem"] = (f"database jobs have waited {pressure['stalled_seconds']:.0f} s with none "

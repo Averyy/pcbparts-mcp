@@ -8,8 +8,8 @@ by the shared limits). For calls that found nothing or failed, the reason, from 
 the other services we call and the answers their caches saved (UPSTREAM_SOURCES), how many part numbers
 were looked up with Mouser and DigiKey and how many of them were different, and the HTTP requests the
 rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the failed calls and the turned-away requests
-in each UTC hour. No IPs, queries or part numbers are kept: callers and distinct part numbers are
-counted through salted hashes held in memory for the current day only, with a new random salt each
+in each UTC hour. From 0.10.2 also how LCSC-code lookups were answered (snapshot, live or a
+fallback). No IPs, queries or part numbers are kept: callers and distinct part numbers are counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
 twice; each day's `restarts` (from 0.10.0) says how many there were.
 
@@ -103,12 +103,18 @@ REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_c
 # the day (before or after a deploy, say). None on a day saved before 0.10.1; on the day it started,
 # None for the hours before that.
 HOURLY_SINCE_0_10_1 = ("failed_hours", "refused_hours")
+# From 0.10.2, per day (None on days saved before): how the LCSC-code lookups of jlc_get_part, and
+# jlc_stock_check's one-code queries, were answered, one event a lookup: snapshot (from the database,
+# no request), live (JLCPCB answered, found or not), fallback (JLCPCB didn't answer; the database
+# did, live_failed) and live_failed (JLCPCB didn't answer and the database has nothing: the error)
+LCSC_LOOKUP_TOOLS = ("jlc_get_part", "jlc_stock_check")
+LCSC_LOOKUP_EVENTS = ("snapshot", "live", "fallback", "live_failed")
 
 
 def _new_day() -> dict[str, Any]:
     return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {},
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
-            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}}
+            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -179,6 +185,12 @@ def _clean_day(day: dict) -> dict[str, Any]:
         clean[field] = _hours(day.get(field))
     # None: not counted (a day saved before 0.10.0)
     clean["restarts"] = None if day.get("restarts") is None else _int(day["restarts"])
+    # None: not counted (a day saved before 0.10.2), shown as null rather than as no lookups
+    lookups = day.get("lcsc_lookups")
+    clean["lcsc_lookups"] = ({name: {event: _int(counts.get(event)) for event in LCSC_LOOKUP_EVENTS}
+                              for name, counts in lookups.items()
+                              if name in LCSC_LOOKUP_TOOLS and isinstance(counts, dict)}
+                             if isinstance(lookups, dict) else None)
     clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
     return clean
 
@@ -294,6 +306,8 @@ class UsageStats:
                 del self._days[old]
         if day["per_ip_refusals"] is None:  # a day saved before 0.10.0: refusals count from now on
             day["per_ip_refusals"] = {}
+        if day["lcsc_lookups"] is None:  # a day saved before 0.10.2: lookups count from now on
+            day["lcsc_lookups"] = {}
         for field in HOURLY_SINCE_0_10_1:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
@@ -382,6 +396,13 @@ class UsageStats:
         refusals[group] = refusals.get(group, 0) + 1
         day["refused_hours"][now.hour] = (day["refused_hours"][now.hour] or 0) + 1
 
+    def record_lcsc_lookup(self, tool: str, event: str) -> None:
+        """How one LCSC-code lookup was answered: tool one of LCSC_LOOKUP_TOOLS, event one of
+        LCSC_LOOKUP_EVENTS. Anything else isn't counted."""
+        if tool in LCSC_LOOKUP_TOOLS and event in LCSC_LOOKUP_EVENTS:
+            counts = self._day()["lcsc_lookups"].setdefault(tool, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
+            counts[event] += 1
+
     def record_why_empty(self, result: str) -> None:
         """How the checks behind a why_empty reply went: one of WHY_EMPTY_RESULTS."""
         if result in WHY_EMPTY_RESULTS:
@@ -421,9 +442,14 @@ class UsageStats:
         total_upstream: dict[str, dict[str, int]] = {}
         total_parts: dict[str, dict[str, int]] = {}  # totals only: distinct can't be added across days
         total_refusals: dict[str, int] = {}
+        total_lookups: dict[str, dict[str, int]] = {}
         total_hours = [0] * 24
         for date in dates:
             day = self._days[date]
+            for name, c in (day["lcsc_lookups"] or {}).items():
+                total = total_lookups.setdefault(name, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
+                for key, value in c.items():
+                    total[key] = total.get(key, 0) + value
             for name, c in day["upstream"].items():
                 total = total_upstream.setdefault(name, dict.fromkeys(UPSTREAM_EVENTS, 0))
                 for key, value in c.items():
@@ -468,6 +494,7 @@ class UsageStats:
                 "parts_asked": dict(sorted(day["parts_asked"].items())),
                 "per_ip_refusals": _refusals_view(day["per_ip_refusals"]),
                 "restarts": day["restarts"],
+                "lcsc_lookups": _lookups_view(day["lcsc_lookups"]),
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -514,7 +541,11 @@ class UsageStats:
                       "tracking as many addresses as it can); null on days before it was counted. "
                       "restarts (from 0.10.0; null before): how many times the server started that day; "
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "
-                      "restart twice."),
+                      "restart twice. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code "
+                      "lookups and jlc_stock_check's one-code queries were answered, one each: snapshot (the "
+                      "daily snapshot, no request), live (JLCPCB answered), fallback (JLCPCB didn't answer and "
+                      "the snapshot did: live_failed in the reply) and live_failed (JLCPCB didn't answer, "
+                      "nothing to fall back on: the error)."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -530,6 +561,7 @@ class UsageStats:
                 "upstream": _upstream_view(total_upstream),
                 "parts_asked": dict(sorted(total_parts.items())),
                 "per_ip_refusals": _refusals_view(total_refusals),
+                "lcsc_lookups": _lookups_view(total_lookups),
             },
             "days": out,
         }
@@ -548,6 +580,14 @@ def _tools_view(tools: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
 def _upstream_view(upstream: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
     """Each source's counts, in UPSTREAM_SOURCES order."""
     return {name: upstream[name] for name in UPSTREAM_SOURCES if name in upstream}
+
+
+def _lookups_view(lookups: dict[str, dict[str, int]] | None) -> dict[str, dict[str, int]] | None:
+    """Each tool's LCSC-code lookups, in LCSC_LOOKUP_TOOLS order; None when not counted."""
+    if lookups is None:
+        return None
+    return {name: {event: lookups[name].get(event, 0) for event in LCSC_LOOKUP_EVENTS}
+            for name in LCSC_LOOKUP_TOOLS if name in lookups}
 
 
 def _refusals_view(refusals: dict[str, int] | None) -> dict[str, int] | None:
@@ -590,3 +630,10 @@ def count_upstream(source: str, event: str, count: int = 1) -> None:
         usage.record_upstream(source, event, count)
     except Exception:
         logger.exception("Usage stats: couldn't count an upstream request")
+
+
+def count_lcsc_lookup(tool: str, event: str) -> None:
+    try:
+        usage.record_lcsc_lookup(tool, event)
+    except Exception:
+        logger.exception("Usage stats: couldn't count an LCSC-code lookup")

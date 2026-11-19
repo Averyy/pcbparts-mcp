@@ -123,7 +123,7 @@ Other people's measurements of the same endpoint:
 - **On the first EasyEDA 403, stop sending.** Don't re-run the integration tests, run single tests,
   or retry by hand. A few stray requests don't seem to extend a block, but heavy retry traffic
   during one probably turned a 2-minute block into a 38–89 minute one. Confirm prod is fine with one `jlc_get_part`
-  call on pcbparts.dev (`has_easyeda_footprint` should be `true`), then wait.
+  call with `live=true` on pcbparts.dev (`has_easyeda_footprint` should be `true`), then wait.
 - Give integration runs the endpoint to themselves: no other EasyEDA traffic (smoke tests, other
   runs, manual calls) for 3 minutes before a full `-m integration` run, and none for 3 minutes after.
   It sends about 20 requests, and a block lasts a bit over 2 minutes.

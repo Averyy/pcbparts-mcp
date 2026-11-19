@@ -812,6 +812,36 @@ class JLCPCBClient:
         answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL)
         return answer.as_result() if answer is not None else None
 
+    def footprint_seed(self, lcsc: str) -> FootprintAnswer | None:
+        """A part's seeded footprint answer, read now: call it inside a database job (run_db), then
+        pass it to known_footprint. None without a seed or when the read fails."""
+        if self._easyeda_seed is None:
+            return None
+        try:
+            return self._easyeda_seed(lcsc.strip().upper())
+        except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+            logger.warning(f"EasyEDA footprint seed lookup failed for {lcsc}: {type(e).__name__}: {e}")
+            return None
+
+    async def known_footprint(self, lcsc: str, seed: FootprintAnswer | None) -> dict[str, Any]:
+        """has_easyeda_footprint and the UUIDs where they're already known, never a request: a live
+        answer in the memory cache, the store, or `seed` (footprint_seed's, read by the caller in
+        its own database job). has_easyeda_footprint None (unknown) otherwise. Not counted in the
+        upstream stats: no request would have been made."""
+        lcsc = lcsc.strip().upper()
+        now = time.time()
+        async with self._get_easyeda_cache_lock():
+            cached = self._easyeda_cache.get(lcsc)
+        if cached is not None and not cached[2] and now - cached[0] < EASYEDA_FOOTPRINT_CACHE_TTL:
+            return dict(cached[1])
+        token = _prefetched_seeds.set({lcsc: seed})
+        try:
+            stored = await self._stored_footprint(lcsc, now)
+        finally:
+            _prefetched_seeds.reset(token)
+        return stored if stored is not None else {
+            "has_easyeda_footprint": None, "easyeda_symbol_uuid": None, "easyeda_footprint_uuid": None}
+
     async def _record_live_footprint(self, lcsc: str, result: dict[str, Any]) -> None:
         """Keep a real /api/products answer in memory and in the store."""
         now = time.time()
@@ -1531,7 +1561,7 @@ class JLCPCBClient:
             wait = max(1, math.ceil(60 - (now - min(self._datasheet_signings))))
             raise DatasheetLinkBusy(
                 f"This server signs at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet links a minute for all "
-                f"users; try again in {wait}s. A datasheet_pdf link jlc_get_part returned in the last "
+                f"users; try again in {wait}s. A datasheet_pdf link a live jlc_get_part reply gave in the last "
                 f"{(PDF_LINK_SECONDS - PDF_LINK_MIN_REMAINING) // 60} minutes opens without one.", retry_after=wait)
         self._datasheet_signings.append(now)
         response = await self._request(JLCPCB_SEARCH_URL, {

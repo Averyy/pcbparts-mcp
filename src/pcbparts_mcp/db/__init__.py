@@ -28,6 +28,7 @@ from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
 from .lookup import (
     add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_price_tiers, get_snapshot_rows, get_sold_out_rows,
+    sold_out_part,
 )
 from .categories import (
     CandidateBatch,
@@ -656,6 +657,27 @@ class ComponentDatabase:
         if not self._conn:
             return None
         return self._snapshot_part(get_by_lcsc(self._conn, lcsc, self._subcategories))
+
+    @_reads
+    def get_part_snapshot(self, lcsc: str, *, gone: bool = False) -> dict[str, Any] | None:
+        """jlc_get_part's answer from the database: the snapshot's part (get_by_lcsc's fields, prices
+        after price with every price break when loaded: lookup.snapshot_prices), or, with gone and
+        when the snapshot doesn't list it, the part kept after it left (lookup.sold_out_part's
+        fields, its one prices tier, data_source.observed_at null); None when neither has it."""
+        self._ensure_db()
+        if not self._conn:
+            return None
+        part = get_by_lcsc(self._conn, lcsc, self._subcategories)
+        if part is not None:
+            return self._snapshot_part(add_snapshot_prices(self._conn, [part], self._price_tiers_as_of is not None)[0])
+        if not gone or not self._has_sold_out:
+            return None
+        row = self._conn.execute("SELECT * FROM sold_out WHERE lcsc = ?", [lcsc.upper()]).fetchone()
+        if row is None:
+            return None
+        kept = add_snapshot_prices(self._conn, [sold_out_part(row, self._subcategories)], False)[0]
+        kept["data_source"] = {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
+        return kept
 
     @_reads
     def get_easyeda_seed(self, lcsc: str) -> FootprintAnswer | None:

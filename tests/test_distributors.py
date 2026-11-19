@@ -1314,7 +1314,8 @@ class TestGetPartMPN:
         mock_client.get_part = AsyncMock(return_value={"lcsc": "C1525", "model": "test"})
         srv._client = mock_client
         try:
-            result = await jlc_get_part(lcsc="C1525", mpn="AO3400A")
+            # live=true: by default C1525 answers from the snapshot without calling the client
+            result = await jlc_get_part(lcsc="C1525", mpn="AO3400A", live=True)
             # Should call client.get_part (LCSC path), not DB lookup
             mock_client.get_part.assert_called_once_with("C1525")
         finally:

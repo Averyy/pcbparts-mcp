@@ -160,7 +160,8 @@ async def test_live_network_waits_do_not_count(monkeypatch):
 
     monkeypatch.setattr(db_worker, "database_pressure", pressure)
     monkeypatch.setattr(server, "_client", types.SimpleNamespace(get_part=lookup))
-    tasks = [asyncio.create_task(server.jlc_get_part(lcsc="C1")) for _ in range(20)]
+    # live=true: straight to the live lookup (by default a database read for the snapshot comes first)
+    tasks = [asyncio.create_task(server.jlc_get_part(lcsc="C1", live=True)) for _ in range(20)]
     try:
         await entered.wait()
         assert pressure.snapshot() == {} and pressure.running() == {}

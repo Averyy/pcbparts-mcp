@@ -156,7 +156,7 @@ class TestReplies:
             async def find_alternatives(self, **kwargs):
                 return {"original": dict(TestReplies.PART), "alternatives": []}
         monkeypatch.setattr(server, "_client", Fake())
-        part = await server.jlc_get_part(lcsc="C15127")
+        part = await server.jlc_get_part(lcsc="C15127", live=True)  # the snapshot answers without it
         assert part["datasheet_pdf"] == "https://pcbparts.dev/mcp/datasheet/C15127"
         alternatives = await server.jlc_find_alternatives(lcsc="C15127")
         assert alternatives["original"]["datasheet_pdf"] == "https://pcbparts.dev/mcp/datasheet/C15127"
