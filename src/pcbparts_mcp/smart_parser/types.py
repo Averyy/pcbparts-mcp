@@ -7,6 +7,11 @@ from ..subcategory_aliases import BATTERY_HOLDER_SUBCATEGORIES, ISOLATED_SIBLING
 
 # Pre-sorted by length (longest first) for correct matching
 _SUBCATEGORY_KEYWORDS_BY_LENGTH = sorted([*SUBCATEGORY_ALIASES, *UNAVAILABLE_SUBCATEGORY_ALIASES], key=len, reverse=True)
+# Compiled once: extract_component_type tries every keyword on every query, and compiling them
+# per call (more than Python's regex cache holds) cost about a tenth of a search, under the GIL.
+# Word boundaries, so "sram" doesn't match inside "PSRAM".
+_KEYWORD_PATTERNS = {keyword: re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
+                     for keyword in _SUBCATEGORY_KEYWORDS_BY_LENGTH}
 
 PD_ROLE_PATTERN = re.compile(r'\b(?:controllers?|sinks?|sources?|triggers?|receivers?|negotiat\w*)\b', re.IGNORECASE)
 _PD_MARKER = re.compile(r'\b(?:pd|power[-\s]+delivery)\b', re.IGNORECASE)
@@ -104,8 +109,7 @@ def extract_component_type(
             continue
         if memory_is_spec and keyword in ("flash", "nor flash", "nand", "nand flash", "sram", "psram"):
             continue
-        # Use word boundaries to avoid "sram" matching inside "PSRAM"
-        pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
+        pattern = _KEYWORD_PATTERNS[keyword]
         if pattern.search(query_lower):
             # "addressable RGB LED": the modifier can be separated from "led" by "RGB",
             # which would pick plain RGB LEDs (no controller) and drop the word.
