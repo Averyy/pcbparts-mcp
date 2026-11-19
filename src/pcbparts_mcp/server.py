@@ -2492,27 +2492,23 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB availability;
     lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
-    assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; part_lifecycle gives it
-    from Mouser and DigiKey, for one part or a BOM. jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
-    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total,
-    exact (the number itself matched, ignoring case) and ambiguous (several parts match). Non-exact replies
+    assembly). No lifecycle status: part_lifecycle gives it from Mouser and DigiKey.
+    jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
+    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results, total,
+    exact (the number itself matched) and ambiguous (several parts match). Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
-    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price (1 piece)
-    is refreshed weekly (prices_as_of), and prices lists the quantity tiers from the daily scrape
-    (price_tiers_as_of; null when this server has none, then prices is the 1-piece price alone).
-    Many parts at once (a BOM): jlc_get_parts, from the snapshot.
+    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price is refreshed
+    weekly (prices_as_of), prices' tiers daily (price_tiers_as_of; null: the 1-piece price only).
+    Many parts at once: jlc_get_parts.
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
-    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (under 10 or no
-    longer listed) are kept until it lists them again: when one matches and no in-stock part does
-    but by full text, or it has the number itself and the only in-stock parts are another maker's
-    spelled with other separators (those are listed after it), it answers with gone, gone_since (the
-    date it left), last_stock, stock null (unknown) and data_source.observed_at null (what's kept
-    predates gone_since), plus hint and that next_call; with parts in stock that match, gone_matches
-    counts them.
+    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (stock under 10 or
+    delisted) answer when no in-stock part matches but by full text or as another maker's spelling
+    (listed after them): gone, gone_since, last_stock and stock null (unknown), with hint and
+    next_call; otherwise gone_matches counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -2952,14 +2948,9 @@ async def jlc_find_alternatives(
     Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
-    savings.order_total uses price breaks at component_quantity (boards * placements) from the
-    original's live prices and the candidates' snapshot (savings.price_tiers_as_of) once that
-    quantity reaches a break above either part's first; a part below its second break, or both when
-    either lacks tiers, uses its qty-1 price; savings.price_basis says which (price_tiers_as_of is
-    null for qty 1, so at the default quantity order_total is assembly_fee plus unit_price_diff).
-    savings.unit_price_diff stays at qty 1;
-    original_unit_price_at_quantity, replacement_unit_price_at_quantity and unit_price_diff_at_quantity
-    in savings give the prices and difference used for order_total. Ranking still uses qty-1 prices.
+    savings.order_total prices component_quantity (boards * placements) at each part's price break
+    for that quantity (savings.price_basis, savings.price_tiers_as_of; the *_at_quantity fields give
+    the prices used); unit_price_diff and the ranking use qty-1 prices.
     summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
     library/package eligibility, footprint and land-check outcomes/cap omissions and per-list output truncation.
     Connector alternatives list "land pattern and pin 1 position" as unchecked: makers' footprints for
@@ -3209,27 +3200,21 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out,
-    so use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
-    asked for Mouser's own stock or price. For lifecycle, use part_lifecycle (a whole BOM per call).
-    Batch up to 10 parts per call (one request; one more when a broad number filled Mouser's
-    50-result reply, for the numbers it crowded out). Don't retry a quota error.
-    Reply: each part's answer is kept up to 3 days (not found: a day); observed_at is the oldest
-    one's time. lifecycle is Mouser's status where it states one (Not Recommended for New Designs,
-    End of Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including
-    some the maker marks NRND (AP2553W6-7); lifecycle_status is active, nrnd, last_time_buy, obsolete
-    or unknown (null is active). digikey_get_part's lifecycle is DigiKey's product status (it listed
-    AP2553W6-7 as NRND); the maker's site decides.
-    not_found lists the given numbers no result matches (Mouser skips them without saying), and
-    those not sent: a value ("10k"), an LCSC code, a BOM placeholder or non-ASCII text can't be a
-    Mouser part number, so not_sent gives each one's reason (value, lcsc_code, placeholder,
-    not_ascii) and no request is spent on it. A limit holding back numbers not kept yet, while
-    others were: the kept ones answer, not_checked lists the rest, retry_after says when to ask
-    them (with none kept, the limit error). lookup_failed: numbers Mouser gave an error for.
-    Each result's requested is the number it answers (null when it can't be put down to one of the
-    numbers given), matched_by how: exact, separators, packing (JST's (LF)/(SN) endings set aside)
-    or mouser_pn are that part; prefix (a longer number) and other need checking.
-    A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
+    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out: use
+    it only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
+    Mouser; for lifecycle use part_lifecycle. Batch up to 10 parts per call. Don't retry a quota
+    error.
+    Reply: answers are kept up to 3 days (not found: a day); observed_at is the oldest used.
+    lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
+    including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
+    NRND); lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown (null is active).
+    not_found lists the given numbers no result matches, and those not sent (not_sent gives each
+    reason: value such as "10k", lcsc_code, placeholder, not_ascii; no request spent). A spent limit
+    with some numbers kept: those answer, not_checked lists the rest, retry_after says when to ask.
+    lookup_failed: numbers Mouser gave an error for. Each result's requested is the number it
+    answers, matched_by how: exact, separators, packing (JST's (LF)/(SN) endings set aside) or
+    mouser_pn are that part; prefix and other need checking. Check manufacturer too (Mouser's
+    SRV05-4 is onsemi's).
 
     Args:
         part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
@@ -3262,20 +3247,19 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(product_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out, so
-    use it only when JLCPCB can't answer: jlc_search / jlc_get_part found nothing, or the user
-    asked for DigiKey's own stock or price. One part per call: don't check whole BOMs; for
-    lifecycle use part_lifecycle. Don't retry a quota error.
+    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out: use it
+    only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
+    DigiKey; one part per call, not whole BOMs; for lifecycle use part_lifecycle. Don't retry a
+    quota error.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
-    lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date is DigiKey's
-    last order date where given. Answers are kept up to 3 days (not found: a day; observed_at).
-    A number several makers use returns each maker's listing, most stock first. Each result's
-    requested is the number asked, matched_by how it matched: exact, separators, packing (JST's
-    (LF)/(SN) endings set aside) or digikey_pn are that part; prefix and other need checking.
-    A number that can't be a DigiKey part number isn't sent: its not-found reply adds not_sent
-    (value: "10k"; lcsc_code; placeholder; length: not 3-40 characters; not_ascii).
+    lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date where given.
+    Answers are kept up to 3 days (not found: a day; observed_at). A number several makers use
+    returns each maker's listing, most stock first. requested is the number asked, matched_by how:
+    exact, separators, packing (JST's (LF)/(SN) endings set aside) or digikey_pn are that part;
+    prefix and other need checking. A number that can't be a DigiKey part number isn't sent
+    (not_sent, as in mouser_get_part, plus length: not 3-40 characters).
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
