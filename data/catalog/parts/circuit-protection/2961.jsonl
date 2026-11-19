@@ -150,6 +150,7 @@
 {"l":"C3206717","m":"03450101HX010","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"1 20A 20mm 5mm 600V Clip Cylindrical - Fuseholders ROHS","a":[["Fuse Diameter (φD)","5mm"],["Fuseholder Type","Clip"],["Voltage Rating","600V"],["Current Rating","20A"],["Fuse Type","Cylindrical"],["Number of Circuits","1"],["Fuse Length","20mm"]],"x":0}
 {"l":"C3206785","m":"3530","f":"Keystone","p":"插件,P=6.9mm","t":"e","c":2961,"d":"15A 6.35mm Clip Cylindrical 插件,P=6.9mm Fuseholders ROHS","a":[["Fuse Diameter (φD)","6.35mm"],["Fuseholder Type","Clip"],["Current Rating","15A"],["Fuse Type","Cylindrical"]],"x":0}
 {"l":"C3206828","m":"FX0415","f":"Bulgin","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
+{"l":"C3206831","m":"8040.0001","f":"SCHURTER","p":"Plugin","t":"e","c":2961,"d":"32A 32mm 6.3mm 600V Clip Cylindrical 插件 Fuseholders ROHS","a":[["Fuse Diameter (φD)","6.3mm"],["Fuseholder Type","Clip"],["Voltage Rating","600V"],["Current Rating","32A"],["Fuse Type","Cylindrical"],["Fuse Length","32mm"]],"x":0}
 {"l":"C3206858","m":"8040.0003","f":"SCHURTER","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C3206938","m":"01520001TXN941","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C3207114","m":"BK/1A1119-10-R","f":"EATON","p":"-","t":"e","c":2961,"d":"6.35mm Clip Cylindrical - Fuseholders ROHS","a":[["Fuse Diameter (φD)","6.35mm"],["Fuseholder Type","Clip"],["Fuse Type","Cylindrical"]],"x":0}
@@ -172,6 +173,7 @@
 {"l":"C6275811","m":"FH201-13","f":"HONGJU","p":"-","t":"e","c":2961,"d":"1 15A 250V 30mm 6mm Cylindrical - Fuseholders ROHS","a":[["Fuse Diameter (φD)","6mm"],["Voltage Rating","250V"],["Current Rating","15A"],["Fuse Type","Cylindrical"],["Number of Circuits","1"],["Fuse Length","30mm"]],"x":0}
 {"l":"C7305306","m":"09010002H","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C7599353","m":"0853.9561","f":"SCHURTER","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
+{"l":"C17311502","m":"0853.0551","f":"SCHURTER","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C17320370","m":"4628C","f":"Keystone","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C17352004","m":"0031.2321","f":"SCHURTER","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C17464305","m":"4245C","f":"Keystone","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
