@@ -1021,15 +1021,76 @@ def _caller_ip() -> str | None:
         return None
 
 
+def _encodable(text: str) -> bool:
+    """Whether the text can be sent as UTF-8 (no unpaired surrogate)."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def _sendable(value: Any) -> Any:
+    """value with any text that can't be sent as UTF-8 written as its escapes ("\\ud800"), in dict
+    keys and values and list items too: a reply holding a lone surrogate can't be serialised."""
+    if isinstance(value, str):
+        return value if _encodable(value) else value.encode("utf-8", "backslashreplace").decode("utf-8")
+    if isinstance(value, dict):
+        return {_sendable(key): _sendable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sendable(item) for item in value]
+    return value
+
+
+class _UnencodableArgument(ValueError):
+    """A JSON-string argument holds text that can't be encoded as UTF-8 (an unpaired surrogate)."""
+
+
+def _unencodable_text(value: Any) -> str | None:
+    """The first string in value, at any depth (dict keys too), that can't be encoded as UTF-8."""
+    stack = [value]
+    while stack:  # not recursive: json.loads nests as deep as Python's limit allows
+        item = stack.pop()
+        if isinstance(item, str):
+            if not _encodable(item):
+                return item
+        elif isinstance(item, dict):
+            stack.extend(item.keys())
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return None
+
+
+def _loads_argument(text: str, check_text: bool = True) -> Any:
+    """json.loads of a JSON-string tool argument: every tool reads them through this. It's the one
+    way text that can't be encoded as UTF-8 gets in: the MCP layer refuses a lone surrogate in the
+    request itself, but json.loads turns an escaped one ("\\ud800" inside the string) into one,
+    which SQLite and the reply's serialisation then fail on. Raises json.JSONDecodeError for
+    invalid JSON, nesting past Python's limit included (its RecursionError failed the call), and
+    with check_text _UnencodableArgument when any string in it can't be encoded, which shows that
+    string escaped, never raw. Without check_text the caller checks each string itself
+    (jlc_get_parts and part_lifecycle make it that row's error)."""
+    try:
+        value = json.loads(text)
+    except RecursionError as exc:
+        raise json.JSONDecodeError("nested too deeply", text[:100], 0) from exc
+    if check_text and (bad := _unencodable_text(value)) is not None:
+        raise _UnencodableArgument(f"'{_sendable(bad[:60])}' holds an unpaired surrogate escape (\\ud800 to "
+                                   "\\udfff without its pair), which isn't text")
+    return value
+
+
 # Helpers to handle JSON string arrays from MCP clients
 def _parse_list_param(value: list[str] | str | None, *, allow_blank: bool = False) -> list[str] | None:
-    """Accept a list, JSON array, or one literal value; never discard an element."""
+    """Accept a list, JSON array, or one literal value; never discard an element. Text that can't be
+    encoded as UTF-8 raises _UnencodableArgument (a ValueError), like any other bad value."""
     if value is None:
         return None
     if isinstance(value, str):
         if value.lstrip().startswith(("[", "{", '"')):
             try:
-                value = json.loads(value)
+                value = _loads_argument(value)
             except json.JSONDecodeError as exc:
                 raise ValueError("expected a string or JSON array of strings") from exc
         else:
@@ -1260,7 +1321,7 @@ def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[Spec
         return None
     if isinstance(filters, str):
         try:
-            filters = json.loads(filters)
+            filters = _loads_argument(filters)  # unencodable text: _UnencodableArgument, a ValueError
         except json.JSONDecodeError as exc:
             raise ValueError("expected a JSON array of {name, op, value} objects") from exc
     if not isinstance(filters, list):
@@ -2682,8 +2743,8 @@ def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
     items: Any = parts
     if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
         try:
-            items = json.loads(items)
-        except (json.JSONDecodeError, RecursionError):  # nested past Python's limit: not a parts list either
+            items = _loads_argument(items, check_text=False)  # unencodable text: that row's error
+        except json.JSONDecodeError:  # nested past Python's limit too: not a parts list either
             return _argument_error("parts", ValueError("not a valid JSON array"),
                                    ["LCSC code", "MPN", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
@@ -3238,27 +3299,6 @@ def _has_control_characters(text: str) -> bool:
     return any(unicodedata.category(c) == "Cc" for c in text)
 
 
-def _encodable(text: str) -> bool:
-    """Whether the text can be sent as UTF-8 (no unpaired surrogate)."""
-    try:
-        text.encode("utf-8")
-    except UnicodeEncodeError:
-        return False
-    return True
-
-
-def _sendable(value: Any) -> Any:
-    """value with any text that can't be sent as UTF-8 written as its escapes ("\\ud800"), in dict
-    keys and values and list items too: a reply holding a lone surrogate can't be serialised."""
-    if isinstance(value, str):
-        return value if _encodable(value) else value.encode("utf-8", "backslashreplace").decode("utf-8")
-    if isinstance(value, dict):
-        return {_sendable(key): _sendable(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [_sendable(item) for item in value]
-    return value
-
-
 def _echo_input(item: Any) -> Any:
     """An input as a reply's input echoes it: as given, except a string over 100 characters (its
     first 100 and "...") or anything else whose JSON is over 200 (the first 100 characters of that
@@ -3368,8 +3408,8 @@ async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
     items: Any = parts
     if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
         try:
-            items = json.loads(items)
-        except (json.JSONDecodeError, RecursionError):  # nested past Python's limit: not a parts list either
+            items = _loads_argument(items, check_text=False)  # unencodable text: that row's error
+        except json.JSONDecodeError:  # nested past Python's limit too: not a parts list either
             return _argument_error("parts", ValueError("not a valid JSON array"),
                                    ["MPN", "LCSC code", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
@@ -3570,11 +3610,13 @@ def sensor_recommend(
     # elements — they bypass Pydantic and get .lower()'d in sensor_db.search)
     if isinstance(measure, str):
         try:
-            parsed = json.loads(measure)
+            parsed = _loads_argument(measure)
             if isinstance(parsed, list):
                 measure = [m for m in parsed if isinstance(m, str)] or None
         except json.JSONDecodeError:
             pass
+        except _UnencodableArgument as exc:  # echoed by the measure error, it couldn't be sent
+            return _argument_error("measure", exc, ["string", "array of strings", "JSON array of strings"])
 
     if query and len(query) > 500:
         return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
@@ -3676,11 +3718,13 @@ def board_search(
     # Handle JSON-string tag param from some MCP clients
     if isinstance(tag, str):
         try:
-            parsed = json.loads(tag)
+            parsed = _loads_argument(tag)
             if isinstance(parsed, list):
                 tag = parsed
         except json.JSONDecodeError:
             pass
+        except _UnencodableArgument as exc:  # SQLite failed on it ("Board search failed")
+            return _argument_error("tag", exc, ["string", "array of strings", "JSON array of strings"])
 
     if isinstance(tag, str):
         tag = "usb" if tag.strip().lower() == "usb-c" else tag.strip().lower()

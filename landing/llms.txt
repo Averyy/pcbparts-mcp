@@ -46,7 +46,7 @@ Clients that only run local commands (Copilot for Xcode): `{"command": "npx", "a
 
 ## Tools
 
-Optional filters and identity arguments default to null unless stated otherwise. Result limits are integers clamped to each tool's range. `library_type` accepts `basic`, `preferred`, `no_fee` (basic or preferred), `extended`, `all`; ignores case and surrounding whitespace; accepts `no-fee`. `packages` and `manufacturers` accept arrays, JSON-array strings or one literal string, never comma-split (max 50 items each).
+Optional filters and identity arguments default to null unless stated otherwise. Result limits are integers clamped to each tool's range. `library_type` accepts `basic`, `preferred`, `no_fee` (basic or preferred), `extended`, `all`; ignores case and surrounding whitespace; accepts `no-fee`. `packages` and `manufacturers` accept arrays, JSON-array strings or one literal string, never comma-split (max 50 items each). A JSON-string argument (`packages`, `manufacturers`, `spec_filters`, a `lcsc` list, `measure`, `tag`) holding an unpaired surrogate escape such as `\ud800` is refused with `error: "Invalid <argument>: ..."`, which shows it escaped (`jlc_get_parts` and `part_lifecycle` make it that part's error instead).
 
 ### jlc_search
 
