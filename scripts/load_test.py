@@ -24,7 +24,10 @@ Run the container with prod's limits and the per-address limits raised so they d
 --xff sends an X-Forwarded-For address (default: one of Anthropic's), so the platform path of the
 rate limiter is the one exercised, as for claude.ai traffic from one address.
 
-For admission control, run at --cpus 0.33 and add --expect-busy --rates 480,720,960,1200. It exits
+This traffic has neither prod's slow searches nor its bursts: never set the busy-cap defaults from it
+(0.10.0's refused prod's normal load). To exercise shedding itself, run at --cpus 0.33 with low
+thresholds (-e DB_BUSY_MAX_WAITING=12 -e DB_BUSY_MAX_WAIT_SECONDS=0.5) and add --expect-busy
+--rates 480,720,960,1200. It exits
 nonzero unless some tools/call requests get server_busy 429s, every step's ACCEPTED calls keep
 p95 below --p95-limit (2s), and no other requests fail. The upstream guard still applies.
 """

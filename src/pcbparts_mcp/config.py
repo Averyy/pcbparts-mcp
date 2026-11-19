@@ -66,18 +66,19 @@ RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
 # than RATE_LIMIT_REQUESTS (RateLimitMiddleware._limit_for takes the larger).
 PLATFORM_RATE_LIMIT = number_setting("PLATFORM_RATE_LIMIT", 1000, 1)
 # Shed new tools/call requests if ANY database pool has this many jobs waiting to start (counting
-# tool calls admitted that haven't started yet), or its oldest has waited this many seconds.
-# Measured 2026-11-18 at a third of a CPU (the VPS estimate,
-# knee ~600 calls/min): 8 / 0.25 s kept accepted p95 near 1.5 s past the knee but refused 11-17%
-# of calls at 360-600 a minute; 16 / 1.0 s refused ~1% at 360 but let accepted p95 reach ~2.5 s.
-# Without a cap, 840 a minute collapsed to p95 12.8 s. 12 / 0.5 s sits between; the CPU quota
-# exaggerates queueing at moderate load, so check prod's server_busy counts and tune by env. To turn
-# the cap off, set both very large (1000000).
-DB_BUSY_MAX_WAITING = number_setting("DB_BUSY_MAX_WAITING", 12, 1)
-DB_BUSY_MAX_WAIT_SECONDS = number_setting("DB_BUSY_MAX_WAIT_SECONDS", 0.5, 0.001)
+# tool calls admitted that haven't started yet), or its oldest has waited this many seconds: only
+# when a new caller would time out anyway (queries run one at a time, so ten 1 s searches from one
+# assistant already make the last wait 10 s). 0.10.0 shipped 12 / 0.5 s, tuned on a synthetic load test, and prod
+# refused about 0.5% of calls at 80 a minute (2026-11-19): component queries run one at a time, an
+# ordinary search takes up to 1 s on the VPS, so one call waiting behind it passed 0.5 s, and a
+# dozen quick lookups arriving together passed 12. Before the cap prod served this traffic without
+# refusals. Tune by env from prod's server_busy counts (/mcp/stats refused_hours); to turn the cap
+# off, set both very large (1000000).
+DB_BUSY_MAX_WAITING = number_setting("DB_BUSY_MAX_WAITING", 200, 1)
+DB_BUSY_MAX_WAIT_SECONDS = number_setting("DB_BUSY_MAX_WAIT_SECONDS", 30.0, 0.001)
 # /health answers 503 (unhealthy) while a database job has waited this long to start: a worker is
 # stuck (queries have no timeout), and every tools/call would be refused as busy until a restart.
-# Far above anything the busy cap lets a normal spike reach (it sheds new calls at 0.5 s).
+# Far above anything the busy cap lets a normal spike reach (it sheds new calls at 30 s).
 DB_STUCK_WAIT_SECONDS = number_setting("DB_STUCK_WAIT_SECONDS", 60.0, 1.0)
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit

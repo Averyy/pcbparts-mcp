@@ -159,12 +159,12 @@ class TestPressure:
         assert (settings["DB_BUSY_MAX_WAITING"], settings["DB_BUSY_MAX_WAIT_SECONDS"]) == (3, 0.5)
 
     @pytest.mark.parametrize("name,value,used,warned", [
-        ("DB_BUSY_MAX_WAIT_SECONDS", "inf", 0.5, True),  # was accepted: OverflowError on every POST
-        ("DB_BUSY_MAX_WAIT_SECONDS", "nan", 0.5, True),
+        ("DB_BUSY_MAX_WAIT_SECONDS", "inf", 30.0, True),  # was accepted: OverflowError on every POST
+        ("DB_BUSY_MAX_WAIT_SECONDS", "nan", 30.0, True),
         ("DB_BUSY_MAX_WAIT_SECONDS", "0", 0.001, True),
         ("DB_BUSY_MAX_WAIT_SECONDS", " 1.5 ", 1.5, False),
-        ("DB_BUSY_MAX_WAITING", "12.5", 12, True),  # was a ValueError at import
-        ("DB_BUSY_MAX_WAITING", "", 12, False),
+        ("DB_BUSY_MAX_WAITING", "12.5", 200, True),  # was a ValueError at import
+        ("DB_BUSY_MAX_WAITING", "", 200, False),
         ("DB_BUSY_MAX_WAITING", "1000000", 1000000, False),  # how to turn the cap off (with the wait)
         ("DB_STUCK_WAIT_SECONDS", "-1", 1.0, True),
         ("DB_STUCK_WAIT_SECONDS", "300", 300.0, False),
@@ -620,7 +620,7 @@ class TestBusyHTTP:
         """/health shows the pools' pressure, and answers 503 once a job has waited
         DB_STUCK_WAIT_SECONDS to start (a stuck worker), so the container's healthcheck fails; a
         busy spike's waits are far below that."""
-        assert config.DB_STUCK_WAIT_SECONDS >= 100 * config.DB_BUSY_MAX_WAIT_SECONDS
+        assert config.DB_STUCK_WAIT_SECONDS >= 2 * config.DB_BUSY_MAX_WAIT_SECONDS
         async with client(server.create_app()) as c:
             reply = await c.get("/health")
             assert reply.status_code == 200 and reply.json()["status"] == "healthy"

@@ -25,8 +25,8 @@ services:
       start_period: 30s
       retries: 3
     # Resource limits for local testing (mirrors VPS constraints)
-    mem_limit: 1024m
-    cpus: 1.0
+    mem_limit: 4096m
+    cpus: 3.0
 
 volumes:
   pcbparts-cache:

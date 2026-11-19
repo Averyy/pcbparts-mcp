@@ -6,6 +6,14 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 
 ## 0.10.1 (2026-11-19)
 
+### Fixed
+
+- The busy cap refused calls at normal load (`server_busy` 429s, about 0.5% of calls on pcbparts.dev): its defaults were far too low. `DB_BUSY_MAX_WAITING` is now 200 (was 12) and `DB_BUSY_MAX_WAIT_SECONDS` 30 (was 0.5): a call is refused only when it would time out anyway.
+
+### Changed
+
+- `docker-compose.yml`: memory limit 4 GB (was 1 GB; the database alone is about 800 MB) and 3 CPUs (was 1).
+
 ### Added
 
 - **`/mcp/stats`**: each day adds `failed_hours` (failed tool calls) and `refused_hours` (429 refusals, every `per_ip_refusals` group) per UTC hour, beside `hours`; null on earlier days and, on the upgrade day, for the hours before it.
