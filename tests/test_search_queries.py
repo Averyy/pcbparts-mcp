@@ -1833,18 +1833,21 @@ class TestRelease074:
 
         db = server.get_db()
         db.search(query="10k resistor", limit=1)
-        conn = db._search_engine._conn
+        connection = db._search_engine._connection  # each thread's own connection
 
         class FailingFTS:
+            def __init__(self, conn):
+                self.conn = conn
+
             def execute(self, sql, params=()):
                 if "components_fts" in sql:
                     raise sqlite3.OperationalError("fts5: syntax error")
-                return conn.execute(sql, params)
+                return self.conn.execute(sql, params)
 
             def __getattr__(self, name):
-                return getattr(conn, name)
+                return getattr(self.conn, name)
 
-        monkeypatch.setattr(db._search_engine, "_conn", FailingFTS())
+        monkeypatch.setattr(db._search_engine, "_connection", lambda: FailingFTS(connection()))
         result = await server.jlc_search(query="LM358")  # a text search, so the FTS query runs
         assert result["error"] == "Search failed: query too complex. Reduce the number of filters."
 

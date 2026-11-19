@@ -309,11 +309,37 @@ class CompiledSearch:
     mpn_predicate: Callable[[str], bool] | None = None
 
 
+# The SQL functions searches call. sqlite3 registers functions per connection, so every
+# connection a search can run on needs them (register_search_functions).
+SEARCH_FUNCTIONS: tuple[tuple[str, int, Callable[..., Any]], ...] = (
+    ("mpn_match_rank", 2, mpn_match_rank),
+    ("connector_value", 2, connector_value),
+    ("spec_preference_rank", 3, _spec_preference_rank),
+    ("rds_gate_min", 1, rds_gate_min_json),
+    ("metric_thread_ok", 2, metric_thread_ok),
+    ("switch_circuit", 1, switch_circuit),
+    ("dropout_at_load", 2, dropout_at_load_json),
+    ("rds_on_at_drive_ohms", 2, rds_on_at_drive_ohms),
+    ("vf_at_current", 2, vf_at_current_json),
+    ("dropout_sort_value", 2, dropout_sort_value),
+    ("spec_sort_value", 2, spec_sort_value_json),
+)
+
+
+def register_search_functions(conn: sqlite3.Connection) -> None:
+    """Give a connection the SQL functions searches call (again is harmless: each replaces itself)."""
+    for name, arguments, function in SEARCH_FUNCTIONS:
+        conn.create_function(name, arguments, function, deterministic=True)
+
+
 class SearchEngine:
     """Search engine for parametric component queries.
 
     Handles SQL query building, execution, and result transformation.
-    Instantiated once by ComponentDatabase after caches are loaded.
+    Instantiated once by ComponentDatabase after caches are loaded, and shared by its threads: each
+    query runs on the calling thread's own connection (connection=), and the caches filled during
+    searches (package catalog, fuse packages, spec-sort part types) are computed whole, then
+    assigned, never changed in place, so two threads filling one at once only repeat the work.
     """
 
     def __init__(
@@ -324,50 +350,50 @@ class SearchEngine:
         subcategory_name_to_id: dict[str, int],
         category_name_to_id: dict[str, int],
         category_to_subcategories: dict[int, list[int]] | None = None,
+        connection: Callable[[], sqlite3.Connection] | None = None,
     ):
         """Initialize the search engine.
 
         Args:
-            conn: SQLite connection (must have row_factory set)
+            conn: SQLite connection (must have row_factory set); given the search functions
             subcategories: Dict mapping subcategory IDs to info
             categories: Dict mapping category IDs to info
             subcategory_name_to_id: Lowercase name -> ID mapping
             category_name_to_id: Lowercase name -> ID mapping
             category_to_subcategories: Pre-built category_id -> [subcategory_ids] mapping
+            connection: Returns the connection the calling thread queries on, each with the
+                search functions (ComponentDatabase: one per thread); default: always conn
         """
-        self._conn = conn
-        self._conn.create_function("mpn_match_rank", 2, mpn_match_rank, deterministic=True)
-        self._conn.create_function("connector_value", 2, connector_value, deterministic=True)
-        self._conn.create_function("spec_preference_rank", 3, _spec_preference_rank, deterministic=True)
-        self._conn.create_function("rds_gate_min", 1, rds_gate_min_json, deterministic=True)
-        self._conn.create_function("metric_thread_ok", 2, metric_thread_ok, deterministic=True)
-        self._conn.create_function("switch_circuit", 1, switch_circuit, deterministic=True)
-        self._conn.create_function("dropout_at_load", 2, dropout_at_load_json, deterministic=True)
-        self._conn.create_function("rds_on_at_drive_ohms", 2, rds_on_at_drive_ohms, deterministic=True)
-        self._conn.create_function("vf_at_current", 2, vf_at_current_json, deterministic=True)
-        self._conn.create_function("dropout_sort_value", 2, dropout_sort_value, deterministic=True)
-        self._conn.create_function("spec_sort_value", 2, spec_sort_value_json, deterministic=True)
+        register_search_functions(conn)
+        self._connection = connection if connection is not None else (lambda: conn)
         self._package_names: dict[str, list[str]] | None = None
-        self._fuse_package_types: dict[str, set[int]] = {}
+        self._fuse_package_types: dict[str, frozenset[int]] = {}
         columns = {
             row[1] for row in conn.execute("PRAGMA table_info(components)")
         }
         self._connector_columns = CONNECTOR_COLUMN_NAMES <= columns
         self._mosfet_gate_column = "rds_gate_min_v" in columns
         self._temperature_columns = {"temp_min_c", "temp_max_c"} <= columns
-        self._sort_spec_subcategories: dict[str, list[dict[str, Any]]] = {}
+        self._sort_spec_subcategories: dict[str, tuple[dict[str, Any], ...]] = {}
         self._subcategories = subcategories
         self._categories = categories
         self._subcategory_name_to_id = subcategory_name_to_id
         self._category_name_to_id = category_name_to_id
         self._category_to_subcategories = category_to_subcategories or {}
 
+    @property
+    def _conn(self) -> sqlite3.Connection:
+        """The connection this thread queries on."""
+        return self._connection()
+
     def _get_package_names(self) -> dict[str, list[str]]:
-        if self._package_names is None:
-            self._package_names = index_package_names([
+        names = self._package_names
+        if names is None:
+            names = index_package_names([
                 row[0] for row in self._conn.execute("SELECT DISTINCT package FROM components WHERE package IS NOT NULL")
             ])
-        return self._package_names
+            self._package_names = names  # whole, never changed after
+        return names
 
     def resolve_package_constraints(self, packages: list[str]) -> tuple[list[str], list[dict[str, str]]]:
         """Resolve unavailable suffixes using the catalog across all subcategories."""
@@ -383,18 +409,20 @@ class SearchEngine:
             return False
         for package in packages:
             key = package.upper()
-            if key not in self._fuse_package_types:
+            types = self._fuse_package_types.get(key)
+            if types is None:
                 expanded = [package, *expand_package(package)]
                 catalog = self._get_package_names() if any(package_needs_catalog(p) for p in expanded) else None
                 clause, params = build_package_clause(expanded, catalog)
-                self._fuse_package_types[key] = {
+                types = frozenset(
                     row[0] for row in self._conn.execute(
                         "SELECT DISTINCT subcategory_id FROM components "
                         "WHERE subcategory_id IN (?, ?) AND stock >= ? " + clause,
                         [resettable, disposable, DEFAULT_MIN_STOCK, *params],
                     )
-                }
-            if self._fuse_package_types[key] != {resettable}:
+                )
+                self._fuse_package_types[key] = types
+            if types != {resettable}:
                 return False
         return True
 
@@ -542,9 +570,10 @@ class SearchEngine:
             count_params.extend(stock_params)
 
         # Package filter
-        if self._package_names is None and any(package_needs_catalog(pkg) for pkg in expanded_packages):
-            self._get_package_names()
-        pkg_sql, pkg_params = build_package_clause(expanded_packages, self._package_names)
+        package_names = self._package_names
+        if package_names is None and any(package_needs_catalog(pkg) for pkg in expanded_packages):
+            package_names = self._get_package_names()
+        pkg_sql, pkg_params = build_package_clause(expanded_packages, package_names)
         if pkg_sql:
             sql_parts.append(pkg_sql)
             count_parts.append(pkg_sql)
@@ -749,7 +778,8 @@ class SearchEngine:
         label, parts = spec_sort.spec.label, f"{total} match{'es' if total != 1 else ''}"
         if spec_sort.at is not None:
             return f"None of the {parts} list {label} at that condition, so they're in the usual order."
-        if label not in self._sort_spec_subcategories:
+        found = self._sort_spec_subcategories.get(label)
+        if found is None:
             names = spec_sort.spec.names
             listed = " OR ".join("instr(attributes, ?) > 0" for _ in names)
             try:
@@ -759,8 +789,8 @@ class SearchEngine:
                     [json.dumps(name) for name in names]).fetchall()
             except sqlite3.OperationalError:
                 rows = []
-            self._sort_spec_subcategories[label] = [self._subcategories[i] for i, _ in rows if i in self._subcategories]
-        found = self._sort_spec_subcategories[label]
+            found = tuple(self._subcategories[i] for i, _ in rows if i in self._subcategories)
+            self._sort_spec_subcategories[label] = found
         where = [s["name"] for s in sorted(found, key=lambda s: s.get("category_name") != category)[:3]]
         return (f"None of the {parts} list {label}, so they're in the usual order"
                 + (f"; parts in {', '.join(where)} list it." if where else "."))

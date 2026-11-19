@@ -200,11 +200,11 @@ class TestMpnRows:
     async def test_no_full_text_query_runs(self, db):
         queries = []
         db._ensure_db()
-        db._conn.set_trace_callback(queries.append)
+        db.set_trace_callback(queries.append)
         try:
             await get_parts(["LM32", "R", "10k", {"mpn": "LM3", "manufacturer": "MSKSEMI"}])
         finally:
-            db._conn.set_trace_callback(None)
+            db.set_trace_callback(None)
         assert queries and not any("components_fts" in query for query in queries)
 
     async def test_the_maker_picks_matched_mpn_too(self, db):
@@ -230,12 +230,12 @@ class TestMpnRows:
         monkeypatch.setattr(db, "get_by_mpn", spy)
         queries = []
         db._ensure_db()
-        db._conn.set_trace_callback(queries.append)
+        db.set_trace_callback(queries.append)
         try:
             reply = await get_parts(["LM358", {"mpn": "LM358", "manufacturer": "MSKSEMI"}, "C7950", "C1525", "LM324",
                                      "lm358", {"mpn": "LM358", "manufacturer": "msksemi"}])
         finally:
-            db._conn.set_trace_callback(None)
+            db.set_trace_callback(None)
         assert asked == [("LM358", False), ("LM358", True), ("LM324", False), ("lm358", False)]
         assert sum("WHERE lcsc IN" in query for query in queries) == 1  # every row's part in one read
         assert [row["total"] for row in reply["results"] if "total" in row] == [2, 1, 12, 2, 1]

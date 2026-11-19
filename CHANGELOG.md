@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.2 (2026-11-19)
+
+### Changed
+
+- JLCPCB catalog reads run up to 3 at once (were one at a time), each worker on its own read connection: a quick lookup no longer waits for a slow search while a worker is free. Replies are unchanged.
+
+### Added
+
+- **`/health`**: `database_pressure` adds `running` (database jobs running now) and `longest_running_seconds` (how long the oldest has run). Measurement only: nothing refuses or times out on them.
+
 ## 0.10.1 (2026-11-19)
 
 ### Fixed
