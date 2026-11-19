@@ -2724,24 +2724,16 @@ PartsItem = Annotated[Any, WithJsonSchema({"anyOf": [{"type": "string"},
 )
 @offload(COMPONENT_POOL)
 def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
-    """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot
-    (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
-    live request. For one part's live stock and prices and its datasheet, use jlc_get_part.
-    Reply: data_as_of (stock), prices_as_of (weekly 1-piece price), price_tiers_as_of (the daily
-    scrape's quantity tiers in prices; null when this server has none), counts (found, gone,
-    not_found, error), hint once when any part is gone or not found, and results in input order,
-    each with input (as given; a long one cut at 100 characters). An LCSC code's row has
-    jlc_get_part's fields: lcsc, model, manufacturer, package, stock, price, prices (quantity tiers;
-    the 1-piece price alone when there are none), library_type, preferred, pcba_type, category,
-    subcategory, description; a part that left the snapshot (under 10 or no longer listed) has stock
-    null, gone, gone_since (the date it left) and last_stock instead of pcba_type; or not_found (a
-    plain code string not listed is also tried as a part number, with a note). An MPN's row is like
-    jlc_get_part(mpn): mpn, total, up to 10 results (most stock first: lcsc, model, manufacturer,
-    package, stock, price, prices, library_type, preferred, and the gone fields; gone ones as
-    jlc_get_part(mpn) lists them), exact, ambiguous and match info, gone_matches; or not_found, with
-    other_manufacturers when only other makers list it in stock. MPNs match only as themselves (or
-    by separators, packing codes, aliases or a BOM line's alternatives), never by full text: search
-    values with jlc_search. An unusable input has error.
+    """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot (stock
+    >= 10), database only: for BOM refreshes and checking many parts at once. For one part's live
+    stock, prices or datasheet, use jlc_get_part.
+    Reply: data_as_of, prices_as_of, price_tiers_as_of, counts (found, gone, not_found, error), hint
+    when any part is gone or not found, and results in input order, each with input. An LCSC code's
+    row has jlc_get_part's fields (prices: quantity tiers), or not_found; an MPN's row is like
+    jlc_get_part(mpn=...): mpn, total, up to 10 results, exact, ambiguous, match info, gone_matches,
+    or not_found with other_manufacturers. Gone parts (left the snapshot): stock null, gone,
+    gone_since, last_stock. MPNs never match by full text: search values with jlc_search. An
+    unusable input has error.
 
     Args:
         parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
@@ -3379,19 +3371,15 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
 async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
-    digikey_get_part for lifecycle. Readings are kept 90 days (unknown: a week; not listed: 30
-    days) for every caller; a part not kept yet is looked up on Mouser, and on DigiKey only if
-    Mouser doesn't list it or Mouser's daily limit is spent. A limit in the way (Mouser's
-    per-minute one, or both daily ones) leaves it unknown with retry_after (seconds); a failed
-    lookup, unknown with lookup_failed. Kept parts still answer. Nothing is sent for a number
-    neither lists: unknown with not_sent (value: "10k"; lcsc_code; placeholder; length: not 3-40
-    characters; not_ascii).
-    Reply: results in input order: input (as given; a long one cut at 100 characters), mpn,
-    manufacturer, status, raw (the distributor's wording; Mouser states none for most active parts:
-    "not stated by Mouser"), source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found
-    (neither lists it), retry_after, lookup_failed, not_sent, error (unusable input, such as an MPN
-    with "|"), or makers: each maker's reading, when several list the number and none was given,
-    or only other makers do. status_counts counts the statuses.
+    digikey_get_part for lifecycle. Readings are shared and kept up to 90 days; other parts are
+    asked of Mouser, and of DigiKey only when Mouser doesn't list them or its daily limit is spent.
+    Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
+    "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
+    last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
+    until a limit allows the lookup), lookup_failed, not_sent (never sent: value such as "10k",
+    lcsc_code, placeholder, length, not_ascii), error (unusable input), or makers (each maker's
+    reading, when several list the number and none was given, or only other makers do).
+    status_counts counts the statuses.
 
     Args:
         parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
