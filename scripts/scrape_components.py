@@ -732,8 +732,9 @@ def write_scrape_outputs(
         except Exception:
             raise RuntimeError("Stock history generation failed; published data unchanged") from None
 
-    # Parts gone from the catalog since the last scrape are kept at stock 0 until a scrape lists them
-    # again (catalog/sold_out/, committed). Read from the previous catalog before write_catalog replaces it.
+    # Parts gone from the catalog since the last scrape are kept, their stock unknown (last_stock is
+    # what the last scrape that listed them had), until a scrape lists them again (catalog/sold_out/,
+    # committed). Read from the previous catalog before write_catalog replaces it.
     sold_out: dict[str, dict[str, Any]] | None = None
     if results:
         try:

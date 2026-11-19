@@ -13,11 +13,12 @@ CONFIG_WARNINGS: list[str] = []
 
 
 def number_setting(name: str, default: int | float, minimum: int | float,
-                   environ: Mapping[str, str] = os.environ, warnings: list[str] = CONFIG_WARNINGS) -> int | float:
+                   environ: Mapping[str, str] = os.environ, warnings: list[str] = CONFIG_WARNINGS,
+                   maximum: int | float | None = None) -> int | float:
     """The environment variable `name` as a number of default's type (int or float). Unset or blank:
     the default. Not a number (`1,000`, `1e3` for an int), not finite, or an integer past a float's
-    range (about 1.8e308, either sign): the default, with a warning. Below minimum: minimum, with a
-    warning."""
+    range (about 1.8e308, either sign): the default, with a warning. Below minimum: minimum, and
+    above maximum (if given): maximum, with a warning."""
     raw = (environ.get(name) or "").strip()
     if not raw:
         return default
@@ -38,6 +39,9 @@ def number_setting(name: str, default: int | float, minimum: int | float,
     if value < minimum:
         warnings.append(f"{name}={raw!r} is below {minimum}; using {minimum}")
         return minimum
+    if maximum is not None and value > maximum:
+        warnings.append(f"{name}={raw!r} is above {maximum}; using {maximum}")
+        return maximum
     return value
 
 # Recorded stock events, built offline from the gzipped JSONL files in data/history/.
@@ -51,7 +55,7 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # interface, or a specific IPv4/IPv6 address. Empty counts as unset (uvicorn would read "" as every
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
-HTTP_PORT = int(os.getenv("HTTP_PORT", "8080"))
+HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
 # Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1
 RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
 # The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
@@ -283,7 +287,9 @@ DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
 # ComponentSearchEngine (SamacSys)
 # Search: rs.componentsearchengine.com alligator JSON API (no auth required)
 # Downloads: rs.componentsearchengine.com/ga/model.php (requires CSEARCH_USER/CSEARCH_PASS)
-DISTRIBUTOR_DAILY_LIMIT = int(os.getenv("DISTRIBUTOR_DAILY_LIMIT", "1000"))
+# Requests a day for each Mouser key and DigiKey app. 0 sends none: only kept answers are given, and
+# a lookup that needs a request is refused as over the daily quota.
+DISTRIBUTOR_DAILY_LIMIT = number_setting("DISTRIBUTOR_DAILY_LIMIT", 1000, 0)
 # Our caps per rolling minute, below each API's own: Mouser allows 30 a minute, DigiKey 120 (and
 # suspends an app for ten minutes for going over its per-second threshold).
 MOUSER_PER_MINUTE = 25

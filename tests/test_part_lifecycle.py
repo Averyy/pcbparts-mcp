@@ -1597,3 +1597,64 @@ class TestEveryReturnedMakerIsListed:
         assert mouser.sent == [] and digikey.asked == []
         assert listed_makers(store, "mouser") == {"Texas Instruments"}
         assert listed_makers(store, "digikey") == {"Texas Instruments Inc."}
+
+
+class TestUnreadableMouserReply:
+    """A 200 without its parts list ({"Errors": [], "SearchResults": null}) was read as an empty
+    one: a day's "not found", a 30-day Mouser "not listed" and a maker miss. It's a failed lookup."""
+
+    BODIES = [{"Errors": [], "SearchResults": None}, {"Errors": []}, {"Errors": [], "SearchResults": {"Parts": None}},
+              {"Errors": [], "SearchResults": {"NumberOfResult": 0}}, {"Errors": [], "SearchResults": []}]
+
+    @pytest.mark.parametrize("body", BODIES, ids=["null", "none", "parts_null", "no_parts", "list"])
+    async def test_mouser_get_part(self, setup, body):
+        mouser = FakeMouser(mouser_part("LM358P"), responses=[httpx.Response(200, json=body)])
+        _, _, store, _, _ = setup(mouser=mouser)
+        reply = await server.mouser_get_part(part_number="LM358P")
+        assert reply == {"error": "Mouser part lookup failed: Mouser API returned an unreadable response"}
+        assert server._error_kind(reply["error"]) == "failed"
+        assert store.get_answer("mouser", "LM358P") is None and store.readings("LM358P") == []
+        assert (await server.mouser_get_part(part_number="LM358P"))["total"] == 1  # asked again
+        assert len(mouser.sent) == 2
+
+    async def test_a_batch_keeps_nothing(self, setup):
+        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0])])
+        m, _, store, _, _ = setup(mouser=mouser)
+        with pytest.raises(MouserError, match="unreadable"):
+            await m.get_part("LM358P|NE555P")
+        assert store.get_answer("mouser", "batch:LM358P|NE555P") is None
+        assert store.readings("LM358P") == store.readings("NE555P") == []
+
+    async def test_part_lifecycle(self, setup):
+        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0])])
+        digikey = FakeDigiKey(dk_product("TIX0001"))
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        row = (await lifecycle([{"mpn": "TIX0001", "manufacturer": "TI"}]))["results"][0]
+        assert row == {"input": {"mpn": "TIX0001", "manufacturer": "TI"}, "mpn": "TIX0001", "status": "unknown",
+                       "manufacturer": "TI", "lookup_failed": True}
+        assert digikey.asked == [] and store.readings("TIX0001") == []  # no "not listed", DigiKey not asked
+        assert misses_of(store, "mouser") == 0
+
+
+class TestLifecycleByMouserPartNumber:
+    """part_lifecycle(["595-LM358P"]): Mouser answered LM358P (its Mouser PN), but only the MPN was
+    compared, so the row was not_found after a DigiKey request and a 30-day DigiKey "not listed"."""
+
+    async def test_the_mouser_pn_is_the_part(self, setup):
+        mouser, digikey = FakeMouser(mouser_part("LM358P")), FakeDigiKey(dk_product("LM358P"))
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        row = (await lifecycle(["595-LM358P"]))["results"][0]
+        assert row == {"input": "595-LM358P", "mpn": "595-LM358P", "manufacturer": "Texas Instruments",
+                       "status": "active", "raw": "not stated by Mouser", "source": "mouser",
+                       "observed_at": "2026-11-18T12:00:00+00:00"}
+        assert mouser.sent == ["595-LM358P"] and digikey.asked == []
+        assert [r for r in store.readings("595-LM358P") if not r.found] == []
+        again = (await lifecycle(["595-lm358p"]))["results"][0]  # the kept answer, no request
+        assert again["source"] == "mouser" and len(mouser.sent) == 1 and digikey.asked == []
+
+    async def test_another_parts_mouser_pn_is_not(self, setup):
+        """A loose match whose Mouser PN only starts with the number is still not the part."""
+        mouser, digikey = FakeMouser(mouser_part("LM358PE4", mouser_pn="595-LM358PE4")), FakeDigiKey()
+        setup(mouser=mouser, digikey=digikey)
+        row = (await lifecycle(["595-LM358P"]))["results"][0]
+        assert row["not_found"] is True and digikey.asked == ["595-LM358P"]

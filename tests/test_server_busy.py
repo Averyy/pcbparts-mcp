@@ -175,6 +175,24 @@ class TestPressure:
         assert settings[name] == used and type(settings[name]) is type(used)
         assert any(w.startswith(f"{name}=") for w in settings["CONFIG_WARNINGS"]) is warned
 
+    @pytest.mark.parametrize("name,value,used,warned", [
+        ("HTTP_PORT", "abc", 8080, True),  # these two still raised at import
+        ("HTTP_PORT", "", 8080, False),
+        ("HTTP_PORT", "0", 1, True),
+        ("HTTP_PORT", "70000", 65535, True),
+        ("HTTP_PORT", " 9000 ", 9000, False),
+        ("DISTRIBUTOR_DAILY_LIMIT", "1,000", 1000, True),
+        ("DISTRIBUTOR_DAILY_LIMIT", "0", 0, False),  # no distributor requests: kept answers only
+        ("DISTRIBUTOR_DAILY_LIMIT", "-5", 0, True),
+        ("DISTRIBUTOR_DAILY_LIMIT", "250", 250, False),
+    ], ids=["port_text", "port_blank", "port_zero", "port_high", "port_ok", "limit_comma", "limit_zero",
+            "limit_neg", "limit_ok"])
+    def test_port_and_daily_limit_fall_back(self, monkeypatch, name, value, used, warned):
+        monkeypatch.setenv(name, value)
+        settings = runpy.run_path(config.__file__)
+        assert settings[name] == used and type(settings[name]) is int
+        assert any(w.startswith(f"{name}=") for w in settings["CONFIG_WARNINGS"]) is warned
+
     @pytest.mark.parametrize("sign", ["", "-"], ids=["pos", "neg"])
     def test_integer_too_large_for_a_float_falls_back(self, sign):
         """math.isfinite converts an int to a float: one past a float's range (about 1.8e308, 309

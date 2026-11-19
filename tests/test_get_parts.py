@@ -431,6 +431,14 @@ class TestInputs:
         for error in errors[:7]:
             assert server._error_kind(error) == "bad_request"
 
+    async def test_a_placeholders_row_has_no_not_sent(self, db):
+        """not_sent is part_lifecycle's (no distributor request for a placeholder); jlc_get_parts makes
+        none, and its placeholder row carried not_sent: "placeholder" anyway."""
+        row, = (await get_parts(["DNP"]))["results"]
+        assert row == {"input": "DNP", "error": "Invalid part: 'DNP' is a BOM placeholder (not fitted or not "
+                                                "chosen), not a part number"}
+        assert server._lifecycle_entry("DNP").error["not_sent"] == "placeholder"  # part_lifecycle keeps it
+
     async def test_json_array_string_and_one_part(self, db):
         assert await get_parts('["C7950", {"mpn": "LM358"}]') == await get_parts(["C7950", {"mpn": "LM358"}])
         assert await get_parts('{"mpn": "LM358"}') == await get_parts([{"mpn": "LM358"}])

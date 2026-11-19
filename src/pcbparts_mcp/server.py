@@ -2511,8 +2511,9 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     longer listed) are kept until it lists them again: when one matches and no in-stock part does
     but by full text, or it has the number itself and the only in-stock parts are another maker's
     spelled with other separators (those are listed after it), it answers with gone, gone_since (the
-    date it left), last_stock and stock null (unknown), plus hint and that next_call; with parts in
-    stock that match, gone_matches counts them.
+    date it left), last_stock, stock null (unknown) and data_source.observed_at null (what's kept
+    predates gone_since), plus hint and that next_call; with parts in stock that match, gone_matches
+    counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
@@ -2832,7 +2833,8 @@ def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
             row["note"] = " ".join(filter(None, [row.get("note"), _code_as_mpn_note(entry.lcsc)]))
             counts[result[0][0]] += 1
         elif entry.error is not None:
-            row.update(entry.error)
+            # not_sent (a placeholder's) is part_lifecycle's: no distributor request is made here
+            row.update((key, value) for key, value in entry.error.items() if key != "not_sent")
             counts["error"] += 1
         elif index in retry_failed:
             row["error"] = "Database not available"

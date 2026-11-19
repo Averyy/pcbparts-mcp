@@ -646,11 +646,13 @@ class LifecycleLookup:
 
 
 def _own_listings(results: list[dict[str, Any]], number: str) -> list[dict[str, Any]]:
-    """The results that are the part asked: its MPN (mpn_key), and for a maker without one, the
-    JST part the number names without the (LF)/(SN) endings. A JST part Mouser lists under both
-    spellings is read from the one spelled as asked: the two can have different statuses."""
+    """The results that are the part asked: its MPN or Mouser PN (mpn_key, as mouser._identifies
+    compares them: 595-LM358P is Mouser's LM358P), and for a maker without one, the JST part the
+    number names without the (LF)/(SN) endings. A JST part Mouser lists under both spellings is read
+    from the one spelled as asked: the two can have different statuses."""
     key = mpn_key(number)
-    exact = [r for r in results if mpn_key(r.get("mfr_part_number") or "") == key]
+    exact = [r for r in results if key and key in (mpn_key(r.get("mfr_part_number") or ""),
+                                                   mpn_key(r.get("part_number") or ""))]
     return exact + [r for r in results if r not in exact
                     and same_jst_part(r.get("mfr_part_number") or "", number, r.get("manufacturer") or "")
                     and not any(makers_match(r.get("manufacturer"), e.get("manufacturer")) for e in exact)]

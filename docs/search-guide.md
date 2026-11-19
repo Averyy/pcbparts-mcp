@@ -138,7 +138,7 @@ A passing check means the catalog listings are compatible. It doesn't guarantee 
 
 `why_empty` tests only supplied library/package/stock restrictions on the normalized plan, retaining the other constraints. `blocking` contains useful single changes and next calls; `tested` records counts as exact or at least. `diagnostics_complete=false` means the private diagnostic connection reached its time/work/row budget or a count was incomplete. No suggestion proves suitability; several requirements can interact. Original results stay empty and no live requests are triggered.
 
-Snapshot rows carry `data_source` and their observation time. Live lookups preserve their observed timestamp while cached. A local MPN miss is not proof the part is absent from JLCPCB: its `next_call` describes a live check with `min_stock=0`, which runs only if the caller executes it.
+Snapshot rows carry `data_source` and their observation time (null for a part that left the snapshot: what was kept for it predates its `gone_since`). Live lookups preserve their observed timestamp while cached. A local MPN miss is not proof the part is absent from JLCPCB: its `next_call` describes a live check with `min_stock=0`, which runs only if the caller executes it.
 
 Negative Vout requirements compare signed outputs, including unsigned catalog magnitudes labelled Negative. `Impedance @ Frequency` with `@` requires the listed frequency too; numeric comparisons apply to impedance at that condition. Unsupported part-number exclusions return an error instead of a positive match.
 

@@ -163,7 +163,7 @@ async def test_mouser_tool_reply(mouser, monkeypatch):
     parts = result.structured_content["results"]
     assert [(p["mfr_part_number"], p["requested"], p["matched_by"]) for p in parts] == [
         ("LM358P", "LM358P", "exact"), ("LM358PE4", None, None)]
-    # The fields Backplane parses keep their names and meaning
+    # The fields BOM clients parse keep their names and meaning
     assert {"mfr_part_number", "lifecycle", "price_breaks"} <= set(parts[0])
 
 
@@ -207,8 +207,8 @@ async def digikey():
 
 
 async def test_digikey_jst_finish(digikey, monkeypatch):
-    """research-backplane-code-review problem 5: the asked number and how it matched, so the
-    answer is usable without comparing B2B-PH-K-S(LF)(SN) to B2B-PH-K-S."""
+    """The asked number and how it matched, so a BOM client can use the answer without comparing
+    B2B-PH-K-S(LF)(SN) to B2B-PH-K-S."""
     fake = FakeDigiKey({"ExactMatches": [], "Products": [
         dk_product("B2B-PH-K-S", "JST Sales America Inc.", ("455-1704-ND",), 315042)]})
     monkeypatch.setattr(server, "_digikey_client", digikey(fake))

@@ -748,13 +748,19 @@ class MouserClient:
                     return None, quota_error
             stats.count_distributor("mouser", "sent")
             try:
-                return await self._post("/search/partnumber", body, key_index), None
+                data = await self._post("/search/partnumber", body, key_index)
             except MouserKeySpent as e:
                 if attempt + 1 < len(self._keys):
                     continue
                 return None, (self._quota.paused_error() if self._quota else None) or {"error": str(e)}
             except MouserRateLimited as e:
                 return None, {"error": str(e)}
+            # A reply without its parts list ({"Errors": [], "SearchResults": null}) says nothing
+            # about the numbers: a failed lookup, never "not found" (nothing is kept or counted from it)
+            results = data.get("SearchResults")
+            if not isinstance(results, dict) or not isinstance(results.get("Parts"), list):
+                raise MouserError("Mouser API returned an unreadable response")
+            return data, None
         raise AssertionError("unreachable: the last attempt returns")
 
     def _keep(self, numbers: list[str], data: dict[str, Any], pooled: bool

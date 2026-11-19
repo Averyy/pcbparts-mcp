@@ -176,14 +176,14 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges, comma-separated; empty gives them the normal limit |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's ChatGPT connectors list ([openai.com/chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json)); the image build refreshes the committed copy; empty gives them the normal limit |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |
-| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily request quota for each of Mouser and DigiKey |
+| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily request quota for each of Mouser and DigiKey; `0` sends none (only kept answers) |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Keeps the day's Mouser/DigiKey counts and pauses across restarts |
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | Keeps the `/mcp/stats` counts across restarts |
 | `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | Keeps EasyEDA footprint answers across restarts |
 | `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | Keeps SamacSys searches and KiCad files across restarts |
 | `DISTRIBUTOR_STORE_PATH` | `/app/cache/distributor.db` in Docker | Keeps Mouser/DigiKey answers (3 days) and lifecycle readings (90 days) across restarts |
 
-These five cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`. A numeric setting that isn't a number, or is out of range, is replaced by its default (or its lowest allowed value) and the server logs a warning at startup.
+These five cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`. A numeric setting that isn't a usable number is replaced by its default, and one outside its allowed range by the nearest allowed value (`HTTP_PORT` 1-65535, `DISTRIBUTOR_DAILY_LIMIT` 0 or more, the rate limits 1 or more), and the server logs a warning at startup.
 
 ## API
 

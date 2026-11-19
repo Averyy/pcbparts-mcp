@@ -417,7 +417,9 @@ class TestGetPartByMpn:
         part = reply["results"][0]
         assert {k: part[k] for k in SOLD_ROW if k != "prices"} == {k: v for k, v in SOLD_ROW.items() if k != "prices"}
         assert part["prices"] == [{"qty": "1+", "price": 0.7}] and part["mounting_type"] == "smd"
-        assert part["data_source"] == {"kind": "snapshot", "provider": "JLCPCB", "observed_at": "2026-11-17T22:00:00Z"}
+        # Not observed in this snapshot: its stock and price predate gone_since (it carried the snapshot's time)
+        assert part["data_source"] == {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
+        assert reply["data_as_of"] == "2026-11-17T22:00:00Z"  # the reply's own snapshot time is unchanged
         assert reply["next_call"] == {"tool": "jlc_stock_check", "arguments": {"query": "RP2040", "min_stock": 0,
                                                                               "limit": 10}}
         assert "under 10" in reply["hint"] and "jlc_get_part(lcsc=...)" in reply["hint"]
@@ -439,10 +441,10 @@ class TestGetPartByMpn:
         use_db("none")  # without the files a gone number is a miss, as before
         assert (await server.jlc_get_part(mpn="RP2040"))["error"].startswith("No part found")
 
-    async def test_backplane_reads_the_gone_row(self, use_db):
-        """Backplane's pick(): the results[] entry whose model matches; stock not an integer reads as -1,
-        their "unknown" (not "out", which their design review reports as an error); prices with qty and
-        numeric price (research-backplane-code-review.md, "What they parse")."""
+    async def test_a_bom_client_reads_the_gone_row(self, use_db):
+        """A BOM client's pick: the results[] entry whose model matches; stock not an integer reads as
+        its "unknown" (not "out", which its design review reports as an error); prices with qty and
+        numeric price."""
         use_db("kept")
         reply = await server.jlc_get_part(mpn="RP2040")
         match = next(r for r in reply["results"] if r["model"].casefold() == "rp2040")
@@ -451,9 +453,9 @@ class TestGetPartByMpn:
         assert all(int(tier["qty"].rstrip("+")) >= 1 and isinstance(tier["price"], float) for tier in match["prices"])
 
 
-async def test_backplane_live_follow_up_needs_one_tier_and_the_code(tmp_path, monkeypatch):
-    """Backplane's hub takes the jlc_get_part(mpn) result whose model matches and, when it has one
-    price break or fewer, looks its lcsc up live and uses that stock (research-backplane-code-review.md).
+async def test_bom_client_live_follow_up_needs_one_tier_and_the_code(tmp_path, monkeypatch):
+    """A BOM client takes the jlc_get_part(mpn) result whose model matches and, when it has one
+    price break or fewer, looks its lcsc up live and uses that stock.
     A gone row keeps that working: its lcsc, and its last 1-piece price as its one tier (none
     without a price), on a database with price breaks and even if breaks were kept for its code."""
     data = _data_dir(tmp_path)
@@ -497,6 +499,7 @@ class TestGoneBeatsRelatedOnly:
         assert reply["note"].startswith("'IRFB4710PBF' itself left the snapshot (the gone parts, listed first)")
         assert "Part types: MOSFETs." in reply["note"]
         assert reply["results"][1] == before["results"][0]  # the related part as before
+        assert reply["results"][0]["data_source"]["observed_at"] is None  # the gone one predates gone_since
         assert reply["hint"].startswith("gone parts") and reply["next_call"]["tool"] == "jlc_stock_check"
         assert outcome(reply) == "ok"
 

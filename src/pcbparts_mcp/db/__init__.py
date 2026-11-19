@@ -606,11 +606,16 @@ class ComponentDatabase:
             return []
         parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info, sold_out=True, maker=maker)
         if with_prices:
-            # No price breaks for them, ever: one tier (the last 1-piece price) or none. Backplane's
-            # hub looks a result with one break or fewer up live by its lcsc for current stock, and
-            # a gone part's stock is exactly what it needs to check (see its row in jlc_get_parts too)
+            # No price breaks for them, ever: one tier (the last 1-piece price) or none. A BOM client
+            # looks a result with one break or fewer up live by its lcsc for current stock, and a
+            # gone part's stock is exactly what it needs to check (see its row in jlc_get_parts too)
             parts = add_snapshot_prices(self._conn, parts, False)
-        return self._snapshot_parts(parts)
+        # Not observed in this snapshot: what's kept is from before gone_since (last_stock from the
+        # last scrape that listed it, price up to a week older), a time not kept, so observed_at is
+        # null and gone_since dates it
+        for part in parts:
+            part["data_source"] = {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
+        return parts
 
     @serialized
     def get_sold_out_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
