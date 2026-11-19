@@ -13,7 +13,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 ### Changed
 
 - `DB_BUSY_MAX_WAITING` and `DB_BUSY_MAX_WAIT_SECONDS` are no longer read.
-- `/health`'s `database_pressure` drops `admitted_not_started`.
+- `/health`'s `database_pressure` drops `admitted_not_started` and adds `stalled_seconds`. The 503 and the stuck-worker restart now need a queue that has started nothing for `DB_STUCK_WAIT_SECONDS`, not a long wait in a queue that keeps moving.
 - `/mcp/stats` keeps `per_ip_refusals.server_busy` for days already counted; it stays 0 from now on.
 - `docker-compose.yml`: memory limit 4 GB (was 1 GB; the database alone is about 800 MB) and 3 CPUs (was 1).
 

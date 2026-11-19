@@ -65,10 +65,11 @@ RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
 # the CPU scaled to the VPS), so one busy platform address can't take the whole server. Never less
 # than RATE_LIMIT_REQUESTS (RateLimitMiddleware._limit_for takes the larger).
 PLATFORM_RATE_LIMIT = number_setting("PLATFORM_RATE_LIMIT", 1000, 1)
-# /health answers 503 (unhealthy) while a database job has waited this long to start: a worker is
-# stuck (queries have no timeout) and every database call queued behind it waits; at two minute
-# checks in a row the server exits for Docker to restart it (server._exit_if_stuck). Far above a
-# normal queue's wait (an ordinary search takes up to 1 s on the VPS).
+# /health answers 503 (unhealthy) while a database pool has had jobs waiting and started none for
+# this long: a worker is stuck (queries have no timeout) and every database call queued behind it
+# waits; at two minute checks in a row the server exits for Docker to restart it
+# (server._exit_if_stuck). Far above any one query (an ordinary search takes up to 1 s on the VPS);
+# a long queue that keeps moving never counts.
 DB_STUCK_WAIT_SECONDS = number_setting("DB_STUCK_WAIT_SECONDS", 60.0, 1.0)
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit

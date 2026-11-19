@@ -64,13 +64,13 @@ class TestPressure:
         other = pressure.enqueue(b)
         clock.advance(0.125)
         assert pressure.snapshot() == {a: PoolPressure(2, 0.25), b: PoolPressure(1, 0.125)}
-        assert pressure.summary() == {"waiting": 3, "oldest_wait_seconds": 0.25}
+        assert pressure.summary() == {"waiting": 3, "oldest_wait_seconds": 0.25, "stalled_seconds": 0.25}
         pressure.discard(a, first)
         assert pressure.snapshot()[a] == PoolPressure(1, 0.125)
         for pool, token in ((a, first), (a, second), (b, other)):
             pressure.discard(pool, token)  # repeated discard is harmless
         assert pressure.snapshot() == {}
-        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0}
+        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0}
 
     async def test_offload_tracks_wait_only_and_keeps_context(self, monkeypatch):
         pressure, pool = DatabasePressure(Clock()), Executor()
@@ -203,7 +203,8 @@ class TestHealth:
             reply = await c.get("/health")
             assert reply.status_code == 200 and reply.json()["status"] == "healthy"
             assert reply.json()["database_pressure"] == {
-                "waiting": 8, "oldest_wait_seconds": 0.0, "unhealthy_after_seconds": config.DB_STUCK_WAIT_SECONDS}
+                "waiting": 8, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0,
+                "unhealthy_after_seconds": config.DB_STUCK_WAIT_SECONDS}
             clock.advance(config.DB_STUCK_WAIT_SECONDS - 1)  # a long queue, still moving: healthy
             assert (await c.get("/health")).status_code == 200
             clock.advance(1)
@@ -248,6 +249,37 @@ class TestStuckWorkerExit:
         token = stuck.pressure.enqueue(stuck.pool)
         stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS - 1)
         assert server._exit_if_stuck(5) == 0 and stuck.exits == []
+        stuck.pressure.discard(stuck.pool, token)
+
+    def test_an_overloaded_queue_that_keeps_starting_jobs_never_exits(self, stuck):
+        """Without a cap on the queue, sustained overload makes calls wait far past
+        DB_STUCK_WAIT_SECONDS while the worker keeps taking jobs: that isn't a stuck worker, and
+        restarting would drop every call in flight. Only a pool that starts nothing is stuck."""
+        queue = [stuck.pressure.enqueue(stuck.pool) for _ in range(500)]
+        checks = 0
+        for _ in range(10):  # ten minutes: a job starts every 2 s, the rest wait for minutes
+            for _ in range(30):
+                stuck.clock.advance(2)
+                stuck.pressure.started(stuck.pool, queue.pop(0))
+            assert stuck.pressure.summary()["oldest_wait_seconds"] >= server.DB_STUCK_WAIT_SECONDS
+            assert stuck.pressure.stalled_seconds() == 0
+            checks = server._exit_if_stuck(checks)
+            assert checks == 0 and stuck.exits == []
+        stuck.clock.advance(server.DB_STUCK_WAIT_SECONDS + 1)  # then the worker hangs
+        assert stuck.pressure.stalled_seconds() == server.DB_STUCK_WAIT_SECONDS + 1
+        assert server._exit_if_stuck(0) == 1 and server._exit_if_stuck(1) == 2 and stuck.exits == [1]
+
+    def test_an_idle_pool_is_not_stalled_by_its_next_job(self, stuck):
+        """Stalled time runs from the oldest waiting job when the last start was before it: a pool
+        idle for an hour isn't stuck the moment a job arrives."""
+        first = stuck.pressure.enqueue(stuck.pool)
+        stuck.pressure.started(stuck.pool, first)
+        stuck.clock.advance(3600)
+        assert stuck.pressure.stalled_seconds() == 0
+        token = stuck.pressure.enqueue(stuck.pool)
+        stuck.clock.advance(5)
+        assert stuck.pressure.stalled_seconds() == 5
+        assert server._exit_if_stuck(0) == 0
         stuck.pressure.discard(stuck.pool, token)
 
     async def test_the_minute_task_exits_when_stuck(self, stuck, monkeypatch):

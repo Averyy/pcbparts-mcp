@@ -170,7 +170,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `HTTP_PORT` | `8080` | Server port |
 | `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP or IPv6 /64 |
 | `PLATFORM_RATE_LIMIT` | `1000` | Per-IP limit for the AI platforms' published ranges (at least `RATE_LIMIT_REQUESTS`) |
-| `DB_STUCK_WAIT_SECONDS` | `60` | A database call waiting this many seconds to start makes `/health` 503, then the server exits for Docker to restart |
+| `DB_STUCK_WAIT_SECONDS` | `60` | A database queue that starts no call for this many seconds makes `/health` 503, then the server exits for Docker to restart |
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges (empty: normal limit) |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |

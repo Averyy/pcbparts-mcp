@@ -39,6 +39,7 @@ class DatabasePressure:
         self._clock = clock
         self._lock = threading.Lock()
         self._waiting: dict[ThreadPoolExecutor, dict[object, float]] = {}
+        self._last_start: dict[ThreadPoolExecutor, float] = {}  # when each pool last started a job
 
     def enqueue(self, pool: ThreadPoolExecutor) -> object:
         token = object()
@@ -46,8 +47,14 @@ class DatabasePressure:
             self._waiting.setdefault(pool, {})[token] = self._clock()
         return token
 
+    def started(self, pool: ThreadPoolExecutor, token: object) -> None:
+        """A worker took this job: the pool's queue is moving."""
+        with self._lock:
+            self._last_start[pool] = self._clock()
+        self.discard(pool, token)
+
     def discard(self, pool: ThreadPoolExecutor, token: object) -> None:
-        """A job started, was cancelled before starting, or couldn't be submitted."""
+        """A job left the queue: started, cancelled before starting, or couldn't be submitted."""
         with self._lock:
             waiting = self._waiting.get(pool)
             if waiting is not None:
@@ -61,11 +68,22 @@ class DatabasePressure:
             return {pool: PoolPressure(len(waiting), max(0.0, now - next(iter(waiting.values()))))
                     for pool, waiting in self._waiting.items()}
 
+    def stalled_seconds(self) -> float:
+        """How long the most stalled pool has had jobs waiting without starting any: since its
+        last start, or since its oldest waiting job was queued if that is later. 0 with nothing
+        waiting. A long queue that keeps moving (overload) stays near 0; a stuck worker doesn't."""
+        with self._lock:
+            now = self._clock()
+            return max((max(0.0, now - max(next(iter(waiting.values())), self._last_start.get(pool, float("-inf"))))
+                        for pool, waiting in self._waiting.items()), default=0.0)
+
     def summary(self) -> dict[str, int | float]:
-        """For /health: jobs waiting to start in all pools and the longest any has waited (seconds)."""
+        """For /health: jobs waiting to start in all pools, the longest any has waited and how long
+        the most stalled pool has started none (seconds)."""
         pools = self.snapshot().values()
         return {"waiting": sum(p.waiting for p in pools),
-                "oldest_wait_seconds": round(max((p.oldest_wait for p in pools), default=0.0), 3)}
+                "oldest_wait_seconds": round(max((p.oldest_wait for p in pools), default=0.0), 3),
+                "stalled_seconds": round(self.stalled_seconds(), 3)}
 
 
 database_pressure = DatabasePressure()
@@ -78,7 +96,7 @@ async def run_db(pool: ThreadPoolExecutor, func: Callable[P, T], *args: P.args, 
     token = pressure.enqueue(pool)
 
     def invoke():
-        pressure.discard(pool, token)
+        pressure.started(pool, token)
         return call()
 
     try:

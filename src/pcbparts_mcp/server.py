@@ -256,8 +256,9 @@ async def lifespan(app):
     await run_db(BOARD_POOL, close_boards_db)
 
 
-# A database call waiting longer than DB_STUCK_WAIT_SECONDS at this many minute checks in a row
-# means a worker is stuck (every database call queued behind it waits, and /health says unhealthy):
+# A database pool that has had calls waiting and started none for DB_STUCK_WAIT_SECONDS, at this
+# many minute checks in a row, has a stuck worker (every database call queued behind it waits, and
+# /health says unhealthy). A long queue that keeps moving is overload, not this:
 # the server exits so Docker's `restart: unless-stopped` starts a fresh one. os._exit, not
 # sys.exit: a normal exit would wait for the stuck worker thread and hang. Replaced in tests.
 STUCK_CHECKS_BEFORE_EXIT = 2
@@ -266,15 +267,15 @@ _exit_process = os._exit
 
 def _exit_if_stuck(stuck_checks: int) -> int:
     """The minute task's stuck-worker check: the updated count of checks in a row that found a
-    database call waiting longer than DB_STUCK_WAIT_SECONDS; exits the process at
-    STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
+    database pool with calls waiting that had started none for DB_STUCK_WAIT_SECONDS
+    (DatabasePressure.stalled_seconds); exits the process at STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
     milliseconds); it guards against a hung disk or a runaway query."""
-    oldest = database_pressure.summary()["oldest_wait_seconds"]
-    stuck_checks = stuck_checks + 1 if oldest >= DB_STUCK_WAIT_SECONDS else 0
+    stalled = database_pressure.stalled_seconds()
+    stuck_checks = stuck_checks + 1 if stalled >= DB_STUCK_WAIT_SECONDS else 0
     if stuck_checks >= STUCK_CHECKS_BEFORE_EXIT:
-        logger.error(f"A database call has waited {oldest:g} s (over {DB_STUCK_WAIT_SECONDS:g} s at "
-                     f"{stuck_checks} minute checks in a row): a worker is stuck; exiting so Docker "
-                     "restarts the server")
+        logger.error(f"Database calls have waited {stalled:.0f} s with none starting (over "
+                     f"{DB_STUCK_WAIT_SECONDS:g} s at {stuck_checks} minute checks in a row): a worker "
+                     "is stuck; exiting so Docker restarts the server")
         try:
             stats.usage.save()
         except Exception:
@@ -3744,11 +3745,11 @@ def _distributor_store_counts() -> dict[str, Any] | None:
 
 # Health check endpoint
 async def health(request):
-    """The server's state. 503 (status "unhealthy") while a database job has waited
-    DB_STUCK_WAIT_SECONDS to start: a worker is stuck and every database call queued behind it
-    waits, so the container's healthcheck fails."""
+    """The server's state. 503 (status "unhealthy") while a database pool has had jobs waiting and
+    started none for DB_STUCK_WAIT_SECONDS: a worker is stuck and every database call queued behind
+    it waits, so the container's healthcheck fails. A long queue that keeps moving stays healthy."""
     pressure = {**database_pressure.summary(), "unhealthy_after_seconds": DB_STUCK_WAIT_SECONDS}
-    stuck = pressure["oldest_wait_seconds"] >= DB_STUCK_WAIT_SECONDS
+    stuck = pressure["stalled_seconds"] >= DB_STUCK_WAIT_SECONDS
     reply = {
         "status": "unhealthy" if stuck else "healthy",
         "service": "pcbparts-mcp",
@@ -3762,8 +3763,8 @@ async def health(request):
         "price_tiers": _price_tiers_info,
     }
     if stuck:
-        reply["problem"] = (f"a database job has waited {pressure['oldest_wait_seconds']:.0f} s to start "
-                            "(a stuck worker?); database tool calls wait until it moves")
+        reply["problem"] = (f"database jobs have waited {pressure['stalled_seconds']:.0f} s with none "
+                            "starting (a stuck worker?); database tool calls wait until it moves")
     return JSONResponse(reply, status_code=503 if stuck else 200)
 
 
