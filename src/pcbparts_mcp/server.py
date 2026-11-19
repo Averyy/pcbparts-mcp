@@ -2948,7 +2948,7 @@ async def jlc_find_alternatives(
     library_type="no_fee" with no basic/preferred match names the best extended ones in
     summary.extended_examples. Listed parts carry has_easyeda_footprint where it's already known (no
     extra request), and pcba_type ("economic" or "standard_only"). Lifecycle (NRND) isn't checked:
-    mouser_get_part or digikey_get_part has it.
+    part_lifecycle has it.
     Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
