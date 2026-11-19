@@ -12,7 +12,7 @@ from types import SimpleNamespace
 
 import pytest
 from fastmcp import Client
-from jsonschema import validate
+from jsonschema import ValidationError, validate
 
 from conftest import write_catalog_category
 
@@ -392,8 +392,12 @@ class TestReviewFixes:
         async with Client(server.mcp) as client:
             for name in ("jlc_get_parts", "part_lifecycle"):
                 tool = next(tool for tool in await client.list_tools() if tool.name == name)
-                for value in ([None, 7, ["x"], "C7950"], {"mpn": "LM358"}, "LM358", '["C7950"]'):
+                for value in (["C7950", {"mpn": "LM358", "manufacturer": "TI"}], {"mpn": "LM358"}, "LM358", '["C7950"]'):
                     validate({"parts": value}, tool.inputSchema)
+                # Published items are strings or objects (typed for strict clients); the server still
+                # accepts any row and answers a bad one with its own error
+                with pytest.raises(ValidationError):
+                    validate({"parts": [7]}, tool.inputSchema)
             mixed = (await client.call_tool("jlc_get_parts", {"parts": [None, 7, ["x"], "C7950"]})).structured_content
             assert [row.get("error", "")[:13] for row in mixed["results"]] == ["Invalid part:"] * 3 + [""]
             assert mixed["counts"] == {"found": 1, "gone": 0, "not_found": 0, "error": 3}

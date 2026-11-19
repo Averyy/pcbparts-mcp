@@ -24,7 +24,7 @@ from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
-from pydantic import BeforeValidator, Field
+from pydantic import BeforeValidator, Field, WithJsonSchema
 from starlette.middleware import Middleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse, Response
@@ -2710,6 +2710,13 @@ def _code_as_mpn_note(code: str) -> str:
             "looked up as a part number.")
 
 
+# One BOM line in jlc_get_parts / part_lifecycle: a string or an object. Validated as Any, so a bad
+# row still gets its own error, but published with typed items: some clients (Gemini) reject an
+# array whose items schema has no type, which would fail every tool in the session.
+PartsItem = Annotated[Any, WithJsonSchema({"anyOf": [{"type": "string"},
+                                                     {"type": "object", "additionalProperties": True}]})]
+
+
 @mcp.tool(
     annotations=ToolAnnotations(
         title="Get Parts (BOM, Daily Snapshot)",
@@ -2720,7 +2727,7 @@ def _code_as_mpn_note(code: str) -> str:
     )
 )
 @offload(COMPONENT_POOL)
-def jlc_get_parts(parts: list[Any] | dict[str, Any] | str) -> dict:
+def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot
     (stock >= 10): for BOM refreshes and checking many parts at once. Reads the database only, no
     live request. For one part's live stock and prices and its datasheet, use jlc_get_part.
@@ -3385,7 +3392,7 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
         openWorldHint=True,
     )
 )
-async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
+async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
     digikey_get_part for lifecycle. Readings are kept 90 days (unknown: a week; not listed: 30

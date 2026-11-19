@@ -49,3 +49,26 @@ def test_every_section_is_sent(name):
 ])
 def test_moved_guidance_is_sent(name, phrase):
     assert phrase in " ".join(parse_docstring(getattr(server, name)).description.split())
+
+
+def _untyped_arrays(schema, path="parameters"):
+    """Paths of arrays whose items schema says nothing (no type, anyOf or $ref)."""
+    found = []
+    if isinstance(schema, dict):
+        if schema.get("type") == "array":
+            items = schema.get("items")
+            if not isinstance(items, dict) or not ({"type", "anyOf", "$ref"} & items.keys()):
+                found.append(path)
+        for key, value in schema.items():
+            found += _untyped_arrays(value, f"{path}.{key}")
+    elif isinstance(schema, list):
+        for index, value in enumerate(schema):
+            found += _untyped_arrays(value, f"{path}[{index}]")
+    return found
+
+
+def test_every_array_types_its_items():
+    """Some clients (Gemini's function declarations) reject an array whose items have no type, and
+    one rejected declaration fails the whole request, every server's tools with it."""
+    tools = asyncio.run(server.mcp.list_tools())
+    assert {t.name: _untyped_arrays(t.parameters) for t in tools if _untyped_arrays(t.parameters)} == {}
