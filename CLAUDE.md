@@ -1,86 +1,91 @@
 # Claude Guidelines
 
-## Before Starting Work
+Rules and gotchas only. History goes in `CHANGELOG.md`; how things work goes in the code and `docs/ref-*.md`.
 
-**Always run `git pull` first** - Your local repo may be out of date.
+## Before starting work
 
-**Check GitHub issues and PRs in every session, at least once a day.** Run `gh issue list --repo Averyy/pcbparts-mcp --state open` and `gh pr list --repo Averyy/pcbparts-mcp --state open` before starting work and again on any day the session continues. Mention anything new to the user, even when the task is unrelated: users and contributors report real bugs there, and an issue may touch what you're changing.
-- Reproduce a reported bug locally before fixing it, and test the fix with the reporter's own inputs.
-- Reference the issue in the commit and `CHANGELOG.md` (`Fixes #17`), so merging closes it.
+- Run `git pull` first: GitHub Actions commits new parts data daily.
+- Check issues and PRs once a day (`gh issue list --repo Averyy/pcbparts-mcp --state open`, `gh pr list ...`) and mention anything new, even when the task is unrelated.
+- Reproduce a reported bug locally before fixing it, and test the fix with the reporter's inputs.
+- Reference the issue in the commit and `CHANGELOG.md` (`Fixes #17`).
 - Don't comment on, label or close issues or PRs without the user's go-ahead; draft the reply instead.
 
-## Git Commit Rules
+## Commits and releases
 
-- **GET LATEST FIRST** github actions runs automatically to commit new parts
-- **NEVER commit without explicit permission** only commit when user explicitly asks ("commit this", "push these changes")
-- **NEVER add Claude attribution** - No "Co-Authored-By: Claude" or similar
-- **Use one version for all unreleased work**: reuse and consolidate the current unreleased entry; bump only when starting work after that version has been released. **Bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**. Keep entries short: bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`, no paragraphs, rationale or measurements (per-field detail belongs in `landing/llms.txt` and the tool docstrings). Head it `## X.Y.Z (YYYY-MM-DD)`: after the deploy, the `release` job in `docker-build.yml` publishes GitHub release `vX.Y.Z` with that section as its notes (no section, failed job). Don't create releases or tags by hand.
+- Never commit without explicit permission. Never push, merge or deploy without the user.
+- No Claude attribution in commits or PRs.
+- One version for all unreleased work; bump only after that version has been released. Bump in `pyproject.toml` and `uv.lock`. Patch is the default; ask before a minor or major bump.
+- `CHANGELOG.md`: head the entry `## X.Y.Z (YYYY-MM-DD)` (the `release` job publishes that section as the GitHub release; without it the job fails). Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
+- Don't create releases or tags by hand.
+- The project is in beta with real external users and contributors: breaking changes must be deliberate (semver bump, changelog note), and dependency pins stay exact.
 
-## Critical Rules
-
-- **NEVER test changes using the live MCP** undeployed code changes NEEDS to be tested locally via the database
-- **ALWAYS use wafer** when testing JLCPCB API - use `wafer.AsyncSession` with proper config (see `client.py` or `scrape_components.py`). Don't write quick test scripts with raw httpx/aiohttp - you'll get 403 blocked.
-- **EasyEDA `/api/products` is rate-limited per IP**: measured at 24 requests, then a bare CloudFront 403 with no `Retry-After` that clears in about 2 minutes (2026-10-09). Stay under 20 requests per 2 minutes. Since 0.5.6 the client enforces that per process (budget and cooldown in `_check_easyeda_footprint()`), but the budget is per client instance (the server has one; each integration test class has its own), so test runs and anything else running at the same time add up. On the first EasyEDA 403, STOP sending. Don't re-run tests or retry by hand: heavy traffic during a block appears to stretch it from ~2 minutes to over 30. Check prod with one `jlc_get_part` instead. Details and numbers: `docs/ref-easyeda-api.md`.
-- **EasyEDA footprint seed** (`data/easyeda/footprints.csv`): built by `scripts/build_easyeda_seed.py` on your own machine only, never on prod or in CI, and never while integration tests run (both use your IP's EasyEDA limit). It paces search at one request per 10s and `/api/products` at one per 15s, waits 10 minutes after search traffic before any `/api/products` step (search counts toward that endpoint's block), stops on the first 403 and resumes on the next run. Since 0.6.0 the server also keeps live footprint answers in a SQLite store on the `pcbparts-cache` volume. Details: `docs/ref-easyeda-api.md`.
-- **EasyEDA pads seed** (`data/easyeda/pads.csv`, 0.9.5): footprint pads for `jlc_find_alternatives(land_compatible=true)`, collected by `scripts/build_easyeda_pads.py` on your own machine only (same rules as the footprint seed: never on prod or in CI, never alongside integration tests or `build_easyeda_seed.py`). One `/api/components` request per footprint every 2s by default, connectors only by default, most-stocked first; it stops on the first 403 and resumes on the next run. The first full run collected all 48,403 connector footprints (2026-11-17 12:18 PM to 2026-11-18 6:24 AM EST: one every 2 s, then every 1 s; no refusals). The server never re-fetches a footprint it has (seed or volume store), so refreshing is this script's job: `--refresh-days 90` re-fetches old rows and rewrites only those that changed. Details: `docs/ref-easyeda-api.md`.
-- **Price tiers stay out of git** (`data/catalog/price_tiers.tsv.gz`, 0.10.0): each daily scrape writes every part's price breaks there, and `.gitignore` keeps it out of `git add data/catalog/` (never `git add -f` it: about 10 MB a day, kept forever). `scrape-components.yml` uploads it as the `price-tiers` artifact (7 days) after the data commit and push and before it triggers the deploy, so a failed upload can't cost the day's commit and the build it starts finds this artifact; `docker-build.yml` downloads the newest one from `main` before the image build. A missing or bad file never fails a build: replies then have `price_tiers_as_of: null` and the 1-piece price only. The weekly 1-piece `prices.tsv` stays in git, unchanged.
-- **Sold-out parts are committed** (`data/catalog/sold_out/YYYY-MM.jsonl`, 0.10.0): the scrape's output step (`update_sold_out()` in `scripts/scrape_components.py`) adds each part the previous catalog had and today's doesn't (after scrape-gap carry-over), with gone_since, and drops it when a scrape lists it again; no extra requests. `build_database.py` loads them into the `sold_out` table, which nothing that reads `components` (search, counts, full-text search, alternatives) sees: keep it that way. Don't edit the files by hand (a malformed row fails the scrape and the image build); `scripts/backfill_sold_out.py` rebuilds them offline from the catalogs in git history.
-- **Mouser and DigiKey limits are shared by everyone using pcbparts.dev**: Mouser allows 30 requests a minute and 1,000 a day per API key; DigiKey 120 a minute and 1,000 a day per DigiKey app (resetting at 00:00 UTC), and its API User Agreement suspends an app for 10 minutes (403s) for going over its per-second threshold, and can end the agreement after three suspensions. Prod used up DigiKey's day on 2026-10-16 while its in-memory counter kept resetting on restarts. Since 0.6.1: counts and pauses are kept in `DISTRIBUTOR_QUOTA_PATH` on the `pcbparts-cache` volume, we cap Mouser at 25 and DigiKey at 100 a minute, a limit refusal pauses that distributor until its reset (DigiKey: 429, or 403 for 10 minutes; Mouser: 403 or 429 with `TooManyRequests` in the body, since 0.10.0 for an hour at a time while our own count is below the limit, else until 00:00 UTC, since Mouser doesn't say when it resets), the limit errors tell users to self-host with their own key, and an hourly log line lists the top caller IPs. Since 0.6.3 DigiKey requests go out at most 5 a second (a burst waits) and DigiKey "not found" answers are cached for 10 minutes (found parts for the hour). Since 0.9.3 DigiKey lookups are one keyword search each. Since 0.10.0 Mouser and DigiKey answers are kept per part number for 3 days (not found: a day), and every lifecycle status they state for 90 days (unknown: a week; not listed: 30 days), in one SQLite store at `DISTRIBUTOR_STORE_PATH` on the volume (`distributor_store.py`; replies carry `observed_at`); a Mouser batch is kept part by part where its results can be matched to the numbers asked, and `part_lifecycle` answers BOMs from the store before asking either. Numbers no distributor lists (values such as "10k", LCSC codes, placeholders, non-ASCII, not 3-40 characters: `search/mpn.py` `not_sent_reason`) are never sent. Check `/health` (`distributor_quota`, `distributor_stored`) before testing with the prod credentials.
-- **Per-IP limiter refusals** (visible since 0.10.0): `RateLimitMiddleware` counts each 429 in `/mcp/stats` (`per_ip_refusals`, per UTC day, no IPs, split by `_refusal_group()` into `platform_ranges`, `everyone_else` and `too_many_clients`, plus `server_busy`, which only holds 0.10.0's stored counts and stays 0; `total` adds all four) and logs a `Per-IP rate limit refusals <hour> UTC: N from M IPs; top: …` line (the five most-refused IPs) for each hour that had any: `docker logs pcbparts-mcp 2>&1 | grep 'limit refusals'`. Those lines (the privacy page describes them) are the only place refused IPs appear, and they go with each deploy; the daily counts don't. uvicorn's access log still shows only Caddy's address (`172.18.0.2`) and Caddy keeps no access log: `main()` passes uvicorn `proxy_headers=False` (uvicorn's default is on, trusting `X-Forwarded-For` from 127.0.0.1): keep it, or every caller's IP could land on every access-log line. Days before 0.10.0 show `per_ip_refusals: null`; while an older version runs, count its refusals since the last deploy with `docker logs pcbparts-mcp 2>&1 | grep -c '" 429'`. Plan for the limits: `todo-platform-rate-limits.md`. Since 0.10.0 `_limit_for()` gives addresses in the AI platforms' published ranges `PLATFORM_RATE_LIMIT` (1,000 a minute, chosen at about half of the VPS estimate from `scripts/load_test.py` (run against a local container only, 2026-11-18): about 9,000 requests a minute sustained on an Apple Silicon core at prod's limits, about 1,800 with the container's CPU cut to 0.33 to stand in for the VPS; re-measure before raising it) and every other address `RATE_LIMIT_REQUESTS` (100): Anthropic's two ranges are in `config.py`, OpenAI's list is `data/platform_ranges/openai-chatgpt-connectors.json`, which `docker-build.yml` replaces with a fresh, checked download on every build (falling back to the committed copy, never failing the build; `platform_ranges.py` is the check, standard library only). The server never downloads it. Also since 0.10.0 the limiter's replies carry `X-RateLimit-Limit/Remaining/Reset` and its 429s a counted-down `Retry-After` and a JSON body `{error, retry_after, reason, resets_at, tell_user}` (`reason` from `RATE_LIMIT_REASONS`; clients read `retry_after`: keep it). The check, the headers and the 429 all use `_limit_for()` (a platform address never gets less than `RATE_LIMIT_REQUESTS`). An IPv6 caller is counted by its /64 (`_limit_key()`; IPv4 and platform addresses by the full address), the window runs on `time.monotonic()` (only `resets_at` reads the wall clock; tests inject `clock=` and `wall_clock=`), and `request_counts` stays in order of each key's last request, so stale cleanup and `too_many_clients` never scan the table; `too_many_clients` refusals log a warning at most once a minute instead of entering the hourly tally. Numeric limit settings go through `config.number_setting()`: a bad value falls back with a warning in `CONFIG_WARNINGS` (logged at startup) instead of failing the import. Also since 0.10.0, `run_db` tracks waiting (not running) database jobs per pool with a monotonic clock (`DatabasePressure`; live network waits never count): `/health` shows them as `database_pressure` and answers 503 once a pool has had jobs waiting and started none for `DB_STUCK_WAIT_SECONDS` (60; `stalled_seconds`, so a long queue that keeps moving under load never counts), and a pool stalled that long at two minute checks in a row makes the server exit (`_exit_if_stuck`) so Docker restarts it, since a stuck worker blocks every database call queued behind it (compose's `restart: unless-stopped` restarts exited containers, not unhealthy ones; `docker logs` shows the ERROR line). A code path that queues many `run_db` jobs at once should batch them into one (the alternatives' footprint seed lookups are one job). 0.10.0's busy cap (`server_busy` 429s when a pool's queue backed up) was removed in 0.10.1 because it refused normal load (about 0.5% of prod's calls at 80 a minute), and a refusal at normal load is a bug. `/health` isn't counted at all, while `/mcp/stats` counts against the per-IP limit as on main before 0.10.0. Every request is charged to its address as it starts, before its body is read, and the body goes to the SDK untouched, as before 0.10.0. `BodySizeLimitMiddleware` (pure ASGI) also counts streamed bytes on every request and replaces a cut-off body's reply with its 413, keeping that reply's X-RateLimit headers; preserve its size guard and streamed replies.
-- **ALWAYS pair wafer `timeout=` with `attempt_timeout=`** - `timeout` is a TOTAL budget across all retries/rotations, not a per-attempt cap. Unpaired, one hanging request eats the whole budget and retries never fire (this failed a sensor scrape and blocked a deploy on 2026-08-01). Sensor scrapers: use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
-
-## Library Types (Quick Reference)
-
-- **basic/preferred** = no extended-type loading fee for Economic assembly
-- **extended** = loading fee per unique part type; the alternatives calculator labels its legacy $3 Economic assumption as a rounded estimate, not a current quote (Standard service differs)
-
-## Project Overview
-
-PCB Parts MCP server for electronic component search and sensor recommendation. Tool docstrings document arguments and replies; README.md is a high-level overview (per-release detail goes in CHANGELOG.md, query rules in `docs/search-guide.md`).
-
-- **Sensor feature:** `sensor_recommend` tool — separate SQLite DB (`sensor.db`) from components. 14 scrapers produce `data/sensors/*.json`, merged by `scripts/build_sensor_db.py`, runtime at `src/pcbparts_mcp/sensor_db/`. Hand corrections go in `data/sensors/curated.json`, per field with evidence (maker URL, page, quote); they always win over scraped data, so fix a general cause in the scraper or build rule instead and curate only per-record facts. The Docker image runs `build_sensor_db.py` from that file alone, so it must not import other `scripts/` modules (`tests/test_docker_build_scripts.py`). Scraper reference: `docs/ref-sensor-scrapers.md`.
-
-- **Design rules:** `get_design_rules` tool — 46 markdown reference files in `data/design-rules/rules/`, organized by category (guides, interfaces, power, protection, mcus, misc). Exact normalized keys, aliases and token-boundary matching on `category/filename`, followed by scored text fallback. Any edits to rule files must follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
-
-- **Website:** https://pcbparts.dev
-- **Endpoint:** https://pcbparts.dev/mcp
-- **Status:** Beta with real external users (self-hosters + hosted MCP + outside contributors) — breaking changes must be deliberate: semver bump, changelog note in the commit, and keep exact dependency pins
-
-## Usage Stats
-
-`/mcp/stats` (under `/mcp` because Caddy forwards only `/mcp*` and `/health`) serves anonymous daily counts from `stats.py`: per-tool calls = ok + similar_only + not_found + bad_request + rate_limited + failed (alternatives: ok means verified alternatives found; similar_only means manual comparison candidates without verified replacements), calls per UTC hour (since 0.10.1 also `failed_hours` and `refused_hours`: failed tool calls and every `per_ip_refusals` 429 per UTC hour, null on earlier days and, on the upgrade day, before the server started), apps, distinct callers, Mouser/DigiKey lookups, plus why calls found nothing or failed (`reasons`: one label a call from the fixed `stats.REASONS` list, so a tool's labels add up to its not_found + failed) and how `why_empty` checks went. Since 0.10.0 also `upstream`: for each service other than Mouser/DigiKey (`stats.UPSTREAM_SOURCES`: JLCPCB, LCSC, three EasyEDA endpoints, SamacSys) the HTTP requests `sent` (not tool calls), wafer's own `retries`, `cached` answers and `rate_limited` (held back by our own budgets); counted with `_sent()`/`_count_upstream()` in `client.py` and in `cse.py`, so a new request or cache must be counted there too (`tests/test_usage_upstream.py` checks the names). `parts_asked`: part numbers looked up with Mouser/DigiKey, total and distinct by `mpn_key` (salted hashes in memory for the day, never written); `per_ip_refusals` (above); and `restarts` (server starts that UTC day: each resets the hashes, so `callers` and `parts_asked.distinct` can double-count on such a day). A day's fields this version doesn't know are carried through saves, and an unreadable file is moved to `usage_stats.json.corrupt` before counting starts from 0; still copy the stats file before rolling back to a version older than 0.10.0, which drops fields it doesn't know. The file (`USAGE_STATS_PATH` on the cache volume) keeps 365 days; the page shows 30. Error replies are sorted by `_ERROR_KINDS` in `server.py`; every error message must be listed in `ERROR_REPLIES` in `tests/test_usage_stats.py` (the test enforces it), and not_found and failed ones need a reason in `_NOT_FOUND_ERRORS` or `_FAILED_REASONS` (`tests/test_usage_reasons.py` enforces that). Keep it same-origin: if another site ever needs it, allow that domain only, never `*`.
-
-## API Gotcha
-
-The JLCPCB API has backwards field names:
-- `firstSortName` = **subcategory** (not first/primary)
-- `secondSortName` = **category** (the primary category)
-
-This is counterintuitive but verified. The client handles this mapping correctly.
-
-## Local backlog
-
-Completed work is recorded in `CHANGELOG.md`. The local deferred backlog is `docs/do-later.md`, intentionally kept uncommitted.
-
-## Development
+## Commands
 
 ```bash
 uv venv && uv pip install -e ".[dev]"
-uv run pytest tests/ -v                    # unit tests only (default)
-uv run pytest tests/ -v -m integration     # integration tests (hits live APIs)
-uv run pytest tests/ -v -m ""              # all tests
+uv run pytest tests/ -q -p no:cacheprovider     # unit tests (default)
+uv run pytest tests/ -v -m integration          # hits live APIs: see the rules below first
+uv run python scripts/build_database.py         # rebuild data/components.db (about 30 s)
 ```
 
-**Tests must pass on the Windows CI runner too**, which local macOS runs don't cover; a branch CI run catches failures that happen every time, not flaky ones. So: no wall-clock timing in tests (inject a fake clock; Windows clocks tick every ~15.6 ms), `encoding="utf-8"` on text reads and non-ASCII writes, close SQLite connections before deleting their files, keep test ids short, and don't run `bash` from a test (it starts WSL). `tests/test_windows_safe.py` enforces the first two.
+Python runs through `uv`, never pip.
 
-## Frontend & Design Work
+## Testing
 
-**Always use the `/frontend-design` skill** for any frontend or design tasks (landing page, UI components, styling). Read `docs/branding-style-guide.md` before making any visual changes — it defines the PCB-inspired design language, color palette, typography, and component patterns.
+- The MCP tools in Claude Code talk to the deployed server, not local code. Never test undeployed changes through the live MCP: test locally, and rebuild the local database if it's more than a day old.
+- Tests must pass on the Windows CI runner: no wall-clock timing (inject a fake clock), `encoding="utf-8"` on text reads and non-ASCII writes, close SQLite connections before deleting their files, short test ids, no `bash` from a test. `tests/test_windows_safe.py` enforces the first two.
+- After a merge, watch `main`'s own Tests run too: it runs against newer scrape data.
+- Catalog-backed tests must survive stock changes (skip or adapt when a recorded part is no longer stocked).
 
-## llms.txt
+## Rules that protect outside services
 
-`landing/llms.txt` holds every fact an AI needs to use the MCP (tools, arguments, defaults, limits, reply fields), and nothing else: no marketing, no changelog. Update it when a release changes any of those.
+- **JLCPCB:** use `wafer.AsyncSession` configured as in `client.py`; raw httpx/aiohttp gets 403s. Always pair wafer's `timeout=` (a total budget) with `attempt_timeout=`. Sensor scrapers use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
+- **EasyEDA `/api/products`:** stay under 20 requests per 2 minutes per IP. On the first 403, stop sending: don't retry or re-run tests. Details: `docs/ref-easyeda-api.md`.
+- **EasyEDA seed scripts** (`scripts/build_easyeda_seed.py`, `scripts/build_easyeda_pads.py`): run on your own machine only, never on prod or in CI, and never while integration tests or the other seed script run.
+- **Mouser and DigiKey:** their daily limits are shared by everyone using pcbparts.dev. Never call them from tests or probes. Check `/health` (`distributor_quota`) before any test with the prod credentials. DigiKey suspends an app that goes over its per-second threshold.
+- Don't run `scripts/load_test.py` against anything but a local container.
 
-## Testing Local Changes
+## Rules for limits and refusals
 
-**The MCP tools in Claude Code connect to the deployed server (pcbparts.dev), not your local code.** Test local changes before deployment. Always git pull/fetch and then re-build the local database if its more than a day old.
+- A refusal at normal load is a bug. Prefer making a caller wait to refusing it.
+- Never add or tune a limit, cap or queue threshold from the synthetic load test alone: its traffic has neither prod's slow searches nor its bursts. Check prod's `/mcp/stats` (`per_ip_refusals`, `refused_hours`) after any limiter change.
+- 429 bodies keep the JSON `retry_after` field: clients read it.
+- Keep uvicorn's `proxy_headers=False`: otherwise callers' IPs could land on every access-log line.
+- Keep `BodySizeLimitMiddleware`'s size guard (declared and streamed bodies) and its streamed replies.
+- Refused IPs appear only in the hourly log lines; stats stay anonymous (counts only, no IPs, queries or part numbers).
+
+## Data rules
+
+- `data/catalog/price_tiers.tsv.gz` stays out of git: never `git add -f` it. A missing or bad tier file must never fail a build.
+- The server never downloads the AI platforms' address lists at runtime; the image build refreshes the committed copy.
+- Don't hand-edit `data/catalog/sold_out/*.jsonl` (a malformed row fails the scrape and the image build); `scripts/backfill_sold_out.py` rebuilds them. Nothing that reads `components` (search, counts, alternatives) may see the `sold_out` table.
+- Sensor corrections go in `data/sensors/curated.json`, per field with evidence, and always win over scraped data: fix a general cause in the scraper or build rule instead. `scripts/build_sensor_db.py` runs alone in the Docker image, so it must not import other `scripts/` modules.
+- Edits to design-rule files follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
+- The daily scrape is started by a cron job on the server; GitHub's schedule is only a backup. See `docs/ref-scrape-schedule.md`.
+
+## Code rules
+
+- Every error message a tool returns must be listed in `ERROR_REPLIES` (`tests/test_usage_stats.py`), with a reason for not-found and failed ones (`tests/test_usage_reasons.py`).
+- A new upstream request or cache must be counted for `/mcp/stats` (`_sent()`/`_count_upstream()`; `tests/test_usage_upstream.py`).
+- Tool docstrings: only the first text section and `Args` reach clients (`tests/test_release_0817.py`). They are sent on every session: keep them short.
+- A code path that queues many `run_db` jobs at once should batch them into one.
+- `/mcp/stats` stays same-origin; if another site ever needs it, allow that domain only, never `*`.
+- Don't do server-side work the calling AI can already do (for example downloading or parsing PDFs).
+
+## Gotchas
+
+- The JLCPCB API's field names are backwards: `firstSortName` is the **subcategory**, `secondSortName` the **category**. The client maps them.
+- `basic` and `preferred` parts have no extended-type loading fee for Economic assembly; `extended` parts are charged per unique type. The alternatives calculator's $3 figure is a rounded estimate, not a quote.
+- Prod's container logs are lost at every deploy; `/mcp/stats` survives.
+
+## Docs
+
+- `landing/llms.txt`: every fact an AI needs to use the MCP (tools, arguments, defaults, limits, reply fields) as a terse reference, and nothing else. Update it when a release changes any of those.
+- `README.md` is a high-level overview; query rules go in `docs/search-guide.md`.
+- Reference: `docs/ref-server-internals.md` (limits, stored data, stats), `docs/ref-easyeda-api.md`, `docs/ref-sensor-scrapers.md`, `docs/ref-scrape-schedule.md`.
+- The deferred backlog is `docs/do-later.md`, intentionally uncommitted.
+- Frontend or design work: use the `/frontend-design` skill and read `docs/branding-style-guide.md` first.
+
+## Project
+
+PCB Parts MCP server: electronic component search (JLCPCB snapshot plus live lookups, Mouser, DigiKey), sensor recommendation, reference boards and design rules. Site https://pcbparts.dev, endpoint https://pcbparts.dev/mcp.

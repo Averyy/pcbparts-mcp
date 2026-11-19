@@ -3,7 +3,8 @@ names compared across catalogs, and part_lifecycle's lookups.
 
 Statuses: active, nrnd (not recommended for new designs), last_time_buy, obsolete and unknown. Each
 reading keeps the distributor's own wording (raw) beside it. Readings live in the lifecycle table of
-distributor_store.py for LIFECYCLE_TTL (90 days); unknown ones a week, "not listed" ones 30 days.
+distributor_store.py for LIFECYCLE_TTL (90 days); obsolete ones a year (LIFECYCLE_OBSOLETE_TTL),
+unknown and "not listed" ones 90 days.
 """
 
 from __future__ import annotations

@@ -4,12 +4,13 @@ Docker volume next to the EasyEDA and CSE stores).
 Two tables in one SQLite file:
 - answers: each part number's full answer (stock, prices, lifecycle), so asking again within
   MOUSER_CACHE_TTL / DIGIKEY_CACHE_TTL (3 days) costs no request; a "not found" is kept
-  MOUSER_NOT_FOUND_TTL / DIGIKEY_NOT_FOUND_TTL (a day). mouser_get_part, digikey_get_part and
+  MOUSER_NOT_FOUND_TTL / DIGIKEY_NOT_FOUND_TTL (3 days too). mouser_get_part, digikey_get_part and
   part_lifecycle share these rows, so a part one of them fetched is free for the others.
 - lifecycle: each part's lifecycle as Mouser or DigiKey stated it, by maker and MPN (lifecycle.py),
-  kept LIFECYCLE_TTL (90 days); an unknown status LIFECYCLE_UNKNOWN_TTL (a week), and "this
-  distributor doesn't list the number" LIFECYCLE_NOT_LISTED_TTL (30 days). Every Mouser/DigiKey
-  answer writes here; part_lifecycle reads it. A part's reading is found by mpn_key ("LM358-P" finds
+  kept LIFECYCLE_TTL (90 days); an obsolete one LIFECYCLE_OBSOLETE_TTL (a year), an unknown status
+  LIFECYCLE_UNKNOWN_TTL and "this distributor doesn't list the number" LIFECYCLE_NOT_LISTED_TTL (90
+  days each; _ttl). Every Mouser/DigiKey answer writes here; part_lifecycle reads it, and a reply's
+  observed_at is when the reading was fetched. A part's reading is found by mpn_key ("LM358-P" finds
   LM358P), a "not listed" only by the spelling asked, ignoring case (DigiKey matches that spelling,
   so its miss for LM358-P says nothing about LM358P).
 
@@ -30,8 +31,8 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .config import (
-    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
-    MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_TTL,
+    LIFECYCLE_UNKNOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
 from .lifecycle import Reading, maker_key, not_listed_key
 from .search.mpn import mpn_key
@@ -76,9 +77,23 @@ _SCHEMA = (
 
 
 def _ttl(found: bool, status: str) -> float:
+    """How long a lifecycle reading is used: by whether the source lists the number, then its
+    status. prune() deletes by the same rule (_PRUNE_LIFECYCLE)."""
     if not found:
         return LIFECYCLE_NOT_LISTED_TTL
-    return LIFECYCLE_TTL if status != "unknown" else LIFECYCLE_UNKNOWN_TTL
+    if status == "obsolete":
+        return LIFECYCLE_OBSOLETE_TTL
+    return LIFECYCLE_UNKNOWN_TTL if status == "unknown" else LIFECYCLE_TTL
+
+
+# Deletes the lifecycle rows _ttl has expired. The first bound (now minus the shortest lifetime) is
+# the range on lifecycle_age; the rows it leaves to the CASE are those with a longer lifetime (an
+# obsolete reading between 90 days and a year old), which stay.
+_PRUNE_LIFECYCLE = (
+    "DELETE FROM lifecycle WHERE observed_at <= ? AND observed_at <= ? - CASE WHEN NOT found THEN ? "
+    "WHEN status = 'obsolete' THEN ? WHEN status = 'unknown' THEN ? ELSE ? END"
+)
+_LIFECYCLE_TTLS = (LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_TTL)
 
 
 class DistributorStore:
@@ -226,7 +241,7 @@ class DistributorStore:
             return False
 
     def put_not_listed(self, mpn: str, source: str, observed_at: float | None = None) -> bool:
-        """The source has no part with this number spelled so (kept LIFECYCLE_NOT_LISTED_TTL, 30
+        """The source has no part with this number spelled so (kept LIFECYCLE_NOT_LISTED_TTL, 90
         days). Readings of parts it does list under the number stay."""
         return self.put_readings([Reading(mpn, "", source, "unknown", None,
                                           self._clock() if observed_at is None else observed_at, found=False)])
@@ -244,11 +259,7 @@ class DistributorStore:
                 for found, ttl in ((1, found_ttl), (0, not_found_ttl)):
                     self._conn.execute("DELETE FROM answers WHERE source = ? AND found = ? AND fetched_at <= ?",
                                        (source, found, now - ttl))
-            shortest = min(LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL)
-            self._conn.execute(
-                "DELETE FROM lifecycle WHERE observed_at <= ? AND observed_at <= ? - CASE WHEN NOT found THEN ? "
-                "WHEN status = 'unknown' THEN ? ELSE ? END",
-                (now - shortest, now, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_TTL))
+            self._conn.execute(_PRUNE_LIFECYCLE, (now - min(_LIFECYCLE_TTLS), now, *_LIFECYCLE_TTLS))
             self._conn.commit()
         except sqlite3.Error as e:
             logger.warning(f"Distributor store prune failed: {e}")

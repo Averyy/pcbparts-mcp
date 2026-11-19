@@ -1,11 +1,11 @@
 """Mouser Search API v2 client.
 
-Answers are kept per part number in distributor_store.py for MOUSER_CACHE_TTL (3 days; not found a
-day), so a batch reuses parts other calls fetched and sends only the rest. Mouser matches loosely and
-doesn't say which part number each result is for, so results are matched back to the numbers asked
-(_attribute): a number whose results can't all be put down to it alone isn't kept on its own, and the
-whole batch is kept under its joined numbers instead. Every answer's lifecycle goes into the
-lifecycle store.
+Answers are kept per part number in distributor_store.py for MOUSER_CACHE_TTL, a miss for
+MOUSER_NOT_FOUND_TTL (3 days each), so a batch reuses parts other calls fetched and sends only the
+rest. Mouser matches loosely and doesn't say which part number each result is for, so results are
+matched back to the numbers asked (_attribute): a number whose results can't all be put down to it
+alone isn't kept on its own, and the whole batch is kept under its joined numbers instead. Every
+answer's lifecycle goes into the lifecycle store.
 
 Mouser sends at most 50 results a request (MOUSER_MAX_RESULTS), however many match, so a broad number
 can crowd the others out of a batch ("LM358|TPS54331DR" can come back as 50 LM358 parts). A reply cut
@@ -601,7 +601,7 @@ class MouserClient:
                 kept = {_cache_key(n): PartAnswer.from_json(batch["answers"][_cache_key(n)], fetched_at) for n in missing}
             except (KeyError, TypeError, AttributeError):  # not expected: ask Mouser again
                 continue
-            # The batch lives as long as a found answer; a part it didn't find is good for a day only
+            # The batch lives as long as a found answer; a part it didn't find, as long as a miss
             if self._store.now() - fetched_at >= MOUSER_NOT_FOUND_TTL and any(not a.matched for a in kept.values()):
                 continue
             answers.update(kept)

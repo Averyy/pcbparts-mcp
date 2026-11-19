@@ -12,6 +12,7 @@ import pytest
 
 from pcbparts_mcp import stats
 from pcbparts_mcp.cache import DailyQuota, Pacer, TTLCache
+from pcbparts_mcp.config import DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.mouser import MouserClient
 from pcbparts_mcp.stats import KEEP_DAYS, MAX_APPS, PUBLIC_DAYS, UsageStats
@@ -148,27 +149,21 @@ class TestDigiKeyNotFound:
         assert first["error"] == "Part not found: 209"
         assert "-ND" in first["hint"]
 
-    async def test_not_found_is_kept_a_day(self):
-        """0.10.0: a day, and found answers 3 days (they were 10 minutes and an hour, in memory)."""
+    @pytest.mark.parametrize("number, body, ttl", [("NOPE1", None, DIGIKEY_NOT_FOUND_TTL),
+                                                    ("LM358P", PRODUCT, DIGIKEY_CACHE_TTL)], ids=["not_found", "found"])
+    async def test_kept_for_its_lifetime(self, number, body, ttl):
+        """0.10.0 kept these in the store (they were 10 minutes and an hour, in memory); a miss and a
+        found part are each kept their lifetime (3 days both), then asked again."""
         clock = Clock()
-        fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT),
-                           httpx.Response(404), httpx.Response(200, json=PRODUCT))
+        fake = FakeDigiKey(*(httpx.Response(404) if body is None else httpx.Response(200, json=body) for _ in range(2)))
         client = digikey(fake, clock=clock)
-        assert "error" in await client.get_part("NOPE1")  # the 404
-        assert "results" in await client.get_part("LM358P")
-        clock.advance(86400 - 1)
-        await client.get_part("NOPE1")
-        await client.get_part("LM358P")
-        assert fake.product_requests == 2
+        first = await client.get_part(number)
+        assert ("error" in first, "results" in first) == (body is None, body is not None)
+        clock.advance(ttl - 1)
+        assert await client.get_part(number) == first and fake.product_requests == 1
         clock.advance(1)
-        assert "error" in await client.get_part("NOPE1")  # asked again
-        assert fake.product_requests == 3
-        clock.advance(2 * 86400 - 1)
-        await client.get_part("LM358P")
-        assert fake.product_requests == 3
-        clock.advance(1)
-        assert "results" in await client.get_part("LM358P")
-        assert fake.product_requests == 4
+        again = await client.get_part(number)  # asked again
+        assert fake.product_requests == 2 and ("error" in again) == (body is None)
 
     async def test_empty_product_is_a_cached_not_found(self):
         fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": []}))
@@ -261,7 +256,8 @@ class TestUsageStats:
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
             "distributors": {}, "reasons": {}, "why_empty": {},
-            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0}}
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0},
+            "lcsc_lookups": {}, "distributor_apps": {}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
@@ -849,6 +845,7 @@ EXCEPTION_MESSAGES = {
     "JLCPCB request timed out — try again later": "failed",
     "JLCPCB returned HTTP {} — try again later": "failed",
     "JLCPCB API error: {}": "failed",
+    "JLCPCB returned an unreadable response — try again later": "failed",
     "UUID is required": "bad_request",
     "Invalid UUID format": "bad_request",
     "EasyEDA has no symbol {}": "not_found",
@@ -896,7 +893,8 @@ class TestErrorSorting:
         from pcbparts_mcp.server import _error_kind
         client = (SRC / "client.py").read_text(encoding="utf-8")
         raised = {_text(node.args[0]) for node in ast.walk(ast.parse(client))
-                  if isinstance(node, ast.Call) and getattr(node.func, "id", "") in ("ValueError", "EasyEDAComponentNotFound")
+                  if isinstance(node, ast.Call)
+                  and getattr(node.func, "id", "") in ("ValueError", "EasyEDAComponentNotFound", "JLCPCBUnavailable")
                   and node.args}
         assert raised - set(EXCEPTION_MESSAGES) == set(), "classify these in EXCEPTION_MESSAGES"
         wrong = {t: _error_kind(_render(t)) for t, kind in EXCEPTION_MESSAGES.items() if _error_kind(_render(t)) != kind}

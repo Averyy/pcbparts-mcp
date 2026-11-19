@@ -500,7 +500,7 @@ class DigiKeyClient:
         products.sort(key=lambda p: p.get("QuantityAvailable") or 0, reverse=True)
 
         if not products:
-            # Kept too (a day), so asking again for a wrong or partial number costs no request
+            # Kept too (DIGIKEY_NOT_FOUND_TTL): asking again for a wrong or partial number costs no request
             self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
             self._store.put_not_listed(product_number, "digikey", fetched_at)
             return Lookup(_not_found_reply(product_number), "not_found", fetched_at)

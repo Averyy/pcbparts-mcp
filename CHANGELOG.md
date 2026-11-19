@@ -4,6 +4,32 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.2 (2026-11-19)
+
+### Changed
+
+- **`jlc_get_part(lcsc=...)`** answers from the daily snapshot, in milliseconds and without waiting on JLCPCB: stock, every price tier, specs, library type, datasheet PDF link and EasyEDA footprint. A part the snapshot doesn't list (stock under 10, or new) is still looked up live automatically.
+- **`jlc_get_part`**: new `live` argument. `live=true` does a live lookup, which also gives `min_order`, `reel_qty`, the `datasheet` page, `maker_datasheet` and `lcsc_url`.
+- Catalog reads run up to 3 at once (were one at a time): a quick lookup no longer waits behind a slow search. Replies are unchanged.
+- Searches are faster: the query parser compiles its keyword patterns once instead of on every search.
+- The per-address rate limit is 200 requests a minute (was 100): `RATE_LIMIT_REQUESTS`'s default, and the value in the Dockerfile and compose files.
+- A `datasheet_pdf` link leads to the maker's datasheet or LCSC's PDF when JLCPCB keeps no PDF of its own (it was a 404).
+- A server without price-tier data answers `jlc_get_part(lcsc=...)` live, as before.
+- A part-number miss in `jlc_get_part` no longer suggests `mouser_get_part` or `digikey_get_part`.
+- The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
+- Kept Mouser and DigiKey answers last longer: a part not found 3 days (was a day), like a found one; lifecycle readings 90 days (unknown was a week, not listed 30 days), obsolete ones a year.
+
+### Fixed
+
+- A JLCPCB listing with a malformed datasheet link or expiry no longer fails the part's lookup; an unreadable JLCPCB reply is the error "JLCPCB returned an unreadable response".
+
+### Added
+
+- **`jlc_get_part`, `jlc_stock_check`**: when JLCPCB doesn't answer, an LCSC code the database has gets its snapshot or gone row instead of an error, with `live_failed: true`, `live_error` and `note`. Other `jlc_stock_check` errors get a `hint` pointing to `jlc_search`.
+- **`/health`**: `snapshot` (`data_as_of`, `age_hours`, `stale` past 30 hours); `database_pressure` adds `running` and `longest_running_seconds` (measurement only).
+- **`/mcp/stats`**: `lcsc_lookups` per day: how `jlc_get_part` LCSC lookups and one-code `jlc_stock_check` queries were answered (`snapshot`, `live`, `fallback`, `live_failed`).
+- **`/mcp/stats`**: `distributor_apps` per day: calls to `mouser_get_part`, `digikey_get_part` and `part_lifecycle` by app, with how many were `rate_limited`.
+
 ## 0.10.1 (2026-11-19)
 
 ### Fixed

@@ -99,6 +99,13 @@ class EasyEDAComponentNotFound(ValueError):
     """EasyEDA has no symbol with this UUID (it answers {"success": false, "code": 404})."""
 
 
+class JLCPCBUnavailable(ValueError):
+    """JLCPCB gave no usable answer (JLCPCBClient._request): the connection failed or timed out, the
+    reply was empty, an HTTP error, a WAF challenge, rate limited, an API-level error or not a JSON
+    object. Only this means "JLCPCB didn't answer": a reply that came but couldn't be read raises
+    something else. The message is one of ours, safe to show."""
+
+
 def _count_upstream(source: str, event: str, count: int = 1) -> None:
     """For /mcp/stats: a request sent to source, an answer its cache gave instead, or a request our
     budget or pause for it held back (stats.UPSTREAM_EVENTS). Counting never breaks a lookup."""
@@ -171,6 +178,9 @@ DATASHEET_SIGNINGS_PER_MINUTE = 20
 DATASHEET_LINK_CACHE_MAX = 5000
 # A part without a datasheet PDF isn't looked up again for this long
 DATASHEET_MISSING_TTL = 600
+# The maker's link or LCSC's copy (no expiry) the redirect gives when JLCPCB keeps no PDF is held
+# this long, as a live part is (PART_CACHE_TTL)
+DATASHEET_UNSIGNED_TTL = PART_CACHE_TTL
 
 
 # Seeded footprint answers read ahead for a batch of footprint checks (JLCPCBClient._footprint_seeds),
@@ -194,16 +204,20 @@ def _signed_url_expiry(url: str) -> float | None:
     JLCPCB signs with OSS v4 (x-oss-date=20261101T151700Z&x-oss-expires=1800); v1 links carry
     Expires=<epoch>.
     """
-    params = parse_qs(urlparse(url).query)
-    try:
+    try:  # a malformed link (urlparse: "Invalid IPv6 URL") has no readable expiry either
+        params = parse_qs(urlparse(url).query)
         if "x-oss-date" in params and "x-oss-expires" in params:
             issued = datetime.strptime(params["x-oss-date"][0], "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
-            return issued.timestamp() + int(params["x-oss-expires"][0])
-        if "Expires" in params:
-            return float(params["Expires"][0])
-    except (ValueError, IndexError):
+            expires = issued.timestamp() + int(params["x-oss-expires"][0])
+        elif "Expires" in params:
+            expires = float(params["Expires"][0])
+        else:
+            return None
+        # One datetime can show: a link whose expiry it can't ("year 33715", inf) failed the whole part
+        datetime.fromtimestamp(expires, timezone.utc)
+    except (ValueError, IndexError, OverflowError, OSError):
         return None
-    return None
+    return expires
 
 
 def datasheet_pdf_link(url: str | None, now: float | None = None) -> tuple[str | None, str | None]:
@@ -233,8 +247,14 @@ def maker_datasheet_link(*urls: str | None) -> str | None:
     the PDF). A gpn isn't turned into a PDF name: LM73100's datasheet is lm7310.pdf. Other links are
     kept as listed (some need their query, Infineon's ?fileId=); LCSC's own aren't maker links."""
     for url in urls:
-        url = (url or "").strip()
-        if not url.startswith(("https://", "http://")) or "lcsc.com" in urlparse(url).netloc.lower():
+        url = url.strip() if isinstance(url, str) else ""  # a listing can hold anything
+        if not url.startswith(("https://", "http://")):
+            continue
+        try:
+            host = urlparse(url).netloc.lower()
+        except ValueError:  # "Invalid IPv6 URL": not a link to give (it failed the whole part)
+            continue
+        if not host or "lcsc.com" in host:
             continue
         if ti := _TI_DATASHEET.match(url):
             if ti.group(1):
@@ -242,6 +262,30 @@ def maker_datasheet_link(*urls: str | None) -> str | None:
             return f"https://www.ti.com/lit/ds/symlink/{ti.group(2).lower()}.pdf"
         return url
     return None
+
+
+def item_maker_datasheet(item: dict[str, Any]) -> str | None:
+    """A JLCPCB item's maker datasheet (a reply's maker_datasheet): maker_datasheet_link of its
+    official link, else of its datasheet link when that is the maker's."""
+    return maker_datasheet_link(item.get("dataManualOfficialLink"), item.get("dataManualUrl"))
+
+
+def lcsc_datasheet_pdf(product: dict[str, Any] | None) -> str | None:
+    """LCSC's copy of the datasheet as a PDF (pdfUrl in its product data), or None."""
+    url = (product or {}).get("pdfUrl")
+    return url if isinstance(url, str) and url else None
+
+
+def _on_lcsc(url: str) -> bool:
+    """An http(s) link on LCSC's own hosts (lcsc.com and its subdomains: datasheet.lcsc.com)."""
+    if not isinstance(url, str):
+        return False
+    try:
+        parsed = urlparse(url)
+        host = (parsed.hostname or "").lower()
+    except ValueError:
+        return False
+    return parsed.scheme in ("https", "http") and (host == "lcsc.com" or host.endswith(".lcsc.com"))
 
 
 def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) -> None:
@@ -252,7 +296,7 @@ def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) 
     """
     if not product:
         return
-    pdf = product.get("pdfUrl")
+    pdf = lcsc_datasheet_pdf(product)
     if pdf and not result.get("datasheet_pdf") and not result.get("maker_datasheet"):
         code = product.get("productCode")
         result["datasheet_pdf"] = pdf
@@ -268,6 +312,16 @@ def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) 
             result["specs_note"] = ("JLCPCB lists no specs for this part; these are LCSC's, which searches don't "
                                     "use, so spec filters still leave it out.")
             annotate_catalog(result)
+
+
+def _cached_datasheet(part: dict[str, Any], now: float) -> str | None:
+    """The /mcp/datasheet link a cached live part gives without a request: JLCPCB's signed PDF
+    unless about to expire (then None: it is signed again), else (JLCPCB had none) the maker's
+    datasheet or LCSC's copy, as datasheet_pdf_url would choose."""
+    if part.get("datasheet_pdf_expires"):
+        return None if _pdf_link_expiring(part, now) else part.get("datasheet_pdf")
+    copy = part.get("datasheet_pdf")
+    return part.get("maker_datasheet") or (copy if copy and _on_lcsc(copy) else None)
 
 
 def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
@@ -697,31 +751,42 @@ class JLCPCBClient:
                 ))
             except ChallengeDetected as e:
                 logger.warning(f"JLCPCB WAF challenge ({e.challenge_type}): {log_keyword}")
-                raise ValueError("JLCPCB blocked request with WAF challenge — try again later")
+                raise JLCPCBUnavailable("JLCPCB blocked request with WAF challenge — try again later")
             except RateLimited:
                 logger.warning(f"JLCPCB rate limited: {log_keyword}")
-                raise ValueError("JLCPCB rate limited — try again later")
+                raise JLCPCBUnavailable("JLCPCB rate limited — try again later")
             except EmptyResponse:
                 logger.warning(f"JLCPCB empty response: {log_keyword}")
-                raise ValueError("JLCPCB returned empty response — try again later")
+                raise JLCPCBUnavailable("JLCPCB returned empty response — try again later")
             except ConnectionFailed as e:
                 logger.warning(f"JLCPCB connection failed ({e.reason}): {log_keyword}")
-                raise ValueError("JLCPCB connection failed — try again later")
+                raise JLCPCBUnavailable("JLCPCB connection failed — try again later")
             except WaferTimeout:
                 logger.warning(f"JLCPCB request timeout: {log_keyword}")
-                raise ValueError("JLCPCB request timed out — try again later")
+                raise JLCPCBUnavailable("JLCPCB request timed out — try again later")
+            except WaferError as e:  # too many redirects, an oversized reply, a failed token: no answer either
+                logger.warning(f"JLCPCB request failed ({type(e).__name__}): {log_keyword}")
+                raise JLCPCBUnavailable("JLCPCB connection failed — try again later")
             logger.debug(f"JLCPCB response: {response.status_code}")
             try:
                 response.raise_for_status()
             except WaferHTTPError as e:
                 logger.warning(f"JLCPCB HTTP {e.status_code}: {log_keyword}")
-                raise ValueError(f"JLCPCB returned HTTP {e.status_code} — try again later")
-            data = response.json()
+                raise JLCPCBUnavailable(f"JLCPCB returned HTTP {e.status_code} — try again later")
+            # A 200 that isn't a JSON object (an error page): our message, the decoder's stays in the log
+            try:
+                data = response.json()
+            except ValueError as e:
+                logger.warning(f"JLCPCB reply not JSON ({e}): {log_keyword}")
+                raise JLCPCBUnavailable("JLCPCB returned an unreadable response — try again later") from e
+            if not isinstance(data, dict):
+                logger.warning(f"JLCPCB reply not a JSON object ({type(data).__name__}): {log_keyword}")
+                raise JLCPCBUnavailable("JLCPCB returned an unreadable response — try again later")
 
             # Check for API-level errors
             if data.get("code") != 200:
                 error_msg = data.get("message", "Unknown API error")
-                raise ValueError(f"JLCPCB API error: {error_msg}")
+                raise JLCPCBUnavailable(f"JLCPCB API error: {error_msg}")
 
             return data
 
@@ -811,6 +876,36 @@ class JLCPCBClient:
         candidates.append(seed)
         answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL)
         return answer.as_result() if answer is not None else None
+
+    def footprint_seed(self, lcsc: str) -> FootprintAnswer | None:
+        """A part's seeded footprint answer, read now: call it inside a database job (run_db), then
+        pass it to known_footprint. None without a seed or when the read fails."""
+        if self._easyeda_seed is None:
+            return None
+        try:
+            return self._easyeda_seed(lcsc.strip().upper())
+        except Exception as e:  # the seed is an optimization; a broken one must not break lookups
+            logger.warning(f"EasyEDA footprint seed lookup failed for {lcsc}: {type(e).__name__}: {e}")
+            return None
+
+    async def known_footprint(self, lcsc: str, seed: FootprintAnswer | None) -> dict[str, Any]:
+        """has_easyeda_footprint and the UUIDs where they're already known, never a request: a live
+        answer in the memory cache, the store, or `seed` (footprint_seed's, read by the caller in
+        its own database job). has_easyeda_footprint None (unknown) otherwise. Not counted in the
+        upstream stats: no request would have been made."""
+        lcsc = lcsc.strip().upper()
+        now = time.time()
+        async with self._get_easyeda_cache_lock():
+            cached = self._easyeda_cache.get(lcsc)
+        if cached is not None and not cached[2] and now - cached[0] < EASYEDA_FOOTPRINT_CACHE_TTL:
+            return dict(cached[1])
+        token = _prefetched_seeds.set({lcsc: seed})
+        try:
+            stored = await self._stored_footprint(lcsc, now)
+        finally:
+            _prefetched_seeds.reset(token)
+        return stored if stored is not None else {
+            "has_easyeda_footprint": None, "easyeda_symbol_uuid": None, "easyeda_footprint_uuid": None}
 
     async def _record_live_footprint(self, lcsc: str, result: dict[str, Any]) -> None:
         """Keep a real /api/products answer in memory and in the store."""
@@ -1285,7 +1380,7 @@ class JLCPCBClient:
                 result["datasheet_pdf"] = pdf_url
                 result["datasheet_pdf_expires"] = pdf_expires
             # JLCPCB has no PDF for some parts (TPS61023DRLR C919459) but lists the maker's link
-            if maker := maker_datasheet_link(item.get("dataManualOfficialLink"), item.get("dataManualUrl")):
+            if maker := item_maker_datasheet(item):
                 result["maker_datasheet"] = maker
             if not pdf_url and not maker:
                 result["datasheet_note"] = ("JLCPCB has no datasheet PDF for this part; find it on the "
@@ -1502,12 +1597,16 @@ class JLCPCBClient:
         return None
 
     async def datasheet_pdf_url(self, lcsc: str) -> str | None:
-        """A signed link to a part's datasheet PDF, valid for at least PDF_LINK_MIN_REMAINING, for
-        the /mcp/datasheet/<lcsc> redirect; None if the part or its PDF isn't found.
+        """The link the /mcp/datasheet/<lcsc> redirect gives, in the order a live reply prefers:
+        JLCPCB's PDF, signed and valid for at least PDF_LINK_MIN_REMAINING; else the maker's
+        datasheet (maker_datasheet: item_maker_datasheet); else LCSC's PDF (apply_lcsc_fallback's,
+        only on an LCSC host). None if the part or all three aren't found. Never a link taken from
+        the request.
 
         Reuses a link from the part cache or an earlier redirect; otherwise makes one JLCPCB search
-        request (never EasyEDA, unlike get_part), within DATASHEET_SIGNINGS_PER_MINUTE for all
-        callers (raises DatasheetLinkBusy beyond it). JLCPCB errors raise ValueError, as elsewhere.
+        request (never EasyEDA, unlike get_part), and one to LCSC when JLCPCB lists neither PDF nor
+        maker link, within DATASHEET_SIGNINGS_PER_MINUTE for all callers (raises DatasheetLinkBusy
+        beyond it). JLCPCB errors raise ValueError (JLCPCBUnavailable), as elsewhere.
         """
         lcsc = lcsc.strip().upper()
         if not lcsc.startswith("C") or not (lcsc[1:].isascii() and lcsc[1:].isdigit()):
@@ -1516,9 +1615,9 @@ class JLCPCBClient:
         async with self._get_part_cache_lock():
             entry = self._part_cache.get(lcsc)
         part = entry[1] if entry else None
-        if part and part.get("datasheet_pdf") and not _pdf_link_expiring(part, now):
+        if part and (url := _cached_datasheet(part, now)):
             _count_upstream("jlcpcb", "cached")
-            return part["datasheet_pdf"]
+            return url
         held = self._datasheet_links.get(lcsc)
         if held and (held[0] is None and now < held[1] or held[0] and held[1] - now >= PDF_LINK_MIN_REMAINING):
             _count_upstream("jlcpcb", "cached")
@@ -1531,7 +1630,7 @@ class JLCPCBClient:
             wait = max(1, math.ceil(60 - (now - min(self._datasheet_signings))))
             raise DatasheetLinkBusy(
                 f"This server signs at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet links a minute for all "
-                f"users; try again in {wait}s. A datasheet_pdf link jlc_get_part returned in the last "
+                f"users; try again in {wait}s. A datasheet_pdf link a live jlc_get_part reply gave in the last "
                 f"{(PDF_LINK_SECONDS - PDF_LINK_MIN_REMAINING) // 60} minutes opens without one.", retry_after=wait)
         self._datasheet_signings.append(now)
         response = await self._request(JLCPCB_SEARCH_URL, {
@@ -1540,13 +1639,25 @@ class JLCPCBClient:
         items = ((response.get("data") or {}).get("componentPageInfo") or {}).get("list") or []
         item = next((i for i in items if i.get("componentCode") == lcsc), None)
         url, _ = datasheet_pdf_link((item or {}).get("dataManualFileAccessIdUrl"))
-        valid_until = (_signed_url_expiry(url) or now) if url else now + DATASHEET_MISSING_TTL
+        if url:
+            valid_until = _signed_url_expiry(url) or now
+        else:  # no PDF on JLCPCB's storage (TPS61023DRLR C919459): what the live reply gives instead
+            url = await self._unsigned_datasheet(lcsc, item) if item else None
+            valid_until = now + (DATASHEET_UNSIGNED_TTL if url else DATASHEET_MISSING_TTL)
         if len(self._datasheet_links) >= DATASHEET_LINK_CACHE_MAX:
             self._datasheet_links = {k: v for k, v in self._datasheet_links.items() if v[1] > now}
             while len(self._datasheet_links) >= DATASHEET_LINK_CACHE_MAX:
                 self._datasheet_links.pop(next(iter(self._datasheet_links)))
         self._datasheet_links[lcsc] = (url, valid_until)
         return url
+
+    async def _unsigned_datasheet(self, lcsc: str, item: dict[str, Any]) -> str | None:
+        """For a JLCPCB item without its own PDF, the link a live reply gives instead: the maker's
+        (maker_datasheet), else LCSC's PDF (asking LCSC, as get_part does), if it is on an LCSC host."""
+        if maker := item_maker_datasheet(item):
+            return maker
+        pdf = lcsc_datasheet_pdf(await self.lcsc_product(lcsc))
+        return pdf if pdf and _on_lcsc(pdf) else None
 
     def _cache_footprint_pads(self, uuid: str, fetched_at: float, pads: list[dict[str, Any]]) -> None:
         cache = self._footprint_pads_cache

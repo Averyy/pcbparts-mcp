@@ -210,7 +210,7 @@ async def test_empty_mpn_lookup_keeps_error_and_adds_hint():
     result = await server.jlc_get_part(mpn=mpn)
     assert result["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "stock >= 10" in result["hint"] and f'jlc_stock_check(query="{mpn}")' in result["hint"]
-    assert "mouser_get_part" in result["hint"] and "digikey_get_part" in result["hint"]
+    assert "mouser_get_part" not in result["hint"] and "digikey_get_part" not in result["hint"]  # since 0.10.2
     assert server._call_outcome(SimpleNamespace(structured_content=result)) == "not_found"
 
 

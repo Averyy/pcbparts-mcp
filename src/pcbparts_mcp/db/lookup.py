@@ -116,8 +116,8 @@ def get_by_mpn(
             if results:
                 info = matched(results, "lcsc")[1]
                 info["note"] = (f"'{candidate}' is an LCSC code, not a part number; this is that part. "
-                                f"jlc_get_part(lcsc=\"{candidate.upper()}\") adds live stock and prices, "
-                                "the datasheet and EasyEDA footprint status.")
+                                f"jlc_get_part(lcsc=\"{candidate.upper()}\") adds the datasheet and EasyEDA "
+                                "footprint status; live=true adds live stock and prices.")
                 return results, info
 
         # 4. Existing FTS queries, variants, stock order and limit are unchanged,

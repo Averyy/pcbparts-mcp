@@ -88,7 +88,7 @@ ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 ENV HTTP_HOST=0.0.0.0
 ENV HTTP_PORT=8080
-ENV RATE_LIMIT_REQUESTS=100
+ENV RATE_LIMIT_REQUESTS=200
 
 # EasyEDA footprint answers, Mouser/DigiKey answers and lifecycle readings, and Mouser/DigiKey daily
 # request counts that survive restarts (dir created and owned by appuser above).

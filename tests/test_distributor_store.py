@@ -1,15 +1,15 @@
-"""0.10.0: Mouser/DigiKey answers (3 days) and lifecycle readings (90 days) in one SQLite store on the
-cache volume, and the lifecycle wording normalised. No network; fake clocks."""
+"""0.10.0: Mouser/DigiKey answers (3 days) and lifecycle readings (90 days; obsolete a year, 0.10.2) in
+one SQLite store on the cache volume, and the lifecycle wording normalised. No network; fake clocks."""
 
 import datetime
 
 import pytest
 
 from pcbparts_mcp.config import (
-    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
-    MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_TTL,
+    LIFECYCLE_UNKNOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
-from pcbparts_mcp.distributor_store import DistributorStore
+from pcbparts_mcp.distributor_store import _PRUNE_LIFECYCLE, DistributorStore
 from pcbparts_mcp.lifecycle import (
     MOUSER_NOT_STATED, NOT_LISTED_MAKER_KEY, Reading, digikey_status, last_buy_date, maker_key, makers_match,
     mouser_status,
@@ -47,10 +47,24 @@ def reading(mpn="LM358P", maker="Texas Instruments", source="mouser", status="ac
     return Reading(mpn, maker, source, status, raw, observed_at, found)
 
 
+# Every kind of kept answer and its lifetime: (source, found, seconds)
+ANSWER_KINDS = [("mouser", True, MOUSER_CACHE_TTL), ("mouser", False, MOUSER_NOT_FOUND_TTL),
+                ("digikey", True, DIGIKEY_CACHE_TTL), ("digikey", False, DIGIKEY_NOT_FOUND_TTL)]
+ANSWER_IDS = ["m_found", "m_miss", "dk_found", "dk_miss"]
+# Every kind of lifecycle reading and its lifetime: (status, found, seconds); found=False is "not listed"
+READING_KINDS = [("active", True, LIFECYCLE_TTL), ("nrnd", True, LIFECYCLE_TTL), ("last_time_buy", True, LIFECYCLE_TTL),
+                 ("obsolete", True, LIFECYCLE_OBSOLETE_TTL), ("unknown", True, LIFECYCLE_UNKNOWN_TTL),
+                 ("unknown", False, LIFECYCLE_NOT_LISTED_TTL)]
+READING_IDS = ["active", "nrnd", "ltb", "obsolete", "unknown", "not_listed"]
+
+
 def test_lifetimes_as_decided():
+    """Decided 2026-11-19: a miss is kept as long as a found answer; every lifecycle reading 90 days,
+    an obsolete one a year (a part doesn't come back from obsolete)."""
     assert (MOUSER_CACHE_TTL, DIGIKEY_CACHE_TTL) == (3 * DAY, 3 * DAY)
-    assert (MOUSER_NOT_FOUND_TTL, DIGIKEY_NOT_FOUND_TTL) == (DAY, DAY)
-    assert (LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL) == (90 * DAY, 7 * DAY, 30 * DAY)
+    assert (MOUSER_NOT_FOUND_TTL, DIGIKEY_NOT_FOUND_TTL) == (3 * DAY, 3 * DAY)
+    assert (LIFECYCLE_TTL, LIFECYCLE_OBSOLETE_TTL) == (90 * DAY, 365 * DAY)
+    assert (LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL) == (90 * DAY, 90 * DAY)
 
 
 class TestSchema:
@@ -66,35 +80,47 @@ class TestSchema:
         plan = " ".join(str(row) for row in store._conn.execute(
             "EXPLAIN QUERY PLAN DELETE FROM answers WHERE source = 'mouser' AND found = 1 AND fetched_at <= 5"))
         assert "answers_age" in plan
+        plan = " ".join(str(row) for row in store._conn.execute("EXPLAIN QUERY PLAN " + _PRUNE_LIFECYCLE,
+                                                                 (5, 10, 1, 2, 3, 4)))
+        assert "lifecycle_age" in plan
 
     def test_prune_keeps_each_kind_for_its_lifetime(self, store, clock):
-        store.put_answer("mouser", "LM358P", {"results": [1]}, True)
-        store.put_answer("mouser", "NOPE", {"not_found": True}, False)
-        store.put_readings([reading(), reading(mpn="NOPE1", maker="", status="unknown", raw=None, found=False),
-                            reading(mpn="ODD1", status="unknown", raw="Odd")])
-        clock.advance(DAY)
-        store.prune()
-        assert store.get_answer("mouser", "LM358P") is not None
-        assert store._conn.execute("SELECT COUNT(*) FROM answers").fetchone()[0] == 1  # the miss is gone
-        clock.advance(LIFECYCLE_UNKNOWN_TTL - DAY)
-        store.prune()
-        assert {r[0] for r in store._conn.execute("SELECT mpn FROM lifecycle")} == {"LM358P", "NOPE1"}
-        clock.advance(LIFECYCLE_NOT_LISTED_TTL - LIFECYCLE_UNKNOWN_TTL)
-        store.prune()
-        assert {r[0] for r in store._conn.execute("SELECT mpn FROM lifecycle")} == {"LM358P"}
+        """Each kind of row stays through prune() until its lifetime ends and goes then, as
+        get_answer() and readings() stop using it: an obsolete reading outlives the others' 90 days."""
+        lifetimes = {}
+        for source, found, ttl in ANSWER_KINDS:
+            store.put_answer(source, f"A{int(found)}", {}, found)
+            lifetimes[(source, f"A{int(found)}")] = ttl
+        for i, (status, found, ttl) in enumerate(READING_KINDS):
+            store.put_readings([reading(mpn=f"P{i}", maker="TI" if found else "", status=status, raw=None, found=found)])
+            lifetimes[f"P{i}"] = ttl
+
+        def kept():
+            answers = set(store._conn.execute("SELECT source, key FROM answers").fetchall())
+            return answers | {row[0] for row in store._conn.execute("SELECT mpn FROM lifecycle")}
+
+        assert len(set(lifetimes.values())) >= 2  # the obsolete year, beside 3 and 90 days
+        for ttl in sorted(set(lifetimes.values())):
+            clock.now = NOW + ttl - 1
+            store.prune()
+            assert kept() == {kind for kind, lifetime in lifetimes.items() if lifetime >= ttl}, ttl
+            clock.now = NOW + ttl
+            store.prune()
+            assert kept() == {kind for kind, lifetime in lifetimes.items() if lifetime > ttl}, ttl
+        assert kept() == set()
 
 
 class TestAnswers:
-    @pytest.mark.parametrize("source", ["mouser", "digikey"])
-    def test_found_kept_three_days_not_found_one(self, store, clock, source):
-        store.put_answer(source, "LM358P", {"results": [1]}, True)
-        store.put_answer(source, "NOPE", {"not_found": True}, False)
-        clock.advance(DAY - 1)
-        assert store.get_answer(source, "NOPE") == ({"not_found": True}, NOW)
-        clock.advance(1)
-        assert store.get_answer(source, "NOPE") is None
-        clock.advance(2 * DAY - 1)
-        assert store.get_answer(source, "LM358P") == ({"results": [1]}, NOW)
+    @pytest.mark.parametrize("source, found, ttl", ANSWER_KINDS, ids=ANSWER_IDS)
+    def test_kept_for_its_lifetime(self, store, clock, source, found, ttl):
+        """A found answer and a "not found" are each used until their lifetime ends (3 days both),
+        with the time they were fetched."""
+        answer = {"results": [1]} if found else {"not_found": True}
+        store.put_answer(source, "LM358P", answer, found)
+        clock.advance(ttl - 1)
+        assert store.get_answer(source, "LM358P") == (answer, NOW)
+        store.prune()
+        assert store.get_answer(source, "LM358P") == (answer, NOW)
         clock.advance(1)
         assert store.get_answer(source, "LM358P") is None
 
@@ -138,25 +164,35 @@ class TestAnswers:
 
 
 class TestReadings:
-    def test_kept_90_days(self, store, clock):
-        store.put_readings([reading(status="nrnd", raw="Not Recommended for New Designs")])
-        clock.advance(LIFECYCLE_TTL - 1)
-        assert [r.status for r in store.readings("LM358P")] == ["nrnd"]
-        clock.advance(1)
-        assert store.readings("LM358P") == []
-
-    @pytest.mark.parametrize("found, ttl", [(False, LIFECYCLE_NOT_LISTED_TTL), (True, LIFECYCLE_UNKNOWN_TTL)],
-                             ids=["not_listed", "unknown"])
-    def test_not_listed_30_days_and_unknown_a_week(self, store, clock, found, ttl):
-        """An unknown status a week; "not listed" 30 days (decision 2026-11-18: mostly parts neither
-        distributor carries, each costing a request whenever its answer expires)."""
-        store.put_readings([reading(maker="" if not found else "TI", status="unknown", raw=None, found=found)])
+    @pytest.mark.parametrize("status, found, ttl", READING_KINDS, ids=READING_IDS)
+    def test_kept_for_its_lifetime(self, store, clock, status, found, ttl):
+        """Each reading is used, and kept by prune(), until its lifetime ends: 90 days, an obsolete
+        one a year. observed_at stays when it was fetched, however old."""
+        store.put_readings([reading(maker="TI" if found else "", status=status, raw=None, found=found)])
         clock.advance(ttl - 1)
-        assert len(store.readings("LM358P")) == 1
+        assert [(r.status, r.found, r.observed_at) for r in store.readings("LM358P")] == [(status, found, NOW)]
         store.prune()
         assert len(store.readings("LM358P")) == 1
         clock.advance(1)
         assert store.readings("LM358P") == []
+        store.prune()
+        assert store._conn.execute("SELECT COUNT(*) FROM lifecycle").fetchone()[0] == 0
+
+    def test_obsolete_outlives_the_others_90_days(self, store, clock):
+        """A part doesn't come back from obsolete: at 90 days the other readings are gone and the
+        obsolete one is still used (and kept by prune) until a year."""
+        store.put_readings([reading(status="obsolete", raw="Obsolete"),
+                            reading(maker="Texas Instruments Inc.", source="digikey", status="active", raw="Active")])
+        clock.advance(LIFECYCLE_TTL)
+        store.prune()
+        assert [(r.source, r.status, r.observed_at) for r in store.readings("LM358P")] == [("mouser", "obsolete", NOW)]
+        clock.advance(LIFECYCLE_OBSOLETE_TTL - LIFECYCLE_TTL - 1)
+        store.prune()
+        assert [r.status for r in store.readings("LM358P")] == ["obsolete"]
+        clock.advance(1)
+        assert store.readings("LM358P") == []
+        store.prune()
+        assert store._conn.execute("SELECT COUNT(*) FROM lifecycle").fetchone()[0] == 0
 
     def test_found_by_mpn_key_whatever_the_spelling(self, store):
         store.put_readings([reading(mpn="AMS1117-3.3")])
@@ -173,7 +209,7 @@ class TestReadings:
 
     def test_not_listed_is_the_spellings_own(self, store):
         """DigiKey matches the spelling asked: a miss for LM358-P was found by mpn_key and answered
-        LM358P not_found for 30 days."""
+        LM358P not_found for as long as the miss was kept."""
         store.put_not_listed("LM358-P", "digikey")
         assert [(r.found, r.source) for r in store.readings(" lm358-p")] == [(False, "digikey")]
         assert store.readings("LM358P") == [] and store.readings("LM358 P") == []

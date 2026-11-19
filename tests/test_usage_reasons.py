@@ -159,6 +159,7 @@ def test_empty_reasons(content, reason):
     ("CSE model download failed (network/connection error)", "cse_download_network"),
     ("CSE get_kicad failed. Check server logs for details.", "cse_lookup_failed"),
     ("JLCPCB blocked request with WAF challenge — try again later", "jlcpcb_waf"),
+    ("JLCPCB returned an unreadable response — try again later", "jlcpcb_unavailable"),
     ("Something nobody expected", "unexpected_error"),
 ])
 def test_failed_reasons(message, reason):

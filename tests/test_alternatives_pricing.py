@@ -94,11 +94,11 @@ async def test_order_quantity_tiers(pricing, boards, original_price, replacement
 async def test_all_listed_candidates_tiers_take_one_query(pricing):
     client, _, _, database = pricing
     queries = []
-    database._conn.set_trace_callback(queries.append)
+    database.set_trace_callback(queries.append)
     try:
         result = await client.find_alternatives("C1", board_quantity=100)
     finally:
-        database._conn.set_trace_callback(None)
+        database.set_trace_callback(None)
     reads = [query for query in queries if "FROM price_tiers" in query]
     assert len(result["alternatives"]) == 2
     assert len(reads) == 1

@@ -56,8 +56,10 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
-# Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1
-RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
+# Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1. HTTP requests, not tool
+# calls: most clients send three per call, and a BOM tool loading a board at its normal pace sends
+# 120-180 a minute (ordinary addresses were refused at the earlier 100 on 2026-11-19).
+RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 200, 1)
 # The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
 # per address instead of RATE_LIMIT_REQUESTS: claude.ai and ChatGPT connectors call from them for
 # many users at once. 1,000 (about 330 tool calls) is about half what the 1-CPU server is estimated to
@@ -231,14 +233,15 @@ def mouser_extra_keys(environ: Mapping[str, str], first: str = "") -> tuple[list
 
 MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS = mouser_extra_keys(os.environ, MOUSER_API_KEY)
 MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
-# Mouser/DigiKey answers (stock, prices, lifecycle) are kept per part number for 3 days, in
-# distributor_store.py (on the cache volume when DISTRIBUTOR_STORE_PATH is set): clients that
-# re-read each part about daily got nothing from a day's cache; 3 days answers about 2 in 3 and
-# one fetched answer serves every caller. Replies carry observed_at, so callers see the age.
+# Mouser/DigiKey answers (stock, prices, lifecycle) are kept per part number in distributor_store.py
+# (on the cache volume when DISTRIBUTOR_STORE_PATH is set), and one fetched answer serves every
+# caller. Replies carry observed_at, so callers see the age.
+# A found part: 3 days, so clients that re-read a BOM about daily get about 2 in 3 answers without
+# a request, while stock and prices stay recent.
 MOUSER_CACHE_TTL = 3 * 86400
-# "Part not found" answers are kept for less time: one that wasn't really about the part (an API
-# glitch, a part listed later) hides that part for at most this long
-MOUSER_NOT_FOUND_TTL = 86400
+# "Part not found": 3 days too. A number the distributor doesn't list seldom gets listed within
+# days, and asking again sooner spends the shared daily limit for the same miss.
+MOUSER_NOT_FOUND_TTL = 3 * 86400
 
 # DigiKey API
 DIGIKEY_CLIENT_ID = os.getenv("DIGIKEY_CLIENT_ID", "")
@@ -248,17 +251,22 @@ DIGIKEY_CLIENT_SECRET_2 = os.getenv("DIGIKEY_CLIENT_SECRET_2", "")
 DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
 DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
 DIGIKEY_CACHE_TTL = 3 * 86400  # as MOUSER_CACHE_TTL
-DIGIKEY_NOT_FOUND_TTL = 86400  # as MOUSER_NOT_FOUND_TTL
+DIGIKEY_NOT_FOUND_TTL = 3 * 86400  # as MOUSER_NOT_FOUND_TTL
 
 # Lifecycle store (distributor_store.py, part_lifecycle): every lifecycle status Mouser or DigiKey
-# states, by maker and MPN. A status changes rarely and with notice (JEDEC JESD48: at least 6 months
-# from a discontinuation notice to the last order), so it's kept 90 days; an unknown status a week;
-# "not listed" (the distributor has no part with that number: mostly Chinese makers' parts, which
-# neither carries) 30 days, so each such part costs a request a month, not a week.
-# part_lifecycle takes up to this many parts a call.
+# states, by maker and MPN. Each kind of reading has its own lifetime (distributor_store._ttl).
+# active, nrnd, last_time_buy: 90 days. A status changes rarely and with notice (JEDEC JESD48: at
+# least 6 months from a discontinuation notice to the last order).
 LIFECYCLE_TTL = 90 * 86400
-LIFECYCLE_UNKNOWN_TTL = 7 * 86400
-LIFECYCLE_NOT_LISTED_TTL = 30 * 86400
+# obsolete: a year. A part doesn't come back from obsolete.
+LIFECYCLE_OBSOLETE_TTL = 365 * 86400
+# Listed with no usable status (unknown): 90 days. A distributor that names no status for a part
+# seldom names one soon after, and each new look spends the shared daily limit.
+LIFECYCLE_UNKNOWN_TTL = 90 * 86400
+# "Not listed" (the distributor has no part with that number: mostly Chinese makers' parts, which
+# neither carries): 90 days. Such a part seldom gets listed, and each new look costs a request.
+LIFECYCLE_NOT_LISTED_TTL = 90 * 86400
+# part_lifecycle takes up to this many parts a call.
 LIFECYCLE_MAX_PARTS = 50
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")

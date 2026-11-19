@@ -2,10 +2,13 @@ name: Scrape JLCPCB Components
 
 on:
   schedule:
-    # Daily at 12:21 UTC (7:21 AM EST / 8:21 PM China)
+    # Backup only: 12:21 UTC (7:21 AM EST / 8:21 PM China). GitHub starts scheduled runs hours late
+    # and sometimes not at all (no run on 2026-11-17), so the daily scrape is started by a cron job
+    # on the VPS through workflow_dispatch (docs/ref-scrape-schedule.md); this one is skipped when
+    # that day's scrape is already on main (the `check` job).
     - cron: '21 12 * * *'
   workflow_dispatch:
-    # Manual trigger with optional parameters
+    # The VPS's daily trigger, and manual runs, with optional parameters
     inputs:
       workers:
         description: 'Number of concurrent workers'
@@ -29,7 +32,42 @@ concurrency:
   cancel-in-progress: false  # Let running scrape finish
 
 jobs:
+  # A scheduled (backup) run does nothing when main already has today's scrape. Dispatched runs
+  # always scrape.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      run: ${{ steps.today.outputs.run }}
+    steps:
+      - name: Checkout the manifest
+        uses: actions/checkout@v7
+        with:
+          ref: main  # the branch tip now, not the commit this run was created on
+          sparse-checkout: data/manifest.json
+          sparse-checkout-cone-mode: false
+      - name: Has today's scrape run?
+        id: today
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          run=true
+          if [ "$EVENT" = "schedule" ]; then
+            scraped=$(python3 -c "import json; print(json.load(open('data/manifest.json'))['scraped_at'][:10])" 2>/dev/null || true)
+            if [ -n "$scraped" ] && [ "$scraped" = "$(date -u +%F)" ]; then
+              run=false
+              echo "::notice title=Scrape skipped::main already has the $scraped scrape"
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
   scrape:
+    needs: check
+    # A dispatched run always scrapes, even if the check job itself failed; a scheduled one only
+    # when the check said today's scrape is missing (or couldn't tell)
+    if: always() && (github.event_name != 'schedule' || needs.check.outputs.run != 'false')
     runs-on: ubuntu-latest
     timeout-minutes: 60  # ~8-15 min with 10 workers, plenty of buffer
 

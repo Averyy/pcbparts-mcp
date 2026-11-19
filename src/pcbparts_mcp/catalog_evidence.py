@@ -134,5 +134,5 @@ def annotate_catalog(part: dict[str, Any]) -> None:
     if part.get("no_datasheet"):
         part["no_datasheet_note"] = (
             "JLCPCB lists no datasheet; this flag does not describe availability from LCSC or the manufacturer. "
-            "jlc_get_part checks LCSC when JLCPCB has none."
+            "jlc_get_part(live=true) checks LCSC when JLCPCB has none."
         )

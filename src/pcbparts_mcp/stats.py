@@ -8,8 +8,10 @@ by the shared limits). For calls that found nothing or failed, the reason, from 
 the other services we call and the answers their caches saved (UPSTREAM_SOURCES), how many part numbers
 were looked up with Mouser and DigiKey and how many of them were different, and the HTTP requests the
 rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the failed calls and the turned-away requests
-in each UTC hour. No IPs, queries or part numbers are kept: callers and distinct part numbers are
-counted through salted hashes held in memory for the current day only, with a new random salt each
+in each UTC hour. From 0.10.2 also how LCSC-code lookups were answered (snapshot, live or a
+fallback), and which apps called the Mouser and DigiKey tools (distributor_apps; server.py links a
+call to its app in memory). No IPs, queries or part numbers are kept: callers and distinct part
+numbers are counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
 twice; each day's `restarts` (from 0.10.0) says how many there were.
 
@@ -103,12 +105,27 @@ REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_c
 # the day (before or after a deploy, say). None on a day saved before 0.10.1; on the day it started,
 # None for the hours before that.
 HOURLY_SINCE_0_10_1 = ("failed_hours", "refused_hours")
+# From 0.10.2, per day (None on days saved before): how the LCSC-code lookups of jlc_get_part, and
+# jlc_stock_check's one-code queries, were answered, one event a lookup: snapshot (from the database,
+# no request), live (a live lookup answered, found or not, including its 1-hour cache), fallback
+# (JLCPCB didn't answer; the database did, live_failed) and live_failed (the live lookup failed and
+# nothing answered instead: the error)
+LCSC_LOOKUP_TOOLS = ("jlc_get_part", "jlc_stock_check")
+LCSC_LOOKUP_EVENTS = ("snapshot", "live", "fallback", "live_failed")
+# From 0.10.2, per day (None on days saved before): calls to the tools that ask Mouser and DigiKey,
+# by app (the name it sent with initialize, cleaned and capped per tool as in apps): calls, and how
+# many of them were rate_limited (the call's outcome). A stateless server's tools/call carries no
+# app name, so server.AppsByAddress links a call to the app its address last connected with, kept
+# APP_LINK_MINUTES from that address's last initialize or call; none: "unknown".
+DISTRIBUTOR_TOOLS = ("mouser_get_part", "digikey_get_part", "part_lifecycle")
+DISTRIBUTOR_APP_COUNTS = ("calls", "rate_limited")
+APP_LINK_MINUTES = 10
 
 
 def _new_day() -> dict[str, Any]:
     return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {},
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
-            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}}
+            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {}}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -179,8 +196,32 @@ def _clean_day(day: dict) -> dict[str, Any]:
         clean[field] = _hours(day.get(field))
     # None: not counted (a day saved before 0.10.0)
     clean["restarts"] = None if day.get("restarts") is None else _int(day["restarts"])
+    # None: not counted (a day saved before 0.10.2), shown as null rather than as no lookups
+    lookups = day.get("lcsc_lookups")
+    clean["lcsc_lookups"] = ({name: {event: _int(counts.get(event)) for event in LCSC_LOOKUP_EVENTS}
+                              for name, counts in lookups.items()
+                              if name in LCSC_LOOKUP_TOOLS and isinstance(counts, dict)}
+                             if isinstance(lookups, dict) else None)
+    # None: not counted (a day saved before 0.10.2)
+    by_tool = day.get("distributor_apps")
+    clean["distributor_apps"] = ({tool: {str(app): {key: _int(counts.get(key)) for key in DISTRIBUTOR_APP_COUNTS}
+                                         for app, counts in apps.items() if isinstance(counts, dict)}
+                                  for tool, apps in by_tool.items()
+                                  if tool in DISTRIBUTOR_TOOLS and isinstance(apps, dict)}
+                                 if isinstance(by_tool, dict) else None)
     clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
     return clean
+
+
+def clean_app_name(name: Any) -> str:
+    """An app's self-reported name (its clientInfo name) as counted and shown publicly: only plain
+    characters, at most APP_NAME_LENGTH; "unknown" for none."""
+    return _NOT_IN_APP_NAME.sub("", str(name or "")).strip()[:APP_NAME_LENGTH] or "unknown"
+
+
+def _capped(apps: dict, name: str) -> str:
+    """name, or "other" once apps has MAX_APPS names and name isn't one of them."""
+    return "other" if name not in apps and len(apps) >= MAX_APPS else name
 
 
 def _clean_tool_counts(counts: dict) -> dict[str, int]:
@@ -294,6 +335,10 @@ class UsageStats:
                 del self._days[old]
         if day["per_ip_refusals"] is None:  # a day saved before 0.10.0: refusals count from now on
             day["per_ip_refusals"] = {}
+        if day["lcsc_lookups"] is None:  # a day saved before 0.10.2: lookups count from now on
+            day["lcsc_lookups"] = {}
+        if day["distributor_apps"] is None:  # likewise
+            day["distributor_apps"] = {}
         for field in HOURLY_SINCE_0_10_1:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
@@ -301,10 +346,11 @@ class UsageStats:
         return day
 
     def record_call(self, tool: str, outcome: str, ms: float, caller: str | None = None,
-                    reason: str | None = None) -> None:
+                    reason: str | None = None, app: str | None = None) -> None:
         """One tool call. outcome is one of OUTCOMES (anything else counts as "failed"). caller is
         an IP, counted but not kept. reason says why it found nothing or failed: one of REASONS
-        (anything else counts as "other"), on the same day as the call so the two add up."""
+        (anything else counts as "other"), on the same day as the call so the two add up. app: the
+        app behind the call (None: not known), counted for DISTRIBUTOR_TOOLS only."""
         if self.tools is not None and tool not in self.tools:
             tool = "unknown"
         now = self._now()  # one reading for date and hour
@@ -326,6 +372,12 @@ class UsageStats:
         day["hours"][hour] = (day["hours"][hour] or 0) + 1
         if caller:
             self._count_caller(date, day, caller)
+        if tool in DISTRIBUTOR_TOOLS:
+            apps = day["distributor_apps"].setdefault(tool, {})
+            counts = apps.setdefault(_capped(apps, clean_app_name(app)), dict.fromkeys(DISTRIBUTOR_APP_COUNTS, 0))
+            counts["calls"] += 1
+            if outcome == "rate_limited":
+                counts["rate_limited"] += 1
 
     def _count_caller(self, date: str, day: dict[str, Any], caller: str) -> None:
         if self._callers.add(date, caller):
@@ -333,10 +385,8 @@ class UsageStats:
 
     def record_app(self, name: str | None) -> None:
         """An MCP app connected (the clientInfo name it sent with initialize)."""
-        name = _NOT_IN_APP_NAME.sub("", str(name or "")).strip()[:APP_NAME_LENGTH] or "unknown"
         apps = self._day()["apps"]
-        if name not in apps and len(apps) >= MAX_APPS:
-            name = "other"
+        name = _capped(apps, clean_app_name(name))
         apps[name] = apps.get(name, 0) + 1
 
     def record_distributor(self, name: str, event: str) -> None:
@@ -382,6 +432,13 @@ class UsageStats:
         refusals[group] = refusals.get(group, 0) + 1
         day["refused_hours"][now.hour] = (day["refused_hours"][now.hour] or 0) + 1
 
+    def record_lcsc_lookup(self, tool: str, event: str) -> None:
+        """How one LCSC-code lookup was answered: tool one of LCSC_LOOKUP_TOOLS, event one of
+        LCSC_LOOKUP_EVENTS. Anything else isn't counted."""
+        if tool in LCSC_LOOKUP_TOOLS and event in LCSC_LOOKUP_EVENTS:
+            counts = self._day()["lcsc_lookups"].setdefault(tool, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
+            counts[event] += 1
+
     def record_why_empty(self, result: str) -> None:
         """How the checks behind a why_empty reply went: one of WHY_EMPTY_RESULTS."""
         if result in WHY_EMPTY_RESULTS:
@@ -421,9 +478,21 @@ class UsageStats:
         total_upstream: dict[str, dict[str, int]] = {}
         total_parts: dict[str, dict[str, int]] = {}  # totals only: distinct can't be added across days
         total_refusals: dict[str, int] = {}
+        total_lookups: dict[str, dict[str, int]] = {}
+        total_distributor_apps: dict[str, dict[str, dict[str, int]]] = {}
         total_hours = [0] * 24
         for date in dates:
             day = self._days[date]
+            for name, c in (day["lcsc_lookups"] or {}).items():
+                total = total_lookups.setdefault(name, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
+                for key, value in c.items():
+                    total[key] = total.get(key, 0) + value
+            for name, apps in (day["distributor_apps"] or {}).items():
+                for app, c in apps.items():
+                    total = total_distributor_apps.setdefault(name, {}).setdefault(
+                        app, dict.fromkeys(DISTRIBUTOR_APP_COUNTS, 0))
+                    for key, value in c.items():
+                        total[key] = total.get(key, 0) + value
             for name, c in day["upstream"].items():
                 total = total_upstream.setdefault(name, dict.fromkeys(UPSTREAM_EVENTS, 0))
                 for key, value in c.items():
@@ -468,6 +537,8 @@ class UsageStats:
                 "parts_asked": dict(sorted(day["parts_asked"].items())),
                 "per_ip_refusals": _refusals_view(day["per_ip_refusals"]),
                 "restarts": day["restarts"],
+                "lcsc_lookups": _lookups_view(day["lcsc_lookups"]),
+                "distributor_apps": _distributor_apps_view(day["distributor_apps"]),
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -514,7 +585,15 @@ class UsageStats:
                       "tracking as many addresses as it can); null on days before it was counted. "
                       "restarts (from 0.10.0; null before): how many times the server started that day; "
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "
-                      "restart twice."),
+                      "restart twice. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code "
+                      "lookups and jlc_stock_check's one-code queries were answered, one each: snapshot (the "
+                      "daily snapshot, no request), live (answered from a live lookup, including its 1-hour "
+                      "cache), fallback (JLCPCB didn't answer and the snapshot did: live_failed in the reply) "
+                      "and live_failed (the live lookup failed and nothing answered instead: the error). "
+                      "distributor_apps (from 0.10.2; null before): calls to mouser_get_part, digikey_get_part "
+                      "and part_lifecycle by app, and how many were rate_limited; a call counts under the app "
+                      f"its address last connected with (remembered for {APP_LINK_MINUTES} minutes after the "
+                      "address's last connection or tool call), else under unknown."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -530,6 +609,8 @@ class UsageStats:
                 "upstream": _upstream_view(total_upstream),
                 "parts_asked": dict(sorted(total_parts.items())),
                 "per_ip_refusals": _refusals_view(total_refusals),
+                "lcsc_lookups": _lookups_view(total_lookups),
+                "distributor_apps": _distributor_apps_view(total_distributor_apps),
             },
             "days": out,
         }
@@ -548,6 +629,25 @@ def _tools_view(tools: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
 def _upstream_view(upstream: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
     """Each source's counts, in UPSTREAM_SOURCES order."""
     return {name: upstream[name] for name in UPSTREAM_SOURCES if name in upstream}
+
+
+def _lookups_view(lookups: dict[str, dict[str, int]] | None) -> dict[str, dict[str, int]] | None:
+    """Each tool's LCSC-code lookups, in LCSC_LOOKUP_TOOLS order; None when not counted."""
+    if lookups is None:
+        return None
+    return {name: {event: lookups[name].get(event, 0) for event in LCSC_LOOKUP_EVENTS}
+            for name in LCSC_LOOKUP_TOOLS if name in lookups}
+
+
+def _distributor_apps_view(by_tool: dict[str, dict[str, dict[str, int]]] | None
+                           ) -> dict[str, dict[str, dict[str, int]]] | None:
+    """Each distributor tool's calls by app, tools in DISTRIBUTOR_TOOLS order, the app with the
+    most calls first; None when not counted."""
+    if by_tool is None:
+        return None
+    return {name: {app: {key: c.get(key, 0) for key in DISTRIBUTOR_APP_COUNTS}
+                   for app, c in sorted(by_tool[name].items(), key=lambda item: (-item[1].get("calls", 0), item[0]))}
+            for name in DISTRIBUTOR_TOOLS if name in by_tool}
 
 
 def _refusals_view(refusals: dict[str, int] | None) -> dict[str, int] | None:
@@ -590,3 +690,10 @@ def count_upstream(source: str, event: str, count: int = 1) -> None:
         usage.record_upstream(source, event, count)
     except Exception:
         logger.exception("Usage stats: couldn't count an upstream request")
+
+
+def count_lcsc_lookup(tool: str, event: str) -> None:
+    try:
+        usage.record_lcsc_lookup(tool, event)
+    except Exception:
+        logger.exception("Usage stats: couldn't count an LCSC-code lookup")

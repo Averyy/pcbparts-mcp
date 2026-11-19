@@ -87,27 +87,36 @@ async def test_other_catalog_paths_run_off_loop(monkeypatch, handler, args, owne
     (server.sensor_recommend, {"query": "BME280"}),
     (server.get_design_rules, {"topic": "usb"}),
 ])
-async def test_component_lock_waiters_do_not_starve_other_catalogs(monkeypatch, handler, args):
+async def test_busy_component_workers_do_not_starve_other_catalogs(monkeypatch, handler, args):
+    """Every COMPONENT_POOL worker is inside a component lookup and more lookups queue behind them:
+    the other catalogs' pools still answer."""
     import threading
+    from pcbparts_mcp import db_worker
 
     database = db.get_db()
-    entered = threading.Event()
+    workers = db_worker.COMPONENT_POOL._max_workers
+    lock = threading.Lock()
+    inside = 0
+    saturated = threading.Event()
     release = threading.Event()
 
     def gated_lookup(*args, **kwargs):
-        with database._conn_lock:
-            entered.set()
-            assert release.wait(timeout=5)
-            return []
+        nonlocal inside
+        with lock:
+            inside += 1
+            if inside == workers:
+                saturated.set()
+        assert release.wait(timeout=5)
+        return []
 
     monkeypatch.setattr(database, "get_by_mpn", gated_lookup)
     tasks = [asyncio.create_task(server.jlc_get_part(mpn="LM358")) for _ in range(8)]
     try:
         for _ in range(200):
-            if entered.is_set():
+            if saturated.is_set():
                 break
             await asyncio.sleep(0.01)
-        assert entered.is_set()
+        assert saturated.is_set()
         await asyncio.sleep(0.05)
         result = await asyncio.wait_for(handler(**args), timeout=0.75)
         assert isinstance(result, dict)
@@ -132,7 +141,7 @@ async def test_offloaded_tools_preserve_schemas():
 
 
 @pytest.mark.parametrize("pool_name,max_workers", [
-    ("COMPONENT_POOL", 2), ("BOARD_POOL", 1), ("SENSOR_POOL", 1), ("RULES_POOL", 1),
+    ("COMPONENT_POOL", 3), ("BOARD_POOL", 1), ("SENSOR_POOL", 1), ("RULES_POOL", 1),
 ])
 async def test_worker_limit_survives_cancellation(pool_name, max_workers):
     import threading
@@ -179,12 +188,13 @@ async def test_worker_limit_survives_cancellation(pool_name, max_workers):
 
 
 @pytest.mark.parametrize("factory,method,args", [
-    (db.ComponentDatabase, "get_by_lcsc", ("C2040",)),
     (BoardsDatabase, "get_board", ("missing-board",)),
     (SensorDatabase, "search", ("BME280",)),
     (StockHistoryDatabase, "history", ("C8314",)),
 ])
 def test_connection_use_and_close_are_serialized(factory, method, args):
+    """The single-connection catalogs: one query at a time, and close waits for it. Component reads
+    run concurrently since 0.10.2 (test_component_reads_overlap_and_close_waits_for_them)."""
     from concurrent.futures import ThreadPoolExecutor
     import sqlite3
     import threading
@@ -233,5 +243,79 @@ def test_connection_use_and_close_are_serialized(factory, method, args):
             closing.result(timeout=5)
         assert peak == 1
         assert closed.is_set()
+    finally:
+        database.close()
+
+
+def test_component_reads_overlap_and_close_waits_for_them():
+    """0.10.2: component reads run at once, each thread on its own query-only connection; close()
+    waits for the running ones, then closes every thread's connection."""
+    from concurrent.futures import ThreadPoolExecutor
+    import sqlite3
+    import threading
+
+    database = db.ComponentDatabase()
+    database._ensure_db()
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        start = threading.Barrier(3)
+
+        def read():
+            start.wait(timeout=5)
+            return database.get_by_lcsc("C2040")
+
+        assert all(f.result(timeout=5)["lcsc"] == "C2040" for f in [pool.submit(read) for _ in range(3)])
+    connections = list(database._connections)
+    assert len(connections) == 4  # the three readers' and this thread's (initialization)
+    for conn in connections:  # the catalog is query-only, including components.db's seeded EasyEDA table
+        with pytest.raises(sqlite3.OperationalError, match="readonly"):
+            conn.execute("CREATE TABLE offload_write_must_fail (id INTEGER)")
+
+    lock = threading.Lock()
+    active = peak = 0
+    overlapping = threading.Event()
+    release = threading.Event()
+
+    def trace(sql):
+        nonlocal active, peak
+        with lock:
+            active += 1
+            peak = max(peak, active)
+            if active == 3:
+                overlapping.set()
+        try:
+            assert release.wait(timeout=5)
+        finally:
+            with lock:
+                active -= 1
+
+    database.set_trace_callback(trace)
+    closed = threading.Event()
+
+    def close():
+        database.close()
+        closed.set()
+
+    try:
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            reads = [pool.submit(database.get_by_lcsc, "C2040") for _ in range(3)]
+            try:
+                assert overlapping.wait(timeout=5)  # three queries inside SQLite at once
+                connections = list(database._connections)  # and these threads' own three
+                assert len(connections) == 7
+                closing = pool.submit(close)
+                for _ in range(500):
+                    if database._closing:
+                        break
+                    closed.wait(timeout=0.01)
+                assert database._closing and not closed.is_set()  # close waits for the reads
+            finally:
+                release.set()
+            assert all(read.result(timeout=5)["lcsc"] == "C2040" for read in reads)
+            closing.result(timeout=5)
+        assert peak == 3 and closed.is_set()
+        for conn in connections:
+            with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+                conn.execute("SELECT 1")
+        assert database._connections == []
     finally:
         database.close()

@@ -13,7 +13,7 @@ import httpx
 import pytest
 
 from pcbparts_mcp import config, db_worker, server, stats
-from pcbparts_mcp.db_worker import DatabasePressure, PoolPressure
+from pcbparts_mcp.db_worker import DatabasePressure, PoolPressure, PoolRunning
 
 NOW = datetime.datetime(2026, 11, 18, 20, tzinfo=datetime.timezone.utc).timestamp()
 
@@ -64,13 +64,38 @@ class TestPressure:
         other = pressure.enqueue(b)
         clock.advance(0.125)
         assert pressure.snapshot() == {a: PoolPressure(2, 0.25), b: PoolPressure(1, 0.125)}
-        assert pressure.summary() == {"waiting": 3, "oldest_wait_seconds": 0.25, "stalled_seconds": 0.25}
+        assert pressure.summary() == {"waiting": 3, "oldest_wait_seconds": 0.25, "stalled_seconds": 0.25,
+                                      "running": 0, "longest_running_seconds": 0.0}
         pressure.discard(a, first)
         assert pressure.snapshot()[a] == PoolPressure(1, 0.125)
         for pool, token in ((a, first), (a, second), (b, other)):
             pressure.discard(pool, token)  # repeated discard is harmless
         assert pressure.snapshot() == {}
-        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0}
+        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0,
+                                      "running": 0, "longest_running_seconds": 0.0}
+
+    def test_running_jobs_and_the_longest_run(self):
+        """0.10.2: started jobs count as running until discarded, per pool, with the longest run;
+        they're not waiting, so they never make a pool stalled."""
+        clock, a, b = Clock(), object(), object()
+        pressure = DatabasePressure(clock)
+        first, second, other = pressure.enqueue(a), pressure.enqueue(a), pressure.enqueue(b)
+        pressure.started(a, first)
+        clock.advance(2)
+        pressure.started(a, second)
+        pressure.started(b, other)
+        clock.advance(0.5)
+        assert pressure.snapshot() == {}
+        assert pressure.running() == {a: PoolRunning(2, 2.5), b: PoolRunning(1, 0.5)}
+        assert pressure.summary() == {"waiting": 0, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0,
+                                      "running": 3, "longest_running_seconds": 2.5}
+        clock.advance(600)  # a very long query is measured, not stopped or refused
+        assert pressure.summary()["longest_running_seconds"] == 602.5 and pressure.stalled_seconds() == 0
+        pressure.discard(a, first)
+        assert pressure.running()[a] == PoolRunning(1, 600.5)
+        for pool, token in ((a, second), (b, other), (b, other)):
+            pressure.discard(pool, token)
+        assert pressure.running() == {}
 
     async def test_offload_tracks_wait_only_and_keeps_context(self, monkeypatch):
         pressure, pool = DatabasePressure(Clock()), Executor()
@@ -80,14 +105,15 @@ class TestPressure:
 
         def work():
             assert pressure.snapshot() == {}  # active work doesn't count as queued
+            assert pressure.running() == {pool: PoolRunning(1, 0.0)}  # it counts as running
             return context.get()
 
         task = asyncio.create_task(db_worker.run_db(pool, work))
         await pool.submitted.wait()
-        assert pressure.snapshot()[pool].waiting == 1
+        assert pressure.snapshot()[pool].waiting == 1 and pressure.running() == {}
         pool.run()
         assert await task == "test"
-        assert pressure.snapshot() == {}
+        assert pressure.snapshot() == {} and pressure.running() == {}
 
     async def test_cancelled_queue_and_failed_submission_leave_no_pressure(self, monkeypatch):
         pressure, pool = DatabasePressure(Clock()), Executor()
@@ -98,7 +124,7 @@ class TestPressure:
         with pytest.raises(asyncio.CancelledError):
             await task
         pool.run()
-        assert pressure.snapshot() == {}
+        assert pressure.snapshot() == {} and pressure.running() == {}
 
         def broken(*args):
             raise RuntimeError("closed pool")
@@ -106,7 +132,7 @@ class TestPressure:
         pool.submit = broken
         with pytest.raises(RuntimeError, match="closed pool"):
             await db_worker.run_db(pool, lambda: None)
-        assert pressure.snapshot() == {}
+        assert pressure.snapshot() == {} and pressure.running() == {}
 
     async def test_failed_query_leaves_no_pressure(self, monkeypatch):
         pressure, pool = DatabasePressure(Clock()), Executor()
@@ -120,7 +146,7 @@ class TestPressure:
         pool.run()
         with pytest.raises(ValueError, match="bad query"):
             await task
-        assert pressure.snapshot() == {}
+        assert pressure.snapshot() == {} and pressure.running() == {}
 
 
 async def test_live_network_waits_do_not_count(monkeypatch):
@@ -134,10 +160,11 @@ async def test_live_network_waits_do_not_count(monkeypatch):
 
     monkeypatch.setattr(db_worker, "database_pressure", pressure)
     monkeypatch.setattr(server, "_client", types.SimpleNamespace(get_part=lookup))
-    tasks = [asyncio.create_task(server.jlc_get_part(lcsc="C1")) for _ in range(20)]
+    # live=true: straight to the live lookup (by default a database read for the snapshot comes first)
+    tasks = [asyncio.create_task(server.jlc_get_part(lcsc="C1", live=True)) for _ in range(20)]
     try:
         await entered.wait()
-        assert pressure.snapshot() == {}
+        assert pressure.snapshot() == {} and pressure.running() == {}
     finally:
         release.set()
         await asyncio.gather(*tasks)
@@ -151,8 +178,8 @@ class TestSettings:
         ("DB_STUCK_WAIT_SECONDS", "-1", 1.0, True),
         ("DB_STUCK_WAIT_SECONDS", " 1.5 ", 1.5, False),
         ("DB_STUCK_WAIT_SECONDS", "300", 300.0, False),
-        ("RATE_LIMIT_REQUESTS", "12.5", 100, True),  # was a ValueError at import
-        ("RATE_LIMIT_REQUESTS", "", 100, False),
+        ("RATE_LIMIT_REQUESTS", "12.5", 200, True),  # was a ValueError at import
+        ("RATE_LIMIT_REQUESTS", "", 200, False),
         ("RATE_LIMIT_REQUESTS", "1000000", 1000000, False),
     ], ids=["inf", "nan", "zero", "neg", "float", "stuck", "intfloat", "blank", "big"])
     def test_bad_settings_fall_back(self, monkeypatch, name, value, used, warned):
@@ -204,6 +231,7 @@ class TestHealth:
             assert reply.status_code == 200 and reply.json()["status"] == "healthy"
             assert reply.json()["database_pressure"] == {
                 "waiting": 8, "oldest_wait_seconds": 0.0, "stalled_seconds": 0.0,
+                "running": 0, "longest_running_seconds": 0.0,
                 "unhealthy_after_seconds": config.DB_STUCK_WAIT_SECONDS}
             clock.advance(config.DB_STUCK_WAIT_SECONDS - 1)  # a long queue, still moving: healthy
             assert (await c.get("/health")).status_code == 200
@@ -215,6 +243,28 @@ class TestHealth:
             for token in tokens:
                 pressure.discard(pool, token)
             assert (await c.get("/health")).json()["status"] == "healthy"
+
+    async def test_shows_running_jobs_and_a_long_query_stays_healthy(self, monkeypatch):
+        """0.10.2: running and longest_running_seconds show a long query; it is only measured.
+        With nothing waiting behind it the pool isn't stuck, so /health stays 200."""
+        clock, pool = Clock(), object()
+        pressure = DatabasePressure(clock)
+        slow, quick = pressure.enqueue(pool), pressure.enqueue(pool)
+        pressure.started(pool, slow)
+        clock.advance(1.25)
+        pressure.started(pool, quick)
+        monkeypatch.setattr(server, "database_pressure", pressure)
+        async with client(server.create_app()) as c:
+            shown = (await c.get("/health")).json()["database_pressure"]
+            assert (shown["running"], shown["longest_running_seconds"], shown["waiting"]) == (2, 1.25, 0)
+            clock.advance(config.DB_STUCK_WAIT_SECONDS * 10)
+            reply = await c.get("/health")
+            assert reply.status_code == 200 and reply.json()["status"] == "healthy"
+            assert reply.json()["database_pressure"]["longest_running_seconds"] == 1.25 + config.DB_STUCK_WAIT_SECONDS * 10
+            pressure.discard(pool, slow)
+            pressure.discard(pool, quick)
+            shown = (await c.get("/health")).json()["database_pressure"]
+            assert (shown["running"], shown["longest_running_seconds"]) == (0, 0.0)
 
 
 class TestStuckWorkerExit:

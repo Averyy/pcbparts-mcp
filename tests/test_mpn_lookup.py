@@ -306,3 +306,14 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
     assert info["note"].endswith(" ABC123(TOKMAS) (Tokmas), ABC123(XBLW) (XBLW) are numbered after the "
                                  "original part but made by another manufacturer; check their datasheets "
                                  "before substituting.")
+
+
+
+async def test_miss_hint_never_suggests_the_distributor_tools():
+    """The hint used to end "or mouser_get_part / digikey_get_part for other distributors": on
+    2026-11-19 digikey_get_part was 17% of traffic and 87% of it refused (the shared limit was
+    spent). A caller who wants a distributor asks for it."""
+    reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")
+    assert reply["error"].startswith("No part found in the local snapshot")
+    assert reply["hint"].endswith("for low or zero stock.")
+    assert "mouser" not in reply["hint"].lower() and "digikey" not in reply["hint"].lower()

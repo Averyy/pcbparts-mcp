@@ -13,20 +13,22 @@ import os
 import sqlite3
 import threading
 from datetime import datetime, timezone
+from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Literal
+from typing import Any, Callable, Literal, ParamSpec, TypeVar
 
-from ..db_worker import serialized
 from ..config import DEFAULT_MIN_STOCK
 from ..easyeda_store import FootprintAnswer, unpack_pads
 from ..mounting import english_package, jlcpcb_package_spellings
 from ..search import SearchEngine, SpecFilter, expand_package, resolve_manufacturer, row_to_dict, get_attribute_names
+from ..search.engine import register_search_functions
 from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
 from .lookup import (
     add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_price_tiers, get_snapshot_rows, get_sold_out_rows,
+    sold_out_part,
 )
 from .categories import (
     CandidateBatch,
@@ -66,19 +68,51 @@ def _iso_utc(value: str) -> str | None:
     return moment.replace(microsecond=0, tzinfo=None).isoformat() + "Z"
 
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def _reads(func: Callable[P, T]) -> Callable[P, T]:
+    """A ComponentDatabase operation: it runs on the calling thread's own read connection, at the
+    same time as other threads' operations, and close() waits for it. A nested call (an operation
+    calling another on the same thread) reuses that thread's connection and is counted once."""
+    @wraps(func)
+    def wrapped(self, *args, **kwargs):
+        outermost = self._begin()
+        try:
+            return func(self, *args, **kwargs)
+        finally:
+            self._end(outermost)
+    return wrapped
+
+
 class ComponentDatabase:
     """SQLite database for parametric component search.
 
-    Thread safety: One connection, serialized by a reentrant lock for the full
-    operation, initialization and close. Runtime queries are read-only; WAL is
-    configured at initialization, after the optional build of a missing database.
+    Thread safety: operations (@_reads) run concurrently, each thread on its own read connection,
+    opened on its first use (COMPONENT_POOL's 3 workers, or any other caller's thread) with the
+    same settings, and no lock is held while a query runs. One short lock (the _state condition)
+    guards the instance's state: initialization, after the optional build of a missing database,
+    happens once, before any connection is used; close() stops new operations, waits for running
+    ones, closes every thread's connection, and a later call initializes again. Runtime queries are
+    read-only (query_only); WAL is configured on each connection, as at initialization. What
+    initialization loads is replaced only by the next initialization; the caches filled during
+    reads (attribute shares and names, PCBA types, the search engine's) are computed whole and
+    assigned, so two threads filling one at once only repeat the work.
     """
 
     def __init__(self, db_path: Path | None = None, data_dir: Path | None = None):
         self.db_path = db_path or DEFAULT_DB_PATH
         self.data_dir = data_dir or DEFAULT_DATA_DIR
-        self._conn: sqlite3.Connection | None = None
-        self._conn_lock = threading.RLock()  # Protects connection use, initialization and close
+        # Guards the state below; operations take it only to start and end, never while querying
+        self._state = threading.Condition(threading.RLock())
+        self._ready = False  # initialized: what _initialize loads is set, connections may open
+        self._closing = False  # close() is waiting for running operations: new ones wait for it
+        self._active = 0  # outermost operations running, on any thread
+        self._generation = 0  # one per initialization: a thread's connection from an earlier one is closed
+        self._connections: list[sqlite3.Connection] = []  # every thread's open connection, for close()
+        self._local = threading.local()  # per thread: depth (operations nested), slot [generation, connection, trace]
+        self._trace: tuple[Callable[[str], object] | None] | None = None  # set_trace_callback's; None: never set
         self._subcategories: dict[int, dict[str, Any]] = {}  # id -> {name, category_id, category_name}
         self._categories: dict[int, dict[str, Any]] = {}  # id -> {name, slug}
         # Reverse lookups for name -> id resolution
@@ -87,7 +121,7 @@ class ComponentDatabase:
         self._category_to_subcategories: dict[int, list[int]] = {}  # category_id -> [subcategory_ids]
         self._search_engine: SearchEngine | None = None
         self._attribute_shares: dict[tuple[tuple[int, ...], tuple[str, ...]], float] = {}
-        self._attribute_names: dict[int, set[str]] = {}
+        self._attribute_names: dict[int, frozenset[str]] = {}  # subcategory id -> attribute names it states
         self._pcba_type_loaded: bool | None = None
         self._scraped_at: str | None = None
         self._prices_as_of: str | None = None
@@ -96,29 +130,49 @@ class ComponentDatabase:
         self._english_packages = False
         self._has_sold_out = False  # built since 0.10.0: parts kept after they left the snapshot
 
-    @serialized
     def _ensure_db(self) -> None:
-        """Ensure database exists, build if missing. Thread-safe."""
-        if self._conn is not None:
+        """Initialize once, building a missing database first; a no-op after. Thread-safe."""
+        if self._ready:
+            return
+        with self._state:
+            while self._closing:
+                self._state.wait()
+            self._initialize()
+
+    def _connect(self) -> sqlite3.Connection:
+        """A new read connection with the settings every thread's has. No statement cache: with
+        it, concurrent queries spent their time waiting on the mutex of SQLite's process-wide
+        allocator (sqlite3Malloc), and 3 threads ran 20 searches slower than one did; without it
+        they ran 2.8x faster than one-at-a-time did, and one thread alone about 10% faster
+        (2026-11-19, local). Likely cause: kept statements fill each connection's own
+        small-allocation pool (lookaside), so a query's allocations fall through to the shared one."""
+        conn = sqlite3.connect(self.db_path, check_same_thread=False, cached_statements=0)
+        try:
+            conn.execute("PRAGMA journal_mode=WAL")  # match sensor_db/boards_db; docstring guarantee
+            conn.execute("PRAGMA query_only=ON")
+            conn.row_factory = sqlite3.Row
+            register_search_functions(conn)
+        except BaseException:
+            conn.close()
+            raise
+        return conn
+
+    def _initialize(self) -> None:
+        """Under _state: load what every operation reads, once per initialization. The connection
+        it reads with becomes this thread's. A failure leaves the instance uninitialized, so the
+        next call tries again."""
+        if self._ready:
             return
 
-        with self._conn_lock:
-            # Double-check after acquiring lock
-            if self._conn is not None:
-                return
+        if not self.db_path.exists():
+            # Ensure parent directory exists
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Database not found at {self.db_path}, building...")
+            build_database(self.data_dir, self.db_path)
 
-            if not self.db_path.exists():
-                # Ensure parent directory exists
-                self.db_path.parent.mkdir(parents=True, exist_ok=True)
-                logger.info(f"Database not found at {self.db_path}, building...")
-                build_database(self.data_dir, self.db_path)
-
-            self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
-            self._conn.execute("PRAGMA journal_mode=WAL")  # match sensor_db/boards_db; docstring guarantee
-            self._conn.execute("PRAGMA query_only=ON")
-            self._conn.row_factory = sqlite3.Row
-
-            indexes = {row[0] for row in self._conn.execute(
+        conn = self._connect()
+        try:
+            indexes = {row[0] for row in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type = 'index' AND name IN ('idx_mpn_lower', 'idx_mpn_key')"
             )}
             limitations = []
@@ -128,19 +182,19 @@ class ComponentDatabase:
                     if "idx_mpn_lower" not in indexes
                     else "separator-insensitive MPN lookups are slow"
                 )
-            columns = {row[1] for row in self._conn.execute("PRAGMA table_info(components)")}
+            columns = {row[1] for row in conn.execute("PRAGMA table_info(components)")}
             if not CONNECTOR_COLUMN_NAMES <= columns:
                 limitations.append("connector filters and series ranking are slow")
             if "rds_gate_min_v" not in columns:
                 limitations.append("MOSFET gate-drive ranking is slow")
             # Built since 0.8.15: packages in English ("Plugin", not "插件"), JLCPCB's spellings kept
-            self._english_packages = self._conn.execute(
+            english_packages = conn.execute(
                 "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'package_spellings'").fetchone() is not None
-            if not self._english_packages:
+            if not english_packages:
                 limitations.append("package names keep JLCPCB's Chinese words, unlike live replies")
-            self._has_sold_out = self._conn.execute(
+            has_sold_out = conn.execute(
                 "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sold_out'").fetchone() is not None
-            if not self._has_sold_out:
+            if not has_sold_out:
                 limitations.append("parts that left the snapshot aren't kept, so lookups miss them")
             if limitations:
                 logger.warning(
@@ -150,49 +204,136 @@ class ComponentDatabase:
                 )
 
             try:
-                meta = dict(self._conn.execute(
+                meta = dict(conn.execute(
                     "SELECT key, value FROM metadata WHERE key IN "
                     "('scraped_at', 'prices_as_of', 'price_tiers_loaded', 'price_tiers_scraped_at', "
                     "'price_tiers_parts')").fetchall())
             except sqlite3.OperationalError:  # built before 0.8.15
                 meta = {}
-            self._scraped_at = _iso_utc(meta["scraped_at"]) if "scraped_at" in meta else None
-            # Since 0.9.0 prices are refreshed weekly (stock daily); earlier data scraped both together
-            self._prices_as_of = _iso_utc(meta["prices_as_of"]) if "prices_as_of" in meta else self._scraped_at
-            # Since 0.10.0 every price break from the daily scrape, when the build had the file
-            self._price_tiers_as_of = (_iso_utc(meta.get("price_tiers_scraped_at"))
-                                       if meta.get("price_tiers_loaded") == "1" else None)
-            parts = meta.get("price_tiers_parts")
-            self._price_tiers_parts = int(parts) if self._price_tiers_as_of and str(parts).isdigit() else 0
 
             # Load caches
             (
-                self._subcategories,
-                self._categories,
-                self._subcategory_name_to_id,
-                self._category_name_to_id,
-                self._category_to_subcategories,
-            ) = load_caches(self._conn)
+                subcategories,
+                categories,
+                subcategory_name_to_id,
+                category_name_to_id,
+                category_to_subcategories,
+            ) = load_caches(conn)
 
-            # Initialize search engine after caches are loaded
-            self._search_engine = SearchEngine(
-                conn=self._conn,
-                subcategories=self._subcategories,
-                categories=self._categories,
-                subcategory_name_to_id=self._subcategory_name_to_id,
-                category_name_to_id=self._category_name_to_id,
-                category_to_subcategories=self._category_to_subcategories,
+            # Initialize search engine after caches are loaded; it queries on each thread's connection
+            search_engine = SearchEngine(
+                conn=conn,
+                subcategories=subcategories,
+                categories=categories,
+                subcategory_name_to_id=subcategory_name_to_id,
+                category_name_to_id=category_name_to_id,
+                category_to_subcategories=category_to_subcategories,
+                connection=self._thread_connection,
             )
+        except BaseException:
+            conn.close()
+            raise
 
-    @serialized
+        self._english_packages = english_packages
+        self._has_sold_out = has_sold_out
+        self._scraped_at = _iso_utc(meta["scraped_at"]) if "scraped_at" in meta else None
+        # Since 0.9.0 prices are refreshed weekly (stock daily); earlier data scraped both together
+        self._prices_as_of = _iso_utc(meta["prices_as_of"]) if "prices_as_of" in meta else self._scraped_at
+        # Since 0.10.0 every price break from the daily scrape, when the build had the file
+        self._price_tiers_as_of = (_iso_utc(meta.get("price_tiers_scraped_at"))
+                                   if meta.get("price_tiers_loaded") == "1" else None)
+        parts = meta.get("price_tiers_parts")
+        self._price_tiers_parts = int(parts) if self._price_tiers_as_of and str(parts).isdigit() else 0
+        self._subcategories = subcategories
+        self._categories = categories
+        self._subcategory_name_to_id = subcategory_name_to_id
+        self._category_name_to_id = category_name_to_id
+        self._category_to_subcategories = category_to_subcategories
+        self._search_engine = search_engine
+        self._connections.append(conn)
+        self._local.slot = [self._generation, conn, None]
+        self._ready = True
+
+    def _begin(self) -> bool:
+        """Start an operation on this thread (_reads); True for the outermost one. Waits while
+        close() runs, and initializes first if needed."""
+        local = self._local
+        depth = getattr(local, "depth", 0)
+        if depth:  # nested: this thread's operation is already counted, and close() waits for it
+            local.depth = depth + 1
+            return False
+        with self._state:
+            while self._closing:
+                self._state.wait()
+            self._initialize()
+            self._active += 1
+        local.depth = 1
+        return True
+
+    def _end(self, outermost: bool) -> None:
+        local = self._local
+        local.depth -= 1
+        if outermost:
+            with self._state:
+                self._active -= 1
+                if not self._active:
+                    self._state.notify_all()  # a close() may be waiting
+
+    def _thread_connection(self) -> sqlite3.Connection | None:
+        """The calling thread's read connection, opened on its first use since initialization;
+        None before initialization and after close(). Only this thread queries on it; it stays
+        open until close() (which closes it once no operation runs), so the callers are long-lived
+        threads: the event loop (startup) and COMPONENT_POOL's workers."""
+        slot = getattr(self._local, "slot", None)
+        if slot is None or slot[0] != self._generation:
+            with self._state:
+                if not self._ready:
+                    return None
+                conn = self._connect()
+                self._connections.append(conn)
+                slot = self._local.slot = [self._generation, conn, None]
+        trace = self._trace
+        if slot[2] is not trace:  # set_trace_callback changed it: this thread applies it to its own
+            slot[1].set_trace_callback(trace[0] if trace else None)
+            slot[2] = trace
+        return slot[1]
+
+    @property
+    def _conn(self) -> sqlite3.Connection | None:
+        """The calling thread's read connection (_thread_connection)."""
+        return self._thread_connection()
+
+    def set_trace_callback(self, callback: Callable[[str], object] | None) -> None:
+        """sqlite3's set_trace_callback for every thread's read connection: each thread applies it
+        to its own connection at its next use, so no connection is changed while another thread
+        queries on it. None stops tracing. For tests and debugging."""
+        with self._state:
+            self._trace = (callback,)
+
     def close(self) -> None:
-        """Close database connection. Thread-safe."""
-        with self._conn_lock:
-            if self._conn:
-                self._conn.close()
-                self._conn = None
+        """Close every thread's connection once the operations running on other threads finish
+        (new ones wait, then initialize again). Thread-safe."""
+        own = 1 if getattr(self._local, "depth", 0) else 0  # called inside this thread's own operation
+        with self._state:
+            while self._closing:
+                self._state.wait()
+            self._closing = True
+            try:
+                while self._active > own:
+                    self._state.wait()
+                connections, self._connections = self._connections, []
+                for conn in connections:
+                    try:
+                        conn.close()
+                    except sqlite3.Error:
+                        logger.warning("Closing a component database connection failed", exc_info=True)
+                self._generation += 1
+                self._ready = False
                 self._search_engine = None
                 self._pcba_type_loaded = None
+            finally:
+                self._closing = False
+                self._state.notify_all()
 
     def scraped_at(self) -> str | None:
         """When the catalog's stock was scraped ("2026-11-04T20:10:49Z"), or None for a database
@@ -218,7 +359,7 @@ class ComponentDatabase:
         self._ensure_db()
         return self._price_tiers_parts
 
-    @serialized
+    @_reads
     def get_price_tiers(self, lcsc_codes: list[str]) -> dict[str, str]:
         """Packed snapshot tiers for a batch of parts; absent parts have no tiers.
 
@@ -234,7 +375,7 @@ class ComponentDatabase:
         self._ensure_db()
         return self._english_packages
 
-    @serialized
+    @_reads
     def upstream_packages(self, packages: list[str]) -> list[str]:
         """Packages as JLCPCB's live search filters them: each given one, its English spelling
         (english_package) and JLCPCB's own spellings of that ("Plugin,12.6x4.4mm" also sends
@@ -258,7 +399,7 @@ class ComponentDatabase:
         """Get all possible attribute names for a given name (including aliases)."""
         return get_attribute_names(name)
 
-    @serialized
+    @_reads
     def mpns_containing(self, fragment: str, limit: int = 6) -> list[str]:
         """In-stock part numbers with the text anywhere in them, best-stocked first ("2812" is in
         WS2812B and XL-5050RGBC-2812B). Walks the stock order, so a few take milliseconds."""
@@ -274,19 +415,19 @@ class ComponentDatabase:
             return []
         return [mpn for (mpn,) in rows]
 
-    @serialized
+    @_reads
     def get_subcategory_name(self, subcategory_id: int) -> str | None:
         """Get subcategory name by ID."""
         self._ensure_db()
         return get_subcategory_name(subcategory_id, self._subcategories)
 
-    @serialized
+    @_reads
     def get_category_for_subcategory(self, subcategory_id: int) -> tuple[int, str] | None:
         """Get category (id, name) for a subcategory."""
         self._ensure_db()
         return get_category_for_subcategory(subcategory_id, self._subcategories)
 
-    @serialized
+    @_reads
     def resolve_subcategory_name(self, name: str) -> int | None:
         """Resolve subcategory name to ID. Case-insensitive, supports partial match."""
         self._ensure_db()
@@ -294,7 +435,7 @@ class ComponentDatabase:
             return self._search_engine.resolve_subcategory_name(name)
         return None
 
-    @serialized
+    @_reads
     def resolve_category_name(self, name: str) -> int | None:
         """Resolve category name to ID. Case-insensitive, supports partial match."""
         self._ensure_db()
@@ -302,7 +443,7 @@ class ComponentDatabase:
             return self._search_engine.resolve_category_name(name)
         return None
 
-    @serialized
+    @_reads
     def _find_similar_subcategories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
         """Find subcategories similar to the given name (for error suggestions)."""
         self._ensure_db()
@@ -314,7 +455,7 @@ class ComponentDatabase:
         """Expand package name to include family variants."""
         return expand_package(package)
 
-    @serialized
+    @_reads
     def resolve_package_constraints(self, packages: list[str]) -> tuple[list[str], list[dict[str, str]]]:
         """Resolve package suffixes absent from the complete cached catalog."""
         self._ensure_db()
@@ -322,7 +463,7 @@ class ComponentDatabase:
             return packages, []
         return self._search_engine.resolve_package_constraints(packages)
 
-    @serialized
+    @_reads
     def packages_are_resettable_fuses(self, packages: list[str]) -> bool:
         """Check the cached fuse-package catalog without applying search ratings."""
         self._ensure_db()
@@ -332,7 +473,7 @@ class ComponentDatabase:
         """Resolve manufacturer alias to canonical name."""
         return resolve_manufacturer(name)
 
-    @serialized
+    @_reads
     def search(
         self,
         query: str | None = None,
@@ -451,7 +592,7 @@ class ComponentDatabase:
 
         return result
 
-    @serialized
+    @_reads
     def attribute_share(self, subcategory_ids: list[int], names: list[str]) -> float:
         """Share of the parts in these subcategories (0-1) that state one of these attributes
         (not "-"). Cached: the data only changes with a new database."""
@@ -460,16 +601,20 @@ class ComponentDatabase:
         if key not in self._attribute_shares:
             if not self._conn or not subcategory_ids or not names:
                 return 0.0
+            stated_names = {}
             for subcategory_id in subcategory_ids:
-                if subcategory_id not in self._attribute_names:
-                    self._attribute_names[subcategory_id] = {
+                found = self._attribute_names.get(subcategory_id)
+                if found is None:
+                    found = frozenset(
                         name.casefold()
                         for row in self._conn.execute(
                             "SELECT attributes FROM components WHERE subcategory_id = ?", (subcategory_id,),
                         )
                         for name, value in json.loads(row[0] or "[]") if value != "-"
-                    }
-            if not any(name.casefold() in self._attribute_names[i] for i in subcategory_ids for name in names):
+                    )
+                    self._attribute_names[subcategory_id] = found  # whole, never changed after
+                stated_names[subcategory_id] = found
+            if not any(name.casefold() in stated_names[i] for i in subcategory_ids for name in names):
                 return 0.0
             stated = " OR ".join("(attributes LIKE ? ESCAPE '\\' AND attributes NOT LIKE ? ESCAPE '\\')" for _ in names)
             params: list[Any] = []
@@ -483,7 +628,7 @@ class ComponentDatabase:
             self._attribute_shares[key] = (row[1] or 0) / row[0] if row[0] else 0.0
         return self._attribute_shares[key]
 
-    @serialized
+    @_reads
     def subcategories_matching(self, text: str, min_stock: int = 0) -> dict[int, int]:
         """In-stock parts whose text matches, counted by subcategory id ({} if the text can't be searched)."""
         self._ensure_db()
@@ -505,7 +650,7 @@ class ComponentDatabase:
     def _snapshot_parts(self, parts):
         return [self._snapshot_part(part) for part in parts]
 
-    @serialized
+    @_reads
     def get_by_lcsc(self, lcsc: str) -> dict[str, Any] | None:
         """Get a single component by LCSC code."""
         self._ensure_db()
@@ -513,7 +658,28 @@ class ComponentDatabase:
             return None
         return self._snapshot_part(get_by_lcsc(self._conn, lcsc, self._subcategories))
 
-    @serialized
+    @_reads
+    def get_part_snapshot(self, lcsc: str, *, gone: bool = False) -> dict[str, Any] | None:
+        """jlc_get_part's answer from the database: the snapshot's part (get_by_lcsc's fields, prices
+        after price with every price break when loaded: lookup.snapshot_prices), or, with gone and
+        when the snapshot doesn't list it, the part kept after it left (lookup.sold_out_part's
+        fields, its one prices tier, data_source.observed_at null); None when neither has it."""
+        self._ensure_db()
+        if not self._conn:
+            return None
+        part = get_by_lcsc(self._conn, lcsc, self._subcategories)
+        if part is not None:
+            return self._snapshot_part(add_snapshot_prices(self._conn, [part], self._price_tiers_as_of is not None)[0])
+        if not gone or not self._has_sold_out:
+            return None
+        row = self._conn.execute("SELECT * FROM sold_out WHERE lcsc = ?", [lcsc.upper()]).fetchone()
+        if row is None:
+            return None
+        kept = add_snapshot_prices(self._conn, [sold_out_part(row, self._subcategories)], False)[0]
+        kept["data_source"] = {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
+        return kept
+
+    @_reads
     def get_easyeda_seed(self, lcsc: str) -> FootprintAnswer | None:
         """Seeded EasyEDA footprint answer for a part (data/easyeda/footprints.csv), or None."""
         self._ensure_db()
@@ -530,7 +696,7 @@ class ComponentDatabase:
             return None
         return FootprintAnswer(bool(row["has_footprint"]), row["symbol_uuid"], row["footprint_uuid"], row["checked_at"])
 
-    @serialized
+    @_reads
     def get_easyeda_pads(self, footprint_uuid: str) -> tuple[list[dict[str, Any]], float] | None:
         """Seeded pads for a footprint (data/easyeda/pads.csv) and when they were fetched, or None."""
         self._ensure_db()
@@ -547,7 +713,7 @@ class ComponentDatabase:
         pads = unpack_pads(row["pads"])
         return None if pads is None else (pads, float(row["fetched_at"]))
 
-    @serialized
+    @_reads
     def pcba_type_loaded(self) -> bool:
         """Whether the catalog has JLCPCB's PCBA types (scraped since 0.8.4; older data has none)."""
         self._ensure_db()
@@ -561,7 +727,7 @@ class ComponentDatabase:
                 self._pcba_type_loaded = False
         return self._pcba_type_loaded
 
-    @serialized
+    @_reads
     def easyeda_seed_size(self) -> int:
         """Rows in the seeded EasyEDA footprint table (0 for a DB built before 0.6.0)."""
         self._ensure_db()
@@ -572,7 +738,7 @@ class ComponentDatabase:
         except sqlite3.OperationalError:
             return 0
 
-    @serialized
+    @_reads
     def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
                    with_prices: bool = False, full_text: bool = True,
                    maker: Callable[[str | None], bool] | None = None) -> list[dict[str, Any]]:
@@ -591,7 +757,7 @@ class ComponentDatabase:
             parts = add_snapshot_prices(self._conn, parts, self._price_tiers_as_of is not None)
         return self._snapshot_parts(parts)
 
-    @serialized
+    @_reads
     def get_sold_out_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
                             with_prices: bool = False,
                             maker: Callable[[str | None], bool] | None = None) -> list[dict[str, Any]]:
@@ -617,7 +783,7 @@ class ComponentDatabase:
             part["data_source"] = {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
         return parts
 
-    @serialized
+    @_reads
     def get_sold_out_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """jlc_get_parts' rows for parts that left the snapshot (lookup.get_sold_out_rows), None for codes not kept."""
         self._ensure_db()
@@ -625,7 +791,7 @@ class ComponentDatabase:
             return {code.upper(): None for code in lcsc_codes}
         return get_sold_out_rows(self._conn, lcsc_codes, self._subcategories)
 
-    @serialized
+    @_reads
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """Get multiple components by LCSC codes in a single query."""
         self._ensure_db()
@@ -633,7 +799,7 @@ class ComponentDatabase:
             return {}
         return {code: self._snapshot_part(part) for code, part in get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories).items()}
 
-    @serialized
+    @_reads
     def get_snapshot_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """jlc_get_parts' rows for LCSC codes in one query (lookup.snapshot_row), None when not listed.
         No data_source per row: the reply gives the snapshot's times once."""
@@ -643,7 +809,7 @@ class ComponentDatabase:
         return get_snapshot_rows(self._conn, lcsc_codes, self._subcategories,
                                  with_tiers=self._price_tiers_as_of is not None)
 
-    @serialized
+    @_reads
     def find_alternative_candidates(
         self,
         original: dict[str, Any],
@@ -678,7 +844,7 @@ class ComponentDatabase:
             logger.warning("Alternative candidates query failed for %s", original.get("lcsc"), exc_info=True)
             raise
 
-    @serialized
+    @_reads
     def subcategory_parts(
         self,
         subcategory_id: int,
@@ -708,7 +874,7 @@ class ComponentDatabase:
         """Convert a database row to a component dict."""
         return row_to_dict(row, self._subcategories)
 
-    @serialized
+    @_reads
     def get_categories_for_client(self) -> list[dict[str, Any]]:
         """Export categories in format expected by JLCPCBClient.set_categories()."""
         self._ensure_db()
@@ -716,7 +882,7 @@ class ComponentDatabase:
             return []
         return get_categories_for_client(self._conn, self._subcategories)
 
-    @serialized
+    @_reads
     def list_attributes(
         self,
         subcategory_id: int | None = None,
@@ -736,7 +902,7 @@ class ComponentDatabase:
             sample_size=sample_size,
         )
 
-    @serialized
+    @_reads
     def get_stats(self) -> dict[str, Any]:
         """Get database statistics."""
         self._ensure_db()

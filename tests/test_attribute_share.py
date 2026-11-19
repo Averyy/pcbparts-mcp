@@ -2,6 +2,7 @@
 
 import json
 import sqlite3
+from contextlib import closing
 
 import pytest
 
@@ -10,15 +11,19 @@ from pcbparts_mcp.search.spec_filter import like_text
 
 
 @pytest.fixture
-def database():
-    database = ComponentDatabase()
-    database._conn = sqlite3.connect(":memory:")
-    database._conn.execute("CREATE TABLE components (subcategory_id INTEGER, attributes TEXT)")
-    database._conn.executemany("INSERT INTO components VALUES (?, ?)", [
-        (1, json.dumps([["Resistance", "10kΩ"], ["Absent", "-"], ["ÄSpec", "2"]], ensure_ascii=False)),
-        (1, json.dumps([["Resistance", "-"], ["Tolerance", "1%"]])),
-        (2, json.dumps([["Resistance", "1kΩ"], ["Name_%", "3"]])),
-    ])
+def database(tmp_path):
+    path = tmp_path / "components.db"
+    with closing(sqlite3.connect(path)) as conn, conn:
+        conn.execute("CREATE TABLE components (subcategory_id INTEGER, attributes TEXT)")
+        conn.execute("CREATE TABLE subcategories (id INTEGER, category_id INTEGER, name TEXT, category_name TEXT)")
+        conn.execute("CREATE TABLE categories (id INTEGER, name TEXT, slug TEXT)")
+        conn.executemany("INSERT INTO components VALUES (?, ?)", [
+            (1, json.dumps([["Resistance", "10kΩ"], ["Absent", "-"], ["ÄSpec", "2"]], ensure_ascii=False)),
+            (1, json.dumps([["Resistance", "-"], ["Tolerance", "1%"]])),
+            (2, json.dumps([["Resistance", "1kΩ"], ["Name_%", "3"]])),
+        ])
+    database = ComponentDatabase(db_path=path)
+    database._ensure_db()
     yield database
     database.close()
 

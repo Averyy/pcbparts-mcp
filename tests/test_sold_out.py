@@ -399,11 +399,11 @@ class TestGetParts:
         db = use_db("kept")
         queries = []
         db._ensure_db()
-        db._conn.set_trace_callback(queries.append)
+        db.set_trace_callback(queries.append)
         try:
             await server.jlc_get_parts(["C7950", "C1525", "LM358DR2G"])
         finally:
-            db._conn.set_trace_callback(None)
+            db.set_trace_callback(None)
         assert sum("WHERE lcsc IN" in query for query in queries) == 1  # no gone read when all are listed
 
 

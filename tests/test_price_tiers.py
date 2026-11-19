@@ -400,11 +400,11 @@ class TestReplies:
         db = use_db("tiers")
         queries = []
         db._ensure_db()
-        db._conn.set_trace_callback(queries.append)
+        db.set_trace_callback(queries.append)
         try:
             reply = await server.jlc_get_parts([{"mpn": "0402WGF1001TCE"}, "C2"])
         finally:
-            db._conn.set_trace_callback(None)
+            db.set_trace_callback(None)
         assert reply["results"][0]["results"][0]["prices"] == LADDER
         assert sum("lcsc IN" in query for query in queries) == 1  # rows and their breaks in one read
 
