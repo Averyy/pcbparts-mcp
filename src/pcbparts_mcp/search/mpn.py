@@ -52,10 +52,12 @@ NOT_SENT_HINTS = {
 #   (a whole number takes only the prefixes each unit is written with, in SI case: 1590MA isn't one)
 # - a number with a decimal point and a unit: 1.5A, 3.3V, 0.25W; and ohms written out: 16Ω, 100 ohm
 # A whole number and one unit letter (1590A, Hammond's enclosure; 100V, 220W, 1000F, 47H) is a part
-# number on its own, and counts only beside a value: the 50V of "100nF 50V" (_VALUE_EXTRA). Each
-# number has at most 4 significant digits (value_digits), so Wurth's 9774025151R isn't a value; a
-# part number has more than a number and a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"),
-# so it never matches the whole pattern.
+# number on its own, and counts only beside a value: the 50V of "100nF 50V" (_VALUE_RATING). And
+# every number, in each of these forms, ratings too, must be one a component value is written with
+# (_series_digits): values come from the E-series, whose finest (E192) has 3 significant digits, so
+# a number with 2 at most or an E192 value's 3 (15.8k, 4R75); not Hammond's 1590K, 1590R or 1590M
+# (159 is no E-series value), 1591K or Wurth's 9774025151R. A part number has more than a number and
+# a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
 _VALUE_NUMBER = r"(\d+)(?:\.(\d+))?"
 _OHMS = r"(?:Ω|[Oo]hms?|OHMS?)"
 _VALUE_TOKEN = re.compile(
@@ -73,10 +75,20 @@ _VALUE_RATING = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?(?:%|(?i:[pnuµμmkg]?
 _VALUE_UNITS = r"(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz|Ω|ohms?)|[rkm]|meg|%)"
 _VALUE_GAP = re.compile(r"[\s,;/]+")
 
+# The E192 series' significant digits (IEC 60063): 10 ** (i / 192) to 3 digits, but 920 for 919. E96
+# and E48 are among them, and E24, E12, E6 and E3 have 2 at most (10, 47, 91).
+E192 = frozenset(str(round(10 ** (i / 192) * 100)) for i in range(192)) - {"919"} | {"920"}
+
+
+def _series_digits(*digit_runs: str) -> bool:
+    """Whether a value's digits (its whole and decimal parts) are a component value's: at most 2
+    significant digits, or 3 that are an E192 value. Zeros before and after are left out: 1000k is
+    1, 2200R 22, 0R1 1, 15.8k 158 (E192), 1590K 159 (none: a part number)."""
+    digits = "".join(digit_runs).strip("0")
+    return len(digits) <= 2 or (len(digits) == 3 and digits in E192)
+
 
 def _is_value(text: str) -> bool:
-    from ..smart_parser.values import value_digits  # here: the smart parser is a lot to load with this module
-
     tokens = [t for t in _VALUE_GAP.split(text.strip()) if t]
     # "10 k" or "10 kOhm": a number and its unit given apart
     joined: list[str] = []
@@ -88,11 +100,11 @@ def _is_value(text: str) -> bool:
     values = 0
     for token in joined:
         if match := _VALUE_TOKEN.fullmatch(token):
-            if not value_digits(*(group for group in match.groups() if group)):
+            if not _series_digits(*(group for group in match.groups() if group)):
                 return False
             values += 1
         elif match := _VALUE_RATING.fullmatch(token):
-            if not value_digits(*(group for group in match.groups() if group)):
+            if not _series_digits(*(group for group in match.groups() if group)):
                 return False
         elif not _VALUE_EXTRA.fullmatch(token):
             return False

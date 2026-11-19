@@ -827,6 +827,9 @@ class TestNotSentReason:
         ("22pF", "value"), ("10uH", "value"), ("1mH", "value"), ("3.3mA", "value"), ("2.2kΩ", "value"),
         ("4.7µF", "value"), ("1.5A", "value"), ("3.3V", "value"), ("0.25W", "value"), ("100mW", "value"),
         ("1.5a", "value"), ("10k 50V", "value"), ("100nF 25V X7R", "value"),
+        # Astra round 7: E-series values (3 significant digits at most) in every form
+        ("220R", "value"), ("15.8k", "value"), ("158k", "value"), ("1000k", "value"), ("2200R", "value"),
+        ("4700pF", "value"), ("4K7", "value"), ("4R75", "value"), ("1.21k 0603", "value"), ("10uH", "value"),
         ("DNP", "placeholder"), ("N/A", "placeholder"), ("C7950", "lcsc_code"), ("c2040", "lcsc_code"),
         ("AB", "length"), ("X" * 41, "length"), ("LM358P中文", "not_ascii"), ("ＬＭ358", "not_ascii"),
     ]
@@ -845,12 +848,22 @@ class TestNotSentReason:
         # read as 1590 amps and never sent), and so is a "voltage" or "power" with nothing else
         "1590A", "1590B", "1590BB", "1590BS", "1550A", "100V", "220W", "1000F", "47H", "1590MA",
         "1590A 0603", "50V 0603", "100V X7R",
+        # Astra round 7: Hammond's 1590K, 1590R and 1590M matched as resistor codes; 159 and 155 aren't
+        # E-series values, and 1591 has 4 significant digits
+        "1590K", "1590R", "1590M", "1550M", "1591K", "1590K 0603",
     ]
 
     @pytest.mark.parametrize("number", SENT, ids=[f"pn{i}" for i in range(len(SENT))])
     def test_real_part_numbers_are_sent(self, number):
         from pcbparts_mcp.search.mpn import not_sent_reason
         assert not_sent_reason(number) is None
+
+    def test_e192_table(self):
+        """IEC 60063's E192 (the finest E-series, 3 significant digits), E96 every other value."""
+        from pcbparts_mcp.search.mpn import E192
+        assert len(E192) == 192 and {"100", "158", "475", "920", "988"} <= E192 and not {"159", "155", "919"} & E192
+        e96 = sorted(E192, key=int)[::2]
+        assert e96[:6] == ["100", "102", "105", "107", "110", "113"] and e96[-3:] == ["931", "953", "976"]
 
 
 class TestIntegerAndUnitLetterIsSent:
@@ -863,6 +876,33 @@ class TestIntegerAndUnitLetterIsSent:
         reply = await server.mouser_get_part(part_number="1590A|100V")
         assert fake.sent == ["1590A|100V"] and "not_sent" not in reply
         assert [r["mfr_part_number"] for r in reply["results"]] == ["1590A"]
+
+    HAMMOND = ["1590K", "1590R", "1590M", "1550M", "1591K"]
+
+    async def test_resistor_shaped_part_numbers_through_mouser(self, setup):
+        """Astra review round 7: 1590K, 1590R and 1590M passed for resistor codes (1590 kOhm...)."""
+        fake = FakeMouser(*(mouser_part(n, "Hammond Manufacturing") for n in self.HAMMOND))
+        setup(mouser=fake)
+        reply = await server.mouser_get_part(part_number="|".join(self.HAMMOND))
+        assert fake.sent == ["|".join(self.HAMMOND)] and "not_sent" not in reply
+        assert sorted(r["mfr_part_number"] for r in reply["results"]) == sorted(self.HAMMOND)
+
+    async def test_resistor_shaped_part_numbers_through_digikey(self, setup):
+        fake = FakeDigiKey(*(dk_product(n, "Hammond Manufacturing") for n in self.HAMMOND))
+        setup(digikey=fake)
+        for number in self.HAMMOND:
+            reply = await server.digikey_get_part(product_number=number)
+            assert reply["results"][0]["manufacturer"] == "Hammond Manufacturing" and "not_sent" not in reply
+        assert fake.asked == self.HAMMOND
+
+    async def test_resistor_shaped_part_numbers_through_part_lifecycle(self, setup):
+        mouser = FakeMouser(*(mouser_part(n, "Hammond Manufacturing") for n in self.HAMMOND))
+        setup(mouser=mouser, digikey=FakeDigiKey())
+        parts = [{"mpn": n, "manufacturer": "Hammond Manufacturing"} for n in self.HAMMOND] + ["2200R", "15.8k"]
+        rows = (await lifecycle(parts))["results"]
+        assert [(r["status"], r.get("source")) for r in rows[:5]] == [("active", "mouser")] * 5
+        assert [r.get("not_sent") for r in rows[5:]] == ["value", "value"]
+        assert sorted(mouser.sent[0].split("|")) == sorted(self.HAMMOND)
 
     async def test_digikey_get_part(self, setup):
         fake = FakeDigiKey(dk_product("1590A", "Hammond Manufacturing"), dk_product("1590B", "Hammond Manufacturing"))
