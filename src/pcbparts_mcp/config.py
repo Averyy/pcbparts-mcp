@@ -242,7 +242,7 @@ MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
 # Mouser/DigiKey answers (stock, prices, lifecycle) are kept per part number for 3 days, in
 # distributor_store.py (on the cache volume when DISTRIBUTOR_STORE_PATH is set): clients that
 # re-read each part about daily got nothing from a day's cache; 3 days answers about 2 in 3 and
-# shares one request between callers. Replies carry observed_at, so callers see the age.
+# one fetched answer serves every caller. Replies carry observed_at, so callers see the age.
 MOUSER_CACHE_TTL = 3 * 86400
 # "Part not found" answers are kept for less time: one that wasn't really about the part (an API
 # glitch, a part listed later) hides that part for at most this long
