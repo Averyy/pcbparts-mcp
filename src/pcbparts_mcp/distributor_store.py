@@ -16,9 +16,11 @@ Four tables in one SQLite file:
   part_lifecycle found the distributor listing that maker's part or freshly not listing the number
   at all, kept MAKER_SKIP_DAYS (30 days): part_lifecycle stops asking a distributor about a maker it
   never lists (maker_not_carried). Nothing about who asked.
-- listed_makers: each maker name a distributor's answers listed a part under, and when it last did,
-  kept MAKER_SKIP_DAYS: a maker listed under any name that makers_match takes as the same one
-  ("NXP USA Inc." for "NXP Semicon") is never maker_not_carried. A few thousand rows at most.
+- listed_makers: each maker name a distributor returned a part under, and when it last did, kept
+  MAKER_SKIP_DAYS: every result of every Mouser and DigiKey answer, fresh or read from answers,
+  whatever number it's put down to (note_listed_makers). A maker listed under any name that
+  makers_match takes as the same one ("NXP USA Inc." for "NXP Semicon") is never maker_not_carried.
+  A few thousand rows at most.
 
 Rows keep when they were fetched; lifetimes are applied when they're read, so changing one applies to
 rows already stored. Only part numbers and the distributors' answers are kept, nothing about who
@@ -246,21 +248,39 @@ class DistributorStore:
                     (key, maker, reading.source, int(reading.found), reading.observed_at, reading.status,
                      reading.mpn, reading.maker, reading.raw, reading.last_buy_date),
                 )
-            listed: dict[tuple[str, str, str], float] = {}  # the names listed under, newest each
-            for reading in readings:
-                if reading.found and (key := maker_key(reading.maker)):
-                    name = (reading.source, key, reading.maker.strip())
-                    listed[name] = max(listed.get(name, 0.0), reading.observed_at)
-            self._conn.executemany(
-                "INSERT INTO listed_makers (source, maker_key, maker, observed_at) VALUES (?, ?, ?, ?) "
-                "ON CONFLICT (source, maker_key, maker) DO UPDATE SET observed_at = excluded.observed_at "
-                "WHERE excluded.observed_at > listed_makers.observed_at",
-                [(*name, at) for name, at in listed.items()])
+            self._put_listed([(reading.source, reading.maker, reading.observed_at)
+                              for reading in readings if reading.found])
             self._conn.commit()
             return True
         except (sqlite3.Error, ValueError) as e:
             logger.warning(f"Lifecycle store write failed: {e}")
             return False
+
+    def note_listed_makers(self, source: str, makers: list[str | None], observed_at: float) -> None:
+        """Keep that this source returned parts under these maker names (as it names them) at
+        observed_at: every result of an answer, whatever number it's put down to, so the maker is
+        never maker_not_carried while it's in the window."""
+        if self._conn is None or not makers:
+            return
+        try:
+            self._put_listed([(source, maker, observed_at) for maker in makers])
+            self._conn.commit()
+        except (sqlite3.Error, ValueError) as e:
+            logger.warning(f"Distributor store maker listing failed: {e}")
+
+    def _put_listed(self, listings: list[tuple[str, str | None, float]]) -> None:
+        """listed_makers rows for (source, maker name, when) listings, newest kept; no commit."""
+        listed: dict[tuple[str, str, str], float] = {}
+        for source, maker, at in listings:
+            if isinstance(maker, str) and (key := maker_key(maker)):
+                name = (source, key, maker.strip())
+                listed[name] = max(listed.get(name, 0.0), at)
+        if listed:
+            self._conn.executemany(
+                "INSERT INTO listed_makers (source, maker_key, maker, observed_at) VALUES (?, ?, ?, ?) "
+                "ON CONFLICT (source, maker_key, maker) DO UPDATE SET observed_at = excluded.observed_at "
+                "WHERE excluded.observed_at > listed_makers.observed_at",
+                [(*name, at) for name, at in listed.items()])
 
     def put_not_listed(self, mpn: str, source: str, observed_at: float | None = None) -> bool:
         """The source has no part with this number spelled so (kept LIFECYCLE_NOT_LISTED_TTL, 30

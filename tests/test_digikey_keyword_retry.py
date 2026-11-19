@@ -83,6 +83,7 @@ async def test_products_only_exact_mpn_is_normalized_and_cached(digikey):
     # Kept without requested and matched_by, which each reply adds for the number as asked
     assert (part["requested"], part["matched_by"]) == ("209", "exact")
     stored = client._store.get_answer("digikey", "209")[0]
+    assert stored.pop("_makers") == ["Keystone Electronics"]  # every maker DigiKey returned (never sent)
     assert stored == {**result, "results": [
         {k: v for k, v in p.items() if k not in ("requested", "matched_by")} for p in result["results"]]}
     assert DIGIKEY_CACHE_TTL == 3 * 86400
@@ -178,7 +179,7 @@ async def test_miss_has_cached_hint(digikey, keyword, pn):
     }
     assert await client.get_part(pn) == result
     assert_keyword_request(fake, pn)
-    assert client._store.get_answer("digikey", pn.upper())[0] == {"not_found": True}
+    assert client._store.get_answer("digikey", pn.upper())[0]["not_found"] is True
     assert DIGIKEY_NOT_FOUND_TTL == 86400
 
 

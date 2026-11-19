@@ -1399,3 +1399,72 @@ class TestListedUnderAnotherName:
         await server.digikey_get_part(product_number="LM358P")  # TI's: not UNI-ROYAL's
         assert store.makers_not_carried("digikey", {"uni royal"}, {"uni royal": {"UNI-ROYAL(Uniroyal Elec)"}}) == {
             "uni royal"}
+
+
+# --- Astra review round 4, 2026-11-18: every returned maker counts as listed ---
+
+def misses_of(store, source):
+    return store._conn.execute("SELECT COUNT(DISTINCT mpn_key) FROM maker_parts WHERE source = ? AND NOT found",
+                               (source,)).fetchone()[0]
+
+
+def listed_makers(store, source):
+    return {row[0] for row in store._conn.execute("SELECT maker FROM listed_makers WHERE source = ?", (source,))}
+
+
+class TestEveryReturnedMakerIsListed:
+    """Results that matching left unattributed or filtered out were dropped as maker evidence, so
+    a maker a distributor plainly lists could be skipped as maker_not_carried."""
+
+    async def test_an_ambiguous_mouser_batch(self, setup):
+        """LM358|LM358P returned TI's LM358PE4, which neither number owns: no listing was kept, both
+        inputs counted as TI misses (18 + 2 = 20), and TI's NE555P came back maker_not_carried."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        mouser = FakeMouser(mouser_part("LM358PE4"), mouser_part("NE555P"))
+        _, _, store, _, _ = setup(mouser=mouser)
+        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED - 2))
+        await lifecycle([{"mpn": "LM358", "manufacturer": "TI"}, {"mpn": "LM358P", "manufacturer": "TI"}])
+        assert mouser.sent == ["LM358|LM358P"] and listed_makers(store, "mouser") == {"Texas Instruments"}
+        assert misses_of(store, "mouser") == MAKER_SKIP_NOT_LISTED - 2  # its own maker's part came back
+        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
+        assert (row["status"], row["source"]) == ("active", "mouser") and mouser.sent[-1] == "NE555P"
+
+    async def test_a_filtered_digikey_listing(self, setup):
+        """DigiKey's LM358P for LM358 isn't the number (filtered out): it counted as a TI miss and no
+        TI listing was kept."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        filtered = httpx.Response(200, json={"Products": [dk_product("LM358P")]})  # DigiKey's loose match
+        digikey = FakeDigiKey(dk_product("NE555P"), responses=[filtered])
+        _, _, store, _, _ = setup(digikey=digikey)
+        store.count_maker_parts("digikey", misses("texas instruments", MAKER_SKIP_NOT_LISTED - 1))
+        row = (await lifecycle([{"mpn": "LM358", "manufacturer": "TI"}]))["results"][0]
+        assert row["not_found"] is True  # the reply is as before: LM358P isn't LM358
+        assert listed_makers(store, "digikey") == {"Texas Instruments"}
+        assert misses_of(store, "digikey") == MAKER_SKIP_NOT_LISTED - 1
+        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
+        assert row["source"] == "digikey" and digikey.asked == ["LM358", "NE555P"]
+
+    async def test_mouser_get_parts_results_alone(self, setup):
+        """No part_lifecycle answer involved: mouser_get_part's unattributed result keeps TI asked."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        mouser = FakeMouser(mouser_part("LM358PE4"), mouser_part("NE555P"))
+        _, _, store, _, _ = setup(mouser=mouser)
+        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED))
+        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
+        reply = await server.mouser_get_part(part_number="LM358|LM358P")
+        assert [(r["mfr_part_number"], r["requested"]) for r in reply["results"]] == [("LM358PE4", None)]
+        assert store.readings("LM358PE4") == []  # no reading: neither number owns it
+        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
+        assert row["source"] == "mouser" and mouser.sent[-1] == "NE555P"
+
+    async def test_answers_read_from_the_store_count_too(self, setup):
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        m, d, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        kept = {"results": [_normalize_part(mouser_part("LM358PE4"))], "matched": True}
+        store.put_answer("mouser", "LM358", kept, True)
+        store.put_answer("digikey", "LM358", {"not_found": True, "_makers": ["Texas Instruments Inc."]}, False)
+        await m.get_part("LM358")
+        assert (await d.get_part("LM358"))["error"] == "Part not found: LM358"  # "_makers" is never sent
+        assert mouser.sent == [] and digikey.asked == []
+        assert listed_makers(store, "mouser") == {"Texas Instruments"}
+        assert listed_makers(store, "digikey") == {"Texas Instruments Inc."}

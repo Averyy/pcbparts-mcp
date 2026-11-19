@@ -631,8 +631,14 @@ class MouserClient:
                 continue
             answers.update(kept)
             extras = list(batch.get("extras") or [])
+            self._store.note_listed_makers("mouser", [r.get("manufacturer") for r in extras if isinstance(r, dict)],
+                                           fetched_at)
             missing = []
             break
+        # Every maker a kept answer lists counts as listed, as when it was fetched (maker_not_carried)
+        for answer in answers.values():
+            self._store.note_listed_makers(
+                "mouser", [r.get("manufacturer") for r in answer.results if isinstance(r, dict)], answer.fetched_at)
         if not missing:
             stats.count_distributor("mouser", "cached")
             return answers, extras, None
@@ -763,6 +769,9 @@ class MouserClient:
         parts = [p for p in parts if isinstance(p, dict)]
         capped = _capped(data, parts)
         results = [_normalize_part(p) for p in parts]
+        # Every maker the reply lists counts as listed, whatever number its parts are put down to
+        # (an unclear owner keeps no reading): part_lifecycle never skips it (maker_not_carried)
+        self._store.note_listed_makers("mouser", [r.get("manufacturer") for r in results], fetched_at)
 
         per, owners, extras, clean = _attribute(numbers, results)
         again = _crowded_out(numbers, per) if capped else []

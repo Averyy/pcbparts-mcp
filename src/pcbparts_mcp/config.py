@@ -270,9 +270,10 @@ LIFECYCLE_MAX_PARTS = 50
 # part_lifecycle stops sending a maker's parts to a distributor that, over the last MAKER_SKIP_DAYS
 # days, said "not listed" for at least MAKER_SKIP_NOT_LISTED different parts of it and listed none
 # (kept per maker, distributor and part in distributor_store.py). A miss counts only from a fresh
-# and complete answer (not read back from the store, not cut at Mouser's result cap); any listing
-# of the maker in that time, fresh or kept, stops the skip. The counts age out, so a maker it
-# starts carrying is asked again.
+# and complete answer (not read back from the store, not cut at Mouser's result cap) that returned
+# no part of that maker; any part of the maker the distributor returned in that time, in any
+# tool's answer, fresh or kept, whatever number it was put down to, stops the skip. The counts age
+# out, so a maker it starts carrying is asked again.
 MAKER_SKIP_DAYS = 30
 MAKER_SKIP_NOT_LISTED = 20
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")

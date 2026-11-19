@@ -339,6 +339,9 @@ class _KeyState:
     # sources whose "not listed" came this call from a request and complete: not read back from the
     # store, not a reply cut at Mouser's result cap (the only misses the maker counts take)
     missed: set[str] = field(default_factory=set)
+    # source -> the maker names of every part its answer returned for this spelling, those that
+    # aren't the number included: a reply listing a maker's LM358PE4 for LM358 is no miss for it
+    returned: dict[str, set[str]] = field(default_factory=dict)
 
     def add(self, reading: Reading) -> None:
         if reading.found:
@@ -486,7 +489,8 @@ class LifecycleLookup:
         day it was observed; a "not listed" for a spelling sent, when the distributor has no listing
         of the number at all, counts as a miss only when it came this call from a request and
         complete (_KeyState.missed: a kept answer read again, or a reply cut at Mouser's result cap,
-        isn't one). Listed only under other makers counts as neither. A false skip leaves a part a
+        isn't one) and returned no part of that maker (_KeyState.returned: LM358PE4 for LM358 is no
+        miss for TI). Listed only under other makers counts as neither. A false skip leaves a part a
         distributor carries unanswered for up to MAKER_SKIP_DAYS, so misses take the surest
         evidence, and the store counts each part once a day (DistributorStore.count_maker_parts)."""
         parts: dict[str, list[tuple[str, str, bool, float]]] = {}
@@ -499,7 +503,8 @@ class LifecycleLookup:
                 if listed := state.matching(entry.maker, source):
                     parts.setdefault(source, []).append((maker, key, True, max(r.observed_at for r in listed)))
                 elif (not entry.not_sent and source in state.missed
-                      and not any(r.source == source for r in state.readings)):
+                      and not any(r.source == source for r in state.readings)
+                      and not any(makers_match(entry.maker, name) for name in state.returned.get(source, ()))):
                     parts.setdefault(source, []).append((maker, key, False, state.not_listed[source]))
         for source, answers in parts.items():
             self._store.count_maker_parts(source, answers)
@@ -543,6 +548,8 @@ class LifecycleLookup:
                 elif not answer.checked:
                     state.failed.add("mouser")
                 else:
+                    state.returned.setdefault("mouser", set()).update(
+                        r.get("manufacturer") for r in answer.results if r.get("manufacturer"))
                     for result in _own_listings(answer.results, number):
                         status, raw = result.get("lifecycle_status") or "unknown", result.get("lifecycle") or MOUSER_NOT_STATED
                         state.add(Reading(result.get("mfr_part_number") or number, result.get("manufacturer") or "",
@@ -563,7 +570,7 @@ class LifecycleLookup:
         async def ask(state: _KeyState) -> None:
             state.asked.add("digikey")
             try:
-                reply, kind, fetched_at, fresh = await self._digikey.lookup(state.spelling, caller=caller)
+                reply, kind, fetched_at, fresh, makers = await self._digikey.lookup(state.spelling, caller=caller)
             except DigiKeyError as e:
                 logger.warning(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}: {e}")
                 state.failed.add("digikey")
@@ -572,6 +579,7 @@ class LifecycleLookup:
                 logger.error(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}")
                 state.failed.add("digikey")
                 return
+            state.returned.setdefault("digikey", set()).update(makers)
             if kind == "limited":
                 state.limited["digikey"] = self._digikey.retry_after()
             elif kind == "not_found":
