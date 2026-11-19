@@ -7,10 +7,11 @@ by the shared limits). For calls that found nothing or failed, the reason, from 
 (REASONS); and how the checks behind jlc_search's why_empty went. From 0.10.0 also the requests sent to
 the other services we call and the answers their caches saved (UPSTREAM_SOURCES), how many part numbers
 were looked up with Mouser and DigiKey and how many of them were different, and the HTTP requests the
-rate limit or the busy cap turned away. No IPs, queries or part numbers are kept: callers and distinct
-part numbers are counted through salted hashes held in memory for the current day only, with a new
-random salt each day. A restart starts a new set, so a caller or part seen before and after one on the
-same day counts twice; each day's `restarts` (from 0.10.0) says how many there were.
+rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the failed calls and the turned-away requests
+in each UTC hour. No IPs, queries or part numbers are kept: callers and distinct part numbers are
+counted through salted hashes held in memory for the current day only, with a new random salt each
+day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
+twice; each day's `restarts` (from 0.10.0) says how many there were.
 
 The server writes the counts to USAGE_STATS_PATH (a JSON file on the cache volume) every minute and
 at shutdown; unset means memory only. The file keeps a year; /mcp/stats shows the last 30 days. Nothing
@@ -92,15 +93,22 @@ MAX_DISTINCT_PARTS = 100_000  # distinct part numbers counted a day per distribu
 # HTTP requests server.RateLimitMiddleware turned away (429), by RateLimitMiddleware._refusal_group():
 # per_ip_rate_limit refusals by the group of the address, everyone_else at the normal limit and
 # platform_ranges for the AI platforms' published addresses (Anthropic, OpenAI) at
-# PLATFORM_RATE_LIMIT; server_busy (shared database pressure) and too_many_clients (the address
-# table was full) regardless of address. All are in per_ip_refusals and its total (the name predates
-# the last two); never stores IPs.
+# PLATFORM_RATE_LIMIT; too_many_clients (the address table was full) regardless of address.
+# server_busy holds 0.10.0's busy-cap refusals: the cap was removed in 0.10.1 and nothing counts
+# there now, but days already stored keep their counts, shown and added into totals (always 0 on
+# later days). All are in per_ip_refusals and its total; never stores IPs.
 REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_clients")
+# From 0.10.1, per UTC hour like hours: failed_hours, the tool calls whose outcome was failed, and
+# refused_hours, the requests counted in per_ip_refusals (every group), so a burst can be placed in
+# the day (before or after a deploy, say). None on a day saved before 0.10.1; on the day it started,
+# None for the hours before that.
+HOURLY_SINCE_0_10_1 = ("failed_hours", "refused_hours")
 
 
 def _new_day() -> dict[str, Any]:
     return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {},
-            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0}
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
+            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -123,6 +131,12 @@ def _int(value: Any) -> int:
 
 def _dict(value: Any) -> dict:
     return value if isinstance(value, dict) else {}
+
+
+def _hours(value: Any) -> list[int | None] | None:
+    """24 counts per UTC hour read from the file (None in it: that hour wasn't recorded); None
+    for anything else (not recorded that day)."""
+    return [None if h is None else _int(h) for h in value] if isinstance(value, list) and len(value) == 24 else None
 
 
 def _clean_day(day: dict) -> dict[str, Any]:
@@ -158,10 +172,11 @@ def _clean_day(day: dict) -> dict[str, Any]:
     refusals = day.get("per_ip_refusals")
     clean["per_ip_refusals"] = ({group: _int(count) for group, count in refusals.items() if group in REFUSAL_GROUPS}
                                 if isinstance(refusals, dict) else None)
-    hours = day.get("hours")
     # None: not recorded (0.6.3 had no hours), so record_call() marks the hours before it as unknown
-    clean["hours"] = ([None if h is None else _int(h) for h in hours]
-                      if isinstance(hours, list) and len(hours) == 24 else None)
+    clean["hours"] = _hours(day.get("hours"))
+    # None: not recorded (a day saved before 0.10.1), so _day() marks the hours before now as unknown
+    for field in HOURLY_SINCE_0_10_1:
+        clean[field] = _hours(day.get(field))
     # None: not counted (a day saved before 0.10.0)
     clean["restarts"] = None if day.get("restarts") is None else _int(day["restarts"])
     clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
@@ -262,12 +277,15 @@ class UsageStats:
         day = self._day()
         day["restarts"] = (day["restarts"] or 0) + 1
 
-    def _today(self) -> str:
-        return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date().isoformat()
+    def _now(self) -> datetime.datetime:
+        return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
 
-    def _day(self, date: str | None = None) -> dict[str, Any]:
-        """The counts for date (default today), marked as changed."""
-        date = date or self._today()
+    def _day(self, now: datetime.datetime | None = None) -> dict[str, Any]:
+        """The counts for now's UTC day (default: the clock's now), marked as changed. Callers that
+        also need the hour pass the same reading, so a call just before midnight can't land on one
+        day and another day's hour."""
+        now = now or self._now()
+        date = now.date().isoformat()
         day = self._days.get(date)
         if day is None:
             day = self._days[date] = _new_day()
@@ -276,6 +294,9 @@ class UsageStats:
                 del self._days[old]
         if day["per_ip_refusals"] is None:  # a day saved before 0.10.0: refusals count from now on
             day["per_ip_refusals"] = {}
+        for field in HOURLY_SINCE_0_10_1:
+            if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
+                day[field] = [None] * now.hour + [0] * (24 - now.hour)
         self._dirty = True
         return day
 
@@ -286,13 +307,16 @@ class UsageStats:
         (anything else counts as "other"), on the same day as the call so the two add up."""
         if self.tools is not None and tool not in self.tools:
             tool = "unknown"
-        now = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)  # one reading for date and hour
+        now = self._now()  # one reading for date and hour
         date, hour = now.date().isoformat(), now.hour
-        day = self._day(date)
+        day = self._day(now)
         counts = day["tools"].setdefault(tool, dict.fromkeys(TOOL_COUNTS, 0))
         counts["calls"] += 1
-        counts[outcome if outcome in OUTCOMES else "failed"] += 1
+        outcome = outcome if outcome in OUTCOMES else "failed"
+        counts[outcome] += 1
         counts["ms"] += round(ms)
+        if outcome == "failed":
+            day["failed_hours"][hour] = (day["failed_hours"][hour] or 0) + 1
         if reason is not None:
             reasons = day["reasons"].setdefault(tool, {})
             reason = reason if reason in REASONS else "other"
@@ -339,9 +363,9 @@ class UsageStats:
             return
         from .search.mpn import mpn_key  # here: the search package is too much to load with this module
 
-        now = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
+        now = self._now()
         date = now.date().isoformat()
-        counts = self._day(date)["parts_asked"].setdefault(distributor, {"total": 0, "distinct": 0})
+        counts = self._day(now)["parts_asked"].setdefault(distributor, {"total": 0, "distinct": 0})
         seen = self._parts[distributor]
         for number in numbers:
             counts["total"] += 1
@@ -349,11 +373,14 @@ class UsageStats:
                 counts["distinct"] += 1
 
     def record_refusal(self, group: str = "everyone_else") -> None:
-        """One HTTP request admission control turned away (no IP is kept). group: one of
-        REFUSAL_GROUPS; anything else counts as everyone_else."""
-        refusals = self._day()["per_ip_refusals"]
+        """One HTTP request admission control turned away (no IP is kept), on its day and in its
+        UTC hour. group: one of REFUSAL_GROUPS; anything else counts as everyone_else."""
+        now = self._now()  # one reading for date and hour
+        day = self._day(now)
+        refusals = day["per_ip_refusals"]
         group = group if group in REFUSAL_GROUPS else "everyone_else"
         refusals[group] = refusals.get(group, 0) + 1
+        day["refused_hours"][now.hour] = (day["refused_hours"][now.hour] or 0) + 1
 
     def record_why_empty(self, result: str) -> None:
         """How the checks behind a why_empty reply went: one of WHY_EMPTY_RESULTS."""
@@ -429,6 +456,8 @@ class UsageStats:
                 "date": date,
                 "calls": sum(c["calls"] for c in tools.values()),
                 "hours": day["hours"],
+                "failed_hours": day["failed_hours"],
+                "refused_hours": day["refused_hours"],
                 "callers": day["callers"],
                 "tools": tools,
                 "apps": _by_count(day["apps"]),
@@ -444,7 +473,10 @@ class UsageStats:
         return {
             "about": ("Anonymous counts per UTC day, the last 30 days at most, newest first; totals adds up "
                       "the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, "
-                      "00 to 23 (null: not recorded); in totals, each hour added up across the days. Each tool's calls = ok (found "
+                      "00 to 23 (null: not recorded); in totals, each hour added up across the days. failed_hours (from "
+                      "0.10.1): the calls whose outcome was failed, in each UTC hour; refused_hours (from 0.10.1): "
+                      "the requests counted in per_ip_refusals, in each UTC hour; both null on days before 0.10.1 "
+                      "and, on the day it started, for the hours before that; not in totals. Each tool's calls = ok (found "
                       "something; for alternatives, verified replacements) + similar_only (only similar parts for manual "
                       "comparison, no verified replacements) + not_found (worked, found nothing) + bad_request (the request was invalid) + "
                       "rate_limited (a limit turned it away) + failed (something broke on this server or a service "
@@ -477,7 +509,8 @@ class UsageStats:
                       "of the groups) and by group: per-address rate limit refusals by address group "
                       "(platform_ranges: addresses in the AI platforms' published ranges, which have a "
                       "higher limit; everyone_else: every other caller), then, regardless of address, "
-                      "server_busy (shared database queue pressure) and too_many_clients (the server was "
+                      "server_busy (0.10.0 only: shared database queue pressure; 0 from 0.10.1, which "
+                      "removed that refusal) and too_many_clients (the server was "
                       "tracking as many addresses as it can); null on days before it was counted. "
                       "restarts (from 0.10.0; null before): how many times the server started that day; "
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "

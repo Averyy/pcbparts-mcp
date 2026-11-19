@@ -175,7 +175,7 @@ DATASHEET_MISSING_TTL = 600
 
 # Seeded footprint answers read ahead for a batch of footprint checks (JLCPCBClient._footprint_seeds),
 # by LCSC code, for the checks gathered in this context: one database job for the batch instead of one
-# per part, so a single find_alternatives call can't queue 15 jobs and trip the busy cap by itself.
+# per part, so a single find_alternatives call can't queue 15 jobs ahead of everyone else's calls.
 _prefetched_seeds: contextvars.ContextVar[dict[str, FootprintAnswer | None] | None] = contextvars.ContextVar(
     "pcbparts_prefetched_seeds", default=None)
 
@@ -2115,7 +2115,7 @@ class JLCPCBClient:
         availability only when the has_easyeda_footprint filter ran, so it took another call each.
         Parts the seed doesn't know are left without the field (the seed can't prove "none"). The
         seed answers are read in one database job (_prefetched_seeds): one each was up to 100
-        queued jobs per call, enough to trip the busy cap for everyone else.
+        queued jobs per call, ahead of everyone else's database calls.
         """
         now = time.time()
         parts = [part for key in ("alternatives", "unverified_alternatives", "similar_parts")

@@ -15,12 +15,11 @@ import pytest
 from fastmcp import FastMCP
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
-from starlette.responses import PlainTextResponse, StreamingResponse
+from starlette.responses import PlainTextResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from pcbparts_mcp import server, stats
 from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally
-from pcbparts_mcp.db_worker import DatabasePressure
 from pcbparts_mcp.platform_ranges import PlatformRanges
 
 UTC = datetime.timezone.utc
@@ -138,7 +137,7 @@ class TestHeaders:
             assert limits(stats_reply) == ("2", "1", "60")  # stats counts, as before 0.10.0
 
     async def test_stats_is_limited_per_address(self, clock):
-        """/mcp/stats had main's 100 a minute per address; only the busy check passes it by."""
+        """/mcp/stats has main's 100 a minute per address, one allowance with every other path."""
         async with client(app_with(2, clock)) as c:
             assert [(await c.get("/mcp/stats", headers={"X-Forwarded-For": A})).status_code
                     for _ in range(3)] == [200, 200, 429]
@@ -349,8 +348,7 @@ class TestRealApp:
         assert data[1][0]["result"]["content"][0]["text"] == "pong"
 
 
-@pytest.mark.parametrize("under_pressure", [False, True], ids=["healthy", "busy"])
-async def test_stream_not_buffered(clock, under_pressure):
+async def test_stream_not_buffered(clock):
     """The headers go out with the reply's start and each body chunk is passed on as it comes, so
     an SSE stream isn't held back: the second event is made only once the first has left the
     middleware (buffering would hang until the guard below fails the test)."""
@@ -364,22 +362,10 @@ async def test_stream_not_buffered(clock, under_pressure):
     async def sse(request):
         return StreamingResponse(events(), media_type="text/event-stream")
 
-    pressure = DatabasePressure(clock)
-    if under_pressure:
-        for _ in range(8):
-            pressure.enqueue(server.COMPONENT_POOL)
-    deadlines = []
-
-    class Watched(server.RateLimitMiddleware):
-        async def _peek_body(self, receive, deadline, headers):
-            deadlines.append(deadline)  # the body was read, with the pressure deadline or none
-            return await super()._peek_body(receive, deadline, headers)
-
     app = Starlette(routes=[Route("/mcp", sse, methods=["POST"])],
                     middleware=[Middleware(server.BodySizeLimitMiddleware),  # prod's order
-                                Middleware(Watched, requests_per_minute=5, clock=clock, wall_clock=clock,
-                                           pressure=pressure, busy_max_waiting=8, busy_max_wait=0.25,
-                                           busy_body_timeout=60)])
+                                Middleware(server.RateLimitMiddleware, requests_per_minute=5, clock=clock,
+                                           wall_clock=clock)])
     sent = []
 
     async def send(message):
@@ -410,4 +396,159 @@ async def test_stream_not_buffered(clock, under_pressure):
         b"5", b"4", b"60")
     assert [m["body"] for m in sent[1:] if m.get("body")] == [b"event: message\ndata: 1\n\n",
                                                              b"event: message\ndata: 2\n\n"]
-    assert deadlines == ([60] if under_pressure else [None])  # the busy case really was under pressure
+
+
+async def _echo(request):
+    return Response(await request.body(), media_type="application/json")
+
+
+def body_app(clock: Clock, limit: int = 100) -> Starlette:
+    """prod's order: the body-size guard outside the rate limiter."""
+    return Starlette(routes=[Route("/mcp", _echo, methods=["POST"])],
+                     middleware=[Middleware(server.BodySizeLimitMiddleware),
+                                 Middleware(server.RateLimitMiddleware, requests_per_minute=limit, clock=clock,
+                                            wall_clock=clock)])
+
+
+def raw_post(path: str = "/mcp", ip: str = A, headers: tuple = ()) -> dict:
+    return {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1", "method": "POST",
+            "scheme": "http", "path": path, "raw_path": path.encode(), "root_path": "", "query_string": b"",
+            "headers": [(b"host", b"localhost"), (b"content-type", b"application/json"), *headers],
+            "client": (ip, 5000), "server": ("localhost", 80)}
+
+
+class TestBodies:
+    """The limiter charges a request as it starts and passes its body to the app untouched (from
+    0.10.1; 0.10.0's busy cap read it first); BodySizeLimitMiddleware bounds it."""
+
+    @pytest.mark.parametrize("raw", [b'{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{}}',
+                                     b"not json", b"\xff", b"[" * 2000, b""],
+                             ids=["call", "invalid", "utf8", "nested", "empty"])
+    async def test_body_reaches_the_app_untouched(self, clock, raw):
+        async with client(body_app(clock)) as c:
+            reply = await c.post("/mcp", content=raw, headers={"X-Forwarded-For": A})
+        assert reply.status_code == 200 and reply.content == raw
+        assert limits(reply) == ("100", "99", "60")
+
+    async def test_chunked_body_reaches_the_app_whole(self, clock):
+        async def chunks():
+            yield b'{"jsonrpc":"2.0",'
+            yield b'"id":1,"method":"initialize"}'
+
+        async with client(body_app(clock)) as c:
+            reply = await c.post("/mcp", content=chunks())
+        assert reply.status_code == 200 and reply.json() == {"jsonrpc": "2.0", "id": 1, "method": "initialize"}
+
+    async def test_charged_before_the_body_is_read(self, clock):
+        """One address's concurrent bodies are bounded by its allowance: each POST is charged as it
+        starts, so the third of three slow bodies is refused without being read."""
+        started, stall = [], asyncio.Event()
+
+        def body(n):
+            async def chunks():
+                started.append(n)
+                yield b'{"jsonrpc":"2.0",'
+                await stall.wait()
+                yield b'"id":1}'
+            return chunks()
+
+        async with client(body_app(clock, limit=2)) as c:
+            tasks = [asyncio.create_task(c.post("/mcp", content=body(n))) for n in range(3)]
+            done, _ = await asyncio.wait(tasks, timeout=30, return_when=asyncio.FIRST_COMPLETED)
+            assert [task.result().json()["reason"] for task in done] == ["per_ip_rate_limit"]
+            assert len(started) == 2
+            stall.set()
+            replies = await asyncio.gather(*tasks)
+        assert sorted(r.status_code for r in replies) == [200, 200, 429]
+
+    async def test_exhausted_address_refused_before_body_read(self, clock):
+        async def chunks():
+            pytest.fail("read a body from an exhausted address")
+            yield b""
+
+        async with client(body_app(clock, limit=1)) as c:
+            assert (await c.post("/mcp", content=b"{}")).status_code == 200
+            reply = await c.post("/mcp", content=chunks())
+            assert reply.status_code == 429 and reply.json()["reason"] == "per_ip_rate_limit"
+
+    @pytest.mark.parametrize("declared", [None, "1", "1000001"], ids=["chunked", "false", "large"])
+    async def test_body_size_guard(self, clock, declared):
+        read = []
+
+        async def chunks():
+            for n in range(3):
+                read.append(n)
+                yield b"x" * 600_000
+
+        async with client(body_app(clock)) as c:
+            reply = await c.post("/mcp", content=chunks(),
+                                 headers={} if declared is None else {"Content-Length": declared})
+        assert reply.status_code == 413 and reply.json() == {"error": "Request body too large"}
+        # A declared size is refused before anything is read; any other body isn't read past the limit
+        assert read == ([] if declared == "1000001" else [0, 1])
+
+    @pytest.mark.parametrize("sizes,status", [((600, 300), 200), ((600, 600), 413)], ids=["under", "over"])
+    async def test_body_guard_counts_streamed_bytes(self, sizes, status):
+        """BodySizeLimitMiddleware on its own: any route's chunked body is held to the limit."""
+        app = Starlette(routes=[Route("/upload", _echo, methods=["POST"])],
+                        middleware=[Middleware(server.BodySizeLimitMiddleware, max_bytes=1000)])
+
+        async def chunks():
+            for size in sizes:
+                yield b"x" * size
+
+        async with client(app) as c:
+            reply = await c.post("/upload", content=chunks())
+        assert reply.status_code == status
+        assert len(reply.content) == sum(sizes) if status == 200 else reply.json() == {"error": "Request body too large"}
+
+    async def test_sdk_cut_off_and_disconnected_bodies(self, clock):
+        """With the MCP SDK reading the body: a body cut off at the limit (chunked, or a false
+        Content-Length) gets the 413 with the X-RateLimit headers of the SDK's own error reply (the
+        request was charged); a declared size over it is refused before the limiter, uncharged. A
+        client that leaves mid-body gets a reply too, charged as any request. The SDK logs those
+        two as errors, as before 0.10.0."""
+        mcp = FastMCP("t")
+
+        @mcp.tool
+        def ping() -> str:
+            return "pong"
+
+        app = mcp.http_app(path="/mcp", transport="streamable-http", stateless_http=True,
+                           middleware=[Middleware(server.BodySizeLimitMiddleware),
+                                       Middleware(server.RateLimitMiddleware, requests_per_minute=5, clock=clock,
+                                                  wall_clock=clock)])
+        headers = {"Accept": "application/json, text/event-stream", "Content-Type": "application/json",
+                   "X-Forwarded-For": A}
+
+        async def chunks():
+            for _ in range(3):
+                yield b" " * 600_000
+
+        async with app.router.lifespan_context(app):
+            async with client(app) as c:
+                chunked = await c.post("/mcp", content=chunks(), headers=headers)
+                false_length = await c.post("/mcp", content=chunks(), headers={**headers, "Content-Length": "5"})
+                declared = await c.post("/mcp", content=b" " * 1_000_001, headers=headers)
+                call = await c.post("/mcp", headers=headers, json={
+                    "jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "ping", "arguments": {}}})
+            for reply in (chunked, false_length, declared):
+                assert reply.status_code == 413 and reply.json() == {"error": "Request body too large"}
+            assert [limits(r) for r in (chunked, false_length, declared)] == [
+                ("5", "4", "60"), ("5", "3", "60"), (None, None, None)]
+            assert call.status_code == 200 and '"pong"' in call.text and limits(call) == ("5", "2", "60")
+
+            messages = [{"type": "http.request", "body": b'{"jsonrpc":', "more_body": True}, {"type": "http.disconnect"}]
+            sent = []
+
+            async def receive():
+                return messages.pop(0) if messages else {"type": "http.disconnect"}
+
+            async def send(message):
+                sent.append(message)
+
+            scope = raw_post(headers=((b"accept", b"application/json, text/event-stream"),
+                                      (b"x-forwarded-for", A.encode())))
+            await asyncio.wait_for(app(scope, receive, send), 30)
+        assert sent[0]["type"] == "http.response.start"
+        assert dict(sent[0]["headers"])[b"x-ratelimit-remaining"] == b"1"

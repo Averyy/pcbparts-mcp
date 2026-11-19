@@ -65,19 +65,11 @@ RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
 # the CPU scaled to the VPS), so one busy platform address can't take the whole server. Never less
 # than RATE_LIMIT_REQUESTS (RateLimitMiddleware._limit_for takes the larger).
 PLATFORM_RATE_LIMIT = number_setting("PLATFORM_RATE_LIMIT", 1000, 1)
-# Shed new tools/call requests if ANY database pool has this many jobs waiting to start (counting
-# tool calls admitted that haven't started yet), or its oldest has waited this many seconds.
-# Measured 2026-11-18 at a third of a CPU (the VPS estimate,
-# knee ~600 calls/min): 8 / 0.25 s kept accepted p95 near 1.5 s past the knee but refused 11-17%
-# of calls at 360-600 a minute; 16 / 1.0 s refused ~1% at 360 but let accepted p95 reach ~2.5 s.
-# Without a cap, 840 a minute collapsed to p95 12.8 s. 12 / 0.5 s sits between; the CPU quota
-# exaggerates queueing at moderate load, so check prod's server_busy counts and tune by env. To turn
-# the cap off, set both very large (1000000).
-DB_BUSY_MAX_WAITING = number_setting("DB_BUSY_MAX_WAITING", 12, 1)
-DB_BUSY_MAX_WAIT_SECONDS = number_setting("DB_BUSY_MAX_WAIT_SECONDS", 0.5, 0.001)
-# /health answers 503 (unhealthy) while a database job has waited this long to start: a worker is
-# stuck (queries have no timeout), and every tools/call would be refused as busy until a restart.
-# Far above anything the busy cap lets a normal spike reach (it sheds new calls at 0.5 s).
+# /health answers 503 (unhealthy) while a database pool has had jobs waiting and started none for
+# this long: a worker is stuck (queries have no timeout) and every database call queued behind it
+# waits; at two minute checks in a row the server exits for Docker to restart it
+# (server._exit_if_stuck). Far above any one query (an ordinary search takes up to 1 s on the VPS);
+# a long queue that keeps moving never counts.
 DB_STUCK_WAIT_SECONDS = number_setting("DB_STUCK_WAIT_SECONDS", 60.0, 1.0)
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit

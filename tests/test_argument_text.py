@@ -85,8 +85,8 @@ async def test_nesting_past_pythons_limit_is_invalid_json(no_databases, monkeypa
 
 
 def test_every_json_string_argument_goes_through_the_helper():
-    """server.py's own json.loads runs only in _loads_argument (tool arguments) and the rate-limit
-    middleware's peek at a request body (the method, never echoed)."""
+    """server.py's own json.loads runs only in _loads_argument (tool arguments); 0.10.0's rate-limit
+    middleware also read request bodies, until 0.10.1 removed its busy check."""
     tree = ast.parse((Path(server.__file__)).read_text(encoding="utf-8"))
     callers = set()
     for function in ast.walk(tree):
@@ -95,7 +95,7 @@ def test_every_json_string_argument_goes_through_the_helper():
                 if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "loads"
                         and isinstance(node.func.value, ast.Name) and node.func.value.id == "json"):
                     callers.add(function.name)
-    assert callers == {"_loads_argument", "__call__"}
+    assert callers == {"_loads_argument"}
 
 
 BIG = "1" * 5000  # past Python's 4,300-digit limit for converting an integer's text

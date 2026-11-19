@@ -1,4 +1,4 @@
-"""Offline checks for the load-test's busy classification and verification mode."""
+"""Offline checks for the load test: how it counts replies, when a step is sustained, and its guards."""
 
 import asyncio
 import importlib.util
@@ -14,11 +14,8 @@ load = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(load)
 
 
-@pytest.mark.parametrize("reason,wait,header,busy,failed", [
-    ("server_busy", 2, "2", 1, 0), ("per_ip_rate_limit", 60, "60", 0, 1),
-    ("server_busy", 0, "0", 0, 1), ("server_busy", 2, "3", 0, 1),
-], ids=["busy", "ip", "zero", "mismatch"])
-async def test_busy_counted_apart_from_errors(monkeypatch, reason, wait, header, busy, failed):
+async def test_429_is_a_failure(monkeypatch):
+    """Any 429 is a failed call: the per-address limits must be raised for a load test."""
     now = [0.0]
     monkeypatch.setattr(load, "time", types.SimpleNamespace(perf_counter=lambda: now[0]))
 
@@ -26,39 +23,15 @@ async def test_busy_counted_apart_from_errors(monkeypatch, reason, wait, header,
         now[0] += 0.125
         method = json.loads(request.content)["method"]
         if method == "tools/call":
-            return httpx.Response(429, json={"reason": reason, "retry_after": wait}, headers={"Retry-After": header})
+            return httpx.Response(429, json={"reason": "per_ip_rate_limit", "retry_after": 2}, headers={"Retry-After": "2"})
         return httpx.Response(202 if method.startswith("notifications/") else 200, json={})
 
     step = load.Step(1000)
+    step.started = 1
     async with httpx.AsyncClient(base_url="http://localhost", transport=httpx.MockTransport(handle)) as client:
-        await load.mcp_call(client, {}, "jlc_search", {"query": "resistor"}, step)
-    assert (step.busy, sum(step.failures.values()), step.ok) == (busy, failed, 0)
-    assert step.latency == []  # busy latency never contaminates accepted-call p95
-    assert step.busy_latency == ([0.125] if busy else [])
-
-
-@pytest.mark.parametrize("case,expected", [("ok", True), ("slow", False), ("error", False),
-                                         ("tool", False), ("skip", False), ("none", False)],
-                         ids=["ok", "slow", "error", "tool", "skip", "none"])
-def test_admission_summary(case, expected):
-    step = load.Step(1000)
-    step.started, step.ok, step.busy = 10, 6, 4
-    step.latency = [0.5] * 6
-    if case == "slow":
-        step.latency[-1] = 3
-    elif case == "error":
-        step.failures["timeout"] = 1
-    elif case == "tool":
-        step.tool_errors = 1
-    elif case == "skip":
-        step.skipped = 1
-    elif case == "none":
-        step.ok = 0
-        step.busy = 10
-        step.latency = []
-    result = load.summary(step, 60, 0, 2)
-    assert result["admission_ok"] is expected
-    assert result["sustained"] is False  # the old mode still requires accepting the offered rate
+        assert await load.mcp_call(client, {}, "jlc_search", {"query": "resistor"}, step) is None
+    assert (dict(step.failures), step.ok, step.latency) == ({"tools/call HTTP 429": 1}, 0, [])
+    assert load.summary(step, 60, 0, 2)["sustained"] is False
 
 
 @pytest.mark.parametrize("errors,expected", [(0, True), (1, True), (2, False), (100, False)],
@@ -107,15 +80,13 @@ async def test_structured_error_replies_are_tool_errors(monkeypatch, case):
             step.started += 1
             await load.mcp_call(client, {}, "board_search", {"query": "esp32"}, step)
     assert (step.ok, step.tool_errors) == (100, 100 if is_error else 0)
-    summary = load.summary(step, 60, 0, 2)
-    assert summary["sustained"] is not is_error  # the default mode
-    step.busy, step.started = 5, 105  # --expect-busy: busy refusals don't excuse tool errors
-    assert load.summary(step, 60, 0, 2)["admission_ok"] is not is_error
+    assert load.summary(step, 60, 0, 2)["sustained"] is not is_error
 
 
-@pytest.mark.parametrize("case,expected", [("busy", 0), ("no_busy", 2), ("slow", 2), ("upstream", 3)],
-                         ids=["busy", "none", "slow", "upstream"])
-async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):
+@pytest.mark.parametrize("case,expected", [("ok", 0), ("slow", 0), ("upstream", 3)], ids=["ok", "slow", "upstream"])
+async def test_exit_and_upstream_guard(monkeypatch, case, expected):
+    """0 after the steps, sustained or not (a slow step is reported, not an error); 3 as soon as an
+    upstream or distributor request was sent."""
     class Inputs:
         by_tool = {"jlc_search": [{"query": "resistor"}]}
         lcsc = []
@@ -129,9 +100,7 @@ async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):
 
     async def step(*args):
         result = load.Step(1000)
-        result.started = 10
-        result.busy = 0 if case == "no_busy" else 4
-        result.ok = 10 - result.busy
+        result.started = result.ok = 10
         result.latency = [3 if case == "slow" else 0.5] * result.ok
         return result, 0
 
@@ -148,11 +117,11 @@ async def test_expect_busy_exit_and_upstream_guard(monkeypatch, case, expected):
     monkeypatch.setattr(load, "run_step", step)
     monkeypatch.setattr(load, "upstream_sent", sent)
     monkeypatch.setattr(load.asyncio, "sleep", sleep)
-    monkeypatch.setattr(load.sys, "argv", ["load_test.py", "--expect-busy", "--rates", "1000", "--pause", "0"])
+    monkeypatch.setattr(load.sys, "argv", ["load_test.py", "--rates", "1000", "--pause", "0"])
     assert await load.main() == expected
 
 
-def test_busy_mode_does_not_bypass_database_only_guard():
+def test_database_only_guard():
     with pytest.raises(SystemExit, match="could send a live request"):
         load.check_database_only("jlc_get_part", {"lcsc": "C1"})
 

@@ -2,7 +2,6 @@
 
 import asyncio
 import contextlib
-import contextvars
 import datetime
 import functools
 import inspect
@@ -27,14 +26,14 @@ from mcp.types import ToolAnnotations
 from pydantic import BeforeValidator, Field, WithJsonSchema
 from starlette.middleware import Middleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse, Response
+from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, platform_ranges, stats
 from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
-    DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS, DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
+    DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
     HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
@@ -50,8 +49,7 @@ from .distributor_store import DistributorStore
 from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
 from .cse import CSEClient
 from .mounting import english_package
-from .db_worker import (BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, Reservation, database_pressure,
-                        offload, run_db)
+from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, database_pressure, offload, run_db
 from .db import get_db, close_db
 from .db.lookup import VIA, related_note
 from .history_db import get_history_db, close_history_db
@@ -84,11 +82,10 @@ _distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
-# Requests the per-IP rate limit turned away, and server_busy refusals, per IP, each logged as one
-# line for each hour that had any with the five most-refused IPs (the only places refused IPs
-# appear; /mcp/stats counts them without IPs; the privacy page describes both lines)
+# Requests the per-IP rate limit turned away, per IP, logged as one line for each hour that had any
+# with the five most-refused IPs (the only place refused IPs appear; /mcp/stats counts them without
+# IPs; the privacy page describes the line)
 _refused_callers = CallerTally("Per-IP rate limit", what="refusals")
-_busy_refused_callers = CallerTally("Server busy limit", what="refusals")
 # The AI platforms' address lists as loaded at startup (_load_platform_ranges), for /health: how many
 # ranges each has and when OpenAI's list was made. None before the app starts.
 _platform_ranges_info: dict[str, Any] | None = None
@@ -241,7 +238,6 @@ async def lifespan(app):
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
     _refused_callers.flush()
-    _busy_refused_callers.flush()
     stats.usage.save()
     if _cse_client:
         await _cse_client.close()
@@ -260,8 +256,9 @@ async def lifespan(app):
     await run_db(BOARD_POOL, close_boards_db)
 
 
-# A database call waiting longer than DB_STUCK_WAIT_SECONDS at this many minute checks in a row
-# means a worker is stuck (every tools/call is then refused as busy and /health says unhealthy):
+# A database pool that has had calls waiting and started none for DB_STUCK_WAIT_SECONDS, at this
+# many minute checks in a row, has a stuck worker (every database call queued behind it waits, and
+# /health says unhealthy). A long queue that keeps moving is overload, not this:
 # the server exits so Docker's `restart: unless-stopped` starts a fresh one. os._exit, not
 # sys.exit: a normal exit would wait for the stuck worker thread and hang. Replaced in tests.
 STUCK_CHECKS_BEFORE_EXIT = 2
@@ -270,15 +267,15 @@ _exit_process = os._exit
 
 def _exit_if_stuck(stuck_checks: int) -> int:
     """The minute task's stuck-worker check: the updated count of checks in a row that found a
-    database call waiting longer than DB_STUCK_WAIT_SECONDS; exits the process at
-    STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
+    database pool with calls waiting that had started none for DB_STUCK_WAIT_SECONDS
+    (DatabasePressure.stalled_seconds); exits the process at STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
     milliseconds); it guards against a hung disk or a runaway query."""
-    oldest = database_pressure.summary()["oldest_wait_seconds"]
-    stuck_checks = stuck_checks + 1 if oldest >= DB_STUCK_WAIT_SECONDS else 0
+    stalled = database_pressure.stalled_seconds()
+    stuck_checks = stuck_checks + 1 if stalled >= DB_STUCK_WAIT_SECONDS else 0
     if stuck_checks >= STUCK_CHECKS_BEFORE_EXIT:
-        logger.error(f"A database call has waited {oldest:g} s (over {DB_STUCK_WAIT_SECONDS:g} s at "
-                     f"{stuck_checks} minute checks in a row): a worker is stuck; exiting so Docker "
-                     "restarts the server")
+        logger.error(f"Database calls have waited {stalled:.0f} s with none starting (over "
+                     f"{DB_STUCK_WAIT_SECONDS:g} s at {stuck_checks} minute checks in a row): a worker "
+                     "is stuck; exiting so Docker restarts the server")
         try:
             stats.usage.save()
         except Exception:
@@ -304,7 +301,6 @@ async def _every_minute() -> None:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
             _refused_callers.flush_if_due()
-            _busy_refused_callers.flush_if_due()
             stats.usage.save()
             if minutes % 60 == 0 and _distributor_store is not None:
                 _distributor_store.prune()
@@ -605,41 +601,17 @@ mcp.add_middleware(UsageStatsMiddleware())
 
 # The per-IP rate limit counts each address's requests over a rolling window of this many seconds
 RATE_LIMIT_WINDOW = 60
-# Under database pressure the body of a POST to /mcp (read to tell a tools/call from cheaper
-# methods) must arrive within this many seconds: a slower one is refused as server_busy (MCP calls
-# are a few KB). Without pressure there's no deadline, as when the SDK read bodies itself.
-BUSY_BODY_READ_SECONDS = 2.0
 
 # Why a request was refused: the `reason` in its 429 body (llms.txt lists them).
-# Add reasons, never rename one: clients branch on them.
+# Add reasons, never rename one: clients branch on them. (0.10.0's server_busy went with the busy
+# cap in 0.10.1.)
 RATE_LIMIT_REASONS = {
     "per_ip_rate_limit": "this address sent its limit of requests in the last minute",
     "too_many_clients": "the server is tracking as many addresses as it can (MAX_TRACKED_IPS); "
                         "not about this address's use",
-    "server_busy": "a database worker pool has too many waiting calls, or its oldest wait is too long",
     "datasheet_rate_limit": "the short datasheet links' shared budget for new links (/mcp/datasheet) is spent; "
                             "not about this address's use",
 }
-
-# The busy check's reservation for the tools/call being handled (RateLimitMiddleware), released by
-# AdmittedCallMiddleware as the tool starts. The tool runs in a copy of the request's context.
-_admitted_call: contextvars.ContextVar[Reservation | None] = contextvars.ContextVar(
-    "pcbparts_admitted_call", default=None)
-
-
-class AdmittedCallMiddleware(FastMCPMiddleware):
-    """Releases the busy check's reservation for this tools/call (RateLimitMiddleware) as the tool
-    starts: from then on a database tool's work counts as waiting jobs (its first run_db is queued
-    as it starts), and a live lookup's network waits never count."""
-
-    async def on_call_tool(self, context, call_next):
-        reservation = _admitted_call.get()
-        if reservation is not None:
-            reservation.release()
-        return await call_next(context)
-
-
-mcp.add_middleware(AdmittedCallMiddleware())
 
 
 class _Allowance(NamedTuple):
@@ -685,19 +657,14 @@ class RateLimitMiddleware:
     retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
     sentence a client can show). Requests the per-IP limit refuses aren't counted. /health isn't
     limited or counted; its headers show where the address stands. /mcp/stats is limited and
-    counted like any request (as before 0.10.0), but never refused as server_busy. The window runs
-    on a monotonic clock, so a wall-clock step can't stretch or shorten it; only resets_at reads
-    the wall clock.
+    counted like any request (as before 0.10.0). The window runs on a monotonic clock, so a
+    wall-clock step can't stretch or shorten it; only resets_at reads the wall clock.
 
-    Database queue pressure also sheds NEW tools/call requests with server_busy. Only database
-    offloads contribute pressure, and tool calls admitted whose tool hasn't started yet (a
-    reservation, so a simultaneous burst can't all pass before any of it is queued): live lookups
-    waiting on upstream services don't fill this cap. Every POST to /mcp is charged to the
-    address's allowance before its body is read, then its body is read whole (bounded by
-    MAX_REQUEST_BODY_BYTES; the SDK reads it whole anyway) and replayed to the SDK, so a busy
-    refusal counts like an answered request and an address that keeps sending through an overload
-    runs into its per-IP limit too. Under pressure the body has BUSY_BODY_READ_SECONDS to arrive.
-    Pure ASGI so response chunks pass straight through, including SSE streams.
+    A request is charged to its address as it starts, before the app reads its body, so an
+    exhausted address is refused without reading it and one address's concurrent bodies are
+    bounded by its allowance. The body itself goes to the app untouched (BodySizeLimitMiddleware,
+    outside this one, bounds it). Pure ASGI so response chunks pass straight through, including
+    SSE streams.
 
     Includes protections against memory exhaustion from IP spoofing:
     - Maximum tracked addresses (10,000): past it, new addresses are refused (too_many_clients)
@@ -706,8 +673,7 @@ class RateLimitMiddleware:
       each address's last counted request, so no step scans every address)
 
     Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP, by _refusal_group()) and,
-    except too_many_clients, in an hourly most-refused log line (_refused_callers, or
-    _busy_refused_callers for server_busy).
+    except too_many_clients, in an hourly most-refused log line (_refused_callers).
     """
 
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
@@ -715,15 +681,8 @@ class RateLimitMiddleware:
     def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS,
                  clock: Callable[[], float] | None = None, platform_per_minute: int = PLATFORM_RATE_LIMIT,
                  platform_addresses: platform_ranges.PlatformRanges | None = None,
-                 pressure=None, busy_max_waiting: int = DB_BUSY_MAX_WAITING,
-                 busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS,
-                 busy_body_timeout: float = BUSY_BODY_READ_SECONDS,
                  wall_clock: Callable[[], float] | None = None):
         self.app = app
-        self.pressure = database_pressure if pressure is None else pressure
-        self.busy_max_waiting = busy_max_waiting
-        self.busy_max_wait = busy_max_wait
-        self.busy_body_timeout = busy_body_timeout
         self.requests_per_minute = requests_per_minute
         self.platform_per_minute = platform_per_minute
         # None: load them from config (and log how many), once: Starlette builds the middleware
@@ -848,8 +807,6 @@ class RateLimitMiddleware:
         seconds = f"{wait} second{'' if wait == 1 else 's'}"
         if allowance.refused == "too_many_clients":
             tell_user = f"pcbparts is serving too many addresses at once; try again in {seconds}."
-        elif allowance.refused == "server_busy":
-            tell_user = f"pcbparts is busy answering database calls; try again in {seconds}."
         else:
             allows = f"pcbparts allows {limit:,} request{'' if limit == 1 else 's'} a minute per address"
             if shared:
@@ -864,9 +821,10 @@ class RateLimitMiddleware:
 
     def _refusal_group(self, client_ip: str, reason: str | None = None) -> str:
         """Which stats.REFUSAL_GROUPS group a refused address counts under: platform_ranges for an
-        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest; server_busy for
-        database pressure and too_many_clients for a full address table, regardless of address."""
-        if reason in ("server_busy", "too_many_clients"):
+        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest; too_many_clients
+        for a full address table, regardless of address. (Nothing counts under server_busy since
+        0.10.1: that group holds 0.10.0's stored counts.)"""
+        if reason == "too_many_clients":
             return reason
         return "platform_ranges" if self._is_platform(client_ip) else "everyone_else"
 
@@ -882,8 +840,7 @@ class RateLimitMiddleware:
             if reason == "too_many_clients":
                 self._warn_too_many_clients()
             else:
-                tally = _busy_refused_callers if reason == "server_busy" else _refused_callers
-                tally.record(self._limit_key(client_ip))
+                _refused_callers.record(self._limit_key(client_ip))
         except Exception:
             logger.exception("Couldn't note a rate-limit refusal for the log")
 
@@ -898,56 +855,11 @@ class RateLimitMiddleware:
                            f"(too_many_clients): {self._too_many_refused:,} refused since the last warning")
             self._too_many_warned_at, self._too_many_refused = now, 0
 
-    def _busy_refusal(self, client_ip: str, wait: int) -> JSONResponse:
-        """The server_busy 429. The request was already charged to the address's allowance (like an
-        answered request, so a flood during an overload also meets the per-IP limit)."""
-        self._count_refusal(client_ip, "server_busy")
-        return self._refusal(_Allowance(self._limit_for(client_ip), 0, wait, self._wall(), "server_busy"))
-
-    async def _peek_body(self, receive, deadline: float | None, headers: dict[str, str]) -> bytes | Response | None:
-        """The request's whole body, or the reply that ends it here (with headers, the address's
-        X-RateLimit-* headers, since it was charged): 413 past MAX_REQUEST_BODY_BYTES (Content-Length
-        may be absent or false, so the actual bytes are counted; the outer body-size guard rejects
-        oversized declared lengths before this read), an empty 400 when the client disconnects
-        (nobody reads it and the server drops it, but the middleware above expects a response), or
-        None when it hasn't all arrived within deadline seconds (None: no deadline)."""
-        body = bytearray()
-        try:
-            async with asyncio.timeout(deadline):
-                while True:
-                    message = await receive()
-                    if message["type"] == "http.disconnect":
-                        return Response(status_code=400, headers=headers)
-                    chunk = message.get("body", b"")
-                    if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
-                        return JSONResponse({"error": "Request body too large"}, status_code=413, headers=headers)
-                    body.extend(chunk)
-                    if not message.get("more_body", False):
-                        return bytes(body)
-        except TimeoutError:
-            return None
-
-    @staticmethod
-    def _replay(body: bytes, receive):
-        """receive() for the SDK: the body read once, then the client's own messages (disconnect)."""
-        replay: bytes | None = body
-
-        async def receive_body():
-            nonlocal replay
-            if replay is not None:
-                message = {"type": "http.request", "body": replay, "more_body": False}
-                replay = None
-                return message
-            return await receive()
-
-        return receive_body
-
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
         request = Request(scope)
         client_ip = self._get_client_ip(request)
-        reservation: Reservation | None = None
         if request.url.path == "/health":  # not limited or counted
             allowance = self._allowance(client_ip, count=False)
         else:
@@ -957,29 +869,6 @@ class RateLimitMiddleware:
             if allowance.refused:
                 self._count_refusal(client_ip, allowance.refused)
                 return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
-            # /mcp/stats is limited per address like other requests; only POST /mcp can be busy
-            if request.method == "POST" and request.url.path in ("/mcp", "/mcp/"):
-                pressured = bool(self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait))
-                body = await self._peek_body(receive, self.busy_body_timeout if pressured else None,
-                                             self._headers(allowance))
-                if body is None:  # too slow while the server is overloaded: refused as busy
-                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait) or 2
-                    return await self._busy_refusal(client_ip, wait)(scope, receive, send)
-                if isinstance(body, Response):  # 413, or the client left
-                    return await body(scope, receive, send)
-                # Replayed once to the SDK, which still validates JSON-RPC
-                receive = self._replay(body, receive)
-                try:
-                    payload = json.loads(body)
-                except (ValueError, RecursionError):
-                    payload = None
-                # Notifications (no id), cheap methods and invalid/batch payloads go to the SDK.
-                if isinstance(payload, dict) and payload.get("method") == "tools/call" and "id" in payload:
-                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)
-                    if wait:
-                        return await self._busy_refusal(client_ip, wait)(scope, receive, send)
-                    # Counted as demand until the tool starts (AdmittedCallMiddleware) or the request ends
-                    reservation = self.pressure.reserve()
 
         async def send_headers(message):
             if message["type"] == "http.response.start":
@@ -988,14 +877,7 @@ class RateLimitMiddleware:
                              for name, value in self._headers(allowance).items())]}
             await send(message)
 
-        if reservation is None:
-            return await self.app(scope, receive, send_headers)
-        token = _admitted_call.set(reservation)
-        try:
-            await self.app(scope, receive, send_headers)
-        finally:
-            reservation.release()
-            _admitted_call.reset(token)
+        return await self.app(scope, receive, send_headers)
 
 
 def _client_ip(request) -> str:
@@ -3863,12 +3745,11 @@ def _distributor_store_counts() -> dict[str, Any] | None:
 
 # Health check endpoint
 async def health(request):
-    """The server's state. 503 (status "unhealthy") while a database job has waited
-    DB_STUCK_WAIT_SECONDS to start: a worker is stuck and every tools/call is refused as busy, so
-    the container's healthcheck fails; a busy spike can't get there (the busy cap sheds new calls
-    long before)."""
+    """The server's state. 503 (status "unhealthy") while a database pool has had jobs waiting and
+    started none for DB_STUCK_WAIT_SECONDS: a worker is stuck and every database call queued behind
+    it waits, so the container's healthcheck fails. A long queue that keeps moving stays healthy."""
     pressure = {**database_pressure.summary(), "unhealthy_after_seconds": DB_STUCK_WAIT_SECONDS}
-    stuck = pressure["oldest_wait_seconds"] >= DB_STUCK_WAIT_SECONDS
+    stuck = pressure["stalled_seconds"] >= DB_STUCK_WAIT_SECONDS
     reply = {
         "status": "unhealthy" if stuck else "healthy",
         "service": "pcbparts-mcp",
@@ -3882,8 +3763,8 @@ async def health(request):
         "price_tiers": _price_tiers_info,
     }
     if stuck:
-        reply["problem"] = (f"a database job has waited {pressure['oldest_wait_seconds']:.0f} s to start "
-                            "(a stuck worker?); tool calls are refused as busy until it moves")
+        reply["problem"] = (f"database jobs have waited {pressure['stalled_seconds']:.0f} s with none "
+                            "starting (a stuck worker?); database tool calls wait until it moves")
     return JSONResponse(reply, status_code=503 if stuck else 200)
 
 
@@ -3929,7 +3810,8 @@ class BodySizeLimitMiddleware:
     Content-Length before anything is read, and the bytes actually received, so a chunked body or
     a false Content-Length can't run past it either. Past the limit the app is told the client left
     (so it stops reading) and its reply is replaced by the 413, which keeps any X-RateLimit-*
-    headers that reply had (RateLimitMiddleware charged the request). MCP JSON-RPC calls are a few
+    headers that reply had (RateLimitMiddleware charged the request; the MCP SDK answers a body cut
+    off this way with an error reply, which carries them). MCP JSON-RPC calls are a few
     KB; the limit is far above any legitimate request. Pure ASGI, so streamed replies pass straight
     through."""
 

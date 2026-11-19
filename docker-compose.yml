@@ -31,8 +31,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M  # DB is ~360MB + Python overhead
-          cpus: '1.0'
+          memory: 4096M  # components.db is ~800 MB and must stay in the page cache (searches read most of it), plus history.db and Python
+          cpus: '3.0'  # the event loop and the database workers run at the same time (SQLite releases the GIL)
     logging:
       driver: "json-file"
       options:
