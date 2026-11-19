@@ -14,7 +14,7 @@
 - **GET LATEST FIRST** github actions runs automatically to commit new parts
 - **NEVER commit without explicit permission** only commit when user explicitly asks ("commit this", "push these changes")
 - **NEVER add Claude attribution** - No "Co-Authored-By: Claude" or similar
-- **Use one version for all unreleased work**: reuse and consolidate the current unreleased entry; bump only when starting work after that version has been released. **Bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**. Head it `## X.Y.Z (YYYY-MM-DD)`: after the deploy, the `release` job in `docker-build.yml` publishes GitHub release `vX.Y.Z` with that section as its notes (no section, failed job). Don't create releases or tags by hand.
+- **Use one version for all unreleased work**: reuse and consolidate the current unreleased entry; bump only when starting work after that version has been released. **Bump version** in `pyproject.toml` and `uv.lock` (PATCH/MINOR/MAJOR per semver, ask permission before bumping major/minor, patch is the default), and add an entry to `CHANGELOG.md` with client-visible changes under **Breaking**. Keep entries short: bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`, no paragraphs, rationale or measurements (per-field detail belongs in `landing/llms.txt` and the tool docstrings). Head it `## X.Y.Z (YYYY-MM-DD)`: after the deploy, the `release` job in `docker-build.yml` publishes GitHub release `vX.Y.Z` with that section as its notes (no section, failed job). Don't create releases or tags by hand.
 
 ## Critical Rules
 
