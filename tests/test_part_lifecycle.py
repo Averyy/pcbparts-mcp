@@ -1039,6 +1039,55 @@ class TestOneNumberMouserRejects:
         with pytest.raises(Exception, match="invalid characters"):
             await bad
 
+    # Astra review round 5 (2026-11-18): with one number left to ask (the pooled path), Mouser
+    # rejecting it raised and threw away the kept answers of the rest of the batch
+
+    async def test_a_kept_part_beside_a_rejected_one(self, setup):
+        fake = FakeMouser(mouser_part("LM358P"))
+        m, _, _, _, _ = setup(mouser=fake)
+        await m.get_part("LM358P")
+        fake.responses = [httpx.Response(200, json=ODD_NUMBER)]
+        reply = await server.mouser_get_part(part_number="LM358P|BAD*NUM")
+        assert fake.sent == ["LM358P", "BAD*NUM"]
+        assert [r["mfr_part_number"] for r in reply["results"]] == ["LM358P"]
+        assert reply["lookup_failed"] == ["BAD*NUM"] and "error" not in reply
+        fake.responses = [httpx.Response(200, json=ODD_NUMBER)]
+        with pytest.raises(Exception, match="invalid characters"):  # alone: Mouser's error, as before
+            await m.get_part("BAD*NUM")
+
+    async def test_part_lifecycle_keeps_the_kept_part(self, setup, clock):
+        """part_lifecycle's chunk failed whole: the kept LM358P came back lookup_failed too."""
+        fake = FakeMouser(mouser_part("LM358P"))
+        _, _, store, _, _ = setup(mouser=fake)
+        await server.mouser_get_part(part_number="LM358P")
+        store._conn.execute("DELETE FROM lifecycle")  # its reading gone: read from the kept answer
+        fake.responses = [httpx.Response(200, json=ODD_NUMBER)]
+        good, bad = (await lifecycle(["LM358P", "BAD*NUM"]))["results"]
+        assert (good["status"], good["source"]) == ("active", "mouser") and "lookup_failed" not in good
+        assert bad["lookup_failed"] is True and fake.sent == ["LM358P", "BAD*NUM"]
+
+    async def test_a_pooled_rejection_fails_only_its_own_number(self, setup):
+        """Two callers share a request; Mouser rejects it and then one of its numbers asked alone:
+        the caller with that number keeps its kept part and gets lookup_failed for the bad one,
+        and the other caller its part."""
+        gate = Gate()
+        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
+        m, _, _, _, _ = setup(mouser=fake, gate=gate)
+        warm = asyncio.create_task(m.get_part("LM358P"))
+        await settle()
+        gate.opened.set()
+        await warm
+        gate.opened.clear()
+        fake.responses = [httpx.Response(200, json=ODD_NUMBER), httpx.Response(200, json=ODD_NUMBER)]
+        mine = asyncio.create_task(m.get_part("LM358P|BAD*NUM", caller="198.51.100.1"))
+        other = asyncio.create_task(m.get_part("NE555P", caller="203.0.113.9"))
+        await settle()
+        gate.opened.set()
+        mine, other = await mine, await other
+        assert fake.sent[1:] == ["BAD*NUM|NE555P", "BAD*NUM", "NE555P"]
+        assert [r["mfr_part_number"] for r in mine["results"]] == ["LM358P"] and mine["lookup_failed"] == ["BAD*NUM"]
+        assert [r["mfr_part_number"] for r in other["results"]] == ["NE555P"] and "lookup_failed" not in other
+
 
 class TestShielded:
     async def test_mouser_batch_answer_kept_when_the_caller_gives_up(self, setup):

@@ -658,14 +658,17 @@ class MouserClient:
         their answers then come from that reply. A limit refusal or failure of that second request
         leaves the first reply's answers; numbers it had no results for are then not checked. When
         Mouser rejects a request of several numbers (an error for the request, not a limit), each
-        number is asked alone instead (_one_by_one)."""
+        number is asked alone instead (_one_by_one); a lone number it rejects gets the error as its
+        answer's problem, as there, so the caller's kept answers still answer (it raised, and a
+        batch with the rest kept failed whole)."""
         try:
             data, error = await self._request(numbers, caller)
         except MouserKeyRejected:
             raise
         except MouserAPIError as e:
             if len(numbers) < 2:
-                raise
+                logger.warning(f"Mouser lookup of one number failed: {type(e).__name__}: {e}")
+                return {_cache_key(n): PartAnswer([], False, self._store.now(), False, e) for n in numbers}, [], None
             logger.warning(f"Mouser rejected a request of {len(numbers)} numbers ({e}); asking each alone")
             return await self._one_by_one(numbers, caller)
         if error is not None:
@@ -812,7 +815,9 @@ class MouserClient:
                       ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
         """One number's answer from a request shared with other one-part lookups that start within
         pool_window (up to 10 numbers; a full batch goes at once). A result matching none of the
-        numbers goes back only to lookups whose number nothing matched."""
+        numbers goes back only to lookups whose number nothing matched. Mouser rejecting the number
+        (asked alone, or alone after rejecting the shared request) is its answer's problem, which
+        the caller reports for that number only (get_part's lookup_failed, part_lifecycle's row)."""
         key = _cache_key(number)
         batch = self._pool
         if batch is None or (key not in batch.numbers and len(batch.numbers) >= MOUSER_MAX_BATCH):
@@ -829,10 +834,10 @@ class MouserClient:
         if error is not None:
             return {}, [], error
         answer = answers[key]
-        # Asked alone after Mouser rejected the shared request (_one_by_one): this number's own
-        # outcome, as if it had been asked by itself; another caller's number can't fail it
+        # Asked alone (_one_by_one, or a lone number): this number's own outcome; another caller's
+        # number can't fail it, and it doesn't fail this caller's kept answers
         if isinstance(answer.problem, Exception):
-            raise answer.problem
+            return {key: answer}, [], None
         if isinstance(answer.problem, dict):
             return {}, [], answer.problem
         return {key: answer}, (extras if not answer.matched else []), None
