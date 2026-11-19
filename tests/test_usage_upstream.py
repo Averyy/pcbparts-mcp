@@ -467,6 +467,7 @@ class TestRefusals:
         assert body["reason"] == "per_ip_rate_limit"
         assert refusal.headers["retry-after"] == "60"  # all three at the same moment: a full minute
         assert usage.summary()["days"][0]["per_ip_refusals"] == {"total": 3, "everyone_else": 3, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0}
+        assert usage.summary()["days"][0]["refused_hours"] == [0] * 20 + [3, 0, 0, 0]  # 0.10.1: at 20:05 UTC
         usage.save()
         assert "203.0.113" not in (tmp_path / "usage.json").read_text(encoding="utf-8")
         with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):

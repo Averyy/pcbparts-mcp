@@ -291,6 +291,89 @@ class TestUsageStats:
         assert hours[:21] == [None] * 21 and hours[21] == 1 and hours[22:] == [0, 0]
         assert usage.summary()["totals"]["hours"][21] == 1 and sum(usage.summary()["totals"]["hours"]) == 1
 
+    def test_failed_calls_and_refusals_per_utc_hour(self, tmp_path):
+        """0.10.1: failed tool calls and limiter refusals (every group) in each UTC hour, beside hours."""
+        start = datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp()
+        clock = Clock(start)
+        usage = UsageStats(clock=clock)
+        usage.open(tmp_path / "usage.json")
+        for hours_later, outcome in ((0, "failed"), (0, "failed"), (0, "ok"), (1, "not_found"), (1, "exploded"),
+                                     (23, "failed")):
+            clock.now = start + hours_later * 3600
+            usage.record_call("jlc_search", outcome, 1, reason="jlcpcb_unavailable" if outcome == "failed" else None)
+        for hours_later, group in ((0, "everyone_else"), (5, "server_busy"), (5, "too_many_clients"),
+                                   (23, "platform_ranges")):
+            clock.now = start + hours_later * 3600
+            usage.record_refusal(group)
+        day = usage.summary()["days"][0]
+        assert day["failed_hours"] == [2, 1] + [0] * 21 + [1]  # "exploded" isn't an outcome: it counts as failed
+        assert sum(day["failed_hours"]) == day["tools"]["jlc_search"]["failed"] == 4
+        assert day["refused_hours"] == [1] + [0] * 4 + [2] + [0] * 17 + [1]
+        assert sum(day["refused_hours"]) == day["per_ip_refusals"]["total"] == 4
+        assert day["hours"][:2] == [3, 2]  # hours still counts every call
+        totals = usage.summary()["totals"]
+        assert "failed_hours" not in totals and "refused_hours" not in totals  # per day only
+        about = usage.summary()["about"]
+        assert "failed_hours" in about and "refused_hours" in about
+        # Saved and read back the same; counts only (no IPs, part numbers or queries to keep)
+        usage.save()
+        saved = json.loads((tmp_path / "usage.json").read_text(encoding="utf-8"))["days"]["2026-10-18"]
+        assert (saved["failed_hours"], saved["refused_hours"]) == (day["failed_hours"], day["refused_hours"])
+        again = UsageStats(clock=clock)
+        again.open(tmp_path / "usage.json")
+        reloaded = again.summary()["days"][0]
+        assert (reloaded["failed_hours"], reloaded["refused_hours"]) == (day["failed_hours"], day["refused_hours"])
+        again.record_call("jlc_search", "failed", 1)  # counting goes on from the saved counts (23:30)
+        again.record_refusal()
+        assert again.summary()["days"][0]["failed_hours"][23] == 2
+        assert again.summary()["days"][0]["refused_hours"][23] == 2
+
+    def test_failed_and_refused_hours_before_0_10_1(self, tmp_path):
+        """A day saved before 0.10.1 has neither: earlier days show null, not 0. On the upgrade day
+        the server's start begins the counting, and the hours before it stay null (as hours did
+        after 0.6.3), through saves too."""
+        path = tmp_path / "usage.json"
+        old_day = {"tools": {"jlc_search": {"calls": 9, "ok": 4, "failed": 5, "ms": 90}}, "hours": [0] * 20 + [9, 0, 0, 0],
+                   "apps": {}, "callers": 2, "distributors": {}, "reasons": {}, "why_empty": {}, "upstream": {},
+                   "parts_asked": {}, "per_ip_refusals": {"server_busy": 21}, "restarts": 1}
+        path.write_text(json.dumps({"days": {"2026-10-16": old_day, "2026-10-17": old_day}}), encoding="utf-8")
+        clock = Clock()  # 2026-10-17 21:15 UTC, the deploy
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        for day in usage.summary()["days"]:
+            assert day["failed_hours"] is None and day["refused_hours"] is None
+            assert day["tools"]["jlc_search"]["failed"] == 5 and day["per_ip_refusals"]["server_busy"] == 21
+        usage.record_start()  # as the server does at startup: counted from this hour on
+        unknown_then_zero = [None] * 21 + [0, 0, 0]
+        today, yesterday = usage.summary()["days"]
+        assert today["failed_hours"] == unknown_then_zero == today["refused_hours"]
+        assert yesterday["failed_hours"] is None and yesterday["refused_hours"] is None
+        clock.advance(3600)  # 22:15: the first failure and refusal since the deploy
+        usage.record_call("jlc_search", "failed", 1)
+        usage.record_refusal("server_busy")
+        today = usage.summary()["days"][0]
+        assert today["failed_hours"] == [None] * 21 + [0, 1, 0] == today["refused_hours"]
+        assert today["tools"]["jlc_search"]["failed"] == 6  # the day's totals still include the hours before
+        usage.save()
+        saved = json.loads(path.read_text(encoding="utf-8"))["days"]
+        assert saved["2026-10-16"]["failed_hours"] is None and saved["2026-10-16"]["refused_hours"] is None
+        assert saved["2026-10-17"]["failed_hours"] == [None] * 21 + [0, 1, 0]
+        again = UsageStats(clock=clock)
+        again.open(path)
+        today, yesterday = again.summary()["days"]
+        assert today["failed_hours"] == [None] * 21 + [0, 1, 0] == today["refused_hours"]
+        assert yesterday["failed_hours"] is None and yesterday["refused_hours"] is None
+
+    def test_malformed_failed_and_refused_hours(self, tmp_path):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {
+            "failed_hours": [1] * 23, "refused_hours": ["x", True, None, 1e309] + [2] * 20}}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        day = usage.summary()["days"][0]
+        assert day["failed_hours"] is None  # not 24 hours: not recorded
+        assert day["refused_hours"] == [0, 0, None, 0] + [2] * 20
+
     def test_names_that_arent_tools_count_as_unknown(self):
         usage = UsageStats(clock=Clock())
         usage.tools = {"jlc_search"}
@@ -528,11 +611,13 @@ class TestServerWiring:
             monkeypatch.setattr(server, "_get_design_rules", crash)
             with pytest.raises(ToolError):
                 await client.call_tool("get_design_rules", {"topic": "ldo"})
-        tools = stats.usage.summary()["days"][0]["tools"]
+        day = stats.usage.summary()["days"][0]
+        tools = day["tools"]
         assert tools["sensor_recommend"]["not_found"] == 1
         assert tools["jlc_search"]["bad_request"] == 1
         assert tools["board_get"]["not_found"] == 1
         assert tools["get_design_rules"]["failed"] == 1  # a crash in our code
+        assert sum(day["failed_hours"]) == 1  # in its UTC hour
 
     @pytest.mark.parametrize(("content", "outcome"), [
         ({"alternatives": [{"lcsc": "C1"}], "similar_parts": []}, "ok"),
@@ -598,6 +683,28 @@ class TestServerWiring:
         assert "keep no IPs" in body["about"]
         assert "similar_only" in body["about"]
         assert "Cutover 2026-10-26" in body["about"]
+
+    async def test_failed_and_refused_hours_over_http(self, monkeypatch):
+        """0.10.1: each day in /mcp/stats has failed_hours and refused_hours beside hours (24 counts,
+        or null on days before 0.10.1); totals don't."""
+        from pcbparts_mcp import server
+        old_day = {"tools": {"jlc_search": {"calls": 1, "failed": 1, "ms": 5}}, "hours": [0] * 24}
+        usage = UsageStats(clock=Clock())  # 2026-10-17 21:15 UTC
+        usage._days["2026-10-16"] = stats._clean_day(old_day)  # as a 0.10.0 file reads
+        monkeypatch.setattr(stats, "usage", usage)
+        usage.record_call("jlc_search", "failed", 5, reason="jlcpcb_unavailable")
+        usage.record_call("jlc_search", "ok", 5)
+        usage.record_refusal("server_busy")
+        app = server.create_app()
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:
+            body = (await c.get("/mcp/stats")).json()
+        today, yesterday = body["days"]
+        assert list(today)[:5] == ["date", "calls", "hours", "failed_hours", "refused_hours"]
+        assert today["failed_hours"] == [0] * 21 + [1, 0, 0] == today["refused_hours"]
+        assert today["hours"][21] == 2
+        assert yesterday["failed_hours"] is None and yesterday["refused_hours"] is None
+        assert set(body["totals"]) & {"failed_hours", "refused_hours"} == set()
+        assert "failed_hours" in body["about"] and "refused_hours" in body["about"]
 
     async def test_public_page_shows_30_days_of_the_year_kept(self, tmp_path, monkeypatch):
         from starlette.requests import Request

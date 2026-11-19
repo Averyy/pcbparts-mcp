@@ -4,6 +4,12 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.1 (2026-11-19)
+
+### Added
+
+- **`/mcp/stats`**: each day adds `failed_hours` (failed tool calls) and `refused_hours` (429 refusals, every `per_ip_refusals` group) per UTC hour, beside `hours`; null on earlier days and, on the upgrade day, for the hours before it.
+
 ## 0.10.0 (2026-11-19)
 
 New tools: `part_lifecycle` and `jlc_get_parts`.
