@@ -43,9 +43,10 @@ COPY --chown=appuser:appuser data/subcategories.json /app/data/
 # Copy database build script and parsers module
 COPY --chown=appuser:appuser scripts/build_database.py /app/scripts/
 
-# Build the SQLite databases at image build time. The catalog (data/catalog/, ~350 MB uncompressed)
-# and the EasyEDA seed CSVs (data/easyeda/: footprints.csv from scripts/build_easyeda_seed.py, pads.csv
-# from scripts/build_easyeda_pads.py; the folder, so a missing pads.csv just builds an empty table) are
+# Build the SQLite databases at image build time. The catalog (data/catalog/, ~350 MB uncompressed,
+# plus price_tiers.tsv.gz when docker-build.yml could download it: it isn't in git, and without it
+# the database has the 1-piece prices only) and the EasyEDA seed CSVs (data/easyeda/: footprints.csv
+# from scripts/build_easyeda_seed.py, pads.csv from scripts/build_easyeda_pads.py; the folder, so a missing pads.csv just builds an empty table) are
 # mounted for this step only: they're loaded into components.db, so none of them ships in the image. --mount needs
 # BuildKit (the default builder since Docker 23, and what Compose v2 and buildx use).
 # The builds run as root because a bind mount keeps the checkout's file mode (a umask 027/077
@@ -77,6 +78,11 @@ RUN python scripts/build_boards_db.py --data-dir /app/data --output /app/data/bo
 # Copy design rules (served markdown only, not raw sources)
 COPY --chown=appuser:appuser data/design-rules/rules/ /app/data/design-rules/rules/
 
+# OpenAI's published ChatGPT connector addresses, for the AI platforms' higher per-address rate limit
+# (platform_ranges.py). docker-build.yml replaces the committed copy with a fresh, checked download
+# before the build; after the database builds, so a changed list doesn't rebuild them.
+COPY --chown=appuser:appuser data/platform_ranges/ /app/data/platform_ranges/
+
 # Add src to Python path
 ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
@@ -84,10 +90,11 @@ ENV HTTP_HOST=0.0.0.0
 ENV HTTP_PORT=8080
 ENV RATE_LIMIT_REQUESTS=100
 
-# EasyEDA footprint answers and Mouser/DigiKey daily request counts that survive restarts (dir
-# created and owned by appuser above).
+# EasyEDA footprint answers, Mouser/DigiKey answers and lifecycle readings, and Mouser/DigiKey daily
+# request counts that survive restarts (dir created and owned by appuser above).
 ENV EASYEDA_STORE_PATH=/app/cache/easyeda.db
 ENV CSE_STORE_PATH=/app/cache/cse.db
+ENV DISTRIBUTOR_STORE_PATH=/app/cache/distributor.db
 ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
 ENV USAGE_STATS_PATH=/app/cache/usage_stats.json
 

@@ -1,195 +1,223 @@
 # PCB Parts MCP Server
 
-> MCP server for electronic component data: a searchable daily snapshot of JLCPCB's in-stock catalog (630K+ parts with stock >= 10), live stock and prices from JLCPCB, Mouser and DigiKey, EasyEDA pinouts and footprints, SamacSys KiCad files, reference board schematics, sensor lookup and PCB design rules.
+> MCP tools for electronic parts: parametric search of JLCPCB's in-stock catalog (daily snapshot, 630K+ parts), live JLCPCB, Mouser and DigiKey stock and prices, lifecycle status, EasyEDA pinouts and footprints, SamacSys KiCad files, reference boards, sensors and PCB design rules.
 
-- Endpoint: `https://pcbparts.dev/mcp` (Streamable HTTP, stateless)
-- Auth: none
-- Rate limit: 100 requests a minute per IP
+- Endpoint: `https://pcbparts.dev/mcp` (Streamable HTTP, stateless), no auth
+- Rate limit: 100 requests a minute per IP or IPv6 /64 (see Rate limit)
 - Health: `https://pcbparts.dev/health`
-- Source: https://github.com/Averyy/pcbparts-mcp
+- Source and self-hosting: https://github.com/Averyy/pcbparts-mcp
 
 ## Setup
 
-Claude Code:
-
-```bash
-claude mcp add -s user --transport http pcbparts https://pcbparts.dev/mcp
-```
-
-Claude Desktop and claude.ai: Customize → Connectors → "+ Add" → "Add custom connector" with the URL above (`claude_desktop_config.json` only runs local servers). Cursor (`~/.cursor/mcp.json`); VS Code (`.vscode/mcp.json`) uses the key `"servers"` instead of `"mcpServers"`:
-
-```json
-{
-  "mcpServers": {
-    "pcbparts": {
-      "type": "http",
-      "url": "https://pcbparts.dev/mcp"
-    }
-  }
-}
-```
-
-Clients that only run local commands (Copilot for Xcode): `{"command": "npx", "args": ["-y", "mcp-remote", "https://pcbparts.dev/mcp"]}`.
+- Claude Code: `claude mcp add -s user --transport http pcbparts https://pcbparts.dev/mcp`
+- Claude Desktop, claude.ai: Customize → Connectors → "Add custom connector" with the endpoint (`claude_desktop_config.json` runs local servers only).
+- Cursor (`~/.cursor/mcp.json`), VS Code (`.vscode/mcp.json`, key `"servers"`): `{"mcpServers": {"pcbparts": {"type": "http", "url": "https://pcbparts.dev/mcp"}}}`
+- Local-command clients (Copilot for Xcode): `{"command": "npx", "args": ["-y", "mcp-remote", "https://pcbparts.dev/mcp"]}`
 
 ## Which tool
 
-- Find parts: `jlc_search`. Confirm stock before ordering, or find parts with stock under 10: `jlc_stock_check`.
-- Recorded low-stock observations for one LCSC code or a BOM's list of up to 50: `jlc_stock_history`; missing scrape records are not confirmed stockouts.
-- One part's live details: `jlc_get_part(lcsc=...)`. A manufacturer part number to JLCPCB parts: `jlc_get_part(mpn=...)`.
-- Replacement for a part: get its LCSC code (from `jlc_get_part(mpn=...)` if needed), then `jlc_find_alternatives(lcsc=...)`.
-- Mouser or DigiKey data: `mouser_get_part`, `digikey_get_part`, only when the user wants that distributor.
+- Find parts: `jlc_search`. Live stock before ordering, or stock under 10: `jlc_stock_check`.
+- One part live: `jlc_get_part(lcsc=...)`; an MPN's JLCPCB parts: `jlc_get_part(mpn=...)`.
+- A BOM (up to 50 codes or MPNs) from the snapshot: `jlc_get_parts`; check live with `jlc_get_part(lcsc=...)` only for a part missing or with stock near the quantity needed.
+- Recorded low-stock events: `jlc_stock_history`.
+- A replacement: `jlc_find_alternatives(lcsc=...)`.
+- Mouser or DigiKey: `mouser_get_part`, `digikey_get_part`, only when JLCPCB can't answer or the user asks for that distributor (shared daily limits).
+- Lifecycle (NRND, last time buy, obsolete) of up to 50 parts: `part_lifecycle`.
 - Pins and footprint pads: `jlc_get_pinout`. KiCad files: `cse_get_kicad` (slow).
 - How real boards wire an IC: `board_search(component=...)`, then `board_get(slug, focus=IC)`.
-- Choosing a sensor: `sensor_recommend`. Design guidance: `get_design_rules`.
+- Sensors: `sensor_recommend`. Design guidance: `get_design_rules`.
+
+## Conventions
+
+- Optional arguments default to null; integer limits are clamped to range.
+- `library_type`: `basic`, `preferred`, `no_fee` (basic or preferred), `extended`, `all`. Economic assembly charges extended parts a loading fee per unique type.
+- List arguments (`packages`, `manufacturers`, `tag`, `measure`, `lcsc`, `parts`): an array, a JSON-array string or one plain string; never comma-split; max 50 items unless stated.
+- An unpaired surrogate escape (`\ud800`) in a JSON-string argument is an `Invalid <argument>` error (a row `error` in `jlc_get_parts` and `part_lifecycle`).
+- LCSC code: C and 1-12 digits, case ignored.
+- Snapshot: JLCPCB parts with stock >= 10, scraped daily. `data_as_of`: its stock. `prices_as_of`: the 1-piece `price`, refreshed weekly (a newer part has its first scraped price). `price_tiers_as_of`: the daily scrape's quantity tiers (null when the server has none).
+- `prices`: `[{"qty": "1+", "price"}, {"qty": "1000+", "price"}, ...]`. From the snapshot: trailing tiers repeating the one before are left out; only the 1-piece tier when `price_tiers_as_of` is null or the part has none; absent with no price.
+- Gone part: left the snapshot since 2026-11-12 (stock under 10, or no longer listed); kept until a scrape lists it again. Rows: `stock: null` (unknown, not a confirmed stockout), `gone: true`, `gone_since` (UTC date of the first scrape missing it), `last_stock`, the last 1-piece `price` as the only `prices` tier, `data_source.observed_at: null`, no `specs` or `pcba_type`. Never in `jlc_search`.
+- Part row: `lcsc`, `model`, `manufacturer`, `package`, `stock`, `price`, `library_type`, `preferred`, `category`, `subcategory`, `subcategory_id`, `mounting_type`, `specs` (or `description`), `pcba_type`, `data_source`.
+  - `data_source`: `kind`, `provider`, `observed_at`, `specs_provider` ("LCSC" when LCSC supplied the specs).
+  - `pcba_type`: "economic", or "standard_only" (one such part moves the whole order to Standard assembly).
+  - `no_datasheet: true`: JLCPCB lists none; LCSC or the maker may (`no_datasheet_note`).
+- `observed_at`: UTC, ISO 8601. `next_call`: a suggested call `{tool, arguments}`, not executed. `hint`: a next step. `valid_values`: accepted inputs, on an error.
+- Specs are JLCPCB's listings: check datasheets and pinouts before choosing.
 
 ## Tools
 
-Optional filters and identity arguments default to null unless stated otherwise. Result limits are integers clamped to each tool's range. `library_type` accepts `basic`, `preferred`, `no_fee` (basic or preferred), `extended`, `all`; ignores case and surrounding whitespace; accepts `no-fee`. `packages` and `manufacturers` accept arrays, JSON-array strings or one literal string, never comma-split (max 50 items each).
-
 ### jlc_search
 
-Searches the daily snapshot (stock >= 10). Stock is as of `data_as_of`; the 1-piece price is refreshed weekly, as of `prices_as_of` (a part new since then has its first scraped price).
+Parametric search of the snapshot.
 
-- Arguments: `query` (max 500 characters; plain words, e.g. "100nF 25V X7R 0402"), `subcategory_name` or `subcategory_id`, `spec_filters`, `package` or `packages` (OR, max 50), `manufacturer`, `min_stock` (default 10, clamped to at least 0), `library_type`, `prefer_no_fee` (default true: basic and preferred first), `pcba_type` ("economic" or "standard_only"), `sort_by` ("stock" by default, "price" or "spec"), `sort_spec`, `sort_order`, `limit` (default 20, clamped to 1-100), `offset` (default 0, clamped to 0-10000), `strict` (default false), `match_all_terms` (default true), `facets` (default false).
-- `spec_filters`: array or JSON-array string, up to 50 of `{"name", "op", "value"}`, e.g. `[{"name": "Vgs(th)", "op": "<", "value": "2V"}]`; values accept text or numbers. Operators `=`, `>=`, `<=`, `>`, `<` (`=>` normalizes to `>=`); `>`, `<`, `>=`, `<=` work only on numeric specs. Several `=` filters on one spec match any of the values (OR), except `Supply Voltage` and `Vin`, where a part must cover all of them (AND). Names ignore case. Unitless values use base units (V, A, ohms, F, H, Hz, W, mm, bytes). `jlc_search_help(subcategory=...)` lists a subcategory's specs, which are numeric, and which sort.
-- Battery holders: a query naming a battery, cell, coin cell or button cell holder searches all holder subcategories. Sizes AA (No. 5, 14500), AAA (No. 7, 10440), C (No. 2), D (No. 1) and coin or button cell match the part's text and show as `Battery Size` in `filters_applied.spec_filters`; two sizes mean either. Other sizes (18650) are plain search words.
-- Short spec names: `Vgs(th)`, `Vds`, `Id`, `Rds(on)`, `Vr`, `If`, `Vf`, `Vceo`, `Ic`, `Vout`, `Iout`, `Quiescent Current` (`Iq`), `Supply Voltage`, `Isolation Voltage`, `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat`, `Frequency`, `Load Capacitance`, `Junction Capacitance`, `Reverse Stand-Off Voltage (Vrwm)`, `Operating Temperature` (°C).
-- Sorting by a spec: `sort_spec` (e.g. "RDS(on)@4.5V", "Dropout@500mA", "Vf@1A", "Iq", "Isat") with `sort_order` "asc" (default) or "desc". A query can supply the spec instead ("lowest Iq LDO"); `sort_order` with neither, or `sort_by="spec"` without `sort_spec`, is an error. Parts that don't list the spec come last. Rows add `sort_value` (the figure sorted on); `sort` says what was compared, and `sort.note` says when figures at different test conditions were compared as listed.
-- Reply: `results`, `total` (every match before pagination), `page_info` (`limit`, `offset`, `returned`), `library_type_counts`, `no_fee_available`; part-number searches add `mpn_matches` counts. Part rows: `lcsc`, `model`, `manufacturer`, `package`, `stock`, `price`, `library_type`, `preferred`, `category`, `subcategory`, `subcategory_id`, `mounting_type`, `specs`, `data_source`; optional `description` when specs are absent, and annotations below or from reviewed evidence. `filters_applied` lists every filter that ran; `parsed` what the query text gave. `relaxed` names query words, a query-only library preference or a part type left out to get results; `relaxed.dropped_filters` lists parsed spec filters dropped when a part number was retried, so those results don't meet them. `parsed.adjusted_filters` lists specs moved or left out (including a package that fell back to its bare family); `ignored_filters` filters not applied or rarely listed. `unlisted` counts parts a range filter left out only because they list no value. `hint` on an empty reply suggests a next step. `counts_complete=false` means the counts are partial. `valid_values` lists accepted inputs on an error.
-- `facets=true` adds manufacturer, package and library_type counts over the full final effective search, independent of pagination. Every active filter applies, including the facet's own field. `facets` has `scope="filtered_snapshot"`, `matched_total`, `complete`, `status` ("complete", "incomplete", "unavailable") and `elapsed_ms`. Each field has up to 15 `buckets` (`value`, `count`), sorted by count descending then value, plus `omitted_buckets` and `omitted_count`. Library values are basic/preferred/extended; no_fee means basic plus preferred, not a separate bucket. Exact counts appear only with complete status; otherwise matched_total is null and buckets are absent. Facets use a private read connection with their own about 200 ms / 2,000,000 SQLite VM step / 5,000 Python-candidate budget; exhaustion preserves the search results.
-- Accepted spellings: `pcba_type` ignores case, spaces and hyphens and accepts "standard" (= standard_only) and "economic_and_standard" (= economic); `sort_order` accepts ascending/lowest and descending/highest; `sort_by` ignores case.
-- LDO dropout at a load: `{"name": "Dropout", "op": "<=", "value": "0.3V@500mA"}` uses each part's listed dropout at or above that load, or scales a lower test current's figure up linearly; parts rated only below the load are left out. Rows add `dropout_at_load` saying which figure was used.
-- USB-PD: controller, sink, source or trigger wording selects PD controllers over USB-C connectors. Sink/trigger and source rank listed receiver/supply controllers first, and a sink voltage ranks matching negotiated Output Voltage within the role; parts missing those attributes stay in the results unless `strict=true`. Strict sink-and-source requirements are reported as unsupported.
-- When the search shortens a part number (`LM1117-3.3` searches `LM1117`), `mpn_match` on each result is `full`, `same_suffix` or `family`, in that order.
-- MOSFET queries with a gate drive add `rds_on_at_drive`: the RDS(on) listed at or below that drive, or null when none is listed there. Null parts stay in the results.
-- `pcba_type="standard_only"` on a part means one such part moves the whole order to Standard assembly. `no_datasheet=true` means JLCPCB lists no datasheet; `no_datasheet_note` clarifies that LCSC or the manufacturer may have one.
+- Arguments: `query` (max 500 characters, plain words: "100nF 25V X7R 0402"), `subcategory_name`/`subcategory_id`, `spec_filters`, `package`/`packages` (OR), `manufacturer`, `min_stock` (default 10), `library_type`, `prefer_no_fee` (default true: basic and preferred first), `pcba_type` ("economic" or "standard_only"), `sort_by` ("stock" default, "price", "spec"), `sort_spec`, `sort_order` ("asc" default, "desc"), `limit` (default 20, 1-100), `offset` (default 0, max 10000), `strict` (default false), `match_all_terms` (default true), `facets` (default false).
+- `spec_filters`: up to 50 `{"name", "op", "value"}`: `[{"name": "Vgs(th)", "op": "<", "value": "2V"}]`. `op`: `=`, `>=`, `<=`, `>`, `<`; all but `=` need a numeric spec. Several `=` on one spec match any, except `Supply Voltage` and `Vin` (must cover all). Unitless values are base units (V, A, ohms, F, H, Hz, W, mm, bytes). On ranges (supply/output voltage, operating temperature) `=` means includes, `>=` reaches, `<=` goes down to. `jlc_search_help(subcategory=...)` lists names, which are numeric, which sort.
+- Short names: `Vgs(th)`, `Vds`, `Id`, `Rds(on)`, `Vr`, `If`, `Vf`, `Vceo`, `Ic`, `Vout`, `Iout`, `Iq`, `Supply Voltage`, `Isolation Voltage`, `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat`, `Frequency`, `Load Capacitance`, `Junction Capacitance`, `Reverse Stand-Off Voltage (Vrwm)`, `Operating Temperature` (°C).
+- Dropout at a load: `{"name": "Dropout", "op": "<=", "value": "0.3V@500mA"}` uses the figure listed at or above that load, or scales a lower test current's up linearly; parts rated only below it are left out. Rows add `dropout_at_load`.
+- Spec sort: `sort_spec` ("RDS(on)@4.5V", "Dropout@500mA", "Vf@1A", "Iq"), or a query naming it ("lowest Iq LDO"). `sort_order` with neither, or `sort_by="spec"` alone, is an error. Unlisted parts come last. Rows add `sort_value`; `sort` says what was compared (`sort.note`: figures at different test conditions).
+- Reply: `results` (part rows), `total`, `page_info` (`limit`, `offset`, `returned`), `data_as_of`, `prices_as_of`, `library_type_counts`, `no_fee_available`, `filters_applied` (every filter that ran), `parsed` (what the query gave). Where they apply:
+  - `relaxed`: query words, a query-only library preference or a part type left out to get results; `relaxed.dropped_filters`: parsed specs dropped on a part-number retry (results don't meet them).
+  - `parsed.adjusted_filters` (specs moved or left out, package fallbacks), `ignored_filters` (not applied or rarely listed), `unlisted` (parts a range filter left out for listing no value), `counts_complete: false` (partial counts).
+  - `mpn_matches`: part-number match counts. When the number was shortened (`LM1117-3.3` searches `LM1117`), rows' `mpn_match` is `full`, `same_suffix` or `family`, in that order.
+  - `rds_on_at_drive`: in MOSFET queries with a gate drive, the RDS(on) listed at or below it, or null.
+  - Empty replies: `hint`, and `why_empty` (library/package/stock changes tried on the snapshot, counts `exact` or `at_least`, next calls, `diagnostics_complete`; `status` "budget_exhausted_or_busy" or "diagnostic_failed" when unfinished).
+- `facets=true`: manufacturer, package and library_type counts over all matches. `facets.status` "complete" (with `matched_total` and per field up to 15 `buckets` `{value, count}`, `omitted_buckets`, `omitted_count`), "incomplete" or "unavailable".
+
+#### Query reading
+
+- Units: `u`/`µ` micro; `4u7` 4.7uF (4.7uH for inductors); `6V3` 6.3V; `10M`/`10Meg` megaohms, `10m` milliohms. At most 4 significant digits before a unit letter (`4R75`); longer runs are part numbers. `1005` is `0402`.
+- A part number (also with 7+ leading digits: `61300211121`) is searched alone; other words go to `parsed.detected.not_searched` (`strict=true` keeps them).
+- A value goes to the spec the part type lists: `5V relay` coil, `3.3V LDO` output, `12V buck` an output range covering it, `3.3V level shifter` a supply range covering it, `24V input 3.3V output` both. Under 1mA in an LDO/DC-DC query is Iq; ohms on MOSFETs, load switches or inductors are maximum RDS(on) or DCR. Specs the type doesn't list are left out (`parsed.adjusted_filters`). Negative Vout keeps its sign; impedance@frequency compares at that frequency; part-number exclusions are unsupported.
+- MOSFET gate drive: a voltage beside `logic level`/`GPIO`/`MCU` (up to 5V) or `gate`/`Vgs` (up to 20V); RDS(on) listed at or below it ranks first.
+- Comparisons keep their operator (`Iq < 10uA`); a sign before a bare value applies to the main rating (`10uF capacitor < 25V`). `-40°C`: rated down to -40°C; `105C`: up to 105°C.
+- Connectors: pin count and pitch (`JST PH 2 pin`); `qwiic`/`STEMMA QT` = 4-pin 1.0mm JST SH, `Grove` = 4-pin 2.0mm. One pitch per query (a second mm length goes to `not_searched` unless named). Header lengths: `insulation height` (or body/plastic height), `mating pin length`, `tail length`, with `at least`, `under`, `>`; filters `Insulation Height`, `Length of Mating Pin`, `Length of End Connection Pin`.
+- Packages include other spellings (`SOT-23` includes `SOT-23-3`, `0603` includes `1608`); bare `QFN-32` matches VQFN/WQFN/UQFN of any body; `QFN-24-EP(4x4)` keeps body and pad, else falls back to the family (not with `strict=true`).
+- Battery holders: naming a battery, cell, coin or button cell holder searches all holder subcategories; AA (No. 5, 14500), AAA (No. 7, 10440), C (No. 2), D (No. 1) and coin/button become `Battery Size` (two: either); others (18650) are plain words.
+- USB-PD: controller/sink/source/trigger words pick PD controllers over USB-C connectors, ranking the role (and a sink voltage's Output Voltage) first; others stay unless `strict=true`. Strict sink-and-source is unsupported.
+- `basic`, `preferred`, `no fee` set the library; `cheapest` sorts by price; `lowest Iq`, `highest Isat`, `most flash` by that spec. Arguments win.
+- Words matching nothing with the rest are left out (`relaxed`), but with `subcategory_name` or `spec_filters` the reply is empty and `hint` names them. `strict=true`: no relaxation; unsupported constraints are errors.
 
 ### jlc_stock_check
 
-Live JLCPCB search over the whole catalog (7M+ parts). Arguments: `query` (max 500 characters), `category_name`/`category_id`, `subcategory_name`/`subcategory_id`, `package`/`packages`, `manufacturer`/`manufacturers`, `library_type`, `min_stock` (default 10, clamped to at least 0; 0 includes out-of-stock), `sort_by` ("quantity" default, "price"), `page` (default 1, clamped to at least 1), `limit` (default 20, clamped to 1-100). JLCPCB matches whole part numbers and their starts, not text inside them. One LCSC code as `query` returns that part only, with its price tiers.
+Live JLCPCB search of the whole catalog (7M+ parts). Matches whole part numbers and their starts, not text inside them.
 
-Reply: `results`, `page`, `per_page`, `total`, `total_pages`, `has_more`. Results use the JLC part-row fields above with live `data_source`; a single-code lookup also includes `prices` (`qty`, `price`) where listed. `hint` appears when an LCSC code matches nothing (with the min_stock and filters applied) and when a part-number fragment matches no part number from its start but is inside in-stock ones ("2812" names WS2812B).
+- Arguments: `query` (max 500 characters; one LCSC code returns only that part, with `prices`), `category_name`/`category_id`, `subcategory_name`/`subcategory_id`, `package`/`packages`, `manufacturer`/`manufacturers`, `library_type`, `min_stock` (default 10; 0 includes out of stock), `sort_by` ("quantity" default, "price"), `page` (default 1), `limit` (default 20, 1-100).
+- Reply: `results` (part rows), `page`, `per_page`, `total`, `total_pages`, `has_more`; `hint` when a code matches nothing, or a fragment is inside in-stock part numbers but starts none ("2812": WS2812B).
 
 ### jlc_stock_history
 
-Recorded events for one `lcsc` C-code: C followed by 1-12 digits (case and surrounding spaces ignored). `lcsc` can also be a list (or JSON array string) of up to 50 codes, de-duplicated: see the list reply below. Event `type` is `change`, `new`, `gone`, `reappear` or `type_change`. `days` defaults to 180, integer 1-366, ending on the newest recorded date rather than today. At most 100 events, newest first; `more_events=true` means older events in that window were omitted.
-
-Reply: `lcsc`, `window` (`start`, `end`, `history_start`, `history_end`, inclusive ISO dates), `events` (`date`, `type`, `stock_after`, `note`, optional `stock_before`), `more_events`, `what_is_recorded` (plain-language recording limits), `current_stock` (snapshot quantity, null if unlisted), `current_stock_as_of` (snapshot time, possibly null). An empty history DB has null window dates. Unknown codes and parts without events return `events: []` normally. A missing/unreadable history DB returns an error.
-
-List reply: `window`, `parts`, `what_is_recorded` (once), `current_stock_as_of`. Each part, in input order: `lcsc`, `current_stock`, `summary` over the whole window (`events` total, `gone` count, `lowest_recorded` stock of non-gone events or null, `last_gone` date or null), the newest 10 `events` (same fields and notes as one code) and `more_events`. An invalid code is `{lcsc, error}` and the others are still answered; an empty list or more than 50 codes is an error. Counts include `gone` events on suspect scrape dates; their notes say so.
-
-Changes are recorded only when resulting stock is <=1,000 and absolute change exceeds 10 at 0-100, 25 at 101-500 or 100 at 501-1,000. An empty history does not establish stable stock: stock above 1,000 and small changes are not tracked. New records require 0 < stock <=1,000; reappear from a listed zero and library-type changes are independent of this cap. `gone` has `stock_after: null`: it means missing from a scrape, possibly delisted, below its 10-unit floor or a scrape gap, never a confirmed zero or ongoing stockout. A scrape gap that empties whole subcategories at once is not recorded as gone: those parts keep their previous stock for up to two days (the past gap days were corrected the same way). Notes label remaining disappearances on those gap dates (2026-03-03, 03-16, 03-18, 05-15) and returns within two days as `suspect_scrape`. Other dates are not certified complete; 2026-08-07 is missing. Returns above 1,000 may be unrecorded. Past events have no before-values; `stock_before` appears only when actually recorded from the previous snapshot. Current stock is separate snapshot data, not live. No predictions or availability percentages.
+- Arguments: `lcsc` (one code, or a list of up to 50), `days` (1-366, default 180, ending on the newest recorded date).
+- One code: `lcsc`, `window` (`start`, `end`, `history_start`, `history_end`; ISO dates), `events` (newest first, max 100: `date`, `type` change/new/gone/reappear/type_change, `stock_after`, `note`, `stock_before` where recorded), `more_events`, `what_is_recorded`, `current_stock` (snapshot; null, with `gone_since` for a gone part), `current_stock_as_of`. Unknown codes: `events: []`.
+- List: `window`, `what_is_recorded`, `current_stock_as_of`, `parts` in input order: `lcsc`, `current_stock`, `summary` (`events`, `gone`, `lowest_recorded` non-gone stock, `last_gone`), the newest 10 `events`, `more_events`; an invalid code is `{lcsc, error}`.
+- Recorded only at stock <= 1,000 after a change over 10 (stock 0-100), 25 (101-500) or 100 (501-1,000); `new` needs 0 < stock <= 1,000; `reappear` from zero and `type_change` always. No events doesn't mean stable stock.
+- `gone` (`stock_after: null`): missing from a scrape (delisted, under 10, or a scrape gap), not a confirmed stockout. On gap dates (2026-03-03, 03-16, 03-18, 05-15), and with a return within two days, notes say `suspect_scrape`. 2026-08-07 is missing.
 
 ### jlc_get_part
 
-- `lcsc` (e.g. "C82899"): live details, cached up to an hour.
-- `mpn` (e.g. "LM358P", max 100 characters): searches the daily snapshot (stock >= 10) and returns `{mpn, results, total}`; call `jlc_get_part(lcsc=...)` on a result for live stock and full details. It also finds other dash and space spellings, the same maker's packing codes and BOM text with notes ("TL074 OP AMP"), and never a different grade. Inexact matches add `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` results can be other part types.
+- `lcsc` ("C82899"): live details, cached up to an hour. Wins over `mpn`.
+- `mpn` ("LM358P", max 100 characters): snapshot matches, most stock first, including other dash/space spellings, the maker's packing codes and BOM text ("TL074 OP AMP"), never another grade. Reply `{mpn, results, total, exact, ambiguous, data_as_of, prices_as_of, price_tiers_as_of}`; results are part rows with `prices`. Live stock: `jlc_get_part(lcsc=...)` on a result.
+  - `exact`: the number itself matched (ignoring case). `ambiguous`: several parts match (pick by `manufacturer`, `package`). Inexact: `match` (`separators`, `packing`, `alias`, `alternative`, `lcsc`, `related`) and `matched_mpn`; `related` (full text) can be other part types, named in `note`.
+  - Gone matches (never full text, most `last_stock` first) answer when no in-stock part matches, only full-text ones do, or the gone part has the number itself and the in-stock ones are another maker's with other separators (Molex's 2081001 gone, TE's 208100-1); in-stock matches follow, as `note` says; `hint` and a live-check `next_call` are added. Otherwise in-stock matches answer and `gone_matches` counts the gone ones.
+  - No match: `error`, `hint`, `availability: unknown_outside_snapshot`, live-check `next_call`.
+- `lcsc` reply: part row plus `prices`, `datasheet_pdf` (a stable PDF link), `datasheet` (LCSC's viewer page, or null), `maker_datasheet`, `datasheet_note`, `specs_note` (what the listing leaves out), `spec_evidence` (reviewed maker values, conditions, source), `spec_discrepancies` (catalog/document conflicts; catalog specs still used), `lcsc_url`, `min_order`, `reel_qty`, `has_easyeda_footprint` (null unknown, false none), `easyeda_symbol_uuid`, `easyeda_footprint_uuid`. No lifecycle (`part_lifecycle`).
 
-Provide `lcsc` or `mpn`; a nonempty `lcsc` wins when both are supplied.
+### jlc_get_parts
 
-Snapshot part rows carry `data_source` (`kind`, `provider`, `observed_at`, plus `specs_provider` "LCSC" when LCSC supplied the specs); live lookup observations keep their time through caching. MPN hits include `data_as_of` and `prices_as_of`; misses identify snapshot scope, `availability: unknown_outside_snapshot`, and an optional unexecuted live-check `next_call`.
+Up to 50 parts from the snapshot in one tool call, database only; no specs, datasheets, EasyEDA status, live stock or lifecycle.
 
-Reply fields: `prices` (quantity tiers), `datasheet_pdf` (a stable link to the PDF), `datasheet` (LCSC's viewer page, null when none), `maker_datasheet` (the manufacturer's link, where listed), `datasheet_note`, `specs`, `specs_note` (what the listing leaves out for the part type), `spec_evidence` (where reviewed: manufacturer values, conditions, document, printed page, source URL, review date), `spec_discrepancies` (known catalog/document conflicts; catalog specs and numeric filtering/sorting are preserved), `pcba_type`, `lcsc_url`, `min_order`, `reel_qty`, `has_easyeda_footprint` (null = unknown, false = none), `easyeda_symbol_uuid`, `easyeda_footprint_uuid`. No lifecycle status: use `mouser_get_part` or `digikey_get_part`.
-
-Savings use a rounded legacy $3 Economic loading-fee estimate, labelled with `is_estimate` and `assembly_service_assumption`; confirm current quotes. Standard service differs.
+- `parts` (required): each an LCSC code, an MPN (max 100 characters) or `{"mpn", "manufacturer", "lcsc"}` (max 100 characters each). A valid `lcsc` wins; an invalid one ("N/A") is ignored beside `mpn`. `manufacturer` (compared loosely: "Microchip Tech" = "Microchip Technology") narrows every match step: Comchip's 1N4007-G answers `{"mpn": "1N4007G", "manufacturer": "Comchip"}`. A part number shaped like a listed code (2SC1815's "C1815") needs `{"mpn": "C1815"}`; a plain code no part has is tried as a part number (MPN row, `note`).
+- Reply: `data_as_of`, `prices_as_of`, `price_tiers_as_of`, `total`, `counts` (`found`, `gone`, `not_found`, `error`), `results` (one per input, in order), `hint` when any is gone or not found. Each row has `input` (as given; a string over 100 characters, or other input whose JSON is over 200, is cut to 100 characters and "...").
+- LCSC code row: `lcsc`, `model`, `manufacturer`, `package`, `stock`, `price`, `prices`, `library_type`, `preferred`, `pcba_type`, `category`, `subcategory`, `description`, `no_datasheet`; gone parts with the gone fields. Unknown: `not_found: true`.
+- MPN row: matched as `jlc_get_part(mpn=...)` but never by full text, so values ("10k": use `jlc_search`) and numbers only text mentions are not found. `mpn`, `total` (for the maker given), `exact`, `ambiguous`, `results` (first 10 by stock: `lcsc`, `model`, `manufacturer`, `package`, `stock`, `price`, `prices`, `library_type`, `preferred`, gone fields), `match`/`matched_mpn`/`note` when inexact. Gone matches answer as in `jlc_get_part(mpn=...)` (counted `gone`), else `gone_matches`. `other_manufacturers` (up to 10): makers with it in stock when the one given has none. No match: `total: 0, results: [], not_found: true`.
+- `error` rows: unusable input (a placeholder such as DNP, empty, wrong type, invalid `lcsc` without `mpn`, over 100 characters, control characters, surrogate escape), or `"Database not available"` for that lookup. Call errors: empty list, over 50 parts, invalid JSON, database unavailable.
 
 ### jlc_get_pinout
 
-`lcsc` or `uuid` (EasyEDA symbol; a nonempty `lcsc` wins), `footprint` (default false; needs `lcsc`). Reply: `lcsc`, `model`, `manufacturer`, `package` (these four may be null with UUID-only lookup), `pin_count`, `pins`, `easyeda_symbol_uuid`. Pin numbers and names exactly as the EasyEDA symbol has them; numbers match the EasyEDA footprint's pads. `electrical` appears only where the symbol sets it. `unverified` (the string "Symbol not verified by LCSC") is present when LCSC hasn't verified the symbol. `note`: the pins are named only by number, or a diode/LED-type part whose numbering varies between sources (connect it by pin name). `footprint=true` adds `footprint` with name, `source_link`, `pad_count`, `numbered_pads`, `pitch`, `pad_sizes` and `pads` (number, x, y in mm from the origin with y down, shape, size, layer, hole, slot_length); if the footprint can't be fetched, the pins still come back with `footprint_error`.
-
-Empty `jlc_search` responses can include `why_empty`: tested library/package/stock changes, retained constraints, counts with exact/at_least relation, executable next calls where representable, and `diagnostics_complete`, plus `status` when the checks didn't finish: "budget_exhausted_or_busy" (out of time or the snapshot was busy) or "diagnostic_failed". Only the stock>=10 snapshot is checked. Diagnostics are bounded to three queries/200 ms; incomplete work is explicit and original results remain empty. Negative Vout preserves polarity; impedance@frequency compares that frequency; part-number exclusions are reported as unsupported.
+- Arguments: `lcsc` or `uuid` (EasyEDA symbol; `lcsc` wins), `footprint` (default false; needs `lcsc`).
+- Reply: `lcsc`, `model`, `manufacturer`, `package` (may be null with `uuid`), `pin_count`, `pins`, `easyeda_symbol_uuid`. Pin numbers and names are the symbol's; numbers match the footprint's pads. `electrical` only where the symbol sets it. `unverified`: LCSC hasn't verified the symbol. `note`: pins named only by number, or a diode/LED-type part whose numbering varies (connect by name).
+- `footprint=true` adds `footprint`: name, `source_link`, `pad_count`, `numbered_pads`, `pitch`, `pad_sizes`, `pads` (number, x, y in mm from the origin, y down, shape, size, layer, hole, slot_length); on failure the pins still come, with `footprint_error`.
 
 ### jlc_find_alternatives
 
-`lcsc` (required LCSC code), `library_type`, `same_package` (default false), `has_easyeda_footprint` (true/false filter, default null: no filter), `min_stock` (default 10, clamped to at least 0), `limit` (per list, default 10, clamped to 1-50), `board_quantity` and `placements_per_board` (default 1, each a positive integer, for `comparison.savings`), `land_compatible` (default false).
-
-- `summary.found` counts `alternatives`: parts whose primary value and required specs match (connector series and contacts, transistor polarity, regulator output and listed input range) and whose readable ratings are the same or better. Ranked basic/preferred first.
-- Ratings that are missing or unreadable don't disqualify a part: they're listed in `specs_unparseable`. `unchecked_requirements` lists what wasn't checked; pinout and external circuit always need checking. A regulator's single input rating checks only the maximum.
-- `unverified_alternatives` miss a required match or lack comparable rating conditions: compare by hand. Inductor Isat needs comparable inductance-drop criteria and rating bases; thermal current needs matching thermal conditions and bases; DCR needs comparable published bases. Multi-diode current comparisons need loading/thermal evidence. These candidates do not drive the recommended savings comparison.
-- `has_easyeda_footprint` checks at most `min(2 * limit, 15)` candidates after library/package eligibility; unknown availability is excluded for both true and false. Extended fallback examples use only the remaining check budget when no verified no-fee result was found. `summary.footprint_filter` reports either cap and lookup failures.
-- `summary.stages`: `retrieval` counts per source (`retrieved`, `limit`, `hit_limit`, `error`: null or "retrieval_failed"; database also `scanned`, `scan_limit`, `scan_hit_limit`); `primary` and `specs` counts (`passed`, `failed`, `unknown`); `eligibility.library/package` passed/failed; `footprints` checked/compatible/incompatible/unknown, `not_checked_cap`, `eligible_checked`, `fallback_checked`; `output` per-list truncation counts and `limit_per_list`. Retrieval counts precede deduplication and source-specific filtering; subsequent stages describe the merged candidates. Unknown spec counts include unreadable ratings and do not change verified/manual classification. Bounds reached do not prove more matches exist; retrieval errors remain visible alongside any usable results.
-- `land_compatible=true` (for a board whose copper is already made) compares the top 30 candidates' EasyEDA footprint pads with the original's and adds `land` to each: `fits` (same pad count and pad kinds, every pad centre within 0.15 mm), `turn` (0/90/180/270 degrees counter-clockwise, top view, the candidate's footprint is turned to line up; non-zero changes the pick-and-place rotation), `max_offset_mm`, and `renumbered` (original pad number -> the candidate's pad number in the same place, only where they differ; each footprint author's numbering, so a renumbered pad 1 needs both datasheets checked). Order: fits as drawn with the same numbers, then only other pads renumbered, then fits only turned, then pad 1 elsewhere, then not compared, then no fit; the usual ranking within each. `land: null` means not compared (no known footprint, or the fetch was skipped); `summary.stages.land` counts `checked`, `fits`, `fits_turned`, `pin1_moved`, `no_fit`, `unknown` (with `unknown_reasons`), `fetched`, `not_checked_cap`, and `original` when the original's footprint isn't known. Pin functions aren't compared. `summary.land_note` explains the fields. Footprints are fetched once and stored, so a repeat check takes no extra time.
-- Connector alternatives list `land pattern and pin 1 position` in `unchecked_requirements`, and without `land_compatible` the reply's `summary.land_note` says makers' footprints for one series differ.
-- Part types without rules return `similar_parts`. RF parts are ordered by `frequency_coverage` of the original's range. Modules and others list the same package and part family first, marked `likely_drop_in` (pinout unchecked).
-- Lifecycle (NRND) isn't checked.
-- Reply: `original`, `search_criteria`, `summary`; part types with rules add `alternatives`, `unverified_alternatives`, `comparison` (`original`, `recommended`, `savings`) and `confidence` (`level` high/medium/low, `reason`, `unchecked_requirements`); others add `similar_parts` and `manual_comparison`. Rows add `score`, `score_breakdown`, `specs_verified`, `specs_unparseable`, `unchecked_requirements`, and where they apply `verification_status`, `unverified_requirements`, `moq_warning`, `package_warning`.
+- Arguments: `lcsc` (required), `library_type`, `same_package` (default false), `has_easyeda_footprint` (true/false filter), `min_stock` (default 10), `limit` (per list, default 10, 1-50), `board_quantity`, `placements_per_board` (default 1, max 1,000,000), `land_compatible` (default false).
+- Reply: `original`, `search_criteria`, `summary`; part types with rules add `alternatives`, `unverified_alternatives`, `comparison` (`original`, `recommended`, `savings`), `confidence` (`level` high/medium/low, `reason`, `unchecked_requirements`); others `similar_parts` and `manual_comparison`. Rows: `score`, `score_breakdown`, `specs_verified`, `specs_unparseable`, `unchecked_requirements`, where they apply `verification_status`, `unverified_requirements`, `moq_warning`, `package_warning`.
+- `alternatives` (`summary.found`): primary value and required specs match (connector series and contacts, transistor polarity, regulator output and listed input range; a single input rating checks the maximum only) and readable ratings are equal or better; basic/preferred first. Unreadable ratings are in `specs_unparseable`, not disqualifying. Always check pinout and external circuit; lifecycle isn't checked (`part_lifecycle`).
+- `unverified_alternatives`: a required match missing or ratings not comparable (inductor Isat, DCR, thermal current, multi-diode current). Compare by hand; not used for `savings`.
+- `similar_parts` (types without rules): RF parts by `frequency_coverage` of the original's range; others with the same package and family first, `likely_drop_in` (pinout unchecked).
+- `has_easyeda_footprint` checks at most `min(2 * limit, 15)` eligible candidates, leaving out unknowns (`summary.footprint_filter`). `no_fee` with no match: `summary.extended_examples`.
+- `land_compatible=true` (board already made): compares the top 30 candidates' EasyEDA pads with the original's; `land`: `fits` (same pad count and kinds, centres within 0.15 mm), `turn` (0/90/180/270 degrees counter-clockwise, top view; non-zero changes pick-and-place rotation), `max_offset_mm`, `renumbered` (original pad -> candidate pad; check both datasheets). Order: fits as drawn, renumbered, turned, pad 1 moved, not compared (`land: null`), no fit. Pin functions aren't compared. `summary.stages.land` counts outcomes; `summary.land_note` explains. Without it, connectors list `land pattern and pin 1 position` as unchecked.
+- `summary.stages`: counts per stage (retrieval, with `error` "retrieval_failed" per failed source; primary; specs; eligibility; footprints; land; output).
+- `comparison.savings`: `order_total = assembly_fee + unit_price_diff_at_quantity * component_quantity` (`board_quantity * placements_per_board`), from `original_unit_price_at_quantity` and `replacement_unit_price_at_quantity`; `unit_price_diff` is at qty 1. `price_basis` "price breaks at component_quantity" when both parts have tiers and the quantity reaches a break above either's first (each its largest break at or below it, or qty-1 `price` below its second; `price_tiers_as_of` dates the replacement's), else "qty 1". `order_total` null when a price is unknown. Ranking uses qty 1. `assembly_fee` uses a rounded $3 Economic estimate per extended type (`is_estimate`, `assembly_service_assumption`), not a quote; Standard assembly differs.
 
 ### jlc_search_help
 
-No arguments: all categories. `category` (name string or integer ID): its subcategories. `subcategory` (name string or integer ID, takes precedence over category): its filterable specs with type and example values, marked `sort_spec` where sortable.
-
-Replies: no arguments `{categories: [{id, name, count, subcategory_count}]}`; category `{category_id, category_name, subcategories: [{id, name, count}]}`; subcategory `{subcategory_id, subcategory_name, category_name, sample_size, attributes}`, each attribute `{name, alias, type, count, example_values, values, min, max, total_unique, sort_spec}` where present. Attributes are sampled from up to 1,000 parts of the subcategory; `values` holds at most 50, and `total_unique` appears when there are more. An unknown category returns `error` and `hint`.
+- No arguments: `categories` (`id`, `name`, `count`, `subcategory_count`).
+- `category` (name or ID): `category_id`, `category_name`, `subcategories` (`id`, `name`, `count`).
+- `subcategory` (name or ID; wins): `subcategory_id`, `subcategory_name`, `category_name`, `sample_size`, `attributes` (`name`, `alias`, `type`, `count`, `example_values`, `values` (max 50), `min`, `max`, `total_unique`, `sort_spec`), from up to 1,000 parts.
+- Unknown: `error`, `hint`.
 
 ### mouser_get_part
 
-`part_number` (required, max 500 characters total): a Mouser PN or MPN (3-40 characters each), or up to 10 joined by "|" ("595-LM358P|NE555P"), one request per call. Matching is loose and returns at most 50 results: use full part numbers when batching and match results by `mfr_part_number`. Check `manufacturer`: a number can match another maker's part. `lifecycle` is Mouser's status where it gives one, else null.
-
-Reply: `{results, total}`, optional `not_found` listing unmatched inputs. Each result: `source`, `part_number`, `mfr_part_number`, `manufacturer`, `description`, `category`, `stock`, `price`, `price_breaks` (`qty`, `price`, `currency`), `datasheet_url`, `product_url`, `rohs`, `lifecycle`, `parameters`, `min_qty`, `currency`, `unit_weight_g`.
+- `part_number` (required, max 500 characters): a Mouser PN or MPN (3-40 characters), or up to 10 joined by "|" ("595-LM358P|NE555P"): one request for those not kept (see Quotas). A broad number can fill Mouser's 50-result reply: the numbers it crowded out are asked once more without it, and any still missing are in `not_found` (not kept: asked again next call).
+- Matching is loose: batch full part numbers, match results by `requested`/`matched_by`, check `manufacturer`. JST's `(LF)`/`(SN)` endings are optional; other bracketed endings (`(UMW)`, Hirose `(50)`) must match.
+- Reply: `results` (grouped by number asked), `total`, `observed_at` (oldest answer used), `not_found` (unmatched or not sent), `not_sent` (`{number: reason}`), `lookup_failed` (numbers Mouser gave an error for). A shared limit holding back some numbers: kept results, `not_checked` (the rest), `retry_after` (seconds); with none kept, the limit `error`.
+- Result: `source`, `part_number`, `mfr_part_number`, `manufacturer`, `description`, `category`, `stock`, `price`, `price_breaks` (`qty`, `price`, `currency`), `datasheet_url`, `product_url`, `rohs`, `lifecycle`, `lifecycle_status`, `parameters`, `min_qty`, `currency`, `unit_weight_g`, `requested`, `matched_by`.
+  - `lifecycle`: Mouser's status, null for most parts. `lifecycle_status`: Not Recommended for New Designs `nrnd`, End of Life `last_time_buy`, Obsolete `obsolete`; null, New Product, New at Mouser `active`; else (Discontinued) `unknown`.
+  - `requested`: the number (trimmed) the result answers (the first, when two name it: `595-LM358P|LM358P`); null when it can't be put down to one.
+  - `matched_by` (first that applies): `exact` (MPN, ignoring case), `separators` (also ignoring `-`, space, `_`, `/`), `packing` (JST endings), `mouser_pn`: the part asked for. `prefix` (starts with the number: LM358PE4 for LM358P), `other` (Mouser's own match): check them.
 
 ### digikey_get_part
 
-`product_number` (required, max 500 characters): one DigiKey PN or full MPN per call (one keyword search per lookup; a partial number can find nothing and still uses a request; a miss includes a `hint` suggesting a DigiKey PN unless the input already ends in `-ND`). JST's `(LF)` and `(SN)` endings may be given or left off; `mfr_part_number` is DigiKey's spelling. `part_number`, `price`, `price_breaks` and `min_qty` are one packaging's (the PN given, else the smallest order); `packaging` names it and `other_packaging` lists the rest. `lifecycle` is DigiKey's product status.
+- `product_number` (required, max 500 characters): one DigiKey PN or full MPN; one keyword search each (a partial number can find nothing and still uses a request). JST's `(LF)`/`(SN)` endings are optional (`matched_by` then `packing`; `mfr_part_number` is DigiKey's spelling).
+- Reply: `results` (each maker's listing, most stock first), `total`, `observed_at`. Results: Mouser's fields except `unit_weight_g`; `price_breaks` are `qty`, `price` in `currency`; `matched_by` has `digikey_pn` (the result's `part_number`) for `mouser_pn`, and `other` is a listing DigiKey called exact whose MPN and PN both differ.
+  - `part_number`, `price`, `price_breaks`, `min_qty`: one packaging's (the PN given, else the smallest order), named by `packaging`; `other_packaging` (`part_number`, `packaging`, `min_qty`, `price`) lists the rest; `reel_fee`/`marketplace` where they apply.
+  - `lifecycle`: DigiKey's product status. `lifecycle_status`: Active `active`, Not For New Designs `nrnd`, Last Time Buy (or end of life still marked Active) `last_time_buy`, Obsolete `obsolete`, else (Discontinued at Digi-Key) `unknown`. `last_buy_date`: YYYY-MM-DD.
+- Miss: `{error: "Part not found: ...", hint}` (suggests a DigiKey PN unless the input ends in `-ND`), plus `not_sent`.
 
-Reply: `{results, total}`. A number several makers use returns each maker's listing, most stock first. Each result has the shared Mouser fields above except `unit_weight_g`; its `price_breaks` contain only `qty` and `price`, using the result's `currency`. Optional `packaging`, `other_packaging` (`part_number`, `packaging`, `min_qty`, `price`), and `reel_fee`/`marketplace` on the result or other packaging.
+### part_lifecycle
+
+Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas). Others are asked of Mouser (10 per request), and of DigiKey only when Mouser doesn't list them for the maker given or its daily limit is spent. Only the shared limits cap lookups.
+
+- `parts` (required): `jlc_get_parts`' forms. An LCSC code fills in a missing or unusable MPN or maker from the snapshot (gone parts included); a usable `mpn` wins. `manufacturer` picks among makers sharing a number (loosely). MPNs match ignoring case, `-`, space, `_`, `/` and JST endings; "not listed" holds only for the spelling asked ("LM358P" is still asked after "LM358-P").
+- Reply: `results` (input order), `total`, `status_counts`, `retry_after` (the smallest, when any part waited). Result: `input` (as in `jlc_get_parts`), `lcsc`, `mpn`, `status`, and with a reading `manufacturer`, `raw` (the distributor's wording), `source` (`mouser`/`digikey`), `observed_at`, `last_buy_date`.
+- `status`: `active`, `nrnd`, `last_time_buy`, `obsolete`, `unknown`, as `lifecycle_status` in `mouser_get_part`/`digikey_get_part`. Mouser listing no status: `active`, `raw` "not stated by Mouser". With both, a stated status beats Mouser's blank, then the newest wins.
+- `unknown` adds why: `not_found: true` with `observed_at` (neither lists it), `retry_after` (seconds until a limit allows it; not an error), `lookup_failed: true` (a lookup failed, or Mouser's 50-result cap left it out), `not_sent`, or `error` (unusable input as in `jlc_get_parts`, an MPN with "|", a lone code the snapshot lacks, with `hint`; a placeholder also has `not_sent`).
+- `makers`: each maker's reading (`manufacturer`, `status`, `raw`, `source`, `observed_at`, `last_buy_date`) when several makers list the number and none was given (`status`: their common one, else `unknown`), or only other makers do (`manufacturer`: the one given).
+- Call errors: no distributor credentials, empty list, over 50 parts, invalid JSON.
+
+#### Numbers not sent
+
+`mouser_get_part`, `digikey_get_part` and `part_lifecycle` send nothing (and spend no limit) for these; `not_sent` names the reason:
+- `value`: a component value, alone or with package, tolerance or rating ("100nF 50V 0603"): a number with a unit ("4.7uF"), a resistor code with up to 3 significant digits ("4k7", "15.8k") or a whole number and multiplier with up to 2 ("10k", "2200R"). "1590A", "193M", "158k", "100V" are sent. Use `jlc_search` for values.
+- `lcsc_code`: give the MPN, or pass the code to `part_lifecycle` as a plain string.
+- `placeholder`: DNP, N/A, TBD and the like.
+- `length`: not 3-40 characters (an error in `mouser_get_part`).
+- `not_ascii`.
 
 ### cse_search, cse_get_kicad
 
-SamacSys ComponentSearchEngine; slow: a search takes about 15 s, longer when busy; answers are cached. No overall tool deadline. Search HTTP requests use `CSE_REQUEST_TIMEOUT` (default 45 s per request phase); a non-Success API status is retried once after 3 s. Model downloads use a fixed 30 s timeout per request phase.
+SamacSys ComponentSearchEngine; slow (about 15 s a search, more when busy; cached).
 
-- `cse_search`: required `query` (max 500 characters), `limit` (default 5, clamped to 1-10); no credentials needed. Reply: `{results, total}`. Each result: `source`, `mfr_part_number`, `manufacturer`, `description`, `datasheet_url`, `has_model` (generic ECAD availability), `has_3d`, `model_quality`, `cse_part_id`, `pin_count`, `image_url`. Individual KiCad/Eagle/Altium formats are not confirmed.
-- `cse_get_kicad`: `query` (string, max 500 characters) or `part_id` (integer), both default null; at least one needed, a nonzero `part_id` wins. Query selection takes the first search result with `has_model` and `cse_part_id`, with no separate best-match scoring. Requires `CSEARCH_USER` and `CSEARCH_PASS`. Reply: `part_id`, search metadata fields above when resolved by query, `kicad_symbol` (`.kicad_sym` text), `kicad_footprint` (`.kicad_mod` text); either file may be null. Archives over 50 MiB are rejected; files over 10 MiB are skipped.
+- `cse_search`: `query` (required, max 500 characters), `limit` (default 5, 1-10). Results: `source`, `mfr_part_number`, `manufacturer`, `description`, `datasheet_url`, `has_model` (some ECAD model; formats unconfirmed), `has_3d`, `model_quality`, `cse_part_id`, `pin_count`, `image_url`; plus `total`.
+- `cse_get_kicad`: `query` (max 500 characters; the first result with `has_model`) or `part_id` (`cse_part_id`; wins). Needs the server's SamacSys login. Reply: `part_id`, search fields when found by query, `kicad_symbol` (`.kicad_sym` text), `kicad_footprint` (`.kicad_mod` text); either may be null (over 10 MiB is skipped).
 
 ### board_search, board_get
 
-`board_search`: `component` (IC name, max 200 characters; adds a cross-board `consensus` when 2+ boards match), `query` (max 500 characters; function, e.g. "motor driver"), `tag` (one string, list or JSON-array string, AND semantics; ignores case/surrounding whitespace, `usb-c` aliases `usb`; lists discard nonstrings/items over 200 characters after normalization, then keep at most 10), `org` (max 200 characters), `layers`, `limit` (default 10, clamped to 1-50). Unknown tags return `valid_values`. Consensus `pct` divides by `consensus.board_count`.
-
-Search reply: `{total, results}`; each result has `slug`, `name`, `org`, `org_display`, `source`, `source_url`, `format`, `description`, `key_coverage`, `tags`, `key_ics`, `layers`, `width_mm`, `height_mm`, `component_count`, `ic_count`, plus `matched_by` when a filter explains the match. Tag-only browsing of one tag may add `tag_consensus`; empty results may add `hint`. A `query` with no searchable words (only stop words such as board, design and pcb, or single characters; quotes and OR are not operators) browses the catalog, keeping the other filters, and the reply's `note` says so.
-
-`board_get`: required `slug` (1-200 characters), `focus` (max 200 characters; IC name, ref like "J1", or value words like "USB-C": returns that part's pin-by-pin neighborhood), `include_bom` (default false; adds plain passives), `include_nets` (default false; full netlist, can be 100 KB+).
-
-Detail reply: board identity/metadata fields above (without `matched_by`), plus `min_trace`, `min_clearance`, `min_drill`, `min_via`, `net_count`. Without focus: `components`, `neighborhoods` summaries, `passives_omitted` when any plain passives were hidden. Components carry `ref`, `value`, `footprint` and available descriptions/ratings/annotations, plus the design files' `mpn`, `manufacturer`, `lcsc`, `mouser`, `digikey` where listed. With focus: `focus` (`ref`, `value`, `pins`), `focus_match_type` (ref/exact/partial), optional `consensus` and `focus_alternatives`. `power_pins` and `pin_nets` appear on focus only when present; `pins_in_nets` counts the named pins in nets; `pin_count` and `nc_pins` appear where source pin information exists (`{}` means all connected). A focus miss adds `focus_error`, `available_ics` and, when present, `available_refs`. `include_nets=true` adds `nets`, `positions`, `copper_pours`. Unknown slug errors may add `did_you_mean`.
+- `board_search`: `component` (IC name, max 200 characters; 2+ boards add `consensus`, `pct` of `consensus.board_count`), `query` (max 500 characters; a function: "motor driver"), `tag` (AND, max 10; `usb-c` = `usb`; unknown: `valid_values`), `org` (max 200 characters), `layers`, `limit` (default 10, 1-50).
+- Results: `slug`, `name`, `org`, `org_display`, `source`, `source_url`, `format`, `description`, `key_coverage`, `tags`, `key_ics`, `layers`, `width_mm`, `height_mm`, `component_count`, `ic_count`, `matched_by`; plus `total`, `tag_consensus` (one tag alone), `hint` (empty). A `query` with no searchable words (stop words such as board, design, pcb; single characters; quotes and OR aren't operators) browses with the other filters (`note`).
+- `board_get`: `slug` (required, max 200 characters), `focus` (max 200 characters: IC name, ref "J1", or value words "USB-C"; returns its pin-by-pin neighborhood), `include_bom` (default false; plain passives too), `include_nets` (default false; full netlist, can be 100 KB+).
+- Detail: the search fields (no `matched_by`), `min_trace`, `min_clearance`, `min_drill`, `min_via`, `net_count`. No focus: `components` (`ref`, `value`, `footprint`, descriptions, ratings, and the design files' `mpn`, `manufacturer`, `lcsc`, `mouser`, `digikey` where listed), `neighborhoods`, `passives_omitted`. Focus: `focus` (`ref`, `value`, `pins`), `focus_match_type` (ref/exact/partial), `consensus`, `focus_alternatives`, `power_pins`, `pin_nets`, `pins_in_nets` (its pins in nets), `pin_count`, `nc_pins` (`{}`: all connected) where known. Focus miss: `focus_error`, `available_ics`, `available_refs`. `include_nets`: `nets`, `positions`, `copper_pours`. Unknown slug: `did_you_mean`.
 
 ### sensor_recommend
 
-`query` (max 500 characters), `measure` (one string, list or JSON-array string of up to 20), `type`, `protocol`, `platform` ("arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr", "raspberry_pi"), `limit` (default 15, clamped to 1-100). Unknown measure, protocol and platform values return `valid_values`; an unknown type returns no matches. Ordering: exact normalized query-ID/alias matches first, then `platform_count` descending, then name ascending. Not for buying: use `jlc_search`.
+Sensor ICs and modules by measurement, protocol and platform; not for buying (`jlc_search`).
 
-Measures in a list all must match. `imu` expands to acceleration/gyroscope/magnetic_field with OR for a scalar or singleton list; in a multi-item list all expanded measures are required. Measure aliases include heart rate/blood oxygen→biometric, barometric→pressure, lux→light, dust→particulate and compass→magnetic_field. Protocols: i2c/i3c/spi/uart/analog/pwm/gpio/one_wire/rs485/rs232/can/i2s/usb/ble/hdq/ssi (accepted values come from the catalog; an unknown one returns `valid_values`); `gpio` includes gpio/analog/pwm/one_wire, `digital` includes gpio/pwm/one_wire, `1-wire`/`one-wire` alias one_wire. Measure/protocol/platform/type filters ignore case and surrounding whitespace.
-
-Reply: `{total, results}`, plus `note` when `query` has no searchable words (stop words, single letters, symbols), which leaves only the filters; each result has `id`, `name`, `manufacturer`, `type`, `voltage`, `datasheet_url`, `platform_count`, `description`, `source_tier`, `measures`, `protocols`, `platforms`, `urls`, plus optional evidence fields below.
-
-`voltage` is the supply in volts, "min-max" or a single value. Parts sold in separate supply versions or with separate supply modes list each, e.g. "3.0-3.6 or 4.5-5.5" (pick the version you order); a record covering several chips gives the range all of them support. Null when the part has no supply of its own (passive elements, probes, heated gas cells) or no maker source states one. A `capability_note` covers other rails (LED, VDDIO, mains) and a narrower supply that full specifications need (DS1821: accuracy and 1-Wire timing at 3.6-5.5V).
-
-Sensor capability notes: calculated CO2 (CCS811, ENS160, ENS161, SGP30, iAQ-Core, APC1, SM300D2) is under `eco2`, not `co2`; BME680 and BME688 note that Bosch's BSEC library calculates IAQ and CO2 equivalent on the host. `capability_note` says what such a part really outputs. CCS811, ENS160 and SGP30 also have `compensation_inputs` and operating/stress `voltage_evidence`; compensation inputs are not selectable direct measurements. For ENS160, ENS161 and the ENS16x library the listed voltage is VDD (1.71-1.98V); VDDIO is separate (1.71-3.6V). Descriptions prefer device/integration sources over breakout marketing.
+- Arguments: `query` (max 500 characters), `measure` (up to 20, all must match), `type`, `protocol`, `platform` (arduino, esphome, micropython, circuitpython, tasmota, zephyr, raspberry_pi), `limit` (default 15, 1-100). Unknown measure/protocol/platform: `valid_values`; unknown type: no matches.
+- `imu`: acceleration, gyroscope or magnetic_field alone; all three in a longer list. Aliases: heart rate/blood oxygen biometric, barometric pressure, lux light, dust particulate, compass magnetic_field. Protocols: i2c, i3c, spi, uart, analog, pwm, gpio, one_wire (`1-wire`), rs485, rs232, can, i2s, usb, ble, hdq, ssi; `gpio` includes analog/pwm/one_wire, `digital` gpio/pwm/one_wire.
+- Order: exact ID/alias matches, `platform_count` descending, name.
+- Results: `id`, `name`, `manufacturer`, `type`, `voltage`, `datasheet_url`, `platform_count`, `description`, `source_tier`, `measures`, `protocols`, `platforms`, `urls`, and where present `capability_note` (what the part really outputs; other rails), `compensation_inputs` (not measurements), `voltage_evidence`; plus `total`, and `note` when `query` has no searchable words.
+- `voltage`: supply volts, "min-max" or one value; versions apart ("3.0-3.6 or 4.5-5.5": pick the one ordered); null without its own supply or a maker source.
+- Calculated CO2 (CCS811, ENS160, ENS161, SGP30, iAQ-Core, APC1, SM300D2) is `eco2`, not `co2`; BME680/BME688 IAQ and CO2 equivalent come from Bosch's BSEC library on the host.
 
 ### get_design_rules
 
-`topic` (default `""`; non-index topics truncated to 500 characters): empty or index (`INDEX.md`) returns `INDEX.md`, which lists every file. Exact normalized keys (`power/ldo`), aliases (`type-c`, `lipo`, `ws2812`, `debounce`, `nordic`, `fiducial`) and token-boundary category/filename matching select files; MCU family prefixes such as `stm32g0` also match. Otherwise a scored text fallback selects the files discussing the topic most.
+- `topic` (default ""; truncated at 500 characters): empty or `index` returns `INDEX.md` (every file). Exact keys (`power/ldo`), aliases (`type-c`, `lipo`, `ws2812`), MCU prefixes (`stm32g0`) and category/filename words select files; otherwise the files discussing it most (`note`).
+- Reply: `content`, `matched_files`, `topic`. Up to three files in full; more give a key list (narrow the topic). No match: the index, empty `matched_files`.
 
-Reply: `{content, matched_files, topic}`, with `note` on text-fallback matches. Up to three matching files return full content; more than three return a key list asking for a narrower topic. No matches returns the index with an explanation and empty `matched_files`.
+## Rate limit
 
-## How jlc_search reads a query
-
-- Units: `u`/`µ`/`μ` mean micro, `4u7` is 4.7uF (4.7uH for inductors), `6V3` is 6.3V. `10M`/`10Meg` are megaohms, `10m` milliohms. A value has at most 4 significant digits before a unit letter (`1000R`, `4R75`); a longer run such as `9774025151R` is searched as a part number. A part number, including one that starts with 7+ digits (`61300211121`, `10118194-0001LF`), is searched on its own; other words in the query are listed in `parsed.detected.not_searched` (`strict=true` keeps them). Package `1005` is `0402`.
-- A value goes to the spec the part type lists: `5V relay` is the coil voltage, `3.3V LDO` the output, `12V buck` an output range covering 12V, `3.3V level shifter` a supply range covering it, `24V input 3.3V output` both sides of a regulator. A current under 1mA in an LDO/DC-DC query is the quiescent current. A resistance with an ohm unit on MOSFETs, load switches or inductors is a maximum RDS(on) or DCR. If the part type doesn't list the spec, the value is left out and `parsed.adjusted_filters` says so.
-- In a MOSFET query, a voltage next to `logic level`, `GPIO` or `MCU` (up to 5V) or `gate`/`Vgs` (up to 20V) is the gate drive; parts with RDS(on) listed at or below it rank first.
-- Comparisons in the text keep their operator: `Iq < 10uA`, `Vf < 0.3V`. A sign before a bare value applies to the main rating (`10uF capacitor < 25V`).
-- Ranges (supply/output voltage, operating temperature): `=` matches a range that includes the value, `>=` one that reaches it, `<=` one that goes down to it. `-40°C` in a query means rated down to -40°C, `105C` up to 105°C.
-- Connectors filter on pin count and pitch where the connector type lists them (`JST PH 2 pin`); `qwiic`/`STEMMA QT` mean 4-pin 1.0mm JST SH, `Grove` 4-pin 2.0mm. A query searches one pitch: a second mm length is left out (`parsed.detected.not_searched`) unless named. Headers take named lengths: `insulation height 5mm` (also body/plastic height), `mating pin length`, `tail length`, with `at least`, `under`, `>` etc.; `Insulation Height`, `Length of Mating Pin` and `Length of End Connection Pin` are numeric, so `spec_filters` can use `>`, `<` and ranges on them.
-- Packages include their other spellings: `SOT-23` includes `SOT-23-3`, `0603` includes `1608`, a bare `QFN-32` matches VQFN/WQFN/UQFN of any body. `QFN-24-EP(4x4)` keeps the body and exposed pad; if no catalog package has that body, the bare family is matched and `parsed.adjusted_filters` says so (`strict=true` doesn't fall back).
-- `basic`, `preferred` and `no fee` in the query set the library filter; `cheapest` sorts by price; `lowest Iq`, `highest Isat`, `most flash` sort by that spec. Arguments win over query words; `library_type="all"` overrides a library word.
-- Query words that match nothing together with the rest are left out and named in `relaxed`. With `subcategory_name` or `spec_filters` given, they aren't left out: the reply is empty and `hint` names them. `strict=true` turns off every relaxation and returns an error for unsupported constraints.
-- Spec figures are JLCPCB's listings; check datasheets before choosing.
-
-## Library types
-
-| Type | Economic loading fee | Meaning |
-|------|--------------|---------|
-| `basic` | none | JLCPCB's standard library |
-| `preferred` | none | Recommended parts with good availability |
-| `extended` | Fee per unique type; calculator uses a rounded $3 estimate | Everything else |
-| `no_fee` | none | Filter for basic and preferred together |
-| `all` | | No library filter |
+- 100 HTTP requests per rolling minute per IPv4 address or IPv6 /64; 1,000 per address in the AI platforms' published ranges (Anthropic's, used by claude.ai and Claude connectors; OpenAI's ChatGPT connectors list).
+- Each MCP message (`initialize`, `tools/call`, ...) counts: a stateless client's tool call is about three. `/health` isn't counted. Bodies over 1 MB: HTTP 413.
+- Replies (`/health`'s too) carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` (seconds until your oldest counted request leaves the minute; 0 with none).
+- Refused: HTTP 429, `Retry-After` and `{error, retry_after, reason, resets_at, tell_user}` (`resets_at`: when, in UTC; `tell_user`: a sentence for the user). Wait `retry_after` seconds, then resend. `per_ip_rate_limit` and `too_many_clients` refusals aren't counted; others are, so retrying sooner hits `per_ip_rate_limit`. `reason`:
+  - `per_ip_rate_limit`: your address used its limit.
+  - `too_many_clients`: the server is serving as many addresses as it can.
+  - `server_busy`: the database is overloaded; only new `tools/call` requests (or, while busy, bodies slower than 2 s); `retry_after` 2-5 s.
+  - `datasheet_rate_limit`: from a `datasheet_pdf` link; at most 20 new links a minute are signed for everyone. Links `jlc_get_part` returned in the last 25 minutes open without one.
+- Heavy use: self-host (Source above).
 
 ## Quotas
 
-The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev (DigiKey's resets at 00:00 UTC), with at most 25 requests a minute for Mouser and 100 for DigiKey. Batch Mouser lookups, look up one DigiKey part at a time, and don't retry a quota error. Self-hosting with your own keys gives your own limits: https://github.com/Averyy/pcbparts-mcp#self-hosting
+- Mouser and DigiKey daily limits are shared by everyone (DigiKey's resets at 00:00 UTC); at most 25 requests a minute for Mouser, 100 for DigiKey.
+- Kept answers are shared and cost no request: Mouser and DigiKey parts 3 days (not found: 1 day); lifecycle readings 90 days (no usable status: a week; not listed: 30 days). `observed_at` dates them.
+- Batch Mouser lookups, one DigiKey part at a time, `part_lifecycle` for lifecycle; don't retry a quota error. Self-hosting with your own keys gives your own limits.

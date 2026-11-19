@@ -6,6 +6,7 @@ is a fallback behavior, not input transformation.
 """
 
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -29,6 +30,100 @@ def is_placeholder_mpn(mpn: str) -> bool:
     return re.sub(r"[^0-9a-z]", "", mpn.casefold()) in _PLACEHOLDER_MPNS
 
 
+# Why a number isn't sent to Mouser or DigiKey (not_sent on mouser_get_part, digikey_get_part and
+# part_lifecycle replies): neither can list it, so a request would only spend the shared daily
+# limits.
+NOT_SENT_REASONS = ("placeholder", "lcsc_code", "value", "length", "not_ascii")
+NOT_SENT_HINTS = {
+    "placeholder": "is a BOM placeholder (not fitted or not chosen), not a part number",
+    "lcsc_code": "is an LCSC code, not a manufacturer part number: jlc_get_part(lcsc=...) gives its MPN",
+    "value": "is a component value, not a part number: jlc_search finds parts by value",
+    "length": "isn't 3-40 characters, as Mouser and DigiKey part numbers are",
+    "not_ascii": "has characters Mouser and DigiKey part numbers don't use",
+}
+
+# A plain electrical value, perhaps with a size, dielectric, tolerance or rating: "10k", "4.7uF",
+# "1R", "100nF 50V 0603", "4K7 1%". A false "value" means a real part number is never sent, so
+# only these are values:
+# - a number with a unit, SI-prefixed or not: 100nF, 4.7uF/µF, 22pF, 10uH, 1mH, 3.3mA, 2.2kΩ, 8MHz,
+#   16Ω, 100 ohm, 1.5A, 3.3V, 0.25W (a whole number takes only the prefixes each unit is written
+#   with, in SI case: 1590MA isn't one; a whole number and a bare unit letter isn't one, below)
+# - a resistor code with its multiplier as the decimal point (4k7, 1R5, 2M2, 0R1, 4R75), or after a
+#   decimal number (15.8k, 4.75k)
+# each with 3 significant digits at most, as the E-series has (E192, the finest, has 3); and a bare
+# code, a whole number and a multiplier letter (10k, 47K, 100R, 220R, 1M, 2200R, 1000k), only with 2
+# at most: with 3 or more it can't be told from a part number (Hammond's 193M and 158M chokes, its
+# 1590K, 1590R and 1590M enclosures). A whole number and one unit letter (1590A, Hammond's
+# enclosure; 100V, 220W, 1000F, 47H) is a part number on its own, and counts only beside a value: the
+# 50V of "100nF 50V" (_VALUE_RATING). Zeros before and after a number's digits aren't significant
+# (1000k has 1, 2200R 2, 0R1 1). A part number has more than a number and a unit ("1N4148", "LM358",
+# "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
+_VALUE_NUMBER = r"(\d+)(?:\.(\d+))?"
+_OHMS = r"(?:Ω|[Oo]hms?|OHMS?)"
+_MULTIPLIER = r"(?:[rRkKmM]|[Mm]eg|MEG)"
+_BARE_CODE = re.compile(rf"(\d+){_MULTIPLIER}")  # 2 significant digits at most
+_VALUE_TOKEN = re.compile(
+    rf"(\d+)\.(\d+){_MULTIPLIER}"  # a decimal number and its multiplier
+    r"|(\d+)[rRkKmM](\d+)"  # the multiplier as the decimal point
+    # a whole number with an SI prefix, each unit with the prefixes it's written with
+    rf"|(\d+)(?:[pnuµμm][Ff]|[nuµμm][Hh]|[nuµμm]A|[mk][Vv]|[mk]W|[mkKMG]{_OHMS}|[kKMG]Hz)"
+    rf"|(\d+)\.(\d+)\s?(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz)|[mkg]?(?:Ω|ohms?))"  # decimal number with a unit
+    rf"|(\d+)\s?{_OHMS}")  # ohms written out
+_VALUE_EXTRA = re.compile(r"01005|0201|0402|0603|0805|1206|1210|1812|2010|2512|x[5-8][rstpv]|c0g|np0|y5v|z5u|smd",
+                          re.IGNORECASE)
+# Beside a value only: a tolerance or a rating, a whole number with a unit ("50V" of "100nF 50V")
+_VALUE_RATING = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?(?:%|(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz)))")
+# A unit given apart from its number ("10 k", "100 nF", "16 ohm")
+_VALUE_UNITS = r"(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz|Ω|ohms?)|[rkm]|meg|%)"
+_VALUE_GAP = re.compile(r"[\s,;/]+")
+
+
+def _significant(match: re.Match) -> int:
+    """How many significant digits a value's number has (its whole and decimal parts; zeros before
+    and after left out)."""
+    return len("".join(group for group in match.groups() if group).strip("0"))
+
+
+def _is_value(text: str) -> bool:
+    tokens = [t for t in _VALUE_GAP.split(text.strip()) if t]
+    # "10 k" or "10 kOhm": a number and its unit given apart
+    joined: list[str] = []
+    for token in tokens:
+        if joined and re.fullmatch(r"(?:±\s?)?\d+(?:\.\d+)?", joined[-1]) and re.fullmatch(_VALUE_UNITS, token):
+            joined[-1] += token
+        else:
+            joined.append(token)
+    values = 0
+    for token in joined:
+        if (match := _BARE_CODE.fullmatch(token)) or (match := _VALUE_TOKEN.fullmatch(token)):
+            if _significant(match) > (2 if match.re is _BARE_CODE else 3):
+                return False
+            values += 1
+        elif match := _VALUE_RATING.fullmatch(token):
+            if _significant(match) > 3:
+                return False
+        elif not _VALUE_EXTRA.fullmatch(token):
+            return False
+    return values > 0
+
+
+def not_sent_reason(number: str) -> str | None:
+    """Why a part number isn't worth a Mouser or DigiKey request (one of NOT_SENT_REASONS), or None
+    to send it. Conservative: a real part number is never caught."""
+    number = (number or "").strip()
+    if is_placeholder_mpn(number):
+        return "placeholder"
+    if LCSC_CODE.fullmatch(number):
+        return "lcsc_code"
+    if _is_value(number):
+        return "value"
+    if not 3 <= len(number) <= 40:
+        return "length"
+    if not number.isascii():
+        return "not_ascii"
+    return None
+
+
 _MAKER_SUFFIX = re.compile(r".+\(([A-Za-z]{2,})\)")
 # Lead-free, tin plating and reel codes, which could otherwise spell a maker's initials.
 _PACKING_TAGS = frozenset({"lf", "sn", "tr", "pbf", "rl"})
@@ -49,6 +144,63 @@ def is_maker_suffixed(part: dict) -> bool:
 def mpn_key(mpn: str) -> str:
     """SQLite-compatible ASCII case folding and separator removal."""
     return mpn.translate(str.maketrans("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "- _/"))
+
+
+# JST ends its part numbers in (LF) (lead-free) and (SN) (tin plating). JLCPCB keeps them
+# (B2B-PH-K-S(LF)(SN)); DigiKey sometimes drops them (B2B-PH-K-S, 455-1704-ND). Other bracketed
+# endings stay significant: (UMW), (TOKMAS) and (XBLW) name another maker's copy, and Hirose's
+# (51) or (50) is a different variant.
+_JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
+
+
+def same_jst_part(listed: str, asked: str, maker: str) -> bool:
+    """Whether a JST part's listed number is the one asked once JST's (LF)/(SN) endings are set
+    aside, ignoring case and outer spaces. Always False for other makers, and for a number that is
+    nothing but those endings."""
+    if "jst" not in (maker or "").casefold().split():
+        return False
+    core = _JST_FINISH.sub("", (listed or "").strip().casefold())
+    return bool(core) and core == _JST_FINISH.sub("", (asked or "").strip().casefold())
+
+
+# matched_by on mouser_get_part / digikey_get_part results: how a result matches the number it
+# answers, the first that applies in this order. exact and separators mean what jlc_get_part(mpn=...)'s
+# exact and match do; packing here is only JST's (LF)/(SN) endings (same_jst_part), while
+# jlc_get_part's packing also covers tape, reel and lead-free suffixes (PACKING_RULES).
+MATCHED_BY = ("exact", "separators", "packing", "mouser_pn", "digikey_pn", "prefix", "other")
+
+
+def _alnum(text: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", text.upper())
+
+
+def distributor_match(asked: str, mpn: str, maker: str, own_numbers: Iterable[str], own_kind: str) -> str:
+    """matched_by for a distributor's result: how its MPN (mpn, by maker) or the distributor's own
+    part numbers for it (own_numbers; own_kind names them: "mouser_pn" or "digikey_pn") match the
+    number asked.
+
+    exact: the MPN is the number, ignoring case. separators: also ignoring -, space, _ and /
+    (mpn_key). packing: a JST part's MPN once its (LF)/(SN) endings are set aside. own_kind: the
+    number is the distributor's own part number for it (as mpn_key compares). The match is sure for
+    all of these. prefix: its MPN or the distributor's number starts with the number, ignoring case
+    and punctuation (Mouser's loose match: LM358P finds LM358PE4), so it's a longer, maybe different
+    part number. other: none of these; the distributor returned it for the number by a rule of its
+    own (DigiKey's exact matches, or anything Mouser returns for a lone number)."""
+    mpn = (mpn or "").strip()
+    own = [number for number in own_numbers if number and number.strip()]
+    if mpn and mpn.casefold() == asked.strip().casefold():
+        return "exact"
+    key = mpn_key(asked.upper())
+    if mpn and key and mpn_key(mpn.upper()) == key:
+        return "separators"
+    if mpn and same_jst_part(mpn, asked, maker):
+        return "packing"
+    if key and any(mpn_key(number.upper()) == key for number in own):
+        return own_kind
+    start = _alnum(asked)
+    if start and any(_alnum(number).startswith(start) for number in [mpn, *own] if number):
+        return "prefix"
+    return "other"
 
 
 MPN_MATCH_NAMES = ("full", "same_suffix", "family")

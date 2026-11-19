@@ -4,27 +4,27 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import re
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable, NamedTuple
 
 import httpx
 
 from . import stats
-from .cache import DailyQuota, Pacer, QuotaPool, TTLCache, _header_int
+from .cache import DailyQuota, Pacer, QuotaPool, _header_int
 from .config import (
     DIGIKEY_CLIENT_ID,
     DIGIKEY_CLIENT_SECRET,
     DIGIKEY_BASE_URL,
     DIGIKEY_TOKEN_URL,
-    DIGIKEY_CACHE_TTL,
-    DIGIKEY_NOT_FOUND_TTL,
     DIGIKEY_PER_SECOND,
     DIGIKEY_LOCALE_SITE,
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
+from .distributor_store import DistributorStore
+from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
+from .search.mpn import NOT_SENT_HINTS, distributor_match, not_sent_reason, same_jst_part
 
 logger = logging.getLogger(__name__)
 
@@ -69,20 +69,31 @@ def _min_qty(variation: dict[str, Any]) -> int:
     return variation.get("MinimumOrderQuantity") or 1
 
 
-# JST ends its part numbers in (LF) (lead-free) and (SN) (tin plating). JLCPCB keeps them
-# (B2B-PH-K-S(LF)(SN)); DigiKey sometimes drops them (B2B-PH-K-S, 455-1704-ND). Other bracketed
-# endings stay significant: (UMW), (TOKMAS) and (XBLW) name another maker's copy, and Hirose's
-# (51) or (50) is a different variant.
-_JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
+class Lookup(NamedTuple):
+    """DigiKeyClient.lookup's answer. reply: get_part's; kind: "found", "not_found", "limited" or
+    "invalid"; fetched_at: when DigiKey answered."""
+    reply: dict[str, Any]
+    kind: str
+    fetched_at: float
 
 
 def _same_mpn(listed: str, asked: str, maker: str) -> bool:
     """Whether DigiKey's ManufacturerProductNumber is the number asked for: equal ignoring case
-    and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside."""
-    listed, asked = listed.strip().casefold(), asked.strip().casefold()
-    if listed == asked:
-        return True
-    return "jst" in maker.casefold().split() and _JST_FINISH.sub("", listed) == _JST_FINISH.sub("", asked)
+    and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside
+    (DigiKey sometimes drops them: B2B-PH-K-S(LF)(SN) is listed as B2B-PH-K-S)."""
+    return listed.strip().casefold() == asked.strip().casefold() or same_jst_part(listed, asked, maker)
+
+
+def _answering(reply: dict[str, Any], number: str) -> dict[str, Any]:
+    """A found reply whose results say which number they answer (requested: the number asked) and
+    how they match it (matched_by: search/mpn.py's distributor_match; part_number is DigiKey's
+    number for the packaging described, the one asked when it's one of the product's). Added to
+    each reply, not kept: the 3-day answer is shared by every spelling of the number."""
+    return {**reply, "results": [
+        {**result, "requested": number,
+         "matched_by": distributor_match(number, result.get("mfr_part_number") or "", result.get("manufacturer") or "",
+                                         [result.get("part_number") or ""], "digikey_pn")}
+        for result in reply.get("results") or []]}
 
 
 def _pick_variation(variations: list[dict[str, Any]], product_number: str) -> dict[str, Any]:
@@ -150,6 +161,8 @@ def _normalize_product(product: dict[str, Any], product_number: str = "") -> dic
     lifecycle = status.get("Status", "Unknown")
     if product.get("Discontinued"):
         lifecycle = "Discontinued"
+    lifecycle_status, _ = digikey_status(status.get("Status"), bool(product.get("Discontinued")),
+                                         bool(product.get("EndOfLife")))
 
     result = {
         "source": "digikey",
@@ -165,10 +178,13 @@ def _normalize_product(product: dict[str, Any], product_number: str = "") -> dic
         "product_url": product.get("ProductUrl"),
         "rohs": classifications.get("RohsStatus", ""),
         "lifecycle": lifecycle,
+        "lifecycle_status": lifecycle_status,
         "parameters": parameters,
         "min_qty": min_qty,
         "currency": DIGIKEY_LOCALE_CURRENCY,
     }
+    if buy_by := last_buy_date(product.get("DateLastBuyChance")):
+        result["last_buy_date"] = buy_by
     packaging = (chosen.get("PackageType") or {}).get("Name")
     if packaging:
         result["packaging"] = packaging
@@ -191,22 +207,36 @@ class DigiKeyClient:
         quota: DailyQuota | QuotaPool | None = None,
         per_second: float = DIGIKEY_PER_SECOND,
         second_app: tuple[str, str] | None = None,
+        store: DistributorStore | None = None,
+        clock: Callable[[], float] = time.time,
     ):
+        """store: the answer and lifecycle store shared with MouserClient and part_lifecycle (the
+        server passes one); without one the client keeps its own in memory."""
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:
             self._apps.append(DigiKeyApp(*second_app))
         self._http: httpx.AsyncClient | None = None
-        self._cache = TTLCache(ttl=DIGIKEY_CACHE_TTL)
+        self._owns_store = store is None
+        self._store = DistributorStore(clock=clock) if store is None else store
         self._quota = QuotaPool([quota]) if isinstance(quota, DailyQuota) else quota
         if self._quota and len(self._quota.quotas) != len(self._apps):
             raise ValueError("Each DigiKey app needs its own daily quota")
         # DigiKey suspends an app for ten minutes for going over its per-second threshold
         self._pacer = Pacer(per_second)
+        self._tasks: set[asyncio.Task] = set()  # lookups whose caller may have given up (_shielded)
 
     def _get_http(self) -> httpx.AsyncClient:
         if self._http is None:
             self._http = httpx.AsyncClient(timeout=15.0)
         return self._http
+
+    def _redact(self, text: str) -> str:
+        """DigiKey's own error text goes into our exceptions, which callers show and log (part_lifecycle
+        logs them as they are): blank out every app's client ID and secret in case DigiKey echoes one."""
+        secrets = {secret for app in self._apps for secret in (app.client_id, app.client_secret) if secret}
+        for secret in sorted(secrets, key=len, reverse=True):
+            text = text.replace(secret, "[redacted]")
+        return text
 
     def _get_token_lock(self, app: DigiKeyApp) -> asyncio.Lock:
         # Safe in single-threaded asyncio: no await between None check and assignment
@@ -263,7 +293,7 @@ class DigiKeyClient:
             # Check for OAuth error responses (some providers return 200 with error)
             if "error" in data:
                 error_desc = data.get("error_description", data["error"])
-                raise DigiKeyError(f"DigiKey OAuth error: {error_desc}")
+                raise DigiKeyError(self._redact(f"DigiKey OAuth error: {error_desc}"))
 
             app.access_token = data["access_token"]
             expires_in = data.get("expires_in", 599)
@@ -378,15 +408,42 @@ class DigiKeyClient:
         Returns:
             Dict with results list and total (consistent with Mouser format)
         """
+        return (await self.lookup(product_number, caller))[0]
+
+    def retry_after(self) -> int:
+        """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
+        return (self._quota.retry_after() if self._quota else None) or 60
+
+    async def lookup(self, product_number: str, caller: str | None = None) -> Lookup:
+        """get_part's reply, what it was and when DigiKey answered (Lookup). A number DigiKey can't
+        list (search/mpn.py's not_sent_reason: a value such as "10k", an LCSC code, not 3-40
+        characters...) isn't sent: it gets the not-found reply with not_sent, without a request or
+        the quota."""
         product_number = product_number.strip()
         if not product_number:
-            return {"error": "Give a DigiKey or manufacturer part number."}
-        cache_key = f"digikey:{product_number}"
-        cached = self._cache.get(cache_key)
-        if cached is not None:
-            stats.usage.record_distributor("digikey", "cached")
-            return cached
+            return Lookup({"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now())
+        if reason := not_sent_reason(product_number):
+            stats.count_distributor("digikey", "skipped")
+            return Lookup(_not_sent_reply(product_number, reason), "not_found", self._store.now())
+        stats.count_parts_asked("digikey", [product_number])
+        # Kept per number, ignoring case: DigiKey's search ignores it, and so does its match (_same_mpn)
+        cache_key = product_number.upper()
+        stored = self._store.get_answer("digikey", cache_key)
+        if stored is not None:
+            stats.count_distributor("digikey", "cached")
+            answer, fetched_at = stored
+            if answer.get("not_found"):
+                return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
+            return Lookup(_answering(answer, product_number), "found", fetched_at)
+        # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
+        task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
+        task.add_done_callback(lambda done: done.cancelled() or done.exception())
+        return await asyncio.shield(task)
 
+    async def _fetch(self, product_number: str, caller: str | None, cache_key: str) -> Lookup:
+        """lookup() for a number the store doesn't have: one keyword search, within the limits."""
         # Cache hits cost no quota. Each attempt gets the app's token and its pacer slot, then checks
         # every limit and pause, counts the request and sends it with that token, with no await from
         # the check to the send: a pause or a spent day noticed meanwhile stops it before anything
@@ -394,21 +451,21 @@ class DigiKeyClient:
         # one more after a daily refusal on app 1 (on app 2), or after an early-expired token.
         for attempt in range(2):
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
-                stats.usage.record_distributor("digikey", "rate_limited")
-                return paused
+                stats.count_distributor("digikey", "rate_limited")
+                return Lookup(paused, "limited", self._store.now())
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
                 app_index, token = await self._ready_app()
             except DigiKeyRateLimited as e:  # a pause began during a token request
-                stats.usage.record_distributor("digikey", "rate_limited")
-                return {"error": str(e)}
+                stats.count_distributor("digikey", "rate_limited")
+                return Lookup({"error": str(e)}, "limited", self._store.now())
             if self._quota:
                 app_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
-                    stats.usage.record_distributor("digikey", "rate_limited")
-                    return quota_error
-            stats.usage.record_distributor("digikey", "sent")
+                    stats.count_distributor("digikey", "rate_limited")
+                    return Lookup(quota_error, "limited", self._store.now())
+            stats.count_distributor("digikey", "sent")
             try:
                 data = await self._request("POST", "/search/keyword", app_index=app_index, token=token, json={
                     "Keywords": product_number, "Limit": 10, "Offset": 0,
@@ -420,13 +477,13 @@ class DigiKeyClient:
             except DigiKeyDailyLimited as e:
                 if attempt == 0 and app_index == 0 and len(self._apps) == 2:
                     continue
-                return {"error": str(e)}
+                return Lookup({"error": str(e)}, "limited", self._store.now())
             except DigiKeyRateLimited as e:
-                return {"error": str(e)}
+                return Lookup({"error": str(e)}, "limited", self._store.now())
             except DigiKeyNotFound:
                 data = {}
             break
-
+        fetched_at = self._store.now()
         # DigiKey PN exact matches can have a different MPN; trust ExactMatches in full.
         candidates = list(data.get("ExactMatches") or [])
         candidates.extend(p for p in data.get("Products") or []
@@ -443,24 +500,48 @@ class DigiKeyClient:
         products.sort(key=lambda p: p.get("QuantityAvailable") or 0, reverse=True)
 
         if not products:
-            # Cached too, so asking again for a wrong or partial number costs no request
-            not_found = {"error": f"Part not found: {product_number}"}
-            if not product_number.upper().endswith("-ND"):
-                not_found["hint"] = ("DigiKey has no exact match for this number. If you have it, "
-                                     "try the DigiKey part number "
-                                     "(usually ending in -ND).")
-            self._cache.set(cache_key, not_found, ttl=DIGIKEY_NOT_FOUND_TTL)
-            return not_found
+            # Kept too (a day), so asking again for a wrong or partial number costs no request
+            self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
+            self._store.put_not_listed(product_number, "digikey", fetched_at)
+            return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
 
-        result = {
-            "results": [_normalize_product(p, product_number) for p in products],
-            "total": len(products),
-        }
-        self._cache.set(cache_key, result)
-        return result
+        results = [_normalize_product(p, product_number) for p in products]
+        result = {"results": results, "total": len(products), "observed_at": utc_text(fetched_at)}
+        self._store.put_answer("digikey", cache_key, result, True, fetched_at)
+        # Each part's lifecycle, filed under the number asked too: DigiKey's match can drop JST's
+        # (LF)(SN) endings or take a DigiKey PN, so the asked number can differ from the MPN
+        readings = []
+        for part, product in zip(results, products):
+            if part["mfr_part_number"]:
+                status, raw = digikey_status((product.get("ProductStatus") or {}).get("Status"),
+                                             bool(product.get("Discontinued")), bool(product.get("EndOfLife")))
+                readings.append(Reading(part["mfr_part_number"], part["manufacturer"], "digikey", status, raw,
+                                        fetched_at, last_buy_date=part.get("last_buy_date")))
+        self._store.put_readings(readings, also_as=product_number)
+        return Lookup(_answering(result, product_number), "found", fetched_at)
 
     async def close(self) -> None:
-        """Close the HTTP client."""
+        """Close the HTTP client (and the store, if this client made its own). Lookups still in
+        flight are cancelled."""
+        for task in list(self._tasks):
+            task.cancel()
         if self._http:
             await self._http.aclose()
             self._http = None
+        if self._owns_store:
+            self._store.close()
+
+
+def _not_sent_reply(product_number: str, reason: str) -> dict[str, Any]:
+    """The not-found reply for a number not sent to DigiKey (search/mpn.py's NOT_SENT_REASONS)."""
+    return {"error": f"Part not found: {product_number}", "not_sent": reason,
+            "hint": f"Not sent to DigiKey: '{product_number[:60]}' {NOT_SENT_HINTS[reason]}."}
+
+
+def _not_found_reply(product_number: str) -> dict[str, Any]:
+    not_found = {"error": f"Part not found: {product_number}"}
+    if not product_number.upper().endswith("-ND"):
+        not_found["hint"] = ("DigiKey has no exact match for this number. If you have it, "
+                             "try the DigiKey part number "
+                             "(usually ending in -ND).")
+    return not_found

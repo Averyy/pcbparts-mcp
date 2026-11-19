@@ -5,7 +5,6 @@ import ast
 import asyncio
 import datetime
 import json
-import time
 from pathlib import Path
 
 import httpx
@@ -46,8 +45,8 @@ class FakeDigiKey:
         return self.responses.pop(0)
 
 
-def digikey(fake: FakeDigiKey, quota: DailyQuota | None = None) -> DigiKeyClient:
-    client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota)
+def digikey(fake: FakeDigiKey, quota: DailyQuota | None = None, clock=None) -> DigiKeyClient:
+    client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota, **({"clock": clock} if clock else {}))
     client._http = httpx.AsyncClient(transport=httpx.MockTransport(fake))
     return client
 
@@ -125,7 +124,7 @@ class TestPacer:
         fake = FakeDigiKey(*(httpx.Response(200, json=PRODUCT) for _ in range(3)))
         client = digikey(fake)
         client._pacer = Pacer(5, clock=clock, sleep=sleep)
-        for number in ("A1", "A2", "A3"):
+        for number in ("PA1", "PA2", "PA3"):
             await client.get_part(number)
         assert fake.product_requests == 3
         # The token request goes first and takes a slot too; then each request waits 0.2 s
@@ -149,14 +148,27 @@ class TestDigiKeyNotFound:
         assert first["error"] == "Part not found: 209"
         assert "-ND" in first["hint"]
 
-    async def test_not_found_is_kept_ten_minutes(self):
-        fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT))
-        client = digikey(fake)
+    async def test_not_found_is_kept_a_day(self):
+        """0.10.0: a day, and found answers 3 days (they were 10 minutes and an hour, in memory)."""
+        clock = Clock()
+        fake = FakeDigiKey(httpx.Response(404), httpx.Response(200, json=PRODUCT),
+                           httpx.Response(404), httpx.Response(200, json=PRODUCT))
+        client = digikey(fake, clock=clock)
         assert "error" in await client.get_part("NOPE1")  # the 404
         assert "results" in await client.get_part("LM358P")
-        left = {key: expires - time.time() for key, (expires, _) in client._cache._data.items()}
-        assert 590 < left["digikey:NOPE1"] <= 600
-        assert 3590 < left["digikey:LM358P"] <= 3600
+        clock.advance(86400 - 1)
+        await client.get_part("NOPE1")
+        await client.get_part("LM358P")
+        assert fake.product_requests == 2
+        clock.advance(1)
+        assert "error" in await client.get_part("NOPE1")  # asked again
+        assert fake.product_requests == 3
+        clock.advance(2 * 86400 - 1)
+        await client.get_part("LM358P")
+        assert fake.product_requests == 3
+        clock.advance(1)
+        assert "results" in await client.get_part("LM358P")
+        assert fake.product_requests == 4
 
     async def test_empty_product_is_a_cached_not_found(self):
         fake = FakeDigiKey(httpx.Response(200, json={"ExactMatches": []}))
@@ -248,7 +260,8 @@ class TestUsageStats:
         assert totals["hours"][21] == 12 and sum(totals["hours"]) == 12  # all at 21:xx UTC
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
-            "distributors": {}, "reasons": {}, "why_empty": {}}
+            "distributors": {}, "reasons": {}, "why_empty": {},
+            "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
@@ -351,6 +364,95 @@ class TestUsageStats:
         day = usage.summary()["days"][0]
         assert day["tools"]["jlc_search"]["calls"] == 1 and day["distributors"]["mouser"]["sent"] == 1
 
+    @pytest.mark.parametrize("content", [b"{not json", b"\xff\xfe", b"[" * 100_000, b'{"other": 1}', b"[]"],
+                             ids=["json", "utf8", "nested", "nodays", "list"])
+    def test_unreadable_file_is_moved_aside_not_overwritten(self, tmp_path, content):
+        """A file that can't be read is kept as usage.json.corrupt (one kept) before counting starts
+        from 0, so the next save can't overwrite a year of counts."""
+        path, aside = tmp_path / "usage.json", tmp_path / "usage.json.corrupt"
+        aside.write_bytes(b"an older one")
+        path.write_bytes(content)
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        assert usage.summary()["days"] == []
+        assert aside.read_bytes() == content and not path.exists()
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        assert json.loads(path.read_text(encoding="utf-8"))["days"] and aside.read_bytes() == content
+        assert usage.summary()["kept_across_restarts"] is True
+
+    def test_counts_too_large_or_not_finite_are_dropped(self, tmp_path):
+        """JSON reads 1e309 as infinity: int() raised OverflowError outside open()'s recovery and
+        stopped the server starting. A huge count broke summary()'s average time the same way."""
+        path = tmp_path / "usage.json"
+        tools = '{"jlc_search": {"calls": 4, "ok": NaN, "not_found": 2, "ms": 1' + "0" * 400 + '}}'
+        day = '{"callers": 1e309, "apps": {"a": -1e309, "b": 2}, "tools": ' + tools + '}'
+        path.write_text('{"days": {"2026-10-17": ' + day + '}}', encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        day = usage.summary()["days"][0]
+        assert (day["callers"], day["apps"]) == (0, {"a": 0, "b": 2})
+        assert day["tools"]["jlc_search"]["calls"] == 4 and day["tools"]["jlc_search"]["not_found"] == 2
+        assert day["tools"]["jlc_search"]["avg_ms"] == 0
+        assert path.exists() and not (tmp_path / "usage.json.corrupt").exists()  # the rest is kept
+
+    def test_a_day_that_fails_to_clean_is_moved_aside(self, tmp_path, monkeypatch):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-10-17": {"callers": 1}}}), encoding="utf-8")
+
+        def broken(day):
+            raise OverflowError("cannot convert float infinity to integer")
+
+        monkeypatch.setattr(stats, "_clean_day", broken)
+        usage = UsageStats(clock=Clock())
+        usage.open(path)  # doesn't raise
+        assert usage.summary()["days"] == [] and (tmp_path / "usage.json.corrupt").exists()
+
+    def test_unknown_day_fields_survive_a_save(self, tmp_path):
+        """A newer version's fields are kept through this version's saves, so a rollback and a
+        redeploy don't erase them."""
+        path = tmp_path / "usage.json"
+        day = {"tools": {"jlc_search": {"calls": 1, "ok": 1, "ms": 5}}, "hours": [0] * 24, "callers": 1,
+               "future_counts": {"x": [1, 2]}, "per_ip_refusals": {"everyone_else": 1}}
+        path.write_text(json.dumps({"days": {"2026-10-17": day}}), encoding="utf-8")
+        usage = UsageStats(clock=Clock())
+        usage.open(path)
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        saved = json.loads(path.read_text(encoding="utf-8"))["days"]["2026-10-17"]
+        assert saved["future_counts"] == {"x": [1, 2]} and saved["tools"]["jlc_search"]["calls"] == 2
+        assert "future_counts" not in usage.summary()["days"][0]  # kept, not shown
+
+    def test_save_syncs_before_replacing(self, tmp_path, monkeypatch):
+        events = []
+        real_fsync, real_replace = stats.os.fsync, stats.os.replace
+        monkeypatch.setattr(stats.os, "fsync", lambda fd: (events.append("fsync"), real_fsync(fd))[1])
+        monkeypatch.setattr(stats.os, "replace", lambda a, b: (events.append("replace"), real_replace(a, b))[1])
+        usage = UsageStats(clock=Clock())
+        usage.open(tmp_path / "usage.json")
+        usage.record_call("jlc_search", "ok", 1)
+        usage.save()
+        assert events == ["fsync", "replace"]
+
+    def test_restarts_per_day(self, tmp_path):
+        """Each start counts on its UTC day, beside the callers and distinct part numbers it can
+        double; days saved before 0.10.0 show null."""
+        path, clock = tmp_path / "usage.json", Clock()
+        path.write_text(json.dumps({"days": {"2026-10-16": {"callers": 3}}}), encoding="utf-8")
+        for _ in range(2):
+            usage = UsageStats(clock=clock)
+            usage.open(path)
+            usage.record_start()
+            usage.record_call("jlc_search", "ok", 1, caller="203.0.113.7")
+            usage.save()
+        today, before = usage.summary()["days"]
+        assert (today["restarts"], today["callers"]) == (2, 2)  # one caller, counted on each side
+        assert before["restarts"] is None
+        clock.advance(86400)
+        usage.record_call("jlc_search", "ok", 1)
+        assert usage.summary()["days"][0]["restarts"] == 0  # running since yesterday
+        assert "restarts" in usage.summary()["about"]
+
     def test_unwritable_file_keeps_counting_in_memory(self, tmp_path):
         blocker = tmp_path / "file"
         blocker.write_text("", encoding="utf-8")
@@ -403,7 +505,7 @@ class TestServerWiring:
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
                 await client.call_tool("not_a_tool", {})
-            assert len(stats.usage.tools) == 15
+            assert len(stats.usage.tools) == 17
         day = stats.usage.summary()["days"][0]
         assert day["tools"]["get_design_rules"]["ok"] == 1
         assert day["tools"]["digikey_get_part"]["failed"] == 1  # not configured: this server can't do it
@@ -522,6 +624,7 @@ class TestServerWiring:
             await client.call_tool("get_design_rules", {"topic": "usb"})
         saved = json.loads(path.read_text(encoding="utf-8"))["days"]
         assert next(iter(saved.values()))["tools"]["get_design_rules"]["calls"] == 1
+        assert saved[max(saved)]["restarts"] >= 1  # the lifespan counts its start
 
 
 # --- Error sorting: every error message in the code, and the kind it counts as ---
@@ -538,6 +641,7 @@ ERROR_REPLIES = {
     "Strict search cannot apply every constraint; see ignored_filters and parsed.adjusted_filters and use jlc_search_help(subcategory=...) for supported attributes": "bad_request",
     "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN": "bad_request",
     "board_quantity and placements_per_board must be positive integers": "bad_request",
+    "board_quantity and placements_per_board must be at most {} each": "bad_request",
     "Unsupported library_type: '{}'": "bad_request",
     "Unsupported pcba_type: '{}'": "bad_request",
     'Give a sort_spec only with sort_by="spec" or no sort_by (sort_by="{}" sorts by something else)': "bad_request",
@@ -604,6 +708,17 @@ ERROR_REPLIES = {
     "Give at least one Mouser or manufacturer part number.": "bad_request",
     "Mouser takes up to {} part numbers per call, separated by |; got {}. Split the batch.": "bad_request",
     "Each Mouser part number must be 3-40 characters: {}": "bad_request",
+    # part_lifecycle (0.10.0): per-part errors in results, and the call's own
+    "Mouser API key not configured, nor DigiKey API credentials. Set MOUSER_API_KEY, or DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET, in environment.": "failed",
+    'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}': "bad_request",
+    'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}': "bad_request",
+    "Invalid part: '{}' is a BOM placeholder (not fitted or not chosen), not a part number": "bad_request",
+    "Invalid part: an MPN can't contain '|' (give each part on its own)": "bad_request",
+    "Invalid part: control characters (a NUL, tab or line break) can't be in a part number, maker or LCSC code": "bad_request",
+    "Invalid part: unpaired surrogate escapes (such as \\ud800) aren't text and can't be in a part number, maker or LCSC code": "bad_request",
+    "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead": "bad_request",
+    "Give a part number or an LCSC code": "bad_request",
+    "Manufacturer too long (max 100 characters)": "bad_request",
     "Part not found: {}": "not_found",
     "Part {} not found": "not_found",
     "Board '{}' not found": "not_found",

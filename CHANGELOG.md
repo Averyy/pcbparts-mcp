@@ -4,6 +4,81 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.0 (2026-11-19)
+
+New tools: `part_lifecycle` and `jlc_get_parts`.
+
+### Breaking
+
+- **`jlc_get_part(mpn=...)`**: a number whose parts left the snapshot returns them instead of the miss `error`, with `stock: null` (always an integer before), `gone: true`, `gone_since`, `last_stock`, no `specs` or `pcba_type`, and `data_source.observed_at: null`. They can come before in-stock rows; `total` counts both.
+- **`jlc_get_part(mpn=...)`**: a full-text match's `note` is joined with the part-type note, the LCSC-code note's text changed, and an `mpn` with control characters gets an error reply instead of failing.
+- **`jlc_find_alternatives`**: `comparison.savings.order_total` uses both parts' price breaks once `component_quantity` reaches a break above the first (it was the 1-piece difference times the quantity), and `savings.note` and `summary.price_note` changed text.
+- **`jlc_find_alternatives`**: `board_quantity` or `placements_per_board` over 1,000,000 is an error.
+- **`mouser_get_part`**: answers are kept 3 days (was 1 hour), so `stock` and `price` can be up to 3 days old (`observed_at`); "not found" is kept a day. Results are grouped by the numbers asked, in order, without duplicates.
+- **`mouser_get_part`**: values, LCSC codes, placeholders and non-ASCII numbers aren't sent (`not_found` with `not_sent`); a number Mouser rejects goes to `lookup_failed` instead of failing the batch; JST numbers ending `(LF)` or `(SN)` now match.
+- **`mouser_get_part`**: when a limit is spent, the reply has the kept results plus `not_checked` and `retry_after` instead of the limit error (which stays when none is kept). A batch can cost two requests: numbers crowded out of a capped reply are asked again.
+- **`digikey_get_part`**: answers are kept 3 days (was 1 hour), "not found" a day (was 10 minutes). Values, LCSC codes, placeholders, non-ASCII numbers and numbers not 3-40 characters aren't looked up: they get "Part not found" with `not_sent`.
+- **Rate limits and HTTP**: a 429's `retry_after` and `Retry-After` count down to the reset (1-60 s) instead of always 60; a `tools/call` can get `reason: server_busy`, counted against the address.
+- **Rate limits and HTTP**: IPv6 callers are counted per /64; a chunked body over 1 MB gets 413; `/health` can answer 503 (`status: "unhealthy"`).
+- **`manufacturer` filter** (`jlc_search`, `jlc_stock_check`): `seiko epson` and `epson` mean Seiko Epson, no longer Seiko Instruments.
+- **JSON-string arguments** (`packages`, `spec_filters`, `manufacturers`, the `lcsc` list, `measure`, `tag`): an unpaired surrogate escape or over-deep nesting is an `Invalid <argument>` error.
+- **Guidance**: tool descriptions and the server instructions say to use Mouser and DigiKey only when JLCPCB can't answer, `part_lifecycle` for lifecycle status and `jlc_get_parts` for many parts.
+- **Self-hosting**: `proxy_headers=False`, an on-disk distributor store and a `components.db` rebuild (below).
+
+### Added
+
+- **`part_lifecycle`**: lifecycle status of up to 50 parts (MPN, LCSC code or `{"mpn", "manufacturer"}`): `status` (`active`, `nrnd`, `last_time_buy`, `obsolete`, `unknown`), `raw`, `source`, `observed_at`, `status_counts`; readings are shared and kept up to 90 days.
+- In `part_lifecycle`, spent limits give `unknown` with `retry_after`, not an error; rows can also carry `lookup_failed`, `not_sent` or `makers`.
+- **`jlc_get_parts`**: up to 50 parts (LCSC code, MPN or `{"mpn", "manufacturer"}`) from the daily snapshot, with no live request. Rows come in input order with `input` and `jlc_get_part`'s field names; MPNs match as in `jlc_get_part(mpn=...)`, but never by full text.
+- `jlc_get_parts` replies add `data_as_of`, `prices_as_of`, `price_tiers_as_of`, `counts` and a `hint`; missing parts are `not_found` (`other_manufacturers` when other makers list the MPN), unusable inputs get their own `error`.
+- **Price tiers**: `jlc_get_parts` rows and `jlc_get_part(mpn=...)` results list every JLCPCB quantity tier in `prices`, with `price_tiers_as_of`; without the tier file it's null and `prices` has the 1-piece price only.
+- **Gone parts**: parts that leave the snapshot (stock under 10, or delisted) are still answered, with `gone: true`, `gone_since`, `last_stock` and a `hint`, until a scrape lists them again; `jlc_search` and `jlc_find_alternatives` never see them.
+- Also for gone parts: `gone_matches` in `jlc_get_part(mpn=...)`, `counts.gone` in `jlc_get_parts`, `gone_since` in `jlc_stock_history`.
+- **`jlc_get_part(mpn=...)`** results add `exact` (the number itself matched) and `ambiguous` (more than one part matches).
+- **`jlc_find_alternatives`**: `comparison.savings` adds `original_unit_price_at_quantity`, `replacement_unit_price_at_quantity`, `unit_price_diff_at_quantity`, `price_basis` and `price_tiers_as_of`.
+- **`mouser_get_part`, `digikey_get_part`**: answers add `observed_at` and `lifecycle_status` (DigiKey also `last_buy_date`); each result adds `requested` and `matched_by` (`exact`, `separators`, `packing`, `mouser_pn`/`digikey_pn`, `prefix` or `other`).
+- **Rate limits**: replies carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset`. 429 bodies add `reason` (`per_ip_rate_limit`, `too_many_clients`, `server_busy`; `/mcp/datasheet`'s `datasheet_rate_limit`), `resets_at` and `tell_user`.
+- **`/health`** adds `database_pressure`, `distributor_stored`, `platform_ranges` and `price_tiers`.
+- **`not_sent`** (Mouser, DigiKey, `part_lifecycle`) gives the reason a number wasn't sent: `value`, `lcsc_code`, `placeholder`, `not_ascii` or `length`.
+- **`/mcp/stats`** adds `upstream`, `parts_asked`, `per_ip_refusals`, `restarts` and `distributors.skipped`.
+
+### Changed
+
+- Addresses in the AI platforms' published ranges get 1,000 requests a minute; every other address keeps 100.
+- Under load, new `tools/call` requests (and bodies slower than 2 s) get a `server_busy` 429 with a 2-5 s `retry_after`. Other methods, `/health` and `/mcp/stats` are never refused as busy.
+- At 10,000 tracked addresses only new addresses are refused (`too_many_clients`).
+- Mouser and DigiKey answers are kept on disk across restarts and shared with `part_lifecycle`; kept answers never count against the daily limits.
+- Mouser batches are kept part by part: a batch sends only numbers not already kept.
+- A Mouser daily refusal is retried hourly (while our own count is under the limit) instead of at 00:00 UTC.
+- A Mouser or DigiKey lookup finishes and keeps its answer when the tool call is cancelled.
+- DigiKey's `EndOfLife` and `DateLastBuyChance` are read: an end-of-life part still marked Active is `last_time_buy`.
+- Maker names match across catalogs for more families (`/`-split names, region words, spacing, Vishay, ams OSRAM, Chemi-Con, Seiko Epson, Infineon/Cypress) in `part_lifecycle` and `jlc_get_parts`. New aliases: `st micro`, `st microelectronics`, `vishay dale`, `vishay siliconix`, `epson`.
+- Per-IP and server-busy refusals are logged hourly with the five most-refused IPs (IPv6 as /64); the privacy page covers these and the new stored data (part numbers and distributors' answers only).
+
+### Fixed
+
+- Mouser's `IsDiscontinued` is read as `true` as well as `Yes`; a DigiKey part marked Not For New Designs and end of life is `last_time_buy`.
+- A Mouser reply without its parts list (`"SearchResults": null`) is a failed lookup ("Mouser part lookup failed"), never "not found".
+- `ST(Semtech)` no longer matches ST Microelectronics' parts, and JLCPCB's `Seiko` no longer matches Seiko Epson.
+- DigiKey's OAuth error text has the server's credentials blanked out before any reply or log; HTTP client log lines carrying Mouser's API key are redacted.
+- A part number with a lone surrogate no longer fails its lookup through the `/mcp/stats` counter.
+- The rate-limit window runs on a monotonic clock, so a wall-clock step back no longer lengthens refusals.
+- `/health`'s Mouser `paused_until` shows the reset once the day's own count is spent (it was null).
+- An unreadable usage stats file is moved to `usage_stats.json.corrupt` instead of being overwritten; a count such as `1e309` or `NaN` no longer stops the server at startup.
+
+### Self-hosting
+
+- New settings: `DISTRIBUTOR_STORE_PATH`, `PLATFORM_RATE_LIMIT`, `ANTHROPIC_IP_RANGES`, `OPENAI_IP_RANGES_FILE`, `DB_BUSY_MAX_WAITING`, `DB_BUSY_MAX_WAIT_SECONDS`, `DB_STUCK_WAIT_SECONDS`.
+- `DISTRIBUTOR_STORE_PATH`: SQLite file for distributor answers and lifecycle readings (`/app/cache/distributor.db` in the Docker image); unset keeps them in memory.
+- `PLATFORM_RATE_LIMIT` (1,000, never below `RATE_LIMIT_REQUESTS`) applies to addresses in `ANTHROPIC_IP_RANGES` and `OPENAI_IP_RANGES_FILE` (empty turns a list off). Image builds refresh OpenAI's list, falling back to `data/platform_ranges/`.
+- `DB_BUSY_MAX_WAITING` (12) and `DB_BUSY_MAX_WAIT_SECONDS` (0.5) set the busy cap (set both to `1000000` to turn it off). A call waiting `DB_STUCK_WAIT_SECONDS` (60) makes `/health` answer 503; at two checks in a row the server exits for Docker to restart.
+- Unusable numeric settings (`RATE_LIMIT_REQUESTS`, `PLATFORM_RATE_LIMIT`, `HTTP_PORT`, `DISTRIBUTOR_DAILY_LIMIT`, `DB_*`) fall back to their defaults with a startup warning instead of stopping the server.
+- uvicorn runs with `proxy_headers=False`: `X-Forwarded-Proto`/`-For` from a proxy on the same host and `FORWARDED_ALLOW_IPS` no longer apply (the rate limiter still reads `X-Forwarded-For` itself).
+- Rebuild `components.db` to get gone parts and price tiers.
+- Price tiers (`data/catalog/price_tiers.tsv.gz`) aren't in git: the GHCR image has them; a build from source needs the `price-tiers` Actions artifact (kept 7 days), downloaded with `gh` (README).
+- The scrape commits parts that left the catalog to `data/catalog/sold_out/YYYY-MM.jsonl`; the manifest adds `sold_out_parts` and `price_tiers_parts`.
+- Copy `usage_stats.json` before rolling back to an older version, which drops fields it doesn't know.
+
 ## 0.9.5 (2026-11-18)
 
 Changed replies: `digikey_get_part` for JST part numbers ending in `(LF)` or `(SN)`; `jlc_find_alternatives` has a new `land_compatible` argument, and connector alternatives list `land pattern and pin 1 position` as unchecked with a `summary.land_note`; `jlc_stock_history` takes a list of codes. Existing arguments and single-code replies are unchanged.

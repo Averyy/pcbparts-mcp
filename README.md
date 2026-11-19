@@ -82,7 +82,7 @@ Add to the Extensions config:
 }
 ```
 
-## Tools (15)
+## Tools (17)
 
 | Tool | What it does |
 |------|--------------|
@@ -90,11 +90,13 @@ Add to the Extensions config:
 | `jlc_stock_check` | Live JLCPCB stock, including out-of-stock and low-stock parts |
 | `jlc_stock_history` | Recorded low-stock events for one LCSC code or a list of up to 50, with scrape-gap warnings and snapshot stock |
 | `jlc_get_part` | Full details for an LCSC code or manufacturer part number |
+| `jlc_get_parts` | Up to 50 LCSC codes or part numbers at once from the daily snapshot (stock, price, library type), for BOM refreshes |
 | `jlc_get_pinout` | Pin numbers and names from the EasyEDA symbol; `footprint=true` adds the footprint's pads |
 | `jlc_find_alternatives` | Replacements checked against compatibility rules, with unverified candidates listed apart |
 | `jlc_search_help` | Categories, subcategories and the specs each one can filter on |
 | `mouser_get_part` | Mouser price, stock and datasheet, up to 10 parts per call |
 | `digikey_get_part` | DigiKey price, stock and datasheet for one part |
+| `part_lifecycle` | Lifecycle status (active, NRND, last time buy, obsolete) for up to 50 parts, from Mouser and DigiKey |
 | `cse_search` | SamacSys search for ECAD models and datasheets |
 | `cse_get_kicad` | KiCad symbol and footprint download |
 | `board_search` | Find reference boards by IC, tag, org or text; consensus shows how boards use an IC |
@@ -119,10 +121,10 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 
 ## Good to know
 
-- `jlc_search` covers parts with at least 10 in stock, from a snapshot taken daily (`data_as_of` in each reply). Its prices are refreshed weekly (`prices_as_of`). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` also reaches the rest of JLCPCB's 7M+ part catalog.
+- `jlc_search`, `jlc_get_parts` and `jlc_get_part(mpn=...)` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_get_part(lcsc=...)` and `jlc_stock_check` are live, and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev, and repeat lookups are answered from kept copies. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -147,33 +149,48 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
+Quantity price tiers (`data/catalog/price_tiers.tsv.gz`) aren't in git. The GHCR image has them; a build from a clone has 1-piece prices only unless you first download the daily scrape's `price-tiers` artifact (kept 7 days; needs `gh auth login`). This tries the newest runs until one has it:
+
+```bash
+for run in $(gh run list -R Averyy/pcbparts-mcp -w scrape-components.yml -b main -s success -L 7 --json databaseId -q '.[].databaseId'); do
+  gh run download "$run" -R Averyy/pcbparts-mcp -n price-tiers -D data/catalog && break
+done
+```
+
 Build recorded stock history with `uv run python scripts/build_history_db.py`. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path. Only changes leaving stock at 1,000 or below are recorded; [llms.txt](https://pcbparts.dev/llms.txt) has the tool's limits.
 
 Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MOUSER_API_KEY` | — | Enables `mouser_get_part` |
-| `DIGIKEY_CLIENT_ID`, `DIGIKEY_CLIENT_SECRET` | — | Enable `digikey_get_part` |
+| `MOUSER_API_KEY` | — | Enables `mouser_get_part` and `part_lifecycle` |
+| `DIGIKEY_CLIENT_ID`, `DIGIKEY_CLIENT_SECRET` | — | Enable `digikey_get_part` and `part_lifecycle` |
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
-| `HTTP_HOST` | `0.0.0.0` | Bind address: `127.0.0.1` or `::1` for localhost only, `::` for every IPv6 interface, or a specific IPv4 or IPv6 address. In Docker keep `0.0.0.0`: `docker-compose.yml` already publishes the port on 127.0.0.1 only, and a localhost bind inside the container can't be reached from outside it |
+| `HTTP_HOST` | `0.0.0.0` | Bind address (`127.0.0.1` or `::1`: localhost only; `::`: all IPv6); keep `0.0.0.0` in Docker, whose compose file already publishes on 127.0.0.1 |
 | `HTTP_PORT` | `8080` | Server port |
-| `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP |
-| `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Comma-separated Host headers to accept (DNS-rebinding protection; localhost always works) |
-| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily request quota for each of Mouser and DigiKey |
-| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Keeps the day's Mouser/DigiKey counts and pauses across restarts |
-| `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | Keeps the `/mcp/stats` counts across restarts |
-| `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | Keeps EasyEDA footprint answers across restarts |
-| `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | Keeps SamacSys searches and KiCad files across restarts |
+| `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP or IPv6 /64 |
+| `PLATFORM_RATE_LIMIT` | `1000` | Per-IP limit for the AI platforms' published ranges (at least `RATE_LIMIT_REQUESTS`) |
+| `DB_BUSY_MAX_WAITING` | `12` | Waiting database calls at which new tool calls get `server_busy` |
+| `DB_BUSY_MAX_WAIT_SECONDS` | `0.5` | Oldest wait at which they do (set both to `1000000` to turn this off) |
+| `DB_STUCK_WAIT_SECONDS` | `60` | A wait this long makes `/health` 503, then the server exits for Docker to restart |
+| `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges (empty: normal limit) |
+| `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
+| `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |
+| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily requests to each of Mouser and DigiKey (`0`: kept answers only) |
+| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts and pauses |
+| `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
+| `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | EasyEDA footprint answers |
+| `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | SamacSys searches and KiCad files |
+| `DISTRIBUTOR_STORE_PATH` | `/app/cache/distributor.db` in Docker | Mouser/DigiKey answers and lifecycle readings |
 
-These four cache and statistics paths are unset outside Docker, which keeps that data in memory only. The compose files mount a named volume at `/app/cache`.
+The five `_PATH` settings keep that data across restarts; outside Docker they're unset and it stays in memory. The compose files mount a named volume at `/app/cache`. An unusable or out-of-range number falls back to its default or nearest allowed value, with a warning at startup.
 
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
-- **Rate limit:** 100 requests a minute per IP
-- **Health:** `https://pcbparts.dev/health` (version, cache sizes, each distributor's requests today)
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`, anonymous daily counts of calls per tool and per hour, apps and Mouser/DigiKey lookups (including historical DigiKey keyword retries from before 0.9.3), and why calls found nothing or failed: one label a call from a fixed list (`reasons`), plus how the checks behind an empty search went (`why_empty`). No IPs, queries or part numbers are kept.
+- **Rate limit:** 100 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
+- **Health:** `https://pcbparts.dev/health`: version, caches, distributor quotas and database status as JSON; HTTP 503 when a database call is stuck
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`: anonymous daily counts of tool calls, outcomes, upstream requests and refusals (the endpoint lists every field). No IPs, queries or part numbers are kept.
 
 ## Privacy
 

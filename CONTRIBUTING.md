@@ -24,7 +24,9 @@ uv venv && uv pip install -e ".[dev]"
 ```
 
 The SQLite databases are build artifacts (gitignored) generated from the committed
-data files. They build automatically on first use, or explicitly:
+data files. They build automatically on first use, or explicitly (quantity price tiers need
+`data/catalog/price_tiers.tsv.gz`, which isn't committed: see the README's self-hosting notes;
+without it the build gives 1-piece prices only):
 
 ```bash
 uv run python scripts/build_database.py     # components.db (~730 MB, ~20s)

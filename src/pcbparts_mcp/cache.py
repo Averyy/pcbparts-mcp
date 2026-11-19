@@ -104,13 +104,18 @@ class CallerTally:
     """Requests per caller IP in the current UTC hour, logged as one summary line once the hour is
     over (flush_if_due(), which the server calls every minute) or at shutdown (flush()). Hours
     without requests log nothing. At most max_callers IPs are tracked an hour; the rest count as
-    "other"."""
+    "other". Requests sent with a later app or key (a QuotaPool's) are also counted by its number;
+    unit names them in the line ("app" for DigiKey, "key" for Mouser). what says what was counted
+    ("requests sent" for Mouser/DigiKey, "refusals" for the per-IP rate limit's)."""
 
-    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000, top: int = 5):
+    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000, top: int = 5,
+                 what: str = "requests sent"):
         self._name = name
+        self._what = what
         self._clock = clock
         self._max_callers = max_callers
         self._top = top
+        self.unit = "app"
         self._hour = self._hour_of(clock())
         self._counts: collections.Counter[str] = collections.Counter()
         self._apps: collections.Counter[int] = collections.Counter()
@@ -139,9 +144,11 @@ class CallerTally:
             end = datetime.datetime.fromtimestamp(min(now, self._hour + 3600), datetime.timezone.utc)
             end_text = "24:00" if end.date() > start.date() else end.strftime("%H:%M")
             top = ", ".join(f"{caller} {count}" for caller, count in self._counts.most_common(self._top))
-            logger.info(f"{self._name} requests sent {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
+            later = ", ".join(f"{self.unit} {index + 1}: {count}" for index, count in sorted(self._apps.items())
+                              if index and count)
+            logger.info(f"{self._name} {self._what} {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
                         f"{sum(self._counts.values())} from {len(self._counts)} IPs; top: {top}"
-                        + (f" (app 2: {self._apps[1]})" if self._apps[1] else ""))
+                        + (f" ({later})" if later else ""))
         self._counts.clear()
         self._apps.clear()
         self._hour = self._hour_of(now)
@@ -211,7 +218,8 @@ class DailyQuota:
         self._date = self._today()
         self._paused_until = 0.0  # unix time; the API said its own limit is used up until then
         # "daily" (until the reset the API named), "daily_unknown" (it didn't name one), "burst"
-        # (its per-minute limit) or "refused" (403)
+        # (its per-minute limit), "refused" (403) or "invalid_key" (Mouser rejected one of several
+        # keys: out until the next UTC day, like a spent one)
         self._pause_reason = ""
         self._api_remaining: int | None = None  # the API's own count of requests left today
         self._api_limit: int | None = None
@@ -274,8 +282,7 @@ class DailyQuota:
         if paused:
             return paused
         if self._count >= self._limit:
-            return {"error": f"{self._name} daily quota exceeded ({self._limit} requests/day on this shared server). "
-                             f"It resets at {_utc_text(_next_utc_midnight(self._clock()))}.{self._advice()}"}
+            return self.count_error()
         if self._minute is not None and not self._minute.try_acquire():
             return {"error": f"{self._name} lookups are limited to {self._per_minute} a minute on this shared server. "
                              f"Try again in {math.ceil(self._minute.wait_seconds())} s.{self._advice()}"}
@@ -283,6 +290,11 @@ class DailyQuota:
         self._save()
         self.callers.record(caller)
         return None
+
+    def count_error(self) -> dict:
+        """The error once our own count has used up the day."""
+        return {"error": f"{self._name} daily quota exceeded ({self._limit} requests/day on this shared server). "
+                         f"It resets at {_utc_text(_next_utc_midnight(self._clock()))}.{self._advice()}"}
 
     def _advice(self) -> str:
         if self._own_key:
@@ -315,16 +327,21 @@ class DailyQuota:
             self._save()
 
     def pause_daily_unknown_reset(self) -> None:
-        """The API refused for its daily limit without saying when it resets (Mouser): wait for the
-        next UTC midnight. Refused again on the first try after a daily pause, it retries hourly,
-        so a reset at another time of day (or a rolling 24 hours) costs at most an hour."""
+        """The API refused for its daily limit without saying when it resets (Mouser): while our own
+        count is below the limit, try again in an hour, from the first refusal on, so a count that
+        resets at another time of day (or rolls over 24 hours) costs at most an hour (on 2026-11-17
+        Mouser refused after 110 of our 1,000). Once our own count is spent too, wait for the next
+        UTC midnight. A refusal while a daily pause is running answers a request sent before that
+        pause began (concurrent batches): it changes nothing, so two refusals together can't
+        stretch the pause."""
         now = self._clock()
-        retried = self._pause_reason in ("daily", "daily_unknown") and now >= self._paused_until
-        self.pause(now + 3600 if retried else _next_utc_midnight(now), "daily_unknown")
+        if self._pause_reason in ("daily", "daily_unknown") and now < self._paused_until:
+            return
+        self._maybe_reset()
+        self.pause(now + 3600 if self._count < self._limit else _next_utc_midnight(now), "daily_unknown")
 
     def clear_expired_pause(self) -> None:
-        """After a request went through: forget an ended pause, so the next daily refusal waits
-        for midnight again instead of retrying hourly."""
+        """After a request went through: forget an ended pause (and what it was for)."""
         if self._pause_reason and self._clock() >= self._paused_until:
             self._pause_reason = ""
             self._save()
@@ -355,6 +372,19 @@ class DailyQuota:
             self._api_limit = limit
         self._save()
 
+    def retry_after(self) -> int | None:
+        """Whole seconds until check() can let a request out (a pause, the day's limit, our
+        per-minute cap), or None when one may go now."""
+        self._maybe_reset()
+        now = self._clock()
+        waits = [self._paused_until - now]
+        if self._count >= self._limit:
+            waits.append(_next_utc_midnight(now) - now)
+        if self._minute is not None:
+            waits.append(self._minute.wait_seconds())
+        wait = max(waits)
+        return math.ceil(wait) if wait > 0 else None
+
     @property
     def remaining(self) -> int:
         self._maybe_reset()
@@ -378,10 +408,11 @@ class QuotaPool:
     """Use each app's day in order, with one minute budget and shared penalty pauses.
 
     Selection and reservation are synchronous, so concurrent asyncio callers cannot overdraw
-    an app. Daily counts and pauses remain in the individual quotas' store entries.
+    an app. Daily counts and pauses remain in the individual quotas' store entries. unit names an
+    app or key in the logs only ("app" for DigiKey, "key" for Mouser).
     """
 
-    def __init__(self, quotas: list[DailyQuota], per_minute: int | None = None):
+    def __init__(self, quotas: list[DailyQuota], per_minute: int | None = None, unit: str = "app"):
         if not quotas:
             raise ValueError("A quota pool needs at least one app")
         self.quotas = quotas
@@ -389,7 +420,10 @@ class QuotaPool:
         self._per_minute = per_minute if per_minute is not None else self._first._per_minute
         self._minute = SlidingWindowBudget(self._per_minute, 60, self._first.now) if self._per_minute else None
         self.callers = self._first.callers
-        self._switched_day = quotas[1]._date if len(quotas) > 1 and quotas[1]._count else None
+        self.callers.unit = self._unit = unit
+        # The day each later app was first used, so "requests moved to" is logged once a day (a
+        # restart that day doesn't repeat it)
+        self._switched_day = {index: quota._date for index, quota in enumerate(quotas) if index and quota._count}
         for quota in quotas:
             quota._minute = None
             quota.callers = self.callers
@@ -409,7 +443,7 @@ class QuotaPool:
     @staticmethod
     def _daily_reset_at(quota: DailyQuota) -> float:
         reset = _next_utc_midnight(quota.now()) if not quota.remaining else 0.0
-        if quota._pause_reason in ("daily", "daily_unknown") and quota.now() < quota._paused_until:
+        if quota._pause_reason in ("daily", "daily_unknown", "invalid_key") and quota.now() < quota._paused_until:
             reset = max(reset, quota._paused_until)
         return reset
 
@@ -439,6 +473,18 @@ class QuotaPool:
     def paused_error(self) -> dict | None:
         return self.penalty_error() or (self.daily_error() if self._active_index() is None else None)
 
+    def retry_after(self) -> int | None:
+        """Whole seconds until acquire() can let a request out (a shared penalty, every app's day,
+        the shared minute), or None when one may go now."""
+        now = self._first.now()
+        waits = [self._penalty()[0] - now]
+        if self._active_index() is None:
+            waits.append(min(self._daily_reset_at(q) for q in self.quotas) - now)
+        if self._minute is not None:
+            waits.append(self._minute.wait_seconds())
+        wait = max(waits)
+        return math.ceil(wait) if wait > 0 else None
+
     def acquire(self, caller: str | None = None) -> tuple[int | None, dict | None]:
         error = self.paused_error()
         if error:
@@ -452,9 +498,9 @@ class QuotaPool:
         quota._count += 1
         quota._save()
         self.callers.record(caller, index)
-        if index == 1 and self._switched_day != quota._date:
-            logger.info(f"{quota._name} requests moved to app 2 for {quota._date} UTC")
-            self._switched_day = quota._date
+        if index and self._switched_day.get(index) != quota._date:
+            logger.info(f"{quota._name} requests moved to {self._unit} {index + 1} for {quota._date} UTC")
+            self._switched_day[index] = quota._date
         return index, None
 
     def mark_sent(self) -> None:
@@ -469,11 +515,17 @@ class QuotaPool:
         remaining = _header_int(headers, "x-ratelimit-remaining")
         if status == 403 or (status == 429 and remaining != 0):
             reason = "refused" if status == 403 else "burst"
-            until = quota.now() + (600 if status == 403 else (_header_int(headers, "retry-after") or 60))
-            for app in self.quotas:
-                if until > app._shared_paused_until:
-                    app._shared_paused_until, app._shared_pause_reason = until, reason
-                    app._save()
+            self.share_penalty(quota.now() + (600 if status == 403 else (_header_int(headers, "retry-after") or 60)),
+                               reason)
+
+    def share_penalty(self, until: float, reason: str) -> None:
+        """Pause every app or key until `until` for a per-minute ("burst") or 403 ("refused")
+        refusal. Kept apart from each one's own pause, so a longer daily pause on the app that got
+        it can't swallow it: that refusal says the whole pool is sending too fast."""
+        for app in self.quotas:
+            if until > app._shared_paused_until:
+                app._shared_paused_until, app._shared_pause_reason = until, reason
+                app._save()
 
     def status(self) -> dict[str, Any]:
         index = self._active_index()
@@ -483,6 +535,31 @@ class QuotaPool:
             until = max(until, min(self._daily_reset_at(q) for q in self.quotas))
         status["paused_until"] = _utc_text(until) if self._first.now() < until else None
         return status
+
+
+class MouserKeyPool(QuotaPool):
+    """Mouser's API keys (MOUSER_API_KEY, then the optional MOUSER_API_KEY_2, _3, ...) as one pool:
+    each key's day in order, one shared per-minute budget (Mouser doesn't say whether its own
+    per-minute limit is per key), and a per-minute pause on any key pauses them all. Mouser's daily
+    refusal pauses only the key that got it (MouserClient), so the next key carries on.
+
+    The limit errors are Mouser's as they were before pools. With one key they're that key's own,
+    word for word; with several, the key free soonest explains the wait: a refusal Mouser sent
+    (it doesn't say when its count resets), else the reset time only, as DigiKey's pool does,
+    since a count would be wrong or reveal the extra keys."""
+
+    def __init__(self, quotas: list[DailyQuota], per_minute: int | None = None):
+        super().__init__(quotas, per_minute=per_minute, unit="key")
+
+    def daily_error(self) -> dict:
+        quota = min(self.quotas, key=self._daily_reset_at)  # the first of those free soonest
+        # Mouser's refusal says when this server asks again; one key's other API pause ("daily",
+        # from rate-limit headers) gives that key's own text too
+        one_key = len(self.quotas) == 1
+        explain = quota._pause_reason == "daily_unknown" or (one_key and quota._pause_reason == "daily")
+        if explain and (paused := quota.paused_error()):
+            return paused
+        return quota.count_error() if one_key else super().daily_error()
 
 
 class SlidingWindowBudget:

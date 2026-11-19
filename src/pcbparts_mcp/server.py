@@ -2,53 +2,63 @@
 
 import asyncio
 import contextlib
+import contextvars
+import datetime
 import functools
 import inspect
+import ipaddress
 import json
 import logging
 import math
+import os
 import re
 import sqlite3
 import time
-from collections import defaultdict
+import unicodedata
 from contextlib import asynccontextmanager
 from difflib import get_close_matches
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Callable, Literal, NamedTuple
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
-from pydantic import BeforeValidator, Field
+from pydantic import BeforeValidator, Field, WithJsonSchema
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse, RedirectResponse
+from starlette.requests import Request
+from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
 
-from . import __version__, stats
-from .cache import DailyQuota, QuotaPool, QuotaStore
+from . import __version__, platform_ranges, stats
+from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
-    RATE_LIMIT_REQUESTS, HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
-    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
-    DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2,
+    RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
+    DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS, DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
+    HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
+    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
+    DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
-    CSE_STORE_PATH,
+    CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
 )
-from .client import DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
+from .client import DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
+from .distributor_store import DistributorStore
+from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
 from .cse import CSEClient
 from .mounting import english_package
-from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, offload, run_db
+from .db_worker import (BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, Reservation, database_pressure,
+                        offload, run_db)
 from .db import get_db, close_db
+from .db.lookup import VIA, related_note
 from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key
+from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key, not_sent_reason
 from .search.query_builder import package_family_adjustments
 from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
@@ -66,11 +76,25 @@ _client: JLCPCBClient | None = None
 _mouser_client: MouserClient | None = None
 _digikey_client: DigiKeyClient | None = None
 _cse_client: CSEClient | None = None
+# Mouser/DigiKey answers and lifecycle readings, shared by both clients and part_lifecycle
+_distributor_store: DistributorStore | None = None
+_distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
 _distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
+# Requests the per-IP rate limit turned away, and server_busy refusals, per IP, each logged as one
+# line for each hour that had any with the five most-refused IPs (the only places refused IPs
+# appear; /mcp/stats counts them without IPs; the privacy page describes both lines)
+_refused_callers = CallerTally("Per-IP rate limit", what="refusals")
+_busy_refused_callers = CallerTally("Server busy limit", what="refusals")
+# The AI platforms' address lists as loaded at startup (_load_platform_ranges), for /health: how many
+# ranges each has and when OpenAI's list was made. None before the app starts.
+_platform_ranges_info: dict[str, Any] | None = None
+# The database's price breaks, for /health (a deploy whose artifact download failed shows as none):
+# {"as_of": ComponentDatabase.price_tiers_as_of(), "parts": price_tiers_parts()}, None before startup
+_price_tiers_info: dict[str, Any] | None = None
 
 # /health is public, isn't rate limited and is fetched by every landing page visit, so the store
 # count it shows is refreshed at most this often (seconds) instead of on every request.
@@ -81,7 +105,10 @@ HEALTH_STORE_COUNT_TTL = 60
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
+    global _distributor_store, _distributor_stored, _price_tiers_info
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
+    for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
+        logger.warning(warning)
 
     # Build/load DB on startup (not on first request)
     db = get_db()
@@ -101,6 +128,11 @@ async def lifespan(app):
     _client.set_alternative_candidates(db.find_alternative_candidates)
     # and, for RF parts, at every maker's parts in the subcategory to check against the original's band
     _client.set_subcategory_parts(db.subcategory_parts)
+    tiers_as_of = db.price_tiers_as_of()
+    _client.set_alternative_price_tiers(db.get_price_tiers, tiers_as_of)
+    _price_tiers_info = {"as_of": tiers_as_of, "parts": db.price_tiers_parts()}
+    logger.info(f"Price tiers: {_price_tiers_info['parts']:,} parts, scraped {tiers_as_of}" if tiers_as_of else
+                "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only")
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
     _easyeda_stored = (time.monotonic(), store_size)
@@ -136,14 +168,33 @@ async def lifespan(app):
     # Mouser/DigiKey daily request counts, kept across restarts when DISTRIBUTOR_QUOTA_PATH is set
     quota_store = QuotaStore(DISTRIBUTOR_QUOTA_PATH) if DISTRIBUTOR_QUOTA_PATH else None
     _distributor_quotas.clear()
+    # Their answers (3 days) and lifecycle readings (90 days), kept across restarts when
+    # DISTRIBUTOR_STORE_PATH is set
+    _distributor_store = DistributorStore(DISTRIBUTOR_STORE_PATH or None)
+    _distributor_stored = (float("-inf"), None)
+    _distributor_store.prune()
+    stored = _distributor_store.counts()
+    logger.info(f"Distributor store: {stored['answers']:,} answers and {stored['lifecycle']:,} lifecycle readings "
+                + (f"kept in {DISTRIBUTOR_STORE_PATH}" if stored["kept_across_restarts"] else "(memory only)"))
 
-    # Initialize Mouser client if API key is configured
+    # Initialize Mouser client if API key is configured. Optional extra keys (MOUSER_API_KEY_2,
+    # _3, ...) are each used only after the previous key's day is spent (MouserKeyPool); the
+    # warnings name ignored variables, never a key.
+    for warning in MOUSER_KEY_WARNINGS:
+        logger.warning(warning)
     if MOUSER_API_KEY:
-        mouser_quota = DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, per_minute=MOUSER_PER_MINUTE,
-                                  own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+        key_quotas = [DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store,
+                                 store_key="Mouser" if index == 0 else f"Mouser#{index + 1}",
+                                 own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+                      for index in range(1 + len(MOUSER_EXTRA_API_KEYS))]
+        mouser_quota = MouserKeyPool(key_quotas, per_minute=MOUSER_PER_MINUTE)
         _distributor_quotas["mouser"] = mouser_quota
-        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota)
-        logger.info(f"Mouser client initialized (requests today: {mouser_quota.status()['used_today']})")
+        _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota, store=_distributor_store,
+                                      extra_keys=MOUSER_EXTRA_API_KEYS)
+        counts = ", ".join(str(q.status()["used_today"]) for q in key_quotas)
+        logger.info(f"Mouser client initialized: {len(key_quotas)} key(s) (requests today: {counts})")
+    elif MOUSER_EXTRA_API_KEYS:
+        logger.warning("Extra Mouser keys are set without MOUSER_API_KEY: Mouser lookups are off")
 
     # Initialize DigiKey client if credentials are configured
     second_app = None
@@ -159,7 +210,8 @@ async def lifespan(app):
                       for index in range(2 if second_app else 1)]
         digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE)
         _distributor_quotas["digikey"] = digikey_quota
-        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota, second_app=second_app)
+        _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota,
+                                        second_app=second_app, store=_distributor_store)
         counts = ", ".join(str(q.status()["used_today"]) for q in app_quotas)
         logger.info(f"DigiKey client initialized: {len(app_quotas)} app(s) (requests today: {counts})")
 
@@ -169,6 +221,7 @@ async def lifespan(app):
     # Anonymous daily usage counts for /mcp/stats
     if USAGE_STATS_PATH:
         stats.usage.open(USAGE_STATS_PATH)
+    stats.usage.record_start()  # this day's restarts, beside its callers and distinct part numbers
     stats.usage.tools = {tool.name for tool in await mcp.list_tools(run_middleware=False)}
     logger.info(f"Usage stats: {f'kept in {USAGE_STATS_PATH}' if USAGE_STATS_PATH else 'memory only'}")
     minute_task = asyncio.create_task(_every_minute())
@@ -187,6 +240,8 @@ async def lifespan(app):
         await minute_task
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
+    _refused_callers.flush()
+    _busy_refused_callers.flush()
     stats.usage.save()
     if _cse_client:
         await _cse_client.close()
@@ -194,6 +249,9 @@ async def lifespan(app):
         await _mouser_client.close()
     if _digikey_client:
         await _digikey_client.close()
+    if _distributor_store:
+        _distributor_store.close()
+        _distributor_store = None
     if _client:
         await _client.close()
     await run_db(COMPONENT_POOL, close_db)
@@ -202,23 +260,66 @@ async def lifespan(app):
     await run_db(BOARD_POOL, close_boards_db)
 
 
+# A database call waiting longer than DB_STUCK_WAIT_SECONDS at this many minute checks in a row
+# means a worker is stuck (every tools/call is then refused as busy and /health says unhealthy):
+# the server exits so Docker's `restart: unless-stopped` starts a fresh one. os._exit, not
+# sys.exit: a normal exit would wait for the stuck worker thread and hang. Replaced in tests.
+STUCK_CHECKS_BEFORE_EXIT = 2
+_exit_process = os._exit
+
+
+def _exit_if_stuck(stuck_checks: int) -> int:
+    """The minute task's stuck-worker check: the updated count of checks in a row that found a
+    database call waiting longer than DB_STUCK_WAIT_SECONDS; exits the process at
+    STUCK_CHECKS_BEFORE_EXIT. This shouldn't happen (every call is a local SQLite read taking
+    milliseconds); it guards against a hung disk or a runaway query."""
+    oldest = database_pressure.summary()["oldest_wait_seconds"]
+    stuck_checks = stuck_checks + 1 if oldest >= DB_STUCK_WAIT_SECONDS else 0
+    if stuck_checks >= STUCK_CHECKS_BEFORE_EXIT:
+        logger.error(f"A database call has waited {oldest:g} s (over {DB_STUCK_WAIT_SECONDS:g} s at "
+                     f"{stuck_checks} minute checks in a row): a worker is stuck; exiting so Docker "
+                     "restarts the server")
+        try:
+            stats.usage.save()
+        except Exception:
+            logger.exception("Couldn't save the usage counts before exiting")
+        for handler in logging.getLogger().handlers:
+            with contextlib.suppress(Exception):
+                handler.flush()
+        _exit_process(1)
+    return stuck_checks
+
+
 async def _every_minute() -> None:
-    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts (one line each)
-    and save the usage counts."""
+    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts and per-IP rate
+    limit refusals (one line each, for hours that had any) and save the usage counts; every hour,
+    drop expired Mouser/DigiKey answers from the store; exit if a database worker is stuck
+    (_exit_if_stuck)."""
+    minutes = 0
+    stuck_checks = 0
     while True:
         await asyncio.sleep(60)
+        minutes += 1
         try:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
+            _refused_callers.flush_if_due()
+            _busy_refused_callers.flush_if_due()
             stats.usage.save()
+            if minutes % 60 == 0 and _distributor_store is not None:
+                _distributor_store.prune()
         except Exception:
             logger.exception("Minute task failed; trying again in a minute")
+        try:
+            stuck_checks = _exit_if_stuck(stuck_checks)
+        except Exception:
+            logger.exception("Stuck-worker check failed; trying again in a minute")
 
 
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only to cross-reference specific part numbers (shared daily limit; batch Mouser lookups). sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -325,6 +426,10 @@ def _call_outcome(result: Any) -> str:
         return "ok"
     if content.get("error"):
         return _error_kind(str(content["error"]))
+    if "status_counts" in content:
+        return _lifecycle_outcome(content)
+    if _is_parts_reply(content):
+        return _parts_outcome(content)
     if "parts" in content and "what_is_recorded" in content:
         # Single history replies count as ok even with no events or snapshot stock. A batch
         # follows that rule if any valid code was answered; all-invalid codes are bad_request.
@@ -333,9 +438,57 @@ def _call_outcome(result: Any) -> str:
         if content["alternatives"]:
             return "ok"
         return "similar_only" if (content.get("similar_parts") or content.get("unverified_alternatives")) else "not_found"
+    if content.get("not_checked") and not content.get("results"):  # Mouser: a limit held the rest back
+        return "rate_limited"
     if any(key in content and not content[key] for key in ("results", "matched_files")):
         return "not_found"
     return "ok"
+
+
+def _lifecycle_errors(content: dict) -> list[str]:
+    """part_lifecycle's per-part errors (inputs that couldn't be looked up)."""
+    return [str(row["error"]) for row in content.get("results") or [] if isinstance(row, dict) and row.get("error")]
+
+
+def _lifecycle_outcome(content: dict) -> str:
+    """part_lifecycle answers every part, unknown when it can't: ok when any has a reading; else
+    what kept the rest unknown (a limit, a failed lookup, or neither distributor lists them). When
+    no part could be looked up, the parts' own errors decide (a catalog outage fails, LCSC codes
+    not in the catalog are not found, the rest were invalid)."""
+    rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
+    if not rows:
+        kinds = {_error_kind(error) for error in _lifecycle_errors(content)}
+        return "failed" if "failed" in kinds else "not_found" if "not_found" in kinds else "bad_request"
+    if any(row.get("status") != "unknown" or "source" in row or row.get("makers") for row in rows):
+        return "ok"
+    if any("retry_after" in row for row in rows):
+        return "rate_limited"
+    if any(row.get("lookup_failed") for row in rows):
+        return "failed"
+    return "not_found"
+
+
+def _is_parts_reply(content: dict) -> bool:
+    """A jlc_get_parts reply (counts of found, not_found and error rows)."""
+    return isinstance(content.get("counts"), dict) and "results" in content
+
+
+def _parts_outcome(content: dict) -> str:
+    """jlc_get_parts: ok when any part was found, in the snapshot or gone from it; not_found when
+    parts were looked up and none was; with neither, failed when the database failed on a part
+    number (that row's "Database not available"), else bad_request (every input was unusable)."""
+    counts = content["counts"]
+    if counts.get("found") or counts.get("gone"):  # a gone part's answer is an answer, from our data
+        return "ok"
+    if counts.get("not_found"):
+        return "not_found"
+    return "failed" if "failed" in {_error_kind(error) for error in _lifecycle_errors(content)} else "bad_request"
+
+
+def _parts_empty_reason(content: dict) -> str:
+    """Why no jlc_get_parts part was found: its LCSC codes or its MPNs aren't in the snapshot, or both."""
+    missed = {"results" in row for row in content.get("results") or [] if isinstance(row, dict) and row.get("not_found")}
+    return "lcsc_not_found" if missed == {False} else "mpn_not_in_snapshot" if missed == {True} else "part_not_found"
 
 
 def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
@@ -344,6 +497,10 @@ def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
 
 def _empty_reason(content: dict) -> str:
     """Why a reply counted as not_found (stats.REASONS): one reason, the most specific it shows."""
+    not_sent = content.get("not_sent")  # Mouser: by number; DigiKey: the one number's reason
+    if not_sent and not content.get("results") and (
+            isinstance(not_sent, str) or set(content.get("not_found") or ()) <= set(not_sent)):
+        return "not_sent"  # nothing that was worth a request
     if content.get("error"):
         reason = _first_reason(_NOT_FOUND_REASONS, str(content["error"])) or "no_results"
         if reason == "mpn_not_in_snapshot":
@@ -354,6 +511,16 @@ def _empty_reason(content: dict) -> str:
         return reason
     if "alternatives" in content:
         return "no_alternatives"
+    if "status_counts" in content:  # part_lifecycle: neither distributor lists the parts
+        for error in _lifecycle_errors(content):  # or, with nothing looked up, LCSC codes not in the catalog
+            if reason := _first_reason(_NOT_FOUND_REASONS, error):
+                return reason
+        rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
+        if rows and all(row.get("not_sent") for row in rows):  # none worth a request
+            return "not_sent"
+        return "part_not_found"
+    if _is_parts_reply(content):
+        return _parts_empty_reason(content)
     if content.get("total") and not content.get("results"):
         return "offset_past_end"
     blocking = {item.get("constraint") for item in (content.get("why_empty") or {}).get("blocking") or []}
@@ -385,6 +552,9 @@ def _call_reason(outcome: str, content: dict, error: Exception | None) -> str:
         return "exception"
     if outcome == "not_found":
         return _empty_reason(content)
+    if ("status_counts" in content or _is_parts_reply(content)) and not content.get("error"):
+        reasons = (_first_reason(_FAILED_REASONS, error) for error in _lifecycle_errors(content))
+        return next(filter(None, reasons), "lifecycle_lookup_failed" if "status_counts" in content else "unexpected_error")
     return _first_reason(_FAILED_REASONS, str(content.get("error") or "")) or "unexpected_error"
 
 
@@ -433,81 +603,399 @@ class UsageStatsMiddleware(FastMCPMiddleware):
 mcp.add_middleware(UsageStatsMiddleware())
 
 
-class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Rate limiting middleware - 100 requests/minute per IP.
+# The per-IP rate limit counts each address's requests over a rolling window of this many seconds
+RATE_LIMIT_WINDOW = 60
+# Under database pressure the body of a POST to /mcp (read to tell a tools/call from cheaper
+# methods) must arrive within this many seconds: a slower one is refused as server_busy (MCP calls
+# are a few KB). Without pressure there's no deadline, as when the SDK read bodies itself.
+BUSY_BODY_READ_SECONDS = 2.0
+
+# Why a request was refused: the `reason` in its 429 body (llms.txt lists them).
+# Add reasons, never rename one: clients branch on them.
+RATE_LIMIT_REASONS = {
+    "per_ip_rate_limit": "this address sent its limit of requests in the last minute",
+    "too_many_clients": "the server is tracking as many addresses as it can (MAX_TRACKED_IPS); "
+                        "not about this address's use",
+    "server_busy": "a database worker pool has too many waiting calls, or its oldest wait is too long",
+    "datasheet_rate_limit": "the short datasheet links' shared budget for new links (/mcp/datasheet) is spent; "
+                            "not about this address's use",
+}
+
+# The busy check's reservation for the tools/call being handled (RateLimitMiddleware), released by
+# AdmittedCallMiddleware as the tool starts. The tool runs in a copy of the request's context.
+_admitted_call: contextvars.ContextVar[Reservation | None] = contextvars.ContextVar(
+    "pcbparts_admitted_call", default=None)
+
+
+class AdmittedCallMiddleware(FastMCPMiddleware):
+    """Releases the busy check's reservation for this tools/call (RateLimitMiddleware) as the tool
+    starts: from then on a database tool's work counts as waiting jobs (its first run_db is queued
+    as it starts), and a live lookup's network waits never count."""
+
+    async def on_call_tool(self, context, call_next):
+        reservation = _admitted_call.get()
+        if reservation is not None:
+            reservation.release()
+        return await call_next(context)
+
+
+mcp.add_middleware(AdmittedCallMiddleware())
+
+
+class _Allowance(NamedTuple):
+    """What the per-IP rate limit decided for one request; its X-RateLimit-* headers and its 429
+    say the same."""
+    limit: int  # requests a minute this address may send (RateLimitMiddleware._limit_for)
+    remaining: int  # requests left in the current window, this one counted; 0 when refused
+    reset: int  # whole seconds until the oldest counted request leaves the window, so one more is
+    #             allowed (0: none counted); refused: until one request would be allowed again (>= 1)
+    at: float  # when it was decided, epoch seconds (the middleware's wall clock), for resets_at
+    refused: str | None = None  # why it was refused (a RATE_LIMIT_REASONS key); None: allowed
+
+
+def _utc_iso(timestamp: float) -> str:
+    return datetime.datetime.fromtimestamp(timestamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _load_platform_ranges() -> platform_ranges.PlatformRanges:
+    """The AI platforms' address ranges from config (ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE),
+    logged, and kept for /health. RateLimitMiddleware calls this once, when the app starts and
+    Starlette builds it."""
+    global _platform_ranges_info
+    loaded = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE)
+    for warning in loaded.warnings:
+        logger.warning(warning)
+    limit = max(PLATFORM_RATE_LIMIT, RATE_LIMIT_REQUESTS)
+    logger.info(f"Platform address ranges: {loaded.summary}; {limit:,} requests a minute per "
+                f"platform address, {RATE_LIMIT_REQUESTS:,} for others")
+    _platform_ranges_info = {**loaded.ranges.counts, "openai_list_created": loaded.openai_created}
+    return loaded.ranges
+
+
+class RateLimitMiddleware:
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per address,
+    and PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's
+    and OpenAI's published ranges), the limit _limit_for() gives each address. An IPv4 address is
+    counted by itself and an IPv6 address by its /64 (_limit_key()), except a platform address.
+
+    Every reply it sees says where the address stands: X-RateLimit-Limit (requests a minute),
+    X-RateLimit-Remaining (left in the current window) and X-RateLimit-Reset (whole seconds until
+    the oldest counted request leaves the window; see _Allowance). A refusal is a 429 with
+    Retry-After and a JSON body: error and retry_after (as before 0.10.0, and clients read
+    retry_after: keep it), reason (a RATE_LIMIT_REASONS key), resets_at (UTC) and tell_user (one
+    sentence a client can show). Requests the per-IP limit refuses aren't counted. /health isn't
+    limited or counted; its headers show where the address stands. /mcp/stats is limited and
+    counted like any request (as before 0.10.0), but never refused as server_busy. The window runs
+    on a monotonic clock, so a wall-clock step can't stretch or shorten it; only resets_at reads
+    the wall clock.
+
+    Database queue pressure also sheds NEW tools/call requests with server_busy. Only database
+    offloads contribute pressure, and tool calls admitted whose tool hasn't started yet (a
+    reservation, so a simultaneous burst can't all pass before any of it is queued): live lookups
+    waiting on upstream services don't fill this cap. Every POST to /mcp is charged to the
+    address's allowance before its body is read, then its body is read whole (bounded by
+    MAX_REQUEST_BODY_BYTES; the SDK reads it whole anyway) and replayed to the SDK, so a busy
+    refusal counts like an answered request and an address that keeps sending through an overload
+    runs into its per-IP limit too. Under pressure the body has BUSY_BODY_READ_SECONDS to arrive.
+    Pure ASGI so response chunks pass straight through, including SSE streams.
 
     Includes protections against memory exhaustion from IP spoofing:
-    - Maximum tracked IPs limit (10,000)
-    - Periodic cleanup of stale IPs
+    - Maximum tracked addresses (10,000): past it, new addresses are refused (too_many_clients)
+      while the addresses already tracked carry on, with a warning in the log at most once a minute
+    - Stale addresses dropped as they go stale, oldest first (request_counts is kept in order of
+      each address's last counted request, so no step scans every address)
+
+    Each refusal (429) is counted in /mcp/stats (per_ip_refusals, no IP, by _refusal_group()) and,
+    except too_many_clients, in an hourly most-refused log line (_refused_callers, or
+    _busy_refused_callers for server_busy).
     """
 
     MAX_TRACKED_IPS = 10_000  # Prevent memory exhaustion from spoofed IPs
 
-    def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS):
-        super().__init__(app)
+    def __init__(self, app, requests_per_minute: int = RATE_LIMIT_REQUESTS,
+                 clock: Callable[[], float] | None = None, platform_per_minute: int = PLATFORM_RATE_LIMIT,
+                 platform_addresses: platform_ranges.PlatformRanges | None = None,
+                 pressure=None, busy_max_waiting: int = DB_BUSY_MAX_WAITING,
+                 busy_max_wait: float = DB_BUSY_MAX_WAIT_SECONDS,
+                 busy_body_timeout: float = BUSY_BODY_READ_SECONDS,
+                 wall_clock: Callable[[], float] | None = None):
+        self.app = app
+        self.pressure = database_pressure if pressure is None else pressure
+        self.busy_max_waiting = busy_max_waiting
+        self.busy_max_wait = busy_max_wait
+        self.busy_body_timeout = busy_body_timeout
         self.requests_per_minute = requests_per_minute
+        self.platform_per_minute = platform_per_minute
+        # None: load them from config (and log how many), once: Starlette builds the middleware
+        # when the app starts
+        self.platform_addresses = (platform_addresses if platform_addresses is not None
+                                   else _load_platform_ranges())
+        self._clock = clock  # seconds for the window; None: time.monotonic()
+        self._wall_clock = wall_clock  # epoch seconds for resets_at; None: time.time()
+        # Counted requests per _limit_key(), in order of each key's last counted request (a counted
+        # request moves its key to the end), so the stalest key is always first
         self.request_counts: dict[str, list[float]] = {}
-        self._last_cleanup = time.time()
+        self._last_cleanup = self._now()
+        self._too_many_refused = 0  # too_many_clients refusals since the last warning
+        self._too_many_warned_at = float("-inf")
+
+    def _now(self) -> float:
+        return self._clock() if self._clock is not None else time.monotonic()
+
+    def _wall(self) -> float:
+        return self._wall_clock() if self._wall_clock is not None else time.time()
 
     def _get_client_ip(self, request) -> str:
         return _client_ip(request)
 
+    def _is_platform(self, client_ip: str) -> bool:
+        """Whether the address is in an AI platform's published range (shared by many users)."""
+        return client_ip in self.platform_addresses
+
+    def _limit_for(self, client_ip: str) -> int:
+        """Requests a minute this address may send: PLATFORM_RATE_LIMIT for an AI platform's
+        address (never less than RATE_LIMIT_REQUESTS), RATE_LIMIT_REQUESTS for any other. The
+        check, the headers and the 429 all use this."""
+        if self._is_platform(client_ip):
+            return max(self.platform_per_minute, self.requests_per_minute)
+        return self.requests_per_minute
+
+    def _limit_key(self, client_ip: str) -> str:
+        """What the address is counted under: an IPv4 address by itself (an IPv4-mapped IPv6
+        address is its IPv4 address), an IPv6 address by its /64, the usual allocation to one
+        subscriber, so its 2**64 addresses can't each get an allowance and fill the table; except
+        an AI platform's address, which is published and counted by itself."""
+        try:
+            address = ipaddress.ip_address(client_ip.strip())
+        except ValueError:  # "unknown", a hostname, garbage
+            return client_ip
+        if address.version == 6:
+            if address.ipv4_mapped is not None:
+                return str(address.ipv4_mapped)
+            if not self._is_platform(client_ip):
+                return str(ipaddress.IPv6Network((address, 64), strict=False))
+        return str(address)
+
     def _cleanup_stale_ips(self, now: float) -> None:
-        """Remove IPs with no recent requests. Called periodically."""
-        window_start = now - 60
-        stale_ips = [
-            ip for ip, timestamps in self.request_counts.items()
-            if not timestamps or timestamps[-1] < window_start
-        ]
-        for ip in stale_ips:
-            del self.request_counts[ip]
+        """Remove addresses with no request left in the window: the first ones, as request_counts
+        is in order of last requests, so this stops at the first that still counts."""
+        window_start = now - RATE_LIMIT_WINDOW
+        while self.request_counts:
+            key, timestamps = next(iter(self.request_counts.items()))
+            if timestamps and timestamps[-1] > window_start:
+                break
+            del self.request_counts[key]
 
-    def _check_rate_limit(self, client_ip: str) -> bool:
-        now = time.time()
-        window_start = now - 60
+    @staticmethod
+    def _reset_seconds(timestamps: list[float], limit: int, now: float) -> int:
+        """Whole seconds until one more request is allowed: until the oldest counted request leaves
+        the window, or with no room, until enough have left for one more. 0 with none counted."""
+        if limit <= 0:
+            return RATE_LIMIT_WINDOW
+        if not timestamps:
+            return 0
+        leaves_at = timestamps[max(0, len(timestamps) - limit)] + RATE_LIMIT_WINDOW
+        return max(1, math.ceil(leaves_at - now))
 
-        # Periodic cleanup every 60 seconds to remove stale IPs
-        if now - self._last_cleanup > 60:
-            self._cleanup_stale_ips(now)
-            self._last_cleanup = now
+    def _seconds_until_untracked(self, now: float) -> int:
+        """With MAX_TRACKED_IPS addresses tracked, whole seconds until the first of them (the one
+        with the oldest last request) goes stale and frees a place (at least 1)."""
+        first = next(iter(self.request_counts.values()), None)
+        last = first[-1] if first else now
+        return max(1, math.ceil(last + RATE_LIMIT_WINDOW - now))
 
-        # If tracking too many IPs, do aggressive cleanup
-        if len(self.request_counts) >= self.MAX_TRACKED_IPS:
-            self._cleanup_stale_ips(now)
-            # If still at limit after cleanup, reject to prevent memory exhaustion
-            if len(self.request_counts) >= self.MAX_TRACKED_IPS:
-                return True  # Rate limit as protection
+    def _allowance(self, client_ip: str, *, count: bool = True) -> _Allowance:
+        """Judge and count a request. count=False only looks (exempt routes)."""
+        now = self._now()
+        window_start = now - RATE_LIMIT_WINDOW
+        limit = self._limit_for(client_ip)
+        key = self._limit_key(client_ip)
 
-        # Get or create entry for this IP
-        if client_ip not in self.request_counts:
-            self.request_counts[client_ip] = [now]
-            return False
+        if count:
+            # Periodic cleanup every minute to remove stale IPs
+            if now - self._last_cleanup > RATE_LIMIT_WINDOW:
+                self._cleanup_stale_ips(now)
+                self._last_cleanup = now
+            # A new address while tracking too many: drop the stale ones, then refuse it if still
+            # full, to prevent memory exhaustion. Addresses already tracked carry on.
+            if key not in self.request_counts and len(self.request_counts) >= self.MAX_TRACKED_IPS:
+                self._cleanup_stale_ips(now)
+                if len(self.request_counts) >= self.MAX_TRACKED_IPS:
+                    return _Allowance(limit, 0, self._seconds_until_untracked(now), self._wall(), "too_many_clients")
 
-        # Filter old entries
-        self.request_counts[client_ip] = [
-            t for t in self.request_counts[client_ip] if t > window_start
-        ]
+        timestamps = [t for t in self.request_counts.get(key, ()) if t > window_start]
+        # Checked before adding the current request; a refused request isn't counted
+        refused = count and len(timestamps) >= limit
+        if count:
+            if not refused:
+                timestamps.append(now)
+                self.request_counts.pop(key, None)  # re-added at the end: the newest last request
+            self.request_counts[key] = timestamps
+        remaining = 0 if refused else max(0, limit - len(timestamps))
+        return _Allowance(limit, remaining, self._reset_seconds(timestamps, limit, now), self._wall(),
+                          "per_ip_rate_limit" if refused else None)
 
-        # Check if rate limited before adding current request
-        if len(self.request_counts[client_ip]) >= self.requests_per_minute:
-            return True
+    @staticmethod
+    def _headers(allowance: _Allowance) -> dict[str, str]:
+        return {"X-RateLimit-Limit": str(allowance.limit),
+                "X-RateLimit-Remaining": str(allowance.remaining),
+                "X-RateLimit-Reset": str(allowance.reset)}
 
-        # Add current request
-        self.request_counts[client_ip].append(now)
-        return False
+    @classmethod
+    def _refusal(cls, allowance: _Allowance, *, shared: bool = False) -> JSONResponse:
+        """The 429 for a refused request; shared: the address is an AI platform's (_is_platform)."""
+        wait, limit = allowance.reset, allowance.limit
+        seconds = f"{wait} second{'' if wait == 1 else 's'}"
+        if allowance.refused == "too_many_clients":
+            tell_user = f"pcbparts is serving too many addresses at once; try again in {seconds}."
+        elif allowance.refused == "server_busy":
+            tell_user = f"pcbparts is busy answering database calls; try again in {seconds}."
+        else:
+            allows = f"pcbparts allows {limit:,} request{'' if limit == 1 else 's'} a minute per address"
+            if shared:
+                allows += ", and this address is shared by many users of the same AI platform"
+            tell_user = f"{allows}; try again in {seconds}, or run your own copy for heavy use: {SELF_HOSTING_URL}"
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Rate limit exceeded", "retry_after": wait, "reason": allowance.refused,
+                     "resets_at": _utc_iso(math.ceil(allowance.at + wait)), "tell_user": tell_user},
+            headers={**cls._headers(allowance), "Retry-After": str(wait)},
+        )
 
-    async def dispatch(self, request, call_next):
-        if request.url.path == "/health":
-            return await call_next(request)
+    def _refusal_group(self, client_ip: str, reason: str | None = None) -> str:
+        """Which stats.REFUSAL_GROUPS group a refused address counts under: platform_ranges for an
+        AI platform's address (PLATFORM_RATE_LIMIT), everyone_else for the rest; server_busy for
+        database pressure and too_many_clients for a full address table, regardless of address."""
+        if reason in ("server_busy", "too_many_clients"):
+            return reason
+        return "platform_ranges" if self._is_platform(client_ip) else "everyone_else"
 
+    def _count_refusal(self, client_ip: str, reason: str | None = None) -> None:
+        """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused log line, or for
+        too_many_clients, the once-a-minute warning (those addresses are new, so a tally of them
+        says nothing). Counting never breaks the reply."""
+        try:
+            stats.usage.record_refusal(self._refusal_group(client_ip, reason))
+        except Exception:
+            logger.exception("Usage stats: couldn't count a rate-limit refusal")
+        try:
+            if reason == "too_many_clients":
+                self._warn_too_many_clients()
+            else:
+                tally = _busy_refused_callers if reason == "server_busy" else _refused_callers
+                tally.record(self._limit_key(client_ip))
+        except Exception:
+            logger.exception("Couldn't note a rate-limit refusal for the log")
+
+    def _warn_too_many_clients(self) -> None:
+        """A warning for the first too_many_clients refusal and then at most once a minute while
+        they go on, with the number since the last one."""
+        now = self._now()
+        self._too_many_refused += 1
+        if now - self._too_many_warned_at >= RATE_LIMIT_WINDOW:
+            logger.warning(f"Per-IP rate limit: tracking {len(self.request_counts):,} addresses "
+                           f"(MAX_TRACKED_IPS {self.MAX_TRACKED_IPS:,}), so new addresses are refused "
+                           f"(too_many_clients): {self._too_many_refused:,} refused since the last warning")
+            self._too_many_warned_at, self._too_many_refused = now, 0
+
+    def _busy_refusal(self, client_ip: str, wait: int) -> JSONResponse:
+        """The server_busy 429. The request was already charged to the address's allowance (like an
+        answered request, so a flood during an overload also meets the per-IP limit)."""
+        self._count_refusal(client_ip, "server_busy")
+        return self._refusal(_Allowance(self._limit_for(client_ip), 0, wait, self._wall(), "server_busy"))
+
+    async def _peek_body(self, receive, deadline: float | None, headers: dict[str, str]) -> bytes | Response | None:
+        """The request's whole body, or the reply that ends it here (with headers, the address's
+        X-RateLimit-* headers, since it was charged): 413 past MAX_REQUEST_BODY_BYTES (Content-Length
+        may be absent or false, so the actual bytes are counted; the outer body-size guard rejects
+        oversized declared lengths before this read), an empty 400 when the client disconnects
+        (nobody reads it and the server drops it, but the middleware above expects a response), or
+        None when it hasn't all arrived within deadline seconds (None: no deadline)."""
+        body = bytearray()
+        try:
+            async with asyncio.timeout(deadline):
+                while True:
+                    message = await receive()
+                    if message["type"] == "http.disconnect":
+                        return Response(status_code=400, headers=headers)
+                    chunk = message.get("body", b"")
+                    if len(body) + len(chunk) > MAX_REQUEST_BODY_BYTES:
+                        return JSONResponse({"error": "Request body too large"}, status_code=413, headers=headers)
+                    body.extend(chunk)
+                    if not message.get("more_body", False):
+                        return bytes(body)
+        except TimeoutError:
+            return None
+
+    @staticmethod
+    def _replay(body: bytes, receive):
+        """receive() for the SDK: the body read once, then the client's own messages (disconnect)."""
+        replay: bytes | None = body
+
+        async def receive_body():
+            nonlocal replay
+            if replay is not None:
+                message = {"type": "http.request", "body": replay, "more_body": False}
+                replay = None
+                return message
+            return await receive()
+
+        return receive_body
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        request = Request(scope)
         client_ip = self._get_client_ip(request)
-        if self._check_rate_limit(client_ip):
-            return JSONResponse(
-                status_code=429,
-                content={"error": "Rate limit exceeded", "retry_after": 60},
-                headers={"Retry-After": "60"},
-            )
-        return await call_next(request)
+        reservation: Reservation | None = None
+        if request.url.path == "/health":  # not limited or counted
+            allowance = self._allowance(client_ip, count=False)
+        else:
+            # Charged before any body is read: an exhausted address is refused without reading it,
+            # and one address's concurrent bodies are bounded by its allowance
+            allowance = self._allowance(client_ip)
+            if allowance.refused:
+                self._count_refusal(client_ip, allowance.refused)
+                return await self._refusal(allowance, shared=self._is_platform(client_ip))(scope, receive, send)
+            # /mcp/stats is limited per address like other requests; only POST /mcp can be busy
+            if request.method == "POST" and request.url.path in ("/mcp", "/mcp/"):
+                pressured = bool(self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait))
+                body = await self._peek_body(receive, self.busy_body_timeout if pressured else None,
+                                             self._headers(allowance))
+                if body is None:  # too slow while the server is overloaded: refused as busy
+                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait) or 2
+                    return await self._busy_refusal(client_ip, wait)(scope, receive, send)
+                if isinstance(body, Response):  # 413, or the client left
+                    return await body(scope, receive, send)
+                # Replayed once to the SDK, which still validates JSON-RPC
+                receive = self._replay(body, receive)
+                try:
+                    payload = json.loads(body)
+                except (ValueError, RecursionError):
+                    payload = None
+                # Notifications (no id), cheap methods and invalid/batch payloads go to the SDK.
+                if isinstance(payload, dict) and payload.get("method") == "tools/call" and "id" in payload:
+                    wait = self.pressure.retry_after(self.busy_max_waiting, self.busy_max_wait)
+                    if wait:
+                        return await self._busy_refusal(client_ip, wait)(scope, receive, send)
+                    # Counted as demand until the tool starts (AdmittedCallMiddleware) or the request ends
+                    reservation = self.pressure.reserve()
+
+        async def send_headers(message):
+            if message["type"] == "http.response.start":
+                message = {**message, "headers": [*message.get("headers", ()),
+                           *((name.lower().encode("latin-1"), value.encode("latin-1"))
+                             for name, value in self._headers(allowance).items())]}
+            await send(message)
+
+        if reservation is None:
+            return await self.app(scope, receive, send_headers)
+        token = _admitted_call.set(reservation)
+        try:
+            await self.app(scope, receive, send_headers)
+        finally:
+            reservation.release()
+            _admitted_call.reset(token)
 
 
 def _client_ip(request) -> str:
@@ -532,15 +1020,81 @@ def _caller_ip() -> str | None:
         return None
 
 
+def _encodable(text: str) -> bool:
+    """Whether the text can be sent as UTF-8 (no unpaired surrogate)."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def _sendable(value: Any) -> Any:
+    """value with any text that can't be sent as UTF-8 written as its escapes ("\\ud800"), in dict
+    keys and values and list items too: a reply holding a lone surrogate can't be serialised."""
+    if isinstance(value, str):
+        return value if _encodable(value) else value.encode("utf-8", "backslashreplace").decode("utf-8")
+    if isinstance(value, dict):
+        return {_sendable(key): _sendable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sendable(item) for item in value]
+    return value
+
+
+class _UnencodableArgument(ValueError):
+    """A JSON-string argument holds text that can't be encoded as UTF-8 (an unpaired surrogate)."""
+
+
+def _unencodable_text(value: Any) -> str | None:
+    """The first string in value, at any depth (dict keys too), that can't be encoded as UTF-8."""
+    stack = [value]
+    while stack:  # not recursive: json.loads nests as deep as Python's limit allows
+        item = stack.pop()
+        if isinstance(item, str):
+            if not _encodable(item):
+                return item
+        elif isinstance(item, dict):
+            stack.extend(item.keys())
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return None
+
+
+def _loads_argument(text: str, check_text: bool = True) -> Any:
+    """json.loads of a JSON-string tool argument: every tool reads them through this. It's the one
+    way text that can't be encoded as UTF-8 gets in: the MCP layer refuses a lone surrogate in the
+    request itself, but json.loads turns an escaped one ("\\ud800" inside the string) into one,
+    which SQLite and the reply's serialisation then fail on. Raises json.JSONDecodeError for
+    invalid JSON, including what json.loads raises otherwise (both failed the call): RecursionError
+    for nesting past Python's limit, and a plain ValueError for an integer over Python's digit limit
+    (sys.get_int_max_str_digits, 4,300). With check_text, raises _UnencodableArgument when any
+    string in it can't be encoded, which shows that string escaped, never raw. Without check_text
+    the caller checks each string itself (jlc_get_parts and part_lifecycle make it that row's
+    error)."""
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError:
+        raise
+    except (RecursionError, ValueError) as exc:
+        reason = "nested too deeply" if isinstance(exc, RecursionError) else "a number too long"
+        raise json.JSONDecodeError(reason, text[:100], 0) from exc
+    if check_text and (bad := _unencodable_text(value)) is not None:
+        raise _UnencodableArgument(f"'{_sendable(bad[:60])}' holds an unpaired surrogate escape (\\ud800 to "
+                                   "\\udfff without its pair), which isn't text")
+    return value
+
+
 # Helpers to handle JSON string arrays from MCP clients
 def _parse_list_param(value: list[str] | str | None, *, allow_blank: bool = False) -> list[str] | None:
-    """Accept a list, JSON array, or one literal value; never discard an element."""
+    """Accept a list, JSON array, or one literal value; never discard an element. Text that can't be
+    encoded as UTF-8 raises _UnencodableArgument (a ValueError), like any other bad value."""
     if value is None:
         return None
     if isinstance(value, str):
         if value.lstrip().startswith(("[", "{", '"')):
             try:
-                value = json.loads(value)
+                value = _loads_argument(value)
             except json.JSONDecodeError as exc:
                 raise ValueError("expected a string or JSON array of strings") from exc
         else:
@@ -771,7 +1325,7 @@ def _parse_spec_filters(filters: list[dict[str, Any]] | str | None) -> list[Spec
         return None
     if isinstance(filters, str):
         try:
-            filters = json.loads(filters)
+            filters = _loads_argument(filters)  # unencodable text: _UnencodableArgument, a ValueError
         except json.JSONDecodeError as exc:
             raise ValueError("expected a JSON array of {name, op, value} objects") from exc
     if not isinstance(filters, list):
@@ -1846,7 +2400,8 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
     """Recorded low-stock events, newest first: one code gets at most 100; a list gives one reply
     with a per-part summary and the newest 10 events each, notes once. more_events flags more.
     Gone is missing from a scrape, not a confirmed stockout; suspect gaps are labelled.
-    Includes the window, recording limits and current_stock from the catalog snapshot.
+    Includes the window, recording limits and current_stock from the catalog snapshot (null, with
+    gone_since, for a part that left it).
 
     Args:
         lcsc: One LCSC C-code (e.g. C8314) or a list of up to 50; ignores case and surrounding
@@ -1875,10 +2430,12 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
             return {"error": "Stock history is not available on this server"}
         db = get_db()
         stock = db.get_by_lcsc_batch(valid_codes)
+        missing = [code for code in valid_codes if not stock.get(code)]
+        gone = db.get_sold_out_rows(missing) if missing else {}
         histories = {part["lcsc"]: part for part in result["parts"]}
         result["parts"] = [
-            {"lcsc": code, "current_stock": stock[code]["stock"] if stock.get(code) else None,
-             **histories[code]} if code in histories else {"lcsc": code, **invalid_code}
+            {"lcsc": code, **_current_stock(stock.get(code), gone.get(code)), **histories[code]}
+            if code in histories else {"lcsc": code, **invalid_code}
             for code in codes
         ]
         result["current_stock_as_of"] = db.scraped_at()
@@ -1895,9 +2452,19 @@ def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le
         return {"error": "Stock history is not available on this server"}
     db = get_db()
     part = db.get_by_lcsc(lcsc)
-    result["current_stock"] = part["stock"] if part else None
+    result.update(_current_stock(part, None if part else db.get_sold_out_rows([lcsc]).get(lcsc)))
     result["current_stock_as_of"] = db.scraped_at()
     return result
+
+
+def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> dict[str, Any]:
+    """jlc_stock_history's current_stock: the snapshot's stock, else None, with gone_since for a part
+    kept after it left the snapshot (its stock unknown: under 10, or no longer listed)."""
+    if part:
+        return {"current_stock": part["stock"]}
+    if gone:
+        return {"current_stock": None, "gone_since": gone["gone_since"]}
+    return {"current_stock": None}
 
 
 @mcp.tool(
@@ -1925,22 +2492,27 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB availability;
     lcsc_url is the LCSC product page; pcba_type is "economic" or
     "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
-    assembly). No lifecycle status (NRND, obsolete): JLCPCB doesn't list it; mouser_get_part and
-    digikey_get_part return lifecycle (Mouser's is null where it states none). jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
-    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results and total. Non-exact replies
+    assembly). No lifecycle status: part_lifecycle gives it from Mouser and DigiKey.
+    jlc_get_pinout(lcsc, footprint=true) gives the footprint's pads.
+    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results, total,
+    exact (the number itself matched) and ambiguous (several parts match). Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn where
     applicable, and a note naming the part types for related full-text results (and parts another
     manufacturer numbered after the original). An LCSC code given as mpn finds that part
     (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
-    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; its prices are
-    refreshed weekly (prices_as_of).
+    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price is refreshed
+    weekly (prices_as_of), prices' tiers daily (price_tiers_as_of; null: the 1-piece price only).
+    Many parts at once: jlc_get_parts.
     Rows carry data_source (kind/provider/observed_at); cached live observations retain their timestamp.
     MPN misses describe snapshot scope, availability outside it is unknown, and next_call offers an explicit
-    jlc_stock_check with min_stock=0 without executing it.
+    jlc_stock_check with min_stock=0 without executing it. Parts that left the snapshot (stock under 10 or
+    delisted) answer when no in-stock part matches but by full text or as another maker's spelling
+    (listed after them): gone, gone_since, last_stock and stock null (unknown), with hint and
+    next_call; otherwise gone_matches counts them.
 
     Args:
         lcsc: LCSC part code (e.g., "C82899")
-        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10). Also
+        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10), then gone ones. Also
             finds other dash/space spellings, the same manufacturer's other packing codes, and BOM
             entries with notes or alternatives; never a different grade. Finds the JLCPCB
             equivalent of a part from another distributor or a reference design.
@@ -1952,9 +2524,24 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     if mpn and not lcsc:
         if len(mpn) > 100:
             return {"error": "MPN too long (max 100 characters)"}
+        if _has_control_characters(mpn):  # a NUL broke the full-text query (an exception, not a reply)
+            return dict(_CONTROL_CHARACTERS)
         db = get_db()
         match_info: dict[str, Any] = {}
-        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info)
+        results = await run_db(COMPONENT_POOL, db.get_by_mpn, mpn, match_info=match_info, with_prices=True)
+        gone_info: dict[str, Any] = {}
+        gone = await run_db(COMPONENT_POOL, db.get_sold_out_by_mpn, mpn, match_info=gone_info, with_prices=True)
+        kind, listed, info, matched = _mpn_answer(mpn, results, match_info, gone, gone_info)
+        if kind == "gone":
+            # The part asked for left the snapshot: answer from what the catalog had, pointing to the live check
+            reply = {"mpn": mpn, "data_as_of": db.scraped_at(), "prices_as_of": db.prices_as_of(),
+                     "price_tiers_as_of": db.price_tiers_as_of(), "total": len(listed),
+                     **_match_flags(matched, info), "results": listed, **_public(info)}
+            if note := _subcategory_note(listed):
+                reply["note"] = " ".join(filter(None, [reply.get("note"), note]))
+            reply["hint"] = _GONE_HINT
+            reply["next_call"] = {"tool": "jlc_stock_check", "arguments": {"query": mpn, "min_stock": 0, "limit": 10}}
+            return reply
         if not results:
             if is_placeholder_mpn(mpn):
                 hint = (f"'{mpn.strip()}' is a BOM placeholder (part not fitted or not chosen), not a "
@@ -1976,12 +2563,16 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
             "mpn": mpn,
             "data_as_of": db.scraped_at(),
             "prices_as_of": db.prices_as_of(),
+            "price_tiers_as_of": db.price_tiers_as_of(),
             "total": len(results),
+            **_match_flags(results, match_info),
             "results": results,
-            **match_info,
+            **_public(match_info),
         }
-        if note := _subcategory_note(results):
-            reply["note"] = note
+        if note := _subcategory_note(results):  # after the match's own note (related parts), never instead
+            reply["note"] = " ".join(filter(None, [reply.get("note"), note]))
+        if gone:  # gone parts numbered so too: counted only, the reply is about the parts in stock
+            reply["gone_matches"] = len(gone)
         return reply
 
     # LCSC lookup via live API (existing behavior)
@@ -1998,6 +2589,271 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None) -> dict:
     if note := _subcategory_note([result]):
         result = {**result, "note": note}
     return result
+
+
+# What a gone row is, once per jlc_get_part(mpn) or jlc_get_parts reply that has one
+_GONE_HINT = ("gone parts left the daily snapshot (stock >= 10) on gone_since: their stock fell under 10 or JLCPCB "
+              "stopped listing them, so stock is null (unknown); last_stock is from the last scrape that listed "
+              "them, and price the last 1-piece price the snapshot had for them (refreshed weekly). "
+              "jlc_get_part(lcsc=...) checks one live.")
+
+
+def _public(info: dict[str, Any]) -> dict[str, Any]:
+    """Match info as a reply gives it: without get_by_mpn's private keys (db.lookup.VIA)."""
+    return {key: value for key, value in info.items() if not key.startswith("_")}
+
+
+def _mpn_answer(mpn: str, in_stock: list[dict[str, Any]], in_info: dict[str, Any], gone: list[dict[str, Any]],
+                gone_info: dict[str, Any]) -> tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    """How an MPN lookup answers, as (kind, parts listed, match info, parts that match it):
+    "found": in-stock parts match (their match info; gone ones are only counted). "gone": parts
+    numbered so left the snapshot and none in stock matches but by full text (related, or an
+    alternative the full text found), or the gone part has the number itself and the only parts in
+    stock are another maker's spelled with other separators (Molex's 2081001 gone, TE's 208100-1 in
+    stock): the gone ones first, the in-stock ones after them, which the note describes. "none": neither."""
+    full_text = in_info.get("match") == "related" or in_info.get(VIA) == "related"
+    other_makers_spelling = (in_info.get("match") == "separators" and "match" not in gone_info and not any(
+        makers_match(part.get("manufacturer"), kept.get("manufacturer")) for part in in_stock for kept in gone))
+    if in_stock and not (gone and (full_text or other_makers_spelling)):
+        return "found", in_stock, in_info, in_stock
+    if not gone:
+        return "none", [], {}, []
+    info = dict(gone_info)
+    if in_stock and full_text:
+        start = in_info["matched_mpn"] if in_info.get("match") == "alternative" else mpn.strip()
+        lead = (f"'{mpn.strip()}' itself left the snapshot (the gone parts, listed first); the parts after it "
+                f"are in stock, and their part numbers start with '{start}' or their text mentions it, so check "
+                "the package and manufacturer.")
+        info["note"] = " ".join(filter(None, [info.get("note"), related_note(in_stock, lead)]))
+    elif in_stock:
+        makers = ", ".join(dict.fromkeys(part["manufacturer"] or "an unnamed maker" for part in in_stock[:3]))
+        info["note"] = " ".join(filter(None, [info.get("note"), (
+            f"'{mpn.strip()}' itself left the snapshot (the gone parts, listed first); the parts after it are "
+            f"in stock from another maker ({makers}), numbered the same apart from separators "
+            f"('{in_info.get('matched_mpn')}'), so check they're the same part before substituting.")]))
+    return "gone", [*gone, *in_stock], info, gone
+
+
+def _match_flags(results: list[dict[str, Any]], match_info: dict[str, Any]) -> dict[str, bool]:
+    """An MPN lookup's exact and ambiguous. exact: the number itself matched (ignoring case), not a
+    separator, packing, alias, alternative, LCSC-code or full-text recovery (those set
+    match_info["match"]). ambiguous: several parts (LCSC codes) match, so picking one needs the
+    manufacturer or package."""
+    return {"exact": "match" not in match_info, "ambiguous": len(results) > 1}
+
+
+# Once per jlc_get_parts reply rather than on each of up to 50 rows
+_GET_PARTS_NOT_FOUND_HINT = (
+    "not_found parts aren't in the daily snapshot, which lists in-stock parts only (stock >= 10): "
+    "jlc_get_part(lcsc=...) looks a code up live, and jlc_stock_check(query=...) finds low or zero stock. "
+    "Part numbers match only as themselves (or with other separators, packing codes or aliases), never by "
+    "their text: for a value such as 10k or 100nF, jlc_search finds parts.")
+
+# The fields of each part an MPN row lists (up to 10 per line, so 50 lines stay small); a part's
+# description and category are in its LCSC code's row or jlc_get_part
+_PARTS_MATCH_KEYS = ("lcsc", "model", "manufacturer", "package", "stock", "price", "prices", "library_type",
+                     "preferred", "gone", "gone_since", "last_stock")
+
+# MPN lookups: (in-stock parts, their match info, gone parts, their match info)
+PartsLookup = tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]], dict[str, Any]]
+
+
+def _parts_lookup(db: Any, mpn: str, maker: str | None, cache: dict[tuple[str, str | None], PartsLookup]) -> PartsLookup:
+    """An MPN's sure matches for jlc_get_parts (no full-text guesses), in stock and gone, for the
+    maker given (None: any), each (number, maker) looked up once a call. The maker narrows every
+    match step, so another maker's exact number doesn't hide this maker's other spelling."""
+    key = (mpn, maker.casefold() if maker else None)
+    if key not in cache:
+        keep = (lambda name: makers_match(name, maker)) if maker else None
+        info: dict[str, Any] = {}
+        gone_info: dict[str, Any] = {}
+        found = db.get_by_mpn(mpn, match_info=info, full_text=False, maker=keep)
+        gone = db.get_sold_out_by_mpn(mpn, match_info=gone_info, maker=keep)
+        cache[key] = (found, info, gone, gone_info)
+    return cache[key]
+
+
+def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]],
+                       everyone: list[dict[str, Any]] | None, gone: list[dict[str, Any]],
+                       rows: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """An MPN's jlc_get_parts row, shaped like jlc_get_part(mpn)'s reply. answer is _mpn_answer's for
+    the maker given (if any): the first GET_PARTS_MAX_MATCHES listed are shown, with
+    _PARTS_MATCH_KEYS only, and total counts all. everyone: the in-stock parts of every maker, when
+    the maker given has none in stock (their makers are other_manufacturers); gone the gone matches
+    (counted in gone_matches when in-stock parts answer)."""
+    kind, listed, info, matched = answer
+    row: dict[str, Any] = {"mpn": mpn, "total": len(listed)}
+    # Other makers list the number in stock
+    others = list(dict.fromkeys(p["manufacturer"] for p in everyone or []))[:GET_PARTS_MAX_MATCHES]
+    if kind == "none":
+        row.update(results=[], not_found=True)
+        if others:
+            row["other_manufacturers"] = others
+        return row
+    row.update(_match_flags(matched, info))
+    row["results"] = [{key: rows[p["lcsc"]][key] for key in _PARTS_MATCH_KEYS if key in rows[p["lcsc"]]}
+                      for p in listed[:GET_PARTS_MAX_MATCHES] if p["lcsc"] in rows]
+    row.update(_public(info))
+    if kind == "found" and gone:
+        row["gone_matches"] = len(gone)
+    elif kind == "gone" and others and len(listed) == len(matched):
+        row["other_manufacturers"] = others  # gone for the maker given; others list it in stock
+    return row
+
+
+def _code_as_mpn_note(code: str) -> str:
+    return (f"'{code}' isn't an LCSC code in the snapshot or among the parts that left it, so it was "
+            "looked up as a part number.")
+
+
+# One BOM line in jlc_get_parts / part_lifecycle: a string or an object. Validated as Any, so a bad
+# row still gets its own error, but published with typed items: some clients (Gemini) reject an
+# array whose items schema has no type, which would fail every tool in the session.
+PartsItem = Annotated[Any, WithJsonSchema({"anyOf": [{"type": "string"},
+                                                     {"type": "object", "additionalProperties": True}]})]
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Get Parts (BOM, Daily Snapshot)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+)
+@offload(COMPONENT_POOL)
+def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
+    """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot (stock
+    >= 10), database only: for BOM refreshes and checking many parts at once. For one part's live
+    stock, prices or datasheet, use jlc_get_part.
+    Reply: data_as_of, prices_as_of, price_tiers_as_of, counts (found, gone, not_found, error), hint
+    when any part is gone or not found, and results in input order, each with input. An LCSC code's
+    row has jlc_get_part's fields (prices: quantity tiers), or not_found; an MPN's row is like
+    jlc_get_part(mpn=...): mpn, total, up to 10 results, exact, ambiguous, match info, gone_matches,
+    or not_found with other_manufacturers. Gone parts (left the snapshot): stock null, gone,
+    gone_since, last_stock. MPNs never match by full text: search values with jlc_search. An
+    unusable input has error.
+
+    Args:
+        parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
+            (the maker narrows the matches; "lcsc" also works, and wins over mpn; {"mpn": "C1815"}
+            for a part number shaped like a code). A list or a JSON array string; never comma-split.
+    """
+    items: Any = parts
+    if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
+        try:
+            items = _loads_argument(items, check_text=False)  # unencodable text: that row's error
+        except json.JSONDecodeError:  # nested past Python's limit too: not a parts list either
+            return _argument_error("parts", ValueError("not a valid JSON array"),
+                                   ["LCSC code", "MPN", '{"mpn", "manufacturer"}', "list or JSON array of these"])
+    if not isinstance(items, list):
+        items = [items]
+    if not items:
+        return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
+    if error := _check_list_cap("parts", items, GET_PARTS_MAX_ITEMS):
+        return error
+
+    # Inputs read as part_lifecycle reads them; a valid LCSC code wins over an MPN given with it
+    entries = [_lifecycle_entry(item) for item in items]
+    db = get_db()
+    cache: dict[tuple[str, str | None], PartsLookup] = {}
+
+    def answer(mpn: str, maker: str | None) -> tuple[Any, ...] | None:
+        """(_mpn_answer for the maker given, its gone matches, every maker's in-stock parts when the
+        maker given has none), or None when the database failed on this number alone."""
+        try:
+            mine, mine_info, gone, gone_info = _parts_lookup(db, mpn, maker, cache)
+            result = _mpn_answer(mpn, mine, mine_info, gone, gone_info)
+            everyone = _parts_lookup(db, mpn, None, cache)[0] if maker and not mine else None
+        except sqlite3.Error:
+            logger.exception("jlc_get_parts: lookup failed for one part number")
+            return None
+        return result, gone, everyone
+
+    def rows_for(codes: list[str], gone_codes: list[str]) -> dict[str, dict[str, Any]]:
+        rows = db.get_snapshot_rows(codes) if codes else {}
+        # LCSC codes the snapshot doesn't list may be gone; one more read only when there are any
+        gone_codes = [*gone_codes, *(code for code, part in rows.items() if part is None)]
+        gone_rows = db.get_sold_out_rows(gone_codes) if gone_codes else {}
+        return {code: part for code, part in [*gone_rows.items(), *rows.items()] if part}  # never both
+
+    def listed_codes(result: tuple[Any, ...] | None, codes: list[str], gone_codes: list[str]) -> None:
+        for part in result[0][1][:GET_PARTS_MAX_MATCHES] if result else ():
+            (gone_codes if part.get("gone") else codes).append(part["lcsc"])
+
+    try:
+        answers: list[tuple[Any, ...] | None] = []  # per MPN entry: answer(); None for code entries
+        codes: list[str] = []
+        gone_codes: list[str] = []
+        for entry in entries:
+            result = None
+            if entry.error is None and entry.lcsc:
+                codes.append(entry.lcsc)
+            elif entry.error is None and entry.mpn:
+                result = answer(entry.mpn, entry.maker)
+                listed_codes(result, codes, gone_codes)
+            answers.append(result)
+        listed = rows_for(codes, gone_codes)
+        # A plain code string neither lists may be a part number (2SC945 is sold as "C945"): asked as
+        # one. A database failure on that lookup is the row's error, as for an MPN given.
+        as_mpn: dict[int, tuple[Any, ...]] = {}
+        retry_failed: set[int] = set()
+        codes, gone_codes = [], []
+        for index, entry in enumerate(entries):
+            if (entry.error is None and entry.lcsc and not entry.mpn and isinstance(entry.input, str)
+                    and entry.lcsc not in listed):
+                result = answer(entry.lcsc, None)
+                if result is None:
+                    retry_failed.add(index)
+                elif result[0][0] != "none":
+                    as_mpn[index] = result
+                    listed_codes(result, codes, gone_codes)
+        if codes or gone_codes:
+            listed.update(rows_for(codes, gone_codes))
+        data_as_of, prices_as_of, tiers_as_of = db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
+    except (OSError, sqlite3.Error):
+        logger.exception("jlc_get_parts: catalog lookup failed")
+        return {"error": "Database not available"}
+
+    # found: in the snapshot (stock >= 10); gone: answered from the parts kept after they left it
+    counts = {"found": 0, "gone": 0, "not_found": 0, "error": 0}
+    results = []
+    for index, (entry, result) in enumerate(zip(entries, answers)):
+        row: dict[str, Any] = {"input": entry.input}
+        if index in as_mpn:
+            result = as_mpn[index]
+            row.update(_get_parts_mpn_row(entry.lcsc, result[0], result[2], result[1], listed))
+            row["note"] = " ".join(filter(None, [row.get("note"), _code_as_mpn_note(entry.lcsc)]))
+            counts[result[0][0]] += 1
+        elif entry.error is not None:
+            # not_sent (a placeholder's) is part_lifecycle's: no distributor request is made here
+            row.update((key, value) for key, value in entry.error.items() if key != "not_sent")
+            counts["error"] += 1
+        elif index in retry_failed:
+            row["error"] = "Database not available"
+            counts["error"] += 1
+        elif entry.lcsc:
+            part = listed.get(entry.lcsc)
+            row.update(part or {"lcsc": entry.lcsc, "not_found": True})
+            counts["not_found" if not part else "gone" if part.get("gone") else "found"] += 1
+        elif result is None:  # the database failed on this number; the others are answered
+            row["error"] = "Database not available"
+            counts["error"] += 1
+        else:
+            (kind, *_), gone, everyone = result
+            row.update(_get_parts_mpn_row(entry.mpn, result[0], everyone, gone, listed))
+            counts["not_found" if kind == "none" else kind] += 1
+        results.append(row)
+    reply: dict[str, Any] = {"data_as_of": data_as_of, "prices_as_of": prices_as_of,
+                             "price_tiers_as_of": tiers_as_of, "total": len(results),
+                             "counts": counts, "results": results}
+    hints = [_GONE_HINT] if counts["gone"] else []
+    if counts["not_found"]:
+        hints.append(_GET_PARTS_NOT_FOUND_HINT)
+    if hints:
+        reply["hint"] = " ".join(hints)
+    return reply
 
 
 def _datasheet_link_base() -> str | None:
@@ -2080,10 +2936,13 @@ async def jlc_find_alternatives(
     library_type="no_fee" with no basic/preferred match names the best extended ones in
     summary.extended_examples. Listed parts carry has_easyeda_footprint where it's already known (no
     extra request), and pcba_type ("economic" or "standard_only"). Lifecycle (NRND) isn't checked:
-    mouser_get_part or digikey_get_part has it.
+    part_lifecycle has it.
     Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
     that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
     assembly_service_assumption), not a current quote; Standard service differs.
+    savings.order_total prices component_quantity (boards * placements) at each part's price break
+    for that quantity (savings.price_basis, savings.price_tiers_as_of; the *_at_quantity fields give
+    the prices used); unit_price_diff and the ranking use qty-1 prices.
     summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
     library/package eligibility, footprint and land-check outcomes/cap omissions and per-list output truncation.
     Connector alternatives list "land pattern and pin 1 position" as unchecked: makers' footprints for
@@ -2100,8 +2959,8 @@ async def jlc_find_alternatives(
             eligible candidates; extended fallback examples use only the remaining budget.
             Leaves out unknowns; summary.footprint_filter describes limits and lookup failures.
         limit: Max entries per verified/unverified list (max 50)
-        board_quantity: Number of boards for project savings (default 1)
-        placements_per_board: Original part placements per board (default 1)
+        board_quantity: Number of boards for project savings (default 1, max 1,000,000)
+        placements_per_board: Original part placements per board (default 1, max 1,000,000)
         land_compatible: True for a board whose copper is already made: compares the top 30
             candidates' EasyEDA footprint pads with the original's and adds land (fits, turn,
             max_offset_mm, renumbered); parts that fit as drawn with the same pad numbers come first.
@@ -2313,10 +3172,11 @@ async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footp
 
 
 def _redact(message: str, *secrets: str) -> str:
-    """Distributor error text goes back to anonymous callers: blank out our credentials in case the
-    API ever echoes them."""
-    for secret in sorted(set(secrets) | {DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
-                                        DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2}, key=len, reverse=True):
+    """Distributor error text goes back to anonymous callers: blank out our credentials (every
+    Mouser key and DigiKey app) in case the API ever echoes them."""
+    credentials = {MOUSER_API_KEY, *MOUSER_EXTRA_API_KEYS,
+                   DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2}
+    for secret in sorted(set(secrets) | credentials, key=len, reverse=True):
         if secret:
             message = message.replace(secret, "[redacted]")
     return message
@@ -2332,20 +3192,26 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts. Use only when the user wants Mouser data;
-    find parts with jlc_search first. Shared daily limit: batch up to 10 parts per call (one
-    request). Don't retry a quota error.
-    Reply: lifecycle is Mouser's status where it states one (Not Recommended for New Designs, End of
-    Life, Obsolete, Discontinued), else null: Mouser states none for most parts, including some the
-    maker marks NRND (AP2553W6-7). digikey_get_part's lifecycle is DigiKey's product status (it
-    listed AP2553W6-7 as NRND); the maker's site decides.
-    not_found lists the given numbers no result matches (Mouser skips them without saying).
-    A number can match another maker's part (Mouser's SRV05-4 is onsemi's): check manufacturer.
+    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out: use
+    it only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
+    Mouser; for lifecycle use part_lifecycle. Batch up to 10 parts per call. Don't retry a quota
+    error.
+    Reply: answers are kept up to 3 days (not found: a day); observed_at is the oldest used.
+    lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
+    including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
+    NRND); lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown (null is active).
+    not_found lists the given numbers no result matches, and those not sent (not_sent gives each
+    reason: value such as "10k", lcsc_code, placeholder, not_ascii; no request spent). A spent limit
+    with some numbers kept: those answer, not_checked lists the rest, retry_after says when to ask.
+    lookup_failed: numbers Mouser gave an error for. Each result's requested is the number it
+    answers, matched_by how: exact, separators, packing (JST's (LF)/(SN) endings set aside) or
+    mouser_pn are that part; prefix and other need checking. Check manufacturer too (Mouser's
+    SRV05-4 is onsemi's).
 
     Args:
         part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
-            3-40 chars each. Loose match, max 50 results per call: use full PNs when batching;
-            match results by mfr_part_number.
+            3-40 chars each. Loose match, max 50 results per request: use full PNs when batching;
+            match results by requested and matched_by.
     """
     if not _mouser_client:
         return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
@@ -2355,11 +3221,11 @@ async def mouser_get_part(part_number: str) -> dict:
     try:
         return await _mouser_client.get_part(part_number, caller=_caller_ip())
     except (MouserError, MouserAPIError) as e:  # our own message or Mouser's
-        message = _redact(str(e), MOUSER_API_KEY)  # in the log as in the reply
+        message = _redact(str(e))  # every key, in the log as in the reply
         logger.error(f"Mouser part lookup failed: {type(e).__name__}: {message}")
         return {"error": f"Mouser part lookup failed: {message}"}
     except Exception as e:
-        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {_redact(str(e), MOUSER_API_KEY)}")
+        logger.error(f"Mouser part lookup failed: {type(e).__name__}: {_redact(str(e))}")
         return {"error": "Mouser part lookup failed. Check server logs for details."}
 
 
@@ -2373,13 +3239,19 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(product_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part. Use only when the user wants DigiKey data;
-    find parts with jlc_search first. Shared daily limit, one part per call: don't check whole
-    BOMs. Don't retry a quota error.
+    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out: use it
+    only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
+    DigiKey; one part per call, not whole BOMs; for lifecycle use part_lifecycle. Don't retry a
+    quota error.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
-    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status.
-    A number several makers use returns each maker's listing, most stock first.
+    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
+    lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date where given.
+    Answers are kept up to 3 days (not found: a day; observed_at). A number several makers use
+    returns each maker's listing, most stock first. requested is the number asked, matched_by how:
+    exact, separators, packing (JST's (LF)/(SN) endings set aside) or digikey_pn are that part;
+    prefix and other need checking. A number that can't be a DigiKey part number isn't sent
+    (not_sent, as in mouser_get_part, plus length: not 3-40 characters).
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
@@ -2399,6 +3271,183 @@ async def digikey_get_part(product_number: str) -> dict:
     except Exception as e:
         logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {_redact(str(e))}")
         return {"error": "DigiKey part lookup failed. Check server logs for details."}
+
+
+# A NUL broke jlc_get_parts' whole batch (SQLite's full-text query); tabs and line breaks inside
+# a number are pasting accidents, not part numbers
+_CONTROL_CHARACTERS = {"error": "Invalid part: control characters (a NUL, tab or line break) can't be in a part "
+                                 "number, maker or LCSC code"}
+# An escaped lone surrogate ("\ud800") in a JSON array string becomes text that can't be encoded:
+# SQLite raised UnicodeEncodeError and failed jlc_get_parts' whole batch
+_UNENCODABLE = {"error": "Invalid part: unpaired surrogate escapes (such as \\ud800) aren't text and can't be in a "
+                         "part number, maker or LCSC code"}
+_ECHO_MAX = 100  # characters of an input echoed back (part_lifecycle and jlc_get_parts' input)
+
+
+def _has_control_characters(text: str) -> bool:
+    return any(unicodedata.category(c) == "Cc" for c in text)
+
+
+def _echo_input(item: Any) -> Any:
+    """An input as a reply's input echoes it: as given, except a string over 100 characters (its
+    first 100 and "...") or anything else whose JSON is over 200 (the first 100 characters of that
+    JSON and "...", as text), so a long or deeply nested input isn't sent back whole; text that
+    can't be sent as UTF-8 (a lone surrogate) is written as its escapes."""
+    if isinstance(item, str):
+        return _sendable(item if len(item) <= _ECHO_MAX else item[:_ECHO_MAX] + "...")
+    try:
+        text = json.dumps(item, ensure_ascii=False)
+    except (TypeError, ValueError, RecursionError):
+        return "..."
+    return _sendable(item if len(text) <= 2 * _ECHO_MAX else text[:_ECHO_MAX] + "...")
+
+
+def _entry_problem(mpn: str | None, maker: str | None) -> dict[str, Any] | None:
+    """Why an input's MPN or maker can't be looked up (the first problem found), or None."""
+    if mpn and len(mpn) > 100:
+        return {"error": "MPN too long (max 100 characters)"}
+    if maker and len(maker) > 100:
+        return {"error": "Manufacturer too long (max 100 characters)"}
+    if any(value and not _encodable(value) for value in (mpn, maker)):
+        return dict(_UNENCODABLE)
+    if any(value and _has_control_characters(value) for value in (mpn, maker)):
+        return dict(_CONTROL_CHARACTERS)
+    if mpn and is_placeholder_mpn(mpn):
+        return {"error": f"Invalid part: '{mpn}' is a BOM placeholder (not fitted or not chosen), not a part number",
+                "not_sent": "placeholder"}
+    return None
+
+
+def _lifecycle_entry(item: Any) -> Entry:
+    """One part_lifecycle or jlc_get_parts input as an Entry (input: _echo_input's), with its error
+    if it can't be looked up. A malformed lcsc beside an MPN (a BOM's "N/A" in its LCSC column) is
+    set aside, and the MPN looked up. Beside a valid LCSC code, which wins over the MPN in
+    jlc_get_parts and supplies what isn't given in part_lifecycle, an MPN or maker that can't be
+    looked up (a BOM's "N/A" in its MPN column, over 100 characters, control characters) is set
+    aside the same way, not the row's error."""
+    echo = _echo_input(item)
+    if isinstance(item, str):
+        text = item.strip()
+        fields = (None, None, text) if re.fullmatch(r"[Cc][0-9]{1,12}", text) else (text, None, None)
+    elif isinstance(item, dict) and all(isinstance(item.get(k), (str, type(None))) for k in ("mpn", "manufacturer", "lcsc")):
+        fields = (item.get("mpn"), item.get("manufacturer"), item.get("lcsc"))
+    else:
+        return Entry(echo, error={"error": 'Invalid part: give an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'})
+    mpn, maker, lcsc = ((value or "").strip() or None for value in fields)
+    if lcsc and not re.fullmatch(r"C[0-9]{1,12}", lcsc.upper()):
+        if not mpn:
+            return Entry(echo, error={"error": "lcsc must be an LCSC C-code (e.g., C6186), or give mpn instead"})
+        lcsc = None
+    if not mpn and not lcsc:
+        return Entry(echo, error={"error": "Give a part number or an LCSC code"})
+    if lcsc:
+        mpn = None if _entry_problem(mpn, None) else mpn
+        maker = None if _entry_problem(None, maker) else maker
+    elif problem := _entry_problem(mpn, maker):
+        return Entry(echo, error=problem)
+    return Entry(echo, mpn=mpn, maker=maker, lcsc=lcsc.upper() if lcsc else None)
+
+
+def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
+    """part_lifecycle's MPN and maker for LCSC codes: the snapshot's part, or for a code it no longer
+    lists, the part kept after it left (gone); None for a code neither has."""
+    db = get_db()
+    parts = db.get_by_lcsc_batch(codes)
+    if missing := [code for code in codes if not parts.get(code)]:
+        gone = db.get_sold_out_rows(missing)
+        parts.update((code, gone[code]) for code in missing if gone.get(code))
+    return parts
+
+
+@mcp.tool(
+    annotations=ToolAnnotations(
+        title="Part Lifecycle (BOM)",
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+)
+async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
+    """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
+    last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
+    digikey_get_part for lifecycle. Readings are shared and kept up to 90 days; other parts are
+    asked of Mouser, and of DigiKey only when Mouser doesn't list them or its daily limit is spent.
+    Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
+    "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
+    last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
+    until a limit allows the lookup), lookup_failed, not_sent (never sent: value such as "10k",
+    lcsc_code, placeholder, length, not_ascii), error (unusable input), or makers (each maker's
+    reading, when several list the number and none was given, or only other makers do).
+    status_counts counts the statuses.
+
+    Args:
+        parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
+            catalog snapshot, parts that left it included) or {"mpn", "manufacturer"} (the maker picks among parts sharing a
+            number; "lcsc" also works). A list or a JSON array string.
+    """
+    if not _mouser_client and not _digikey_client:
+        return {"error": "Mouser API key not configured, nor DigiKey API credentials. Set MOUSER_API_KEY, "
+                         "or DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET, in environment."}
+    items: Any = parts
+    if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
+        try:
+            items = _loads_argument(items, check_text=False)  # unencodable text: that row's error
+        except json.JSONDecodeError:  # nested past Python's limit too: not a parts list either
+            return _argument_error("parts", ValueError("not a valid JSON array"),
+                                   ["MPN", "LCSC code", '{"mpn", "manufacturer"}', "list or JSON array of these"])
+    if not isinstance(items, list):
+        items = [items]
+    if not items:
+        return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
+    if error := _check_list_cap("parts", items, LIFECYCLE_MAX_PARTS):
+        return error
+
+    entries = [_lifecycle_entry(item) for item in items]
+    # Beside a valid code, a given MPN no distributor lists (not_sent_reason: a value such as "10k",
+    # an LCSC code, not 3-40 characters, not ASCII) or one Mouser can't take ("|", below) is set
+    # aside for the catalog's; a usable one still wins over it
+    for entry in entries:
+        if entry.error is None and entry.lcsc and entry.mpn and ("|" in entry.mpn or not_sent_reason(entry.mpn)):
+            entry.mpn = None
+    codes = list(dict.fromkeys(e.lcsc for e in entries if e.error is None and e.lcsc and not (e.mpn and e.maker)))
+    if codes:  # an LCSC code's MPN and maker from the catalog snapshot, or from a part kept after it left it
+        try:
+            catalog = await run_db(COMPONENT_POOL, _catalog_identities, codes)
+        except Exception:
+            logger.exception("part_lifecycle: catalog lookup failed")
+            catalog = None
+        for entry in entries:
+            if entry.lcsc not in codes or entry.error is not None:
+                continue
+            part = catalog.get(entry.lcsc) if catalog is not None else None
+            if catalog is None:
+                entry.error = {"error": "Database not available"}
+            elif not part:
+                if not entry.mpn:
+                    entry.error = {"error": f"Part {entry.lcsc} not found",
+                                   "hint": "The catalog snapshot lists in-stock parts (stock >= 10) and parts that "
+                                           "have left it since 2026-11-12, not this one: give its MPN and "
+                                           "manufacturer instead."}
+            else:
+                entry.mpn = entry.mpn or part.get("model") or None
+                entry.maker = entry.maker or part.get("manufacturer") or None
+                if not entry.mpn:
+                    entry.error = {"error": "Give a part number or an LCSC code"}
+
+    for entry in entries:  # Mouser's batches join numbers with "|": one holding it would be several
+        if entry.error is None and entry.mpn and "|" in entry.mpn:
+            entry.error = {"error": "Invalid part: an MPN can't contain '|' (give each part on its own)"}
+
+    store = _distributor_store or (_mouser_client or _digikey_client)._store
+    results = await LifecycleLookup(store, _mouser_client, _digikey_client).answer(entries, caller=_caller_ip())
+    counts = dict.fromkeys(STATUSES, 0)
+    for result in results:
+        counts[result["status"]] += 1
+    reply: dict[str, Any] = {"results": results, "total": len(results), "status_counts": counts}
+    if waits := [result["retry_after"] for result in results if "retry_after" in result]:
+        reply["retry_after"] = min(waits)
+    return reply
 
 
 @mcp.tool(
@@ -2545,11 +3594,13 @@ def sensor_recommend(
     # elements — they bypass Pydantic and get .lower()'d in sensor_db.search)
     if isinstance(measure, str):
         try:
-            parsed = json.loads(measure)
+            parsed = _loads_argument(measure)
             if isinstance(parsed, list):
                 measure = [m for m in parsed if isinstance(m, str)] or None
         except json.JSONDecodeError:
             pass
+        except _UnencodableArgument as exc:  # echoed by the measure error, it couldn't be sent
+            return _argument_error("measure", exc, ["string", "array of strings", "JSON array of strings"])
 
     if query and len(query) > 500:
         return {"error": "Query too long (max 500 characters)", "results": [], "total": 0}
@@ -2651,11 +3702,13 @@ def board_search(
     # Handle JSON-string tag param from some MCP clients
     if isinstance(tag, str):
         try:
-            parsed = json.loads(tag)
+            parsed = _loads_argument(tag)
             if isinstance(parsed, list):
                 tag = parsed
         except json.JSONDecodeError:
             pass
+        except _UnencodableArgument as exc:  # SQLite failed on it ("Board search failed")
+            return _argument_error("tag", exc, ["string", "array of strings", "JSON array of strings"])
 
     if isinstance(tag, str):
         tag = "usb" if tag.strip().lower() == "usb-c" else tag.strip().lower()
@@ -2794,16 +3847,44 @@ def _cse_store_counts() -> dict[str, int] | None:
     return counts
 
 
+def _distributor_store_counts() -> dict[str, Any] | None:
+    """Stored Mouser/DigiKey answers and lifecycle readings, refreshed at most every
+    HEALTH_STORE_COUNT_TTL. None before startup."""
+    global _distributor_stored
+    if _distributor_store is None:
+        return None
+    counted_at, counts = _distributor_stored
+    now = time.monotonic()
+    if now - counted_at >= HEALTH_STORE_COUNT_TTL or counts is None:
+        counts = _distributor_store.counts()
+        _distributor_stored = (now, counts)
+    return counts
+
+
 # Health check endpoint
 async def health(request):
-    return JSONResponse({
-        "status": "healthy",
+    """The server's state. 503 (status "unhealthy") while a database job has waited
+    DB_STUCK_WAIT_SECONDS to start: a worker is stuck and every tools/call is refused as busy, so
+    the container's healthcheck fails; a busy spike can't get there (the busy cap sheds new calls
+    long before)."""
+    pressure = {**database_pressure.summary(), "unhealthy_after_seconds": DB_STUCK_WAIT_SECONDS}
+    stuck = pressure["oldest_wait_seconds"] >= DB_STUCK_WAIT_SECONDS
+    reply = {
+        "status": "unhealthy" if stuck else "healthy",
         "service": "pcbparts-mcp",
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
         "cse_stored": _cse_store_counts(),
+        "distributor_stored": _distributor_store_counts(),
         "distributor_quota": {name: quota.status() for name, quota in _distributor_quotas.items()},
-    })
+        "database_pressure": pressure,
+        "platform_ranges": _platform_ranges_info,
+        "price_tiers": _price_tiers_info,
+    }
+    if stuck:
+        reply["problem"] = (f"a database job has waited {pressure['oldest_wait_seconds']:.0f} s to start "
+                            "(a stuck worker?); tool calls are refused as busy until it moves")
+    return JSONResponse(reply, status_code=503 if stuck else 200)
 
 
 async def datasheet_redirect(request):
@@ -2815,8 +3896,14 @@ async def datasheet_redirect(request):
     try:
         url = await _client.datasheet_pdf_url(lcsc)
     except DatasheetLinkBusy as e:
-        return JSONResponse({"error": str(e), "retry_after": e.retry_after}, status_code=429,
-                            headers={"Retry-After": str(e.retry_after)})
+        # The per-IP limiter's 429 fields (llms.txt), with this budget's own reason
+        wait = e.retry_after
+        seconds = f"{wait} second{'' if wait == 1 else 's'}"
+        return JSONResponse({"error": str(e), "retry_after": wait, "reason": "datasheet_rate_limit",
+                             "resets_at": _utc_iso(math.ceil(time.time() + wait)),
+                             "tell_user": f"pcbparts makes at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet "
+                                          f"links a minute for all its users; try again in {seconds}."},
+                            status_code=429, headers={"Retry-After": str(wait)})
     except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout: details stay in the log
         logger.warning(f"Datasheet link for {lcsc} failed: {e}")
         return JSONResponse({"error": "The datasheet source didn't answer; try again later"}, status_code=502)
@@ -2837,22 +3924,65 @@ async def usage_stats(request):
                         headers={"Cache-Control": "public, max-age=60"})
 
 
-class BodySizeLimitMiddleware(BaseHTTPMiddleware):
-    """Reject requests whose declared body exceeds max_bytes (memory-amplification guard).
-
-    MCP JSON-RPC calls are a few KB; the limit is far above any legitimate request.
-    Requests without a Content-Length (chunked) are passed through.
-    """
+class BodySizeLimitMiddleware:
+    """Reject request bodies over max_bytes with a 413 (memory-amplification guard): a declared
+    Content-Length before anything is read, and the bytes actually received, so a chunked body or
+    a false Content-Length can't run past it either. Past the limit the app is told the client left
+    (so it stops reading) and its reply is replaced by the 413, which keeps any X-RateLimit-*
+    headers that reply had (RateLimitMiddleware charged the request). MCP JSON-RPC calls are a few
+    KB; the limit is far above any legitimate request. Pure ASGI, so streamed replies pass straight
+    through."""
 
     def __init__(self, app, max_bytes: int = MAX_REQUEST_BODY_BYTES):
-        super().__init__(app)
+        self.app = app
         self.max_bytes = max_bytes
 
-    async def dispatch(self, request, call_next):
-        content_length = request.headers.get("content-length")
+    @staticmethod
+    def _too_large(headers: list[tuple[bytes, bytes]] = ()) -> JSONResponse:
+        response = JSONResponse({"error": "Request body too large"}, status_code=413)
+        response.raw_headers.extend(headers)
+        return response
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        content_length = Request(scope).headers.get("content-length")
         if content_length and content_length.isdigit() and int(content_length) > self.max_bytes:
-            return JSONResponse({"error": "Request body too large"}, status_code=413)
-        return await call_next(request)
+            return await self._too_large()(scope, receive, send)
+        received = 0
+        too_large = started = False
+        kept_headers: list[tuple[bytes, bytes]] = []
+
+        async def counted_receive():
+            nonlocal received, too_large
+            if too_large:
+                return {"type": "http.disconnect"}
+            message = await receive()
+            if message["type"] == "http.request":
+                received += len(message.get("body", b""))
+                if received > self.max_bytes:
+                    too_large = True
+                    return {"type": "http.disconnect"}
+            return message
+
+        async def guarded_send(message):
+            nonlocal started
+            if too_large and not started:  # the 413 replaces the app's reply to the cut-off body
+                if message["type"] == "http.response.start":
+                    kept_headers[:] = [(name, value) for name, value in message.get("headers", ())
+                                       if name.lower().startswith(b"x-ratelimit-")]
+                return
+            if message["type"] == "http.response.start":
+                started = True
+            await send(message)
+
+        try:
+            await self.app(scope, counted_receive, guarded_send)
+        except Exception:
+            if not too_large or started:
+                raise  # the app's own failure; a cut-off body's (the client "left") is answered below
+        if too_large and not started:
+            await self._too_large(kept_headers)(scope, receive, send)
 
 
 # Create ASGI app
@@ -2862,7 +3992,8 @@ def create_app():
     # FastMCP handles CORS for MCP endpoints.
     middleware = [
         Middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES),
-        Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS),
+        Middleware(RateLimitMiddleware, requests_per_minute=RATE_LIMIT_REQUESTS,
+                   platform_per_minute=PLATFORM_RATE_LIMIT),
     ]
 
     # stateless_http=True required because Claude Code doesn't forward session cookies.
@@ -2918,6 +4049,10 @@ def main():
         host=HTTP_HOST,
         port=HTTP_PORT,
         lifespan="on",
+        # uvicorn turns these on by default (trusting X-Forwarded-For from FORWARDED_ALLOW_IPS,
+        # 127.0.0.1 unless set), which would put callers' IPs on every access-log line if the proxy
+        # ever connected from there; _client_ip() reads X-Forwarded-For itself
+        proxy_headers=False,
     )
 
 

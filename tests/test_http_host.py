@@ -52,3 +52,6 @@ def test_main_binds_to_http_host(monkeypatch):
     assert len(calls) == 1
     assert calls[0]["host"] == "::1"
     assert calls[0]["port"] == server.HTTP_PORT
+    # uvicorn trusts X-Forwarded-For from 127.0.0.1 (or FORWARDED_ALLOW_IPS) by default, which would
+    # put callers' IPs in the access log (the privacy page says it sees only the proxy's address)
+    assert calls[0]["proxy_headers"] is False

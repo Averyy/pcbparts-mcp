@@ -3,12 +3,16 @@
 Only standard-library imports: the scrape workflow does not install the server.
 """
 
+import gzip
+import io
 import json
 import logging
 import math
 import re
 import shutil
-from collections.abc import Iterator
+import zlib
+from collections.abc import Iterable, Iterator
+from datetime import date, datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -16,6 +20,23 @@ MAX_FILE_BYTES = 95_000_000
 WARN_FILE_BYTES = 50_000_000
 # transform_part's order, excluding the independently stored stock and price.
 _PART_KEYS = ("l", "m", "f", "p", "t", "c", "d", "a", "x", "n")
+# Stored outside the part files: stock and price in stock.tsv/prices.tsv, the price breaks ("$t")
+# in PRICE_TIERS_FILE, which is never committed.
+_STORED_APART = ("s", "$", "$t")
+# Every part's price breaks from one scrape (scrape_components.py writes it, build_database.py loads
+# it). Not in git (.gitignore): the scrape workflow hands it to the image build as an Actions artifact.
+PRICE_TIERS_FILE = "price_tiers.tsv.gz"
+_TIERS_HEADER = "#scraped_at\t"
+# Parts that dropped out of the catalog (missing from a daily scrape, not a scrape gap), kept until a
+# scrape lists them again (scrape_components.update_sold_out writes them, build_database.py loads
+# them into the sold_out table). Committed: one file per month they went missing in (YYYY-MM.jsonl),
+# so no file nears the size limit however long they stay; each line one part as a JSON array,
+# sorted by LCSC code.
+SOLD_OUT_DIR = "sold_out"
+# A sold-out row's fields, in file order: the part file's keys (stock and 1-piece price as the last
+# scrape that listed it had them) plus "g", gone_since: the UTC date of the first scrape it was missing from
+SOLD_OUT_KEYS = ("l", "g", "s", "$", "t", "c", "m", "f", "p", "d")
+_SOLD_OUT_NAME = re.compile(r"[0-9]{4}-[0-9]{2}\.jsonl")
 
 
 def _lcsc_key(code: str) -> tuple[int | float, str]:
@@ -78,7 +99,7 @@ def write_catalog(
                     row = {key: part[key] for key in _PART_KEYS if key in part}
                     # Preserve any additional fields rather than silently losing data.
                     row.update((key, part[key]) for key in sorted(part)
-                               if key not in row and key not in ("s", "$"))
+                               if key not in row and key not in _STORED_APART)
                     stream.write(json.dumps(row, separators=(",", ":"), ensure_ascii=False) + "\n")
             _check_size(path)
 
@@ -170,7 +191,7 @@ def read_catalog(catalog_dir: Path, *, prices: bool = True) -> Iterator[tuple[st
                     code = part["l"]
                     if type(part.get("c")) is not int or part["c"] != int(path.stem):
                         raise ValueError(f"{code}: subcategory does not match filename")
-                    if "s" in part or "$" in part:
+                    if any(key in part for key in _STORED_APART):
                         raise ValueError(f"{code}: stock/price must be stored in TSV")
                     if code in seen:
                         raise ValueError(f"duplicate LCSC {code}")
@@ -187,3 +208,211 @@ def read_catalog(catalog_dir: Path, *, prices: bool = True) -> Iterator[tuple[st
         if values:
             code = next(iter(values))
             raise ValueError(f"{catalog_dir / name}: {code} has no part")
+
+
+def _tier_values(code: object, qty: object, price: object) -> tuple[int, float]:
+    if not _valid_code(code):
+        raise ValueError(f"invalid LCSC {code!r}")
+    if type(qty) is not int or qty < 1:
+        raise ValueError(f"{code}: invalid quantity {qty!r}")
+    if type(price) not in (int, float) or not math.isfinite(price) or price < 0:
+        raise ValueError(f"{code}: invalid price {price!r}")
+    return qty, float(price)
+
+
+def pack_tiers(breaks: Iterable[tuple[int, float]]) -> str:
+    """Price breaks as compact text, "1:0.0228,300:0.0176": the scraper's form in memory and the
+    database's price_tiers column. A list of pairs per part took 8 times the memory (about 600 MB
+    more for a whole scrape)."""
+    return ",".join(f"{qty}:{json.dumps(float(price))}" for qty, price in breaks)
+
+
+def unpack_tiers(text: str) -> list[tuple[int, float]]:
+    """pack_tiers' text back as [(quantity, price), ...]."""
+    breaks = []
+    for pair in text.split(","):
+        qty, _, price = pair.partition(":")
+        breaks.append((int(qty), float(price)))
+    return breaks
+
+
+def write_price_tiers(path: Path, tiers: dict[str, str], scraped_at: str) -> int:
+    """Write every part's price breaks ({LCSC: pack_tiers text}) as gzipped TSV lines of LCSC,
+    quantity and price, sorted by LCSC code and quantity, under a first line naming the scrape time
+    ("#scraped_at", tab, ISO time). Byte-identical for the same input. Returns the number of parts."""
+    datetime.fromisoformat(scraped_at)  # a ValueError here, not a file the build rejects
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("wb") as raw, gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as packed, \
+            io.TextIOWrapper(packed, encoding="utf-8", newline="\n") as stream:
+        stream.write(f"{_TIERS_HEADER}{scraped_at}\n")
+        for code in sorted(tiers, key=_lcsc_key):
+            values = [_tier_values(code, qty, price) for qty, price in unpack_tiers(tiers[code])]
+            if any(a[0] >= b[0] for a, b in zip(values, values[1:])):
+                raise ValueError(f"{code}: price break quantities must rise")
+            for qty, price in values:
+                stream.write(f"{code}\t{qty}\t{json.dumps(price)}\n")
+    return len(tiers)
+
+
+def _tier_lines(path: Path) -> Iterator[tuple[int, str]]:
+    """A price tiers file's lines; ValueError (with the line number) for broken compression."""
+    number = 0
+    try:
+        with gzip.open(path, "rb") as stream:
+            for number, raw in enumerate(stream, 1):
+                try:
+                    yield number, raw.decode("utf-8")
+                except UnicodeError as exc:
+                    raise ValueError(f"{path} line {number}: invalid UTF-8") from exc
+    except (OSError, EOFError, zlib.error) as exc:
+        raise ValueError(f"{path} after line {number}: unreadable ({exc})") from exc
+
+
+def price_tiers_scraped_at(path: Path) -> str:
+    """The scrape time on a price tiers file's first line; ValueError when it has none."""
+    try:
+        with gzip.open(path, "rb") as stream:
+            text = stream.readline(200).decode("utf-8").removesuffix("\n")
+    except (OSError, EOFError, zlib.error, UnicodeError) as exc:
+        raise ValueError(f"{path}: unreadable ({exc})") from exc
+    if text.startswith(_TIERS_HEADER):
+        scraped_at = text[len(_TIERS_HEADER):]
+        try:
+            datetime.fromisoformat(scraped_at)
+            return scraped_at
+        except ValueError:
+            pass
+    raise ValueError(f"{path}: first line must be '#scraped_at<TAB><ISO time>'")
+
+
+def read_price_tiers(path: Path) -> Iterator[tuple[str, list[tuple[int, float]]]]:
+    """Yield (LCSC, [(quantity, price), ...]) per part, as write_price_tiers wrote them. Any
+    malformed line, a part out of LCSC order or split up, or quantities not rising raises
+    ValueError with the line number, so a caller can drop the whole file rather than load part of it."""
+    code: str | None = None
+    breaks: list[tuple[int, float]] = []
+    for number, line in _tier_lines(path):
+        if number == 1:
+            if not line.startswith(_TIERS_HEADER):  # its time is read by price_tiers_scraped_at
+                raise ValueError(f"{path}: first line must be '#scraped_at<TAB><ISO time>'")
+            continue
+        try:
+            fields = line.removesuffix("\n").split("\t")
+            if len(fields) != 3 or not re.fullmatch(r"[0-9]+", fields[1]):
+                raise ValueError("expected LCSC, quantity and price")
+            qty, price = _tier_values(fields[0], int(fields[1]), json.loads(fields[2]))
+            if fields[0] != code:
+                if code is not None:
+                    if _lcsc_key(fields[0]) <= _lcsc_key(code):
+                        raise ValueError(f"{fields[0]} out of LCSC order")
+                    yield code, breaks
+                code, breaks = fields[0], []
+            elif qty <= breaks[-1][0]:
+                raise ValueError(f"{code}: quantities must rise")
+            breaks.append((qty, price))
+        except (ValueError, OverflowError) as exc:
+            raise ValueError(f"{path} line {number}: malformed price tier ({exc})") from exc
+    if code is not None:
+        yield code, breaks
+
+
+def sold_out_row(part: dict, gone_since: str) -> dict:
+    """A catalog part (read_catalog's row) as a sold-out row: what the catalog had for it, minus its
+    attributes and flags, plus gone_since ("g", an ISO date). write_catalog checks fewer types than
+    a sold-out row needs, so a value the row can't hold is made one, with a warning, rather than
+    failing every scrape until the part is listed again: text fields (model, maker, package,
+    description) that aren't strings become their text, an unknown library type "e" (extended)."""
+    row = {"l": part["l"], "g": gone_since, **{key: part.get(key) for key in SOLD_OUT_KEYS[2:]}}
+    for key in ("m", "f", "p", "d"):
+        if row[key] is not None and not isinstance(row[key], str):
+            logger.warning("Sold-out part %s: %r %r stored as text", row["l"], key, row[key])
+            row[key] = json.dumps(row[key], ensure_ascii=False) if isinstance(row[key], (dict, list)) else str(row[key])
+    if row["t"] not in (None, "b", "p", "e"):
+        logger.warning("Sold-out part %s: library type %r stored as extended", row["l"], row["t"])
+        row["t"] = "e"
+    return row
+
+
+def _check_sold_out_row(row: object) -> dict:
+    """The row as a dict of SOLD_OUT_KEYS, or ValueError naming what's wrong with it."""
+    if isinstance(row, list):
+        if len(row) != len(SOLD_OUT_KEYS):
+            raise ValueError(f"expected {len(SOLD_OUT_KEYS)} fields")
+        row = dict(zip(SOLD_OUT_KEYS, row))
+    if not isinstance(row, dict) or not _valid_code(row.get("l")):
+        raise ValueError("a sold-out part needs an LCSC code")
+    code, gone = row["l"], row.get("g")
+    try:
+        if not (isinstance(gone, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", gone)):
+            raise ValueError
+        date.fromisoformat(gone)
+    except ValueError:
+        raise ValueError(f"{code}: gone_since must be an ISO date, not {gone!r}") from None
+    if row.get("s") is not None and type(row["s"]) is not int:
+        raise ValueError(f"{code}: invalid stock {row['s']!r}")
+    price = row.get("$")
+    if price is not None and (type(price) not in (int, float) or not math.isfinite(price)):
+        raise ValueError(f"{code}: invalid price {price!r}")
+    if row.get("t") not in (None, "b", "p", "e"):
+        raise ValueError(f"{code}: invalid library type {row['t']!r}")
+    if type(row.get("c")) is not int or row["c"] < 0:
+        raise ValueError(f"{code}: invalid subcategory {row.get('c')!r}")
+    for key in ("m", "f", "p", "d"):
+        if row.get(key) is not None and not isinstance(row[key], str):
+            raise ValueError(f"{code}: invalid {key!r} {row[key]!r}")
+    return {key: row.get(key) for key in SOLD_OUT_KEYS}
+
+
+def write_sold_out(catalog_dir: Path, rows: dict[str, dict]) -> dict[str, int]:
+    """Replace catalog_dir/SOLD_OUT_DIR with these rows ({LCSC: sold_out_row}): one YYYY-MM.jsonl per
+    month of gone_since, each part a JSON array in SOLD_OUT_KEYS order, sorted by LCSC code.
+    Byte-identical for the same rows; no rows, no files. Returns the rows written per file name."""
+    by_month: dict[str, list[dict]] = {}
+    for code, row in rows.items():
+        row = _check_sold_out_row(row)
+        if row["l"] != code:
+            raise ValueError(f"sold-out row for {code} names {row['l']}")
+        by_month.setdefault(row["g"][:7], []).append(row)
+    directory = catalog_dir / SOLD_OUT_DIR
+    if directory.exists():
+        shutil.rmtree(directory)
+    counts = {}
+    for month, month_rows in sorted(by_month.items()):
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / f"{month}.jsonl"
+        with path.open("w", encoding="utf-8", newline="\n") as stream:
+            for row in sorted(month_rows, key=lambda row: _lcsc_key(row["l"])):
+                stream.write(json.dumps([row[key] for key in SOLD_OUT_KEYS], separators=(",", ":"),
+                                        ensure_ascii=False) + "\n")
+        _check_size(path)
+        counts[path.name] = len(month_rows)
+    return counts
+
+
+def read_sold_out(catalog_dir: Path) -> Iterator[dict]:
+    """Yield the sold-out rows (dicts of SOLD_OUT_KEYS) as write_sold_out wrote them, oldest month
+    first, nothing when the directory is missing. A malformed line, a row in the wrong month's file,
+    out of LCSC order or listed twice raises ValueError with the file and line."""
+    directory = catalog_dir / SOLD_OUT_DIR
+    if not directory.is_dir():
+        return
+    seen: set[str] = set()
+    for path in sorted(directory.glob("*.jsonl")):
+        if not _SOLD_OUT_NAME.fullmatch(path.name):
+            raise ValueError(f"{path}: sold-out files are named YYYY-MM.jsonl")
+        previous = None
+        for number, line in _lines(path):
+            try:
+                row = _check_sold_out_row(json.loads(line))
+                code = row["l"]
+                if row["g"][:7] != path.stem:
+                    raise ValueError(f"{code}: gone_since {row['g']} is not in this file's month")
+                if previous is not None and _lcsc_key(code) <= _lcsc_key(previous):
+                    raise ValueError(f"{code} out of LCSC order")
+                if code in seen:
+                    raise ValueError(f"duplicate LCSC {code}")
+            except ValueError as exc:  # json.JSONDecodeError included
+                raise ValueError(f"{path} line {number}: malformed sold-out row ({exc})") from exc
+            previous = code
+            seen.add(code)
+            yield row

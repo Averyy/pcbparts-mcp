@@ -3,7 +3,9 @@
 Scrape all JLCPCB components for local database.
 
 Uses concurrent workers with wafer for anti-detection HTTP to avoid rate limiting.
-Outputs a sorted catalog with separate stock and weekly price files.
+Outputs a sorted catalog with separate stock and weekly price files, the parts that dropped out
+of it, kept until a scrape lists them again (catalog/sold_out/), plus every part's price breaks
+from this scrape (catalog/price_tiers.tsv.gz, not committed).
 
 Usage:
     python scripts/scrape_components.py [--resume] [--workers N]
@@ -14,6 +16,7 @@ import asyncio
 import gzip
 import json
 import logging
+import math
 import os
 import re
 import shutil
@@ -32,7 +35,10 @@ from wafer import ChallengeDetected, ConnectionFailed, RateLimited, WaferTimeout
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pcbparts_mcp.config import DEFAULT_MIN_STOCK
-from pcbparts_mcp.catalog_files import read_catalog, read_prices, write_catalog
+from pcbparts_mcp.catalog_files import (
+    PRICE_TIERS_FILE, pack_tiers, read_catalog, read_prices, read_sold_out, sold_out_row, write_catalog,
+    write_price_tiers, write_sold_out,
+)
 
 # Configure logging for scraper output
 logging.basicConfig(
@@ -125,6 +131,64 @@ def slugify(name: str) -> str:
     return slug.strip("-")
 
 
+def _break_quantity(value: Any) -> int | None:
+    """A price break's startNumber as a whole number: an int, or a float or numeric text that is one
+    (100.0, "100"; JSON doesn't promise JLCPCB keeps sending ints), else None."""
+    if type(value) is int:
+        return value
+    if type(value) is float and math.isfinite(value) and value.is_integer():
+        return int(value)
+    if isinstance(value, str) and re.fullmatch(r"[0-9]{1,12}(\.0+)?", value.strip()):
+        return int(float(value))
+    return None
+
+
+def price_tiers(prices: list[dict[str, Any]]) -> str | None:
+    """Every price break JLCPCB listed, by quantity, as pack_tiers text ("1:0.0228,300:0.0176"), the
+    prices rounded like the 1-piece "$" price; None without any. A malformed break (a quantity that
+    isn't a whole number from 1, a price that isn't a finite number, a quantity listed twice) also
+    gives None, so the part keeps only its 1-piece price instead of an optional file failing the scrape."""
+    breaks: dict[int, float] = {}
+    for tier in prices:
+        if not isinstance(tier, dict):
+            return None
+        qty, price = _break_quantity(tier.get("startNumber")), tier.get("productPrice")
+        if (qty is None or qty < 1 or qty in breaks or type(price) not in (int, float)
+                or not math.isfinite(price) or price < 0):
+            return None
+        breaks[qty] = round(price, 4)
+    return pack_tiers((qty, breaks[qty]) for qty in sorted(breaks)) or None
+
+
+# Under this share of priced parts with price breaks, the scrape warns (in the workflow's
+# annotations): JLCPCB sending them another way would otherwise empty the file without a word
+PRICE_TIERS_MIN_SHARE = 0.9
+
+
+def write_price_tiers_file(path: Path, tiers: dict[str, str], scraped_at: str, priced: int) -> int:
+    """Write today's price breaks (catalog/price_tiers.tsv.gz), or remove the file when there are
+    none. It's optional, so this never fails the scrape: a write that fails removes its partial
+    file and warns. Returns the parts written (0 when nothing was)."""
+    written = 0
+    try:
+        if tiers:
+            written = write_price_tiers(path, tiers, scraped_at)
+        else:
+            path.unlink(missing_ok=True)  # never an older scrape's breaks beside today's catalog
+    except Exception as exc:  # disk full, a break the writer refuses: the 1-piece prices still publish
+        logger.warning(f"::warning title=Price tiers not written::{type(exc).__name__}: {exc}; "
+                       "replies give the 1-piece price only until the next scrape")
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            pass
+        return 0
+    if priced and written < PRICE_TIERS_MIN_SHARE * priced:
+        logger.warning(f"::warning title=Few price tiers::{written:,} of {priced:,} priced parts have price "
+                       f"breaks (under {PRICE_TIERS_MIN_SHARE:.0%}): check how JLCPCB sends componentPrices")
+    return written
+
+
 def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     """Transform API response to our compact schema."""
     # Get price from first tier (`or []` guards against componentPrices being null;
@@ -169,6 +233,9 @@ def transform_part(item: dict[str, Any], subcategory_id: int) -> dict[str, Any]:
     # No datasheet of any kind on JLCPCB (about 3% of parts): only then, to keep the files small
     if not any(item.get(k) for k in ("dataManualUrl", "dataManualFileAccessIdUrl", "dataManualOfficialLink")):
         part["n"] = 1
+    # Every price break, for price_tiers.tsv.gz only: write_catalog keeps "$t" out of the part files
+    if tiers := price_tiers(prices):
+        part["$t"] = tiers
     return part
 
 
@@ -594,6 +661,35 @@ def carry_over_gaps(
     return carried, record
 
 
+def update_sold_out(
+    previous_parts: Iterable[tuple[str, dict[str, Any]]],
+    today_codes: set[str],
+    previous_sold_out: Iterable[dict[str, Any]],
+    today: str,
+) -> tuple[dict[str, dict[str, Any]], dict[str, int]]:
+    """The sold-out parts after today's scrape, by LCSC code, and how they changed.
+
+    A part in the previous catalog that today's catalog doesn't list (`today_codes`: the scraped
+    parts plus any carried over a scrape gap, so a gap's parts only count once carry_over_gaps gives
+    them up) is sold out from `today`, with the details the previous catalog had for it. A part
+    already sold out stays as it was (its gone_since too) until a scrape lists it again, then it's
+    dropped: it's a catalog part again. Returns (rows, {"new", "back", "kept"}).
+    """
+    rows: dict[str, dict[str, Any]] = {}
+    back = 0
+    for row in previous_sold_out:
+        if row["l"] in today_codes:
+            back += 1
+        else:
+            rows[row["l"]] = row
+    new = 0
+    for _, part in previous_parts:  # streamed: only the missing parts are kept
+        if part["l"] not in today_codes:
+            rows[part["l"]] = sold_out_row(part, today)
+            new += 1
+    return rows, {"new": new, "back": back, "kept": len(rows)}
+
+
 # === Main Scraper ===
 
 def write_scrape_outputs(
@@ -636,6 +732,22 @@ def write_scrape_outputs(
         except Exception:
             raise RuntimeError("Stock history generation failed; published data unchanged") from None
 
+    # Parts gone from the catalog since the last scrape are kept, their stock unknown (last_stock is
+    # what the last scrape that listed them had), until a scrape lists them again (catalog/sold_out/,
+    # committed). Read from the previous catalog before write_catalog replaces it.
+    sold_out: dict[str, dict[str, Any]] | None = None
+    if results:
+        try:
+            today_codes = {part.get("l") for parts in results.values() for part in parts}
+            previous_parts = (read_catalog(catalog_dir, prices=(catalog_dir / "prices.tsv").exists())
+                              if (catalog_dir / "stock.tsv").exists() else ())
+            sold_out, sold_out_changes = update_sold_out(previous_parts, today_codes, read_sold_out(catalog_dir),
+                                                         now.date().isoformat())
+        except Exception as exc:
+            raise RuntimeError(f"Sold-out parts update failed ({exc}); published data unchanged") from exc
+        logger.info(f"Sold out: {sold_out_changes['new']:,} new, {sold_out_changes['back']:,} back in stock, "
+                    f"{sold_out_changes['kept']:,} kept")
+
     # Keep the first occurrence globally, visiting sorted category slugs as before.
     seen_lcsc: set[str] = set()
     total_dupes = 0
@@ -669,6 +781,18 @@ def write_scrape_outputs(
             prices[code] = stored if stored is not None else part.get("$")
     progress.category_counts = write_catalog(catalog_dir, unique_results, prices)
     progress.total_parts = sum(progress.category_counts.values())
+    if sold_out is not None:
+        write_sold_out(catalog_dir, sold_out)
+
+    # Today's price breaks for every part that has them, out of git (.gitignore): the scrape workflow
+    # uploads the file as an Actions artifact for the image build. Parts carried over a scrape gap
+    # have none, so replies give them the 1-piece price only.
+    tiers = {part["l"]: part["$t"] for parts in unique_results.values() for part in parts if part.get("$t")}
+    priced = sum(1 for parts in unique_results.values() for part in parts if part.get("$") is not None)
+    tier_parts = write_price_tiers_file(catalog_dir / PRICE_TIERS_FILE, tiers, now.isoformat(), priced)
+    without = priced - sum(1 for parts in unique_results.values() for part in parts
+                           if part.get("$") is not None and part.get("$t"))
+    logger.info(f"Price breaks: {tier_parts:,} parts" + (f" ({without:,} priced parts without them)" if without else ""))
 
     # Generate manifest
     logger.info("")
@@ -679,6 +803,10 @@ def write_scrape_outputs(
         "prices_updated_at": prices_updated_at,
         "stock_threshold": STOCK_THRESHOLD,
         "total_parts": progress.total_parts,
+        # Parts kept in catalog/sold_out/, not in total_parts or the categories' counts
+        **({"sold_out_parts": len(sold_out)} if sold_out is not None else {}),
+        # Parts in catalog/price_tiers.tsv.gz (not committed): 0 when the file wasn't written
+        "price_tiers_parts": tier_parts,
         "categories": {},
     }
 

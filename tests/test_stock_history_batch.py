@@ -52,6 +52,7 @@ def history_db(tmp_path, monkeypatch):
     monkeypatch.setattr(server, "get_db", lambda: SimpleNamespace(
         get_by_lcsc=stocks.get,
         get_by_lcsc_batch=lambda codes: {code: stocks.get(code) for code in codes},
+        get_sold_out_rows=lambda codes: dict.fromkeys(codes),
         scraped_at=lambda: "2026-03-21",
     ))
     yield reader

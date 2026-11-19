@@ -3,7 +3,10 @@
 Build SQLite database from scraped JLCPCB component data.
 
 Reads sorted part, stock and price files from data/catalog/ and creates a searchable
-SQLite database with FTS5 full-text search.
+SQLite database with FTS5 full-text search. The scrape's price breaks
+(data/catalog/price_tiers.tsv.gz, not in git) are loaded when present; without them the build
+still succeeds and replies give the 1-piece price only. Parts that sold out (data/catalog/sold_out/)
+go into their own table, outside search.
 
 Usage:
     python scripts/build_database.py [--data-dir PATH] [--output PATH]
@@ -17,13 +20,16 @@ import json
 import sqlite3
 import sys
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 # Add parent directory to path for imports when running as script
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from pcbparts_mcp.catalog_files import read_catalog
+from pcbparts_mcp.catalog_files import (
+    PRICE_TIERS_FILE, pack_tiers, price_tiers_scraped_at, read_catalog, read_price_tiers, read_sold_out,
+)
 from pcbparts_mcp.mounting import english_package  # noqa: E402
 from pcbparts_mcp.parsers import (
     parse_capacitance,
@@ -505,6 +511,100 @@ def load_easyeda_pads(conn: sqlite3.Connection, rows: dict[str, PadsRow]) -> int
     return len(rows)
 
 
+# A price tiers file's scrape time must fall in this window (UTC) to load: before 2025 nothing
+# wrote one, and a time days ahead is a bad clock or a hand-made header
+PRICE_TIERS_EARLIEST = datetime(2025, 1, 1, tzinfo=timezone.utc)
+PRICE_TIERS_MAX_AHEAD = timedelta(days=2)
+
+
+def _price_tiers_time(text: str, now: datetime) -> str:
+    """The file header's scrape time in UTC ISO form ("2026-11-17T22:00:00+00:00"; a time without a
+    zone is read as UTC), or ValueError when it can't be put in UTC or is implausible, so the
+    server never has to read a time it can't use (_iso_utc gave up on "0001-01-01T00:00:00+14:00")."""
+    try:
+        moment = datetime.fromisoformat(text)
+        moment = moment.replace(tzinfo=timezone.utc) if moment.tzinfo is None else moment.astimezone(timezone.utc)
+    except (ValueError, OverflowError) as exc:
+        raise ValueError(f"scraped_at {text!r} isn't a usable time ({exc})") from None
+    if not PRICE_TIERS_EARLIEST <= moment <= now + PRICE_TIERS_MAX_AHEAD:
+        raise ValueError(f"scraped_at {text!r} is before 2025 or more than 2 days ahead")
+    return moment.isoformat()
+
+
+def load_price_tiers(conn: sqlite3.Connection, catalog_dir: Path,
+                     now: datetime | None = None) -> tuple[int, str | None, str | None]:
+    """Load the scrape's price breaks (catalog/price_tiers.tsv.gz) into price_tiers, one row per
+    part listed in components, as pack_tiers text. The table is always created. The file is
+    optional (it isn't in git: the image build downloads it as an Actions artifact), so a missing
+    or malformed one leaves the table empty instead of failing the build, all or nothing: any error
+    reading it (JSON nested past Python's limit raises RecursionError, not ValueError), or a scrape
+    time that isn't plausible (_price_tiers_time; now: the build's time, for tests). Returns
+    (parts loaded, the file's scrape time in UTC or None, why nothing was loaded or None)."""
+    conn.execute("CREATE TABLE price_tiers (lcsc TEXT PRIMARY KEY, tiers TEXT NOT NULL) WITHOUT ROWID")
+    path = catalog_dir / PRICE_TIERS_FILE
+    if not path.exists():
+        return 0, None, f"no {PRICE_TIERS_FILE}"
+    try:
+        scraped_at = _price_tiers_time(price_tiers_scraped_at(path), now or datetime.now(timezone.utc))
+        batch = []
+        for code, breaks in read_price_tiers(path):
+            batch.append((code, pack_tiers(breaks)))
+            if len(batch) >= 5000:
+                conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
+                batch = []
+        conn.executemany("INSERT INTO price_tiers VALUES (?, ?)", batch)
+    except Exception as exc:  # an optional file: whatever is wrong with it, the build goes on without it
+        conn.execute("DELETE FROM price_tiers")
+        return 0, None, f"{PRICE_TIERS_FILE} not loaded: {type(exc).__name__}: {exc}"
+    # A file from another day's scrape (an older artifact) lists parts this catalog doesn't
+    conn.execute("DELETE FROM price_tiers WHERE lcsc NOT IN (SELECT lcsc FROM components)")
+    count = conn.execute("SELECT COUNT(*) FROM price_tiers").fetchone()[0]
+    return (count, scraped_at, None) if count else (0, None, f"{PRICE_TIERS_FILE} lists no catalog part")
+
+
+def load_sold_out(conn: sqlite3.Connection, catalog_dir: Path) -> int:
+    """Load the parts kept after they sold out (catalog/sold_out/, committed; none without it) into
+    sold_out: a slim table apart from components, so search, its counts and full-text search never
+    see them; jlc_get_parts, jlc_get_part(mpn) and jlc_stock_history read it. Always created. Runs
+    before the components load, so a malformed file fails the build at once. Returns the rows loaded."""
+    conn.execute("""
+        CREATE TABLE sold_out (
+            lcsc TEXT PRIMARY KEY,
+            mpn TEXT,
+            manufacturer TEXT,
+            package TEXT,
+            library_type TEXT CHECK(library_type IN ('b', 'p', 'e')),
+            subcategory_id INTEGER,
+            price REAL,
+            description TEXT,
+            last_stock INTEGER,
+            gone_since TEXT NOT NULL
+        )
+    """)
+    insert = "INSERT INTO sold_out VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    batch = []
+    count = 0
+    for row in read_sold_out(catalog_dir):
+        batch.append((row["l"], row["m"], row["f"], english_package(row["p"]), row["t"], row["c"], row["$"],
+                      row["d"], row["s"], row["g"]))
+        if len(batch) >= 5000:
+            conn.executemany(insert, batch)
+            count += len(batch)
+            batch = []
+    conn.executemany(insert, batch)
+    return count + len(batch)
+
+
+def index_sold_out(conn: sqlite3.Connection) -> int:
+    """After the components load: drop sold-out rows the catalog lists (a part back in stock is a
+    catalog part; the scrape drops them too), then index part numbers as components are. Returns the
+    rows kept."""
+    conn.execute("DELETE FROM sold_out WHERE lcsc IN (SELECT lcsc FROM components)")
+    conn.execute("CREATE INDEX idx_sold_out_mpn_lower ON sold_out(LOWER(mpn))")
+    conn.execute(f"CREATE INDEX idx_sold_out_mpn_key ON sold_out({MPN_KEY_SQL})")
+    return conn.execute("SELECT COUNT(*) FROM sold_out").fetchone()[0]
+
+
 def build_database(data_dir: Path, db_path: Path, verbose: bool = True) -> dict:
     """
     Build SQLite database from compressed JSON files.
@@ -557,6 +657,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     pads = read_easyeda_pads(data_dir)
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
+    sold_out_read = load_sold_out(conn, data_dir / "catalog")
 
     # Build CREATE TABLE with precomputed attribute columns
     numeric_cols_sql = ",\n            ".join(ATTRIBUTE_COLUMNS)
@@ -788,8 +889,24 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
 
     seed_rows = load_easyeda_seed(conn, seed)
     pads_rows = load_easyeda_pads(conn, pads)
+    sold_out_rows = index_sold_out(conn)
+    conn.execute("INSERT OR REPLACE INTO metadata VALUES ('sold_out_parts', ?)", (str(sold_out_rows),))
+    # Whether replies have every price break, and from which scrape (they may be older or newer
+    # than the catalog's stock): ComponentDatabase.price_tiers_as_of()
+    tier_parts, tiers_scraped_at, tiers_missing = load_price_tiers(conn, catalog_dir)
+    conn.executemany("INSERT OR REPLACE INTO metadata VALUES (?, ?)", [
+        ("price_tiers_loaded", "1" if tier_parts else "0"), ("price_tiers_parts", str(tier_parts))])
+    if tiers_scraped_at:
+        conn.execute("INSERT OR REPLACE INTO metadata VALUES ('price_tiers_scraped_at', ?)", (tiers_scraped_at,))
+    if tiers_missing and (verbose or (catalog_dir / PRICE_TIERS_FILE).exists()):
+        # A file that didn't load always shows; a self-hoster's build has none, which is normal
+        print(f"WARNING: {tiers_missing}; replies list the 1-piece price only")
     if verbose:
         print(f"EasyEDA footprint seed: {seed_rows:,} rows; footprint pads: {pads_rows:,}")
+        print(f"Sold-out parts: {sold_out_rows:,}" + (f" ({sold_out_read - sold_out_rows:,} dropped: "
+              "the catalog lists them)" if sold_out_read > sold_out_rows else ""))
+        if tier_parts:
+            print(f"Price breaks: {tier_parts:,} parts, scraped {tiers_scraped_at}")
         print("Optimizing database...")
 
     # Commit all changes first
@@ -838,6 +955,9 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
         "total_parts": final_count,
         "easyeda_seed_rows": seed_rows,
         "easyeda_pads_rows": pads_rows,
+        "price_tier_parts": tier_parts,
+        "price_tiers_scraped_at": tiers_scraped_at,
+        "sold_out_parts": sold_out_rows,
         "categories": len(category_counts),
         "category_counts": category_counts,
         "db_size_bytes": db_size,

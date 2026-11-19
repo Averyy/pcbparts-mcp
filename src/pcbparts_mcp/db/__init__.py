@@ -25,7 +25,9 @@ from ..search.query_builder import build_fts_clause
 from ..search.spec_filter import CONNECTOR_COLUMN_NAMES, like_text
 from ..search.spec_sort import SpecSort
 from .connection import build_database, load_caches
-from .lookup import get_by_lcsc, get_by_lcsc_batch, get_by_mpn
+from .lookup import (
+    add_snapshot_prices, get_by_lcsc, get_by_lcsc_batch, get_by_mpn, get_price_tiers, get_snapshot_rows, get_sold_out_rows,
+)
 from .categories import (
     CandidateBatch,
     get_subcategory_name,
@@ -52,13 +54,15 @@ DEFAULT_DB_PATH = Path(os.environ.get("JLCPCB_DB_PATH", str(DEFAULT_DATA_DIR / "
 
 
 def _iso_utc(value: str) -> str | None:
-    """The manifest's "2026-11-04T20:10:49.531605+00:00" as "2026-11-04T20:10:49Z"."""
+    """The manifest's "2026-11-04T20:10:49.531605+00:00" as "2026-11-04T20:10:49Z"; None for a value
+    that isn't an ISO time or can't be put in UTC ("0001-01-01T00:00:00+14:00" is before year 1
+    there), so a bad header never stops the server opening the database."""
     try:
         moment = datetime.fromisoformat(value)
-    except (TypeError, ValueError):
+        if moment.tzinfo is not None:
+            moment = moment.astimezone(timezone.utc)
+    except (TypeError, ValueError, OverflowError):
         return None
-    if moment.tzinfo is not None:
-        moment = moment.astimezone(timezone.utc)
     return moment.replace(microsecond=0, tzinfo=None).isoformat() + "Z"
 
 
@@ -87,7 +91,10 @@ class ComponentDatabase:
         self._pcba_type_loaded: bool | None = None
         self._scraped_at: str | None = None
         self._prices_as_of: str | None = None
+        self._price_tiers_as_of: str | None = None  # None: no price breaks loaded (built without the file)
+        self._price_tiers_parts = 0
         self._english_packages = False
+        self._has_sold_out = False  # built since 0.10.0: parts kept after they left the snapshot
 
     @serialized
     def _ensure_db(self) -> None:
@@ -131,6 +138,10 @@ class ComponentDatabase:
                 "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'package_spellings'").fetchone() is not None
             if not self._english_packages:
                 limitations.append("package names keep JLCPCB's Chinese words, unlike live replies")
+            self._has_sold_out = self._conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'sold_out'").fetchone() is not None
+            if not self._has_sold_out:
+                limitations.append("parts that left the snapshot aren't kept, so lookups miss them")
             if limitations:
                 logger.warning(
                     "Component database %s predates this version: %s. "
@@ -140,12 +151,19 @@ class ComponentDatabase:
 
             try:
                 meta = dict(self._conn.execute(
-                    "SELECT key, value FROM metadata WHERE key IN ('scraped_at', 'prices_as_of')").fetchall())
+                    "SELECT key, value FROM metadata WHERE key IN "
+                    "('scraped_at', 'prices_as_of', 'price_tiers_loaded', 'price_tiers_scraped_at', "
+                    "'price_tiers_parts')").fetchall())
             except sqlite3.OperationalError:  # built before 0.8.15
                 meta = {}
             self._scraped_at = _iso_utc(meta["scraped_at"]) if "scraped_at" in meta else None
             # Since 0.9.0 prices are refreshed weekly (stock daily); earlier data scraped both together
             self._prices_as_of = _iso_utc(meta["prices_as_of"]) if "prices_as_of" in meta else self._scraped_at
+            # Since 0.10.0 every price break from the daily scrape, when the build had the file
+            self._price_tiers_as_of = (_iso_utc(meta.get("price_tiers_scraped_at"))
+                                       if meta.get("price_tiers_loaded") == "1" else None)
+            parts = meta.get("price_tiers_parts")
+            self._price_tiers_parts = int(parts) if self._price_tiers_as_of and str(parts).isdigit() else 0
 
             # Load caches
             (
@@ -187,6 +205,29 @@ class ComponentDatabase:
         since then has the price it was first scraped with. scraped_at for older data."""
         self._ensure_db()
         return self._prices_as_of
+
+    def price_tiers_as_of(self) -> str | None:
+        """When the price breaks in snapshot replies' prices were scraped (daily, since 0.10.0), or
+        None when the database has none (built without price_tiers.tsv.gz: prices is then the
+        1-piece price only, as of prices_as_of)."""
+        self._ensure_db()
+        return self._price_tiers_as_of
+
+    def price_tiers_parts(self) -> int:
+        """How many catalog parts have price breaks loaded (0 when price_tiers_as_of is None)."""
+        self._ensure_db()
+        return self._price_tiers_parts
+
+    @serialized
+    def get_price_tiers(self, lcsc_codes: list[str]) -> dict[str, str]:
+        """Packed snapshot tiers for a batch of parts; absent parts have no tiers.
+
+        Alternatives lists have at most 50 parts, so all their tiers take one query.
+        """
+        self._ensure_db()
+        if self._price_tiers_as_of is None:
+            return {}
+        return get_price_tiers(self._conn, list(dict.fromkeys(lcsc_codes)))
 
     def english_packages(self) -> bool:
         """Whether the database was built with packages in English (english_package), since 0.8.15."""
@@ -532,15 +573,57 @@ class ComponentDatabase:
             return 0
 
     @serialized
-    def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    def get_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
+                   with_prices: bool = False, full_text: bool = True,
+                   maker: Callable[[str | None], bool] | None = None) -> list[dict[str, Any]]:
         """Find components by manufacturer part number.
 
         Tries exact/separator/packing/alias matches, FTS, then annotated alternatives.
+        with_prices adds each part's prices (lookup.snapshot_prices) after its price.
+        full_text=False and maker: as lookup.get_by_mpn's.
         """
         self._ensure_db()
         if not self._conn:
             return []
-        return self._snapshot_parts(get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info))
+        parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info,
+                           full_text=full_text, maker=maker)
+        if with_prices:
+            parts = add_snapshot_prices(self._conn, parts, self._price_tiers_as_of is not None)
+        return self._snapshot_parts(parts)
+
+    @serialized
+    def get_sold_out_by_mpn(self, mpn: str, *, match_info: dict[str, Any] | None = None,
+                            with_prices: bool = False,
+                            maker: Callable[[str | None], bool] | None = None) -> list[dict[str, Any]]:
+        """Parts kept after they left the snapshot (stock None, gone, gone_since, last_stock: lookup.sold_out_part)
+        that match a part number by get_by_mpn's rules, without full-text matches. with_prices adds
+        prices: the last 1-piece price the snapshot had. maker: as lookup.get_by_mpn's. [] for a
+        database built before 0.10.0."""
+        self._ensure_db()
+        if match_info is not None:
+            match_info.clear()
+        if not self._conn or not self._has_sold_out:
+            return []
+        parts = get_by_mpn(self._conn, mpn, self._subcategories, match_info=match_info, sold_out=True, maker=maker)
+        if with_prices:
+            # No price breaks for them, ever: one tier (the last 1-piece price) or none. A BOM client
+            # looks a result with one break or fewer up live by its lcsc for current stock, and a
+            # gone part's stock is exactly what it needs to check (see its row in jlc_get_parts too)
+            parts = add_snapshot_prices(self._conn, parts, False)
+        # Not observed in this snapshot: what's kept is from before gone_since (last_stock from the
+        # last scrape that listed it, price up to a week older), a time not kept, so observed_at is
+        # null and gone_since dates it
+        for part in parts:
+            part["data_source"] = {"kind": "snapshot", "provider": "JLCPCB", "observed_at": None}
+        return parts
+
+    @serialized
+    def get_sold_out_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
+        """jlc_get_parts' rows for parts that left the snapshot (lookup.get_sold_out_rows), None for codes not kept."""
+        self._ensure_db()
+        if not self._conn or not self._has_sold_out:
+            return {code.upper(): None for code in lcsc_codes}
+        return get_sold_out_rows(self._conn, lcsc_codes, self._subcategories)
 
     @serialized
     def get_by_lcsc_batch(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
@@ -549,6 +632,16 @@ class ComponentDatabase:
         if not self._conn:
             return {}
         return {code: self._snapshot_part(part) for code, part in get_by_lcsc_batch(self._conn, lcsc_codes, self._subcategories).items()}
+
+    @serialized
+    def get_snapshot_rows(self, lcsc_codes: list[str]) -> dict[str, dict[str, Any] | None]:
+        """jlc_get_parts' rows for LCSC codes in one query (lookup.snapshot_row), None when not listed.
+        No data_source per row: the reply gives the snapshot's times once."""
+        self._ensure_db()
+        if not self._conn:
+            return {code.upper(): None for code in lcsc_codes}
+        return get_snapshot_rows(self._conn, lcsc_codes, self._subcategories,
+                                 with_tiers=self._price_tiers_as_of is not None)
 
     @serialized
     def find_alternative_candidates(

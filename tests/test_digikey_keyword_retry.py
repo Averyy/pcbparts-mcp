@@ -1,7 +1,6 @@
 """One keyword search per uncached DigiKey lookup, using only fake transports."""
 
 import json
-import time
 
 import httpx
 import pytest
@@ -81,8 +80,12 @@ async def test_products_only_exact_mpn_is_normalized_and_cached(digikey):
     assert part["parameters"] == {"Battery Size": "AA"}
     assert await client.get_part("209") == result
     assert_keyword_request(fake)
-    expires, _ = client._cache._data["digikey:209"]
-    assert DIGIKEY_CACHE_TTL - 10 < expires - time.time() <= DIGIKEY_CACHE_TTL
+    # Kept without requested and matched_by, which each reply adds for the number as asked
+    assert (part["requested"], part["matched_by"]) == ("209", "exact")
+    stored = client._store.get_answer("digikey", "209")[0]
+    assert stored == {**result, "results": [
+        {k: v for k, v in p.items() if k not in ("requested", "matched_by")} for p in result["results"]]}
+    assert DIGIKEY_CACHE_TTL == 3 * 86400
 
 
 @pytest.mark.parametrize("pn", ["AO3400A", "LM358DR", "NE555DR", "BSS138", "USBLC6-2SC6", "AMS1117-3.3", "SS34", "209"])
@@ -175,8 +178,8 @@ async def test_miss_has_cached_hint(digikey, keyword, pn):
     }
     assert await client.get_part(pn) == result
     assert_keyword_request(fake, pn)
-    expires, _ = client._cache._data[f"digikey:{pn}"]
-    assert DIGIKEY_NOT_FOUND_TTL - 10 < expires - time.time() <= DIGIKEY_NOT_FOUND_TTL
+    assert client._store.get_answer("digikey", pn.upper())[0]["not_found"] is True
+    assert DIGIKEY_NOT_FOUND_TTL == 86400
 
 
 @pytest.mark.parametrize("pn", ["NOPE-ND", "nope-nd"])
@@ -207,7 +210,7 @@ async def test_quota_refusal_is_recorded_and_not_cached(digikey):
     client = digikey(fake, quota)
     result = await client.get_part("209")
     assert "daily quota exceeded" in result["error"]
-    assert client._cache.get("digikey:209") is None
+    assert client._store.get_answer("digikey", "209") is None
     assert await client.get_part("209") == result
     assert fake.requests == [] and quota.status()["used_today"] == 0
     assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {"sent": 0, "cached": 0, "rate_limited": 2}
@@ -217,7 +220,7 @@ async def test_rate_limit_is_not_cached_as_not_found(digikey):
     fake = FakeDigiKey(httpx.Response(429), httpx.Response(200, json={"Products": [product()]}))
     client = digikey(fake)
     assert await client.get_part("209") == {"error": "DigiKey is limiting requests (HTTP 429). Try again later."}
-    assert client._cache.get("digikey:209") is None
+    assert client._store.get_answer("digikey", "209") is None
     assert_keyword_request(fake)
     assert (await client.get_part("209"))["total"] == 1
     assert len(fake.requests) == 2
@@ -228,5 +231,5 @@ async def test_other_errors_propagate_without_caching(digikey):
     client = digikey(fake)
     with pytest.raises(DigiKeyError, match="DigiKey API returned HTTP 500"):
         await client.get_part("209")
-    assert client._cache.get("digikey:209") is None
+    assert client._store.get_answer("digikey", "209") is None
     assert_keyword_request(fake)

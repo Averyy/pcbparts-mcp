@@ -95,7 +95,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Add JSON files only (DB is built at Docker build time)
+          # Add JSON files only (DB is built at Docker build time). price_tiers.tsv.gz is ignored,
+          # so this skips it (it goes up as an artifact below).
           git add data/catalog/ data/manifest.json data/subcategories.json data/history/
 
           # Check if there are changes to commit
@@ -112,6 +113,24 @@ jobs:
             echo "Data committed and pushed"
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
+
+      # Every part's price breaks from this scrape (data/catalog/price_tiers.tsv.gz) stay out of git
+      # (.gitignore): docker-build.yml downloads the newest price-tiers artifact for the image build.
+      # After the push, so a stalled or failed upload can never cost the day's commit (the push uses
+      # GITHUB_TOKEN, which starts no build), and before "Trigger deploy", so the build it starts
+      # finds this one. A failed upload only leaves that build with the previous artifact (or the
+      # 1-piece prices).
+      - name: Upload price tiers
+        continue-on-error: true
+        timeout-minutes: 5  # a 10 MB upload takes seconds; the job's 60 minutes are the scrape's
+        uses: actions/upload-artifact@v7
+        with:
+          name: price-tiers
+          path: data/catalog/price_tiers.tsv.gz
+          retention-days: 7
+          if-no-files-found: warn
+          compression-level: 0  # already gzipped
+          overwrite: true  # a re-run job replaces its own earlier upload
 
       - name: Trigger deploy
         if: steps.commit.outputs.has_changes == 'true'

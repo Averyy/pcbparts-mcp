@@ -24,10 +24,91 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: read  # the price-tiers artifact
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      # Price breaks (data/catalog/price_tiers.tsv.gz) aren't in git: each daily scrape uploads them
+      # as the price-tiers artifact, kept 7 days. Take the one from the scrape workflow's newest run
+      # on main that has one: only that workflow uploads it, so a fork's pull request artifact of the
+      # same name can't be picked, and runs of any status count, since the scrape run that triggers
+      # this build is still finishing its last step. Each request is bounded (timeout 120) and so is
+      # the step. This step never fails the build: without the file, replies give the 1-piece price only.
+      - name: Download price tiers
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          warn() {
+            echo "::warning title=No price tiers::$1; the image gives the 1-piece price only"
+            echo "Price tiers: none ($1)" >> "$GITHUB_STEP_SUMMARY"
+          }
+          dir="$RUNNER_TEMP/price-tiers"
+          rm -rf "$dir" && mkdir -p "$dir"
+          if ! runs=$(timeout 120 gh api "repos/$REPO/actions/workflows/scrape-components.yml/runs?branch=main&per_page=10" \
+              --jq '.workflow_runs[] | select(.head_repository.id == .repository.id) | .id'); then
+            warn "listing the scrape runs failed"; exit 0
+          fi
+          id=""
+          for run in $runs; do
+            if ! id=$(timeout 120 gh api "repos/$REPO/actions/runs/$run/artifacts?name=price-tiers" \
+                --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty'); then
+              warn "listing scrape run $run's artifacts failed"; exit 0
+            fi
+            if [ -n "$id" ]; then break; fi
+          done
+          if [ -z "$id" ]; then warn "no unexpired price-tiers artifact in the scrape's last 10 runs on main"; exit 0; fi
+          if ! timeout 120 gh api "repos/$REPO/actions/artifacts/$id/zip" > "$dir/price-tiers.zip"; then
+            warn "downloading artifact $id failed"; exit 0
+          fi
+          if ! unzip -q -o "$dir/price-tiers.zip" price_tiers.tsv.gz -d "$dir" || ! gzip -t "$dir/price_tiers.tsv.gz"; then
+            warn "artifact $id has no readable price_tiers.tsv.gz"; exit 0
+          fi
+          header=$(gzip -cd "$dir/price_tiers.tsv.gz" | head -n 1 || true)
+          case "$header" in
+            "#scraped_at"*) ;;
+            *) warn "artifact $id's price_tiers.tsv.gz has no #scraped_at line"; exit 0 ;;
+          esac
+          parts=$(gzip -cd "$dir/price_tiers.tsv.gz" | tail -n +2 | cut -f1 | uniq | wc -l | tr -d ' ') || parts="?"
+          mv "$dir/price_tiers.tsv.gz" data/catalog/price_tiers.tsv.gz
+          echo "Price tiers from artifact $id (scrape run $run): ${header#*$'\t'}, $parts parts"
+          echo "Price tiers: $parts parts, scraped ${header#*$'\t'} (artifact $id, scrape run $run)" >> "$GITHUB_STEP_SUMMARY"
+
+      # OpenAI's ChatGPT connector addresses get the AI platforms' higher per-address rate limit
+      # (platform_ranges.py). OpenAI says the list can change, so each build takes a fresh copy when
+      # it checks out (platform_ranges.py, standard library only) and otherwise keeps the committed
+      # one. Prod deploys on every push to main, the daily scrape's included, so when the download
+      # succeeds the list is about a day old; when it fails, this warns and the committed copy stays
+      # (/health shows the list's creation date). The server never downloads it. This step never
+      # fails the build. The check's output is downloaded text: it's printed as one line of at most
+      # 300 characters, so nothing in it can start a workflow command (::error::, ::add-mask::).
+      - name: Refresh OpenAI's address list
+        continue-on-error: true
+        run: |
+          warn() { echo "::warning title=OpenAI address list not refreshed::$1; the image keeps the committed copy"; }
+          dir="$RUNNER_TEMP/openai-ranges"
+          committed=data/platform_ranges/openai-chatgpt-connectors.json
+          rm -rf "$dir" && mkdir -p "$dir"
+          if ! curl -fsSL --proto '=https' --proto-redir '=https' --max-time 30 --retry 2 --max-filesize 1000000 \
+              -o "$dir/list.json" https://openai.com/chatgpt-connectors.json; then
+            warn "downloading it failed"; exit 0
+          fi
+          checked=0
+          summary=$(python3 -I src/pcbparts_mcp/platform_ranges.py "$dir/list.json" 2>&1) || checked=$?
+          summary=$(printf '%s' "$summary" | tr -c '[:print:]' ' ' | cut -c1-300)
+          if [ "$checked" -ne 0 ]; then
+            warn "the download isn't a usable list: $summary"; exit 0
+          fi
+          if cmp -s "$dir/list.json" "$committed"; then
+            echo "OpenAI address list unchanged from the committed copy: $summary"
+          else
+            cp "$dir/list.json" "$committed"
+            echo "OpenAI address list refreshed: $summary"
+          fi
 
       - name: Log in to the Container registry
         uses: docker/login-action@v4
