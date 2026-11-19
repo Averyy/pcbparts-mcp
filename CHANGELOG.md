@@ -6,23 +6,19 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 
 ## 0.10.2 (2026-11-19)
 
-### Breaking
+### Changed
 
-- **`jlc_get_part(lcsc=...)`** answers from the daily snapshot by default (`data_source.kind` "snapshot", stock >= 10), with no JLCPCB, LCSC or EasyEDA request; `has_easyeda_footprint` is null unless already known.
-- Its snapshot reply has no `min_order`, `reel_qty`, `datasheet`, `maker_datasheet`, `datasheet_note` or `lcsc_url`: those need `live=true`. A code the snapshot doesn't list (gone, new) still goes live.
+- **`jlc_get_part(lcsc=...)`** answers from the daily snapshot, in milliseconds and without waiting on JLCPCB: stock, every price tier, specs, library type, datasheet PDF link and EasyEDA footprint. A part the snapshot doesn't list (stock under 10, or new) is still looked up live automatically.
+- **`jlc_get_part`**: new `live` argument. `live=true` does a live lookup, which also gives `min_order`, `reel_qty`, the `datasheet` page, `maker_datasheet` and `lcsc_url`.
+- Catalog reads run up to 3 at once (were one at a time): a quick lookup no longer waits behind a slow search. Replies are unchanged.
+- Searches are faster: the query parser compiles its keyword patterns once instead of on every search.
+- The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
 
 ### Added
 
-- **`jlc_get_part`**: `live` argument (default false) for a live lookup.
-- **`jlc_get_part`, `jlc_stock_check`**: when JLCPCB doesn't answer, an LCSC code the database has gets its snapshot or gone row instead of the error, with `live_failed: true`, `live_error` and `note`. Other `jlc_stock_check` errors get a `hint` pointing to `jlc_search`.
+- **`jlc_get_part`, `jlc_stock_check`**: when JLCPCB doesn't answer, an LCSC code the database has gets its snapshot or gone row instead of an error, with `live_failed: true`, `live_error` and `note`. Other `jlc_stock_check` errors get a `hint` pointing to `jlc_search`.
 - **`/health`**: `snapshot` (`data_as_of`, `age_hours`, `stale` past 30 hours); `database_pressure` adds `running` and `longest_running_seconds` (measurement only).
 - **`/mcp/stats`**: `lcsc_lookups` per day: how `jlc_get_part` LCSC lookups and one-code `jlc_stock_check` queries were answered (`snapshot`, `live`, `fallback`, `live_failed`).
-
-### Changed
-
-- Catalog reads run up to 3 at once (were one at a time), each worker on its own read connection: a quick lookup no longer waits behind a slow search. Replies are unchanged.
-- Searches are faster: the query parser compiles its keyword patterns once instead of on every search.
-- The scheduled scrape is a backup that skips when the day's scrape is already on `main`; the daily scrape is started by a cron job on the server (`docs/ref-scrape-schedule.md`).
 
 ## 0.10.1 (2026-11-19)
 
