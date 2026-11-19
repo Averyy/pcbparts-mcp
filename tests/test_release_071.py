@@ -205,7 +205,10 @@ async def test_part_number_retry_order_and_explicit_constraints(monkeypatch, dro
         assert result["relaxed"]["dropped_filters"] == [{"name": "Voltage Rating", "op": ">=", "value": "25V"}]
 
 
-async def test_empty_mpn_lookup_keeps_error_and_adds_hint():
+async def test_empty_mpn_lookup_keeps_error_and_adds_hint(monkeypatch):
+    # Both distributors set up and able to answer (0.10.2 suggests only those that can)
+    available = SimpleNamespace(retry_after=lambda: None)
+    monkeypatch.setattr(server, "_distributor_quotas", {"mouser": available, "digikey": available})
     mpn = "ZZNOEXIST123456789"
     result = await server.jlc_get_part(mpn=mpn)
     assert result["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
