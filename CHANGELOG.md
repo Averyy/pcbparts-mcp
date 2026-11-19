@@ -15,7 +15,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 - The per-address rate limit is 200 requests a minute (was 100): `RATE_LIMIT_REQUESTS`'s default, and the value in the Dockerfile and compose files.
 - A `datasheet_pdf` link leads to the maker's datasheet or LCSC's PDF when JLCPCB keeps no PDF of its own (it was a 404).
 - A server without price-tier data answers `jlc_get_part(lcsc=...)` live, as before.
-- A part-number miss in `jlc_get_part` suggests `mouser_get_part` or `digikey_get_part` only while that distributor can answer: not when its daily limit is spent or it isn't set up.
+- A part-number miss in `jlc_get_part` no longer suggests `mouser_get_part` or `digikey_get_part`.
 - The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
 
 ### Fixed
@@ -27,6 +27,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 - **`jlc_get_part`, `jlc_stock_check`**: when JLCPCB doesn't answer, an LCSC code the database has gets its snapshot or gone row instead of an error, with `live_failed: true`, `live_error` and `note`. Other `jlc_stock_check` errors get a `hint` pointing to `jlc_search`.
 - **`/health`**: `snapshot` (`data_as_of`, `age_hours`, `stale` past 30 hours); `database_pressure` adds `running` and `longest_running_seconds` (measurement only).
 - **`/mcp/stats`**: `lcsc_lookups` per day: how `jlc_get_part` LCSC lookups and one-code `jlc_stock_check` queries were answered (`snapshot`, `live`, `fallback`, `live_failed`).
+- **`/mcp/stats`**: `distributor_apps` per day: calls to `mouser_get_part`, `digikey_get_part` and `part_lifecycle` by app, with how many were `rate_limited`.
 
 ## 0.10.1 (2026-11-19)
 

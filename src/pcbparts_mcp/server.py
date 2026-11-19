@@ -300,7 +300,8 @@ def _exit_if_stuck(stuck_checks: int) -> int:
 
 async def _every_minute() -> None:
     """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts and per-IP rate
-    limit refusals (one line each, for hours that had any) and save the usage counts; every hour,
+    limit refusals (one line each, for hours that had any), save the usage counts and drop expired
+    address-to-app links (AppsByAddress); every hour,
     drop expired Mouser/DigiKey answers from the store; exit if a database worker is stuck
     (_exit_if_stuck)."""
     minutes = 0
@@ -313,6 +314,7 @@ async def _every_minute() -> None:
                 quota.callers.flush_if_due()
             _refused_callers.flush_if_due()
             stats.usage.save()
+            _apps_by_address.expire()  # none outlives its lifetime by more than a minute when quiet
             if minutes % 60 == 0 and _distributor_store is not None:
                 _distributor_store.prune()
         except Exception:
@@ -571,13 +573,91 @@ def _exception_outcome(error: Exception) -> str:
     return "bad_request" if isinstance(error, (ValidationError, NotFoundError)) else "failed"
 
 
+class AppsByAddress:
+    """The app each caller address last connected with (the clientInfo name it sent with
+    initialize, as stats.clean_app_name shows it), so the usage counts can say which apps call the
+    Mouser and DigiKey tools (stats distributor_apps): this server is stateless, so a tools/call
+    request carries no clientInfo and its session has none. Keyed by _address_key() (an IPv6
+    address by its /64). An entry lasts `lifetime` seconds (stats.APP_LINK_MINUTES) from its
+    address's last initialize or tool call (each of those, and the minute task, drops the expired
+    ones), and at most max_size are kept, the least recently used dropped first. In memory only:
+    never written, logged or shown. Kept in order of last use, so neither expiry nor the size bound
+    scans the table."""
+
+    def __init__(self, lifetime: float = stats.APP_LINK_MINUTES * 60, max_size: int = 10_000,
+                 clock: Callable[[], float] | None = None):
+        self.lifetime = lifetime
+        self.max_size = max_size
+        self._clock = clock or time.monotonic
+        self._apps: dict[str, tuple[str, float]] = {}  # key: (app, last use), least recently used first
+
+    def __len__(self) -> int:
+        return len(self._apps)
+
+    def expire(self, now: float | None = None) -> None:
+        """Drop the entries a lifetime old: the first ones, as the table is in order of last use."""
+        now = self._clock() if now is None else now
+        while self._apps:
+            key, (_, used) = next(iter(self._apps.items()))
+            if now - used < self.lifetime:
+                break
+            del self._apps[key]
+
+    def remember(self, client_ip: str | None, app: Any) -> None:
+        """An initialize from client_ip (None: not over HTTP, nothing to link) sent this app name."""
+        if not client_ip:
+            return
+        now, key = self._clock(), _address_key(client_ip)
+        self.expire(now)
+        self._apps.pop(key, None)  # re-added at the end: the most recently used
+        self._apps[key] = (stats.clean_app_name(app), now)
+        while len(self._apps) > self.max_size:
+            del self._apps[next(iter(self._apps))]
+
+    def app_for(self, client_ip: str | None) -> str | None:
+        """The app client_ip last connected with, which this use keeps for another lifetime; None
+        if it hasn't connected within one."""
+        if not client_ip:
+            return None
+        now, key = self._clock(), _address_key(client_ip)
+        self.expire(now)
+        entry = self._apps.pop(key, None)
+        if entry is None:
+            return None
+        self._apps[key] = (entry[0], now)
+        return entry[0]
+
+
+# The server's map; the middleware looks it up at each call, so tests can swap it
+_apps_by_address = AppsByAddress()
+
+
+def _call_app(context, caller: str | None) -> str | None:
+    """The app behind a tool call: its session's clientInfo name where the session has one (stdio,
+    or a stateful session), else the app its address last connected with; None when neither says
+    (or the lookup fails: the call is still counted, under unknown)."""
+    try:
+        client_info = context.fastmcp_context.session.client_params.clientInfo
+    except (AttributeError, RuntimeError):  # stateless HTTP: client_params is None
+        client_info = None
+    if client_info is not None:
+        return client_info.name
+    try:
+        return _apps_by_address.app_for(caller)
+    except Exception:
+        logger.exception("Usage stats: couldn't find a call's app")
+        return None
+
+
 class UsageStatsMiddleware(FastMCPMiddleware):
     """Counts tool calls and connecting apps for /mcp/stats (stats.py). Counting never breaks a call."""
 
     async def on_initialize(self, context, call_next):
         try:
             client_info = context.message.params.clientInfo
-            stats.usage.record_app(client_info.name if client_info else None)
+            name = client_info.name if client_info else None
+            stats.usage.record_app(name)
+            _apps_by_address.remember(_caller_ip(), name)  # for distributor_apps: calls carry no app
         except Exception:
             logger.exception("Usage stats: couldn't count an app")
         return await call_next(context)
@@ -599,8 +679,9 @@ class UsageStatsMiddleware(FastMCPMiddleware):
             content = getattr(result, "structured_content", None)
             content = content if isinstance(content, dict) else {}
             reason = _call_reason(outcome, content, error) if outcome in ("not_found", "failed") else None
-            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, _caller_ip(),
-                                    reason=reason)
+            caller = _caller_ip()
+            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, caller,
+                                    reason=reason, app=_call_app(context, caller))
             if isinstance(content.get("why_empty"), dict):
                 stats.usage.record_why_empty(_why_empty_result(content["why_empty"]))
         except Exception:
@@ -731,20 +812,10 @@ class RateLimitMiddleware:
         return self.requests_per_minute
 
     def _limit_key(self, client_ip: str) -> str:
-        """What the address is counted under: an IPv4 address by itself (an IPv4-mapped IPv6
-        address is its IPv4 address), an IPv6 address by its /64, the usual allocation to one
-        subscriber, so its 2**64 addresses can't each get an allowance and fill the table; except
-        an AI platform's address, which is published and counted by itself."""
-        try:
-            address = ipaddress.ip_address(client_ip.strip())
-        except ValueError:  # "unknown", a hostname, garbage
-            return client_ip
-        if address.version == 6:
-            if address.ipv4_mapped is not None:
-                return str(address.ipv4_mapped)
-            if not self._is_platform(client_ip):
-                return str(ipaddress.IPv6Network((address, 64), strict=False))
-        return str(address)
+        """What the address is counted under (_address_key): an IPv6 address by its /64, so its
+        2**64 addresses can't each get an allowance and fill the table; except an AI platform's
+        address, which is published and counted by itself."""
+        return _address_key(client_ip, by_itself=self._is_platform)
 
     def _cleanup_stale_ips(self, now: float) -> None:
         """Remove addresses with no request left in the window: the first ones, as request_counts
@@ -902,6 +973,23 @@ def _client_ip(request) -> str:
         ips = [ip.strip() for ip in forwarded.split(",")]
         return ips[-1] if ips else "unknown"
     return request.client.host if request.client else "unknown"
+
+
+def _address_key(client_ip: str, by_itself: Callable[[str], bool] | None = None) -> str:
+    """One caller's key, for the per-IP limit (RateLimitMiddleware._limit_key) and AppsByAddress:
+    an IPv4 address by itself (an IPv4-mapped IPv6 address is its IPv4 address), an IPv6 address
+    by its /64, the usual allocation to one subscriber, unless by_itself(client_ip) says to keep
+    it whole; anything else ("unknown", a hostname, garbage) as it is."""
+    try:
+        address = ipaddress.ip_address(client_ip.strip())
+    except ValueError:
+        return client_ip
+    if address.version == 6:
+        if address.ipv4_mapped is not None:
+            return str(address.ipv4_mapped)
+        if by_itself is None or not by_itself(client_ip):
+            return str(ipaddress.IPv6Network((address, 64), strict=False))
+    return str(address)
 
 
 def _caller_ip() -> str | None:
@@ -2499,8 +2587,7 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
                         "part number. Search by value and package with jlc_search instead.")
             else:
                 hint = ("The local catalog only lists in-stock parts (stock >= 10). "
-                        f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock"
-                        + _other_distributors_clause() + ".")
+                        f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock.")
                 if LCSC_CODE.fullmatch(mpn.strip()):
                     hint = (f"'{mpn.strip()}' looks like an LCSC code: "
                             f"jlc_get_part(lcsc=\"{mpn.strip().upper()}\") looks it up live, "
@@ -3912,36 +3999,6 @@ def _snapshot_health() -> dict[str, Any]:
         return {"data_as_of": _snapshot_as_of, "age_hours": None, "stale": None}
     age = (_health_clock() - scraped) / 3600
     return {"data_as_of": _snapshot_as_of, "age_hours": round(age, 1), "stale": age > SNAPSHOT_STALE_HOURS}
-
-
-# A per-minute wait is short; anything longer is a spent day or a pause the distributor asked for
-_DISTRIBUTOR_SPENT_SECONDS = 120
-
-
-def _usable_distributor_tools() -> list[str]:
-    """The distributor lookup tools worth suggesting right now: configured, and not waiting on a
-    spent daily limit or a pause. Suggesting a spent one only earns the caller the limit error
-    (14,000 refused digikey_get_part calls on 2026-11-19, nearly every one a different part)."""
-    tools = []
-    for name, tool in (("mouser", "mouser_get_part"), ("digikey", "digikey_get_part")):
-        quota = _distributor_quotas.get(name)
-        if quota is None:
-            continue
-        try:
-            wait = quota.retry_after()
-        except Exception:  # a hint must never fail a lookup
-            logger.exception(f"Couldn't read the {name} limit for a hint")
-            continue
-        if wait is None or wait <= _DISTRIBUTOR_SPENT_SECONDS:
-            tools.append(tool)
-    return tools
-
-
-def _other_distributors_clause() -> str:
-    """", or mouser_get_part / digikey_get_part for other distributors" for the tools usable now;
-    empty when neither is."""
-    tools = _usable_distributor_tools()
-    return f", or {' / '.join(tools)} for other distributors" if tools else ""
 
 
 # Health check endpoint

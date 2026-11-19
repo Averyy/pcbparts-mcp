@@ -308,33 +308,12 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
                                  "before substituting.")
 
 
-class _Quota:
-    def __init__(self, wait):
-        self.wait = wait
 
-    def retry_after(self):
-        if isinstance(self.wait, Exception):
-            raise self.wait
-        return self.wait
-
-
-@pytest.mark.parametrize("quotas,clause", [
-    ({"mouser": _Quota(None), "digikey": _Quota(None)}, ", or mouser_get_part / digikey_get_part for other distributors."),
-    ({"mouser": _Quota(40), "digikey": _Quota(None)}, ", or mouser_get_part / digikey_get_part for other distributors."),  # a per-minute wait
-    ({"mouser": _Quota(None), "digikey": _Quota(18000)}, ", or mouser_get_part for other distributors."),  # DigiKey's day spent
-    ({"mouser": _Quota(3600), "digikey": _Quota(None)}, ", or digikey_get_part for other distributors."),
-    ({"mouser": _Quota(3600), "digikey": _Quota(18000)}, "for low or zero stock."),  # both spent: neither is suggested
-    ({}, "for low or zero stock."),  # no distributor credentials on this server
-    ({"mouser": _Quota(RuntimeError("boom")), "digikey": _Quota(None)}, ", or digikey_get_part for other distributors."),
-], ids=["both", "minute_wait", "digikey_spent", "mouser_spent", "both_spent", "none_configured", "unreadable"])
-async def test_miss_hint_suggests_only_distributors_that_can_answer(monkeypatch, quotas, clause):
-    """A spent distributor was still suggested on every miss, and the caller's next call got the
-    limit error (2026-11-19: 14,000 refused digikey_get_part calls, nearly all different parts)."""
-    monkeypatch.setattr(server, "_distributor_quotas", quotas)
+async def test_miss_hint_never_suggests_the_distributor_tools():
+    """The hint used to end "or mouser_get_part / digikey_get_part for other distributors": on
+    2026-11-19 digikey_get_part was 17% of traffic and 87% of it refused (the shared limit was
+    spent). A caller who wants a distributor asks for it."""
     reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")
     assert reply["error"].startswith("No part found in the local snapshot")
-    assert reply["hint"].endswith(clause), reply["hint"]
-    spent = [tool for name, tool in (("mouser", "mouser_get_part"), ("digikey", "digikey_get_part"))
-             if name not in quotas or (isinstance(quotas[name].wait, (int, float)) and quotas[name].wait > 120)
-             or isinstance(quotas[name].wait, Exception)]
-    assert not any(tool in reply["hint"] for tool in spent)
+    assert reply["hint"].endswith("for low or zero stock.")
+    assert "mouser" not in reply["hint"].lower() and "digikey" not in reply["hint"].lower()
