@@ -1,6 +1,5 @@
-"""0.10.0: Mouser answers kept per part (3 days), concurrent one-part Mouser lookups sharing a
-request, every Mouser/DigiKey answer feeding the 90-day lifecycle store, and part_lifecycle.
-No network: httpx.MockTransport fakes, fake clocks, a gated sleep for the pool window."""
+"""0.10.0: Mouser answers kept per part (3 days), every Mouser/DigiKey answer feeding the 90-day
+lifecycle store, and part_lifecycle. No network: httpx.MockTransport fakes and fake clocks."""
 
 import asyncio
 import datetime
@@ -92,18 +91,6 @@ class FakeDigiKey:
         return httpx.Response(200, json={"Products": hits}) if hits else httpx.Response(404)
 
 
-class Gate:
-    """The pool window's sleep: waits until the test opens it."""
-
-    def __init__(self):
-        self.opened = asyncio.Event()
-        self.waits: list[float] = []
-
-    async def __call__(self, seconds: float) -> None:
-        self.waits.append(seconds)
-        await self.opened.wait()
-
-
 @pytest.fixture
 def clock():
     return Clock()
@@ -114,15 +101,14 @@ async def setup(clock, monkeypatch):
     """Build the server's clients on one store, as lifespan does. Returns a factory."""
     made = []
 
-    def create(mouser=None, digikey=None, mouser_limit=1000, digikey_limit=1000, gate=None, store=None,
+    def create(mouser=None, digikey=None, mouser_limit=1000, digikey_limit=1000, store=None,
                mouser_per_minute=None):
         store = store or DistributorStore(clock=clock)
         mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key", per_minute=mouser_per_minute)
         dq = QuotaPool([DailyQuota("DigiKey", digikey_limit, clock=clock, own_key="DigiKey API credentials")])
         m = d = None
         if mouser is not None:
-            m = MouserClient(api_key="k", quota=mq, store=store, pool_window=0.1 if gate else 0,
-                             **({"sleep": gate} if gate else {}))
+            m = MouserClient(api_key="k", quota=mq, store=store)
             m._client = httpx.AsyncClient(transport=httpx.MockTransport(mouser))
         if digikey is not None:
             d = DigiKeyClient(client_id="id", client_secret="secret", quota=dq, store=store)
@@ -147,7 +133,7 @@ async def lifecycle(parts):
 
 
 async def settle():
-    """Let started lookups reach the pool and its timer start."""
+    """Let started lookups reach their requests."""
     for _ in range(5):
         await asyncio.sleep(0)
 
@@ -324,20 +310,6 @@ class TestResultCap:
         reply = await m.get_part("LM358|TPS54331DR")
         assert fake.sent == ["LM358|TPS54331DR", "TPS54331DR"] and "not_found" not in reply
 
-    async def test_a_pooled_lookup_doesnt_depend_on_anothers_broad_number(self, setup):
-        gate = Gate()
-        fake = CappedMouser(*BROAD, mouser_part("TPS54331DR"))
-        m, _, store, _, _ = setup(mouser=fake, gate=gate)
-        broad = asyncio.create_task(m.get_part("LM358", caller="198.51.100.1"))
-        mine = asyncio.create_task(m.get_part("TPS54331DR", caller="203.0.113.9"))
-        await settle()
-        gate.opened.set()
-        await broad
-        reply = await mine
-        assert fake.sent == ["LM358|TPS54331DR", "TPS54331DR"]
-        assert [r["mfr_part_number"] for r in reply["results"]] == ["TPS54331DR"] and "not_found" not in reply
-        assert [(r.found, r.source) for r in store.readings("TPS54331DR")] == [(True, "mouser")]
-
     async def test_one_more_request_at_most_and_no_negative_from_a_capped_reply(self, setup):
         """Two broad numbers: the second request is capped too, and TPS54331DR is left unchecked:
         not found in this reply, nothing kept, and part_lifecycle doesn't call it not listed."""
@@ -371,102 +343,6 @@ class TestResultCap:
         assert fake.sent == ["LM358"]
         assert store.get_answer("mouser", "LM358") is not None  # what Mouser answers for it alone
         assert store.readings("LM358") == []  # no "not listed": the part itself may be past the cap
-
-
-# --- concurrent one-part lookups share a request ---
-
-class TestPool:
-    async def test_concurrent_lookups_share_one_request(self, setup):
-        gate = Gate()
-        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
-        m, _, store, mq, _ = setup(mouser=fake, gate=gate)
-        tasks = [asyncio.create_task(m.get_part(n, caller="198.51.100.1")) for n in ("LM358P", "NE555P", "lm358p")]
-        await settle()
-        assert gate.waits == [0.1] and fake.sent == []
-        gate.opened.set()
-        a, b, c = await asyncio.gather(*tasks)
-        assert fake.sent == ["LM358P|NE555P"] and mq.status()["used_today"] == 1
-        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"]
-        assert a == {**c, "results": [{**r, "requested": "LM358P"} for r in c["results"]]}  # c asked "lm358p"
-        assert [r["mfr_part_number"] for r in b["results"]] == ["NE555P"]
-        assert store.get_answer("mouser", "NE555P") is not None  # clean: kept per part
-        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["sent"] == 1
-
-    async def test_ten_go_at_once(self, setup):
-        gate = Gate()  # never opened
-        fake = FakeMouser(*(mouser_part(f"PART{i:02}X") for i in range(11)))
-        m, _, _, _, _ = setup(mouser=fake, gate=gate)
-        tasks = [asyncio.create_task(m.get_part(f"PART{i:02}X")) for i in range(11)]
-        done = await asyncio.gather(*tasks[:10])
-        assert fake.sent == ["|".join(f"PART{i:02}X" for i in range(10))]
-        assert [d["results"][0]["mfr_part_number"] for d in done] == [f"PART{i:02}X" for i in range(10)]
-        assert not tasks[10].done()  # the 11th waits in a new batch
-        gate.opened.set()
-        assert (await tasks[10])["total"] == 1 and len(fake.sent) == 2
-
-    async def test_a_refusal_reaches_every_waiter(self, setup):
-        gate = Gate()
-        m, _, _, _, _ = setup(mouser=FakeMouser(), gate=gate, mouser_limit=0)
-        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "NE555P")]
-        await settle()
-        gate.opened.set()
-        a, b = await asyncio.gather(*tasks)
-        assert a == b and "daily quota exceeded" in a["error"]
-
-    async def test_a_failure_raises_in_every_waiter(self, setup):
-        gate = Gate()
-        m, _, _, _, _ = setup(mouser=FakeMouser(responses=[httpx.Response(500)]), gate=gate)
-        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "NE555P")]
-        await settle()
-        gate.opened.set()
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        assert all(isinstance(r, MouserError) and "HTTP 500" in str(r) for r in results)
-
-    async def test_one_caller_giving_up_leaves_the_others(self, setup):
-        gate = Gate()
-        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
-        m, _, _, _, _ = setup(mouser=fake, gate=gate)
-        gone = asyncio.create_task(m.get_part("LM358P"))
-        stays = asyncio.create_task(m.get_part("NE555P"))
-        await settle()
-        gone.cancel()
-        gate.opened.set()
-        assert (await stays)["results"][0]["mfr_part_number"] == "NE555P"
-        assert gone.cancelled() and fake.sent == ["LM358P|NE555P"]
-
-    async def test_close_before_the_timer_starts(self, setup):
-        gate = Gate()
-        m, _, _, _, _ = setup(mouser=FakeMouser(mouser_part("LM358P")), gate=gate)
-        waiting = asyncio.create_task(m.get_part("LM358P"))
-        await asyncio.sleep(0)  # the lookup waits; the window's task hasn't started
-        await m.close()
-        with pytest.raises(asyncio.CancelledError):
-            await asyncio.wait_for(waiting, 1)
-
-    async def test_close_releases_a_waiting_batch(self, setup):
-        gate = Gate()  # never opened
-        fake = FakeMouser(mouser_part("LM358P"))
-        m, _, _, _, _ = setup(mouser=fake, gate=gate)
-        waiting = asyncio.create_task(m.get_part("LM358P"))
-        await settle()
-        await m.close()
-        with pytest.raises(asyncio.CancelledError):
-            await waiting
-        assert fake.sent == []
-
-    async def test_unmatched_result_goes_only_to_unmatched_lookups(self, setup):
-        gate = Gate()
-        odd = mouser_part("XYZ-1", mouser_pn="123-XYZ1")
-        fake = FakeMouser(responses=[httpx.Response(200, json={"Errors": [], "SearchResults": {
-            "Parts": [mouser_part("LM358P"), odd]}})])
-        m, _, store, _, _ = setup(mouser=fake, gate=gate)
-        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "OLDNAME1")]
-        await settle()
-        gate.opened.set()
-        found, other = await asyncio.gather(*tasks)
-        assert [r["mfr_part_number"] for r in found["results"]] == ["LM358P"]
-        assert [r["mfr_part_number"] for r in other["results"]] == ["XYZ-1"] and other["not_found"] == ["OLDNAME1"]
-        assert store.get_answer("mouser", "LM358P") is None  # unclear request: nothing kept per part
 
 
 # --- DigiKey answers in the store ---
@@ -974,11 +850,6 @@ class TestNotSent:
         assert (await lifecycle(["AB"]))["results"][0]["status"] == "obsolete"
 
 
-def misses(maker, count):
-    """count different parts of the maker a distributor freshly didn't list today."""
-    return [(maker, f"P{i:04}", False, NOW) for i in range(count)]
-
-
 def lcsc_catalog(monkeypatch, parts):
     class Catalog:
         def get_by_lcsc_batch(self, codes):
@@ -988,59 +859,6 @@ def lcsc_catalog(monkeypatch, parts):
             return dict.fromkeys(codes)
 
     monkeypatch.setattr(server, "get_db", lambda: Catalog())
-
-
-class TestMakerNotCarried:
-    async def test_learned_then_skipped_then_asked_again(self, setup, monkeypatch, clock):
-        from pcbparts_mcp.config import MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED
-        maker = "UNI-ROYAL(Uniroyal Elec)"
-        mouser, digikey = FakeMouser(), FakeDigiKey()
-        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
-        parts = [{"mpn": f"0603WAF{i:04}T5E", "manufacturer": maker} for i in range(MAKER_SKIP_NOT_LISTED + 1)]
-        reply = await lifecycle(parts[:MAKER_SKIP_NOT_LISTED])
-        assert all(r.get("not_found") for r in reply["results"]) and len(digikey.asked) == MAKER_SKIP_NOT_LISTED
-        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}
-        sent = (len(mouser.sent), len(digikey.asked))
-        last = (await lifecycle([parts[-1]]))["results"][0]
-        assert last == {"input": parts[-1], "mpn": parts[-1]["mpn"], "status": "unknown", "manufacturer": maker,
-                        "not_sent": "maker_not_carried"}
-        assert (len(mouser.sent), len(digikey.asked)) == sent  # neither asked: both learned it
-        assert stats.usage.summary()["days"][0]["distributors"]["mouser"]["skipped"] == 1
-        clock.advance(MAKER_SKIP_DAYS * DAY)  # the counts age out, and the not-listed answers too
-        await lifecycle([parts[-1]])
-        assert len(mouser.sent) == sent[0] + 1
-
-    async def test_never_for_a_maker_listed_in_the_window(self, setup):
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("LM358P"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED * 3))
-        await lifecycle([{"mpn": "LM358P", "manufacturer": "TI"}])
-        assert mouser.sent == []  # learned: not carried (as counted above)
-        store.count_maker_parts("mouser", [("texas instruments", "NE555P", True, NOW)])  # then one listed
-        assert (await lifecycle([{"mpn": "LM358P", "manufacturer": "Texas Instruments"}]))["results"][0]["source"] == "mouser"
-        assert mouser.sent == ["LM358P"]
-
-    async def test_mouser_skipped_for_the_maker_goes_to_digikey(self, setup):
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser, digikey = FakeMouser(), FakeDigiKey(dk_product("CL10A106KP8NNNC", "Samsung Electro-Mechanics"))
-        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
-        store.count_maker_parts("mouser", misses("samsung electro mechanics", MAKER_SKIP_NOT_LISTED))
-        row = (await lifecycle([{"mpn": "CL10A106KP8NNNC", "manufacturer": "Samsung Electro-Mechanics"}]))["results"][0]
-        assert (row["status"], row["source"]) == ("active", "digikey") and mouser.sent == []
-        assert store.makers_not_carried("digikey", {"samsung electro mechanics"}) == set()
-
-    async def test_listed_under_another_maker_counts_as_neither(self, setup):
-        _, _, store, _, _ = setup(mouser=FakeMouser(mouser_part("BSS138", "onsemi")), digikey=FakeDigiKey())
-        await lifecycle([{"mpn": "BSS138", "manufacturer": "Diodes Incorporated"}])
-        assert store._conn.execute("SELECT source, maker_key, mpn_key, found FROM maker_parts").fetchall() == [
-            ("digikey", "diodes", "BSS138", 0)]  # Mouser lists the number (onsemi's): no count for Diodes
-
-    async def test_lcsc_code_entries_count_by_the_catalog_maker(self, setup, monkeypatch):
-        lcsc_catalog(monkeypatch, {"C25804": {"model": "0603WAF1002T5E", "manufacturer": "UNI-ROYAL(Uniroyal Elec)"}})
-        _, _, store, _, _ = setup(mouser=FakeMouser(), digikey=FakeDigiKey())
-        await lifecycle(["C25804"])
-        assert {r[0] for r in store._conn.execute("SELECT maker_key FROM maker_parts")} == {"uni royal"}
 
 
 class TestMouserPartial:
@@ -1105,22 +923,8 @@ class TestOneNumberMouserRejects:
         assert [r["mfr_part_number"] for r in reply["results"]] == ["PARTB1"]
         assert reply["not_checked"] == ["PARTB2"] and reply["retry_after"] == 60
 
-    async def test_a_pooled_bad_number_fails_only_its_caller(self, setup):
-        gate = Gate()
-        fake = FakeMouser(responses=[httpx.Response(200, json=ODD_NUMBER),
-                                     httpx.Response(200, json={"Errors": [], "SearchResults": {"Parts": [mouser_part("LM358P")]}}),
-                                     httpx.Response(200, json=ODD_NUMBER)])
-        m, _, _, _, _ = setup(mouser=fake, gate=gate)
-        good = asyncio.create_task(m.get_part("LM358P"))
-        bad = asyncio.create_task(m.get_part("BAD*NUM"))
-        await settle()
-        gate.opened.set()
-        assert (await good)["results"][0]["mfr_part_number"] == "LM358P"
-        with pytest.raises(Exception, match="invalid characters"):
-            await bad
-
-    # Astra review round 5 (2026-11-18): with one number left to ask (the pooled path), Mouser
-    # rejecting it raised and threw away the kept answers of the rest of the batch
+    # Astra review round 5 (2026-11-18): with one number left to ask, Mouser rejecting it raised
+    # and threw away the kept answers of the rest of the batch
 
     async def test_a_kept_part_beside_a_rejected_one(self, setup):
         fake = FakeMouser(mouser_part("LM358P"))
@@ -1145,29 +949,6 @@ class TestOneNumberMouserRejects:
         good, bad = (await lifecycle(["LM358P", "BAD*NUM"]))["results"]
         assert (good["status"], good["source"]) == ("active", "mouser") and "lookup_failed" not in good
         assert bad["lookup_failed"] is True and fake.sent == ["LM358P", "BAD*NUM"]
-
-    async def test_a_pooled_rejection_fails_only_its_own_number(self, setup):
-        """Two callers share a request; Mouser rejects it and then one of its numbers asked alone:
-        the caller with that number keeps its kept part and gets lookup_failed for the bad one,
-        and the other caller its part."""
-        gate = Gate()
-        fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
-        m, _, _, _, _ = setup(mouser=fake, gate=gate)
-        warm = asyncio.create_task(m.get_part("LM358P"))
-        await settle()
-        gate.opened.set()
-        await warm
-        gate.opened.clear()
-        fake.responses = [httpx.Response(200, json=ODD_NUMBER), httpx.Response(200, json=ODD_NUMBER)]
-        mine = asyncio.create_task(m.get_part("LM358P|BAD*NUM", caller="198.51.100.1"))
-        other = asyncio.create_task(m.get_part("NE555P", caller="203.0.113.9"))
-        await settle()
-        gate.opened.set()
-        mine, other = await mine, await other
-        assert fake.sent[1:] == ["BAD*NUM|NE555P", "BAD*NUM", "NE555P"]
-        assert [r["mfr_part_number"] for r in mine["results"]] == ["LM358P"] and mine["lookup_failed"] == ["BAD*NUM"]
-        assert [r["mfr_part_number"] for r in other["results"]] == ["NE555P"] and "lookup_failed" not in other
-
 
 class TestShielded:
     async def test_mouser_batch_answer_kept_when_the_caller_gives_up(self, setup):
@@ -1290,32 +1071,15 @@ class TestMakerIdentity:
         assert given["status"] == "active" and mouser.sent == ["SC-32S-TEST"]
         assert (epson["manufacturer"], epson["status"]) == ("EPSON", "obsolete")  # Epson's own still answers
 
-    async def test_jlcpcbs_ams_counts_as_ams_osram(self, setup, monkeypatch):
-        """maker_key("AMS") was the alias's Advanced Monolithic Systems (JLCPCB's AMS1117 maker), so
-        that maker's misses skipped JLCPCB's "AMS" parts, which are ams OSRAM's."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        from pcbparts_mcp.lifecycle import maker_key
+    async def test_jlcpcbs_ams_is_ams_osram(self, setup, monkeypatch):
+        """JLCPCB's "AMS" parts are ams OSRAM's (the alias "ams" is Advanced Monolithic Systems,
+        JLCPCB's AMS1117 maker): Mouser's ams OSRAM listing answers them."""
         mouser = FakeMouser(mouser_part("AS5047P-ATSM", "ams OSRAM"))
         _, _, store, _, _ = setup(mouser=mouser)
-        store.count_maker_parts("mouser", misses(maker_key("Advanced Monolithic Systems"), MAKER_SKIP_NOT_LISTED))
         lcsc_catalog(monkeypatch, {"C976416": {"model": "AS5047P-ATSM", "manufacturer": "AMS"}})
         row = (await lifecycle(["C976416"]))["results"][0]
         assert (row["status"], row["source"], row["manufacturer"]) == ("active", "mouser", "ams OSRAM")
-        assert store._conn.execute("SELECT maker_key, found FROM maker_parts WHERE found").fetchall() == [
-            ("ams osram", 1)]
-
-    async def test_hk_is_a_maker(self, setup):
-        """JLCPCB's maker "HK" had an empty maker key (all region words), so its misses were never
-        counted and maker_not_carried never applied to it."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser, digikey = FakeMouser(), FakeDigiKey()
-        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
-        parts = [{"mpn": f"HK32F0{i:02}TEST", "manufacturer": "HK"} for i in range(MAKER_SKIP_NOT_LISTED + 1)]
-        await lifecycle(parts[:MAKER_SKIP_NOT_LISTED])
-        assert store.makers_not_carried("mouser", {"hk"}) == {"hk"}
-        sent = (len(mouser.sent), len(digikey.asked))
-        last = (await lifecycle([parts[-1]]))["results"][0]
-        assert last["not_sent"] == "maker_not_carried" and (len(mouser.sent), len(digikey.asked)) == sent
+        assert [r.maker for r in store.readings("AS5047P-ATSM")] == ["ams OSRAM"]
 
 
 class TestSpellingsSharingANumber:
@@ -1328,9 +1092,16 @@ class TestSpellingsSharingANumber:
         setup(mouser=mouser, digikey=digikey)
         rows = {row["input"]: row for row in (await lifecycle(parts))["results"]}
         assert mouser.sent == ["10-k"] and digikey.asked == ["10-k"]
-        assert rows["10k"] == {"input": "10k", "mpn": "10k", "status": "unknown", "not_found": True,
-                               "observed_at": "2026-11-18T12:00:00+00:00", "not_sent": "value"}
+        # "Not listed" is each spelling's own: the other spelling's miss isn't the value's
+        assert rows["10k"] == {"input": "10k", "mpn": "10k", "status": "unknown", "not_sent": "value"}
         assert rows["10-k"]["not_found"] is True and "not_sent" not in rows["10-k"]
+
+    async def test_a_listing_found_for_the_other_spelling_answers_both(self, setup):
+        mouser = FakeMouser(mouser_part("10-K", "Acme"))
+        setup(mouser=mouser)
+        rows = (await lifecycle(["10k", "10-K"]))["results"]
+        assert [(r["status"], r["source"]) for r in rows] == [("active", "mouser")] * 2
+        assert mouser.sent == ["10-K"] and "not_sent" not in rows[0]
 
     async def test_a_limit_on_the_other_spelling_isnt_the_values(self, setup):
         mouser = FakeMouser()
@@ -1393,39 +1164,10 @@ class TestCodeBesideAnUnusableMpn:
         assert rows[1]["error"] == "MPN too long (max 100 characters)"
 
 
-# --- Astra review round 2, 2026-11-18: what maker_not_carried may learn from ---
+# --- Astra review round 2, 2026-11-18 ---
 
-class TestMakerEvidence:
-    """A false skip leaves a part that IS carried unanswered for up to 30 days, so only distinct,
-    fresh and complete "not listed" answers count as a maker's misses, and any listing of the maker,
-    fresh or kept, counts as found."""
-
-    async def test_a_capped_reply_and_its_kept_answer_are_no_misses(self, setup):
-        """A capped reply of LM358's prefix matches counted as a TI miss, and its kept answer again on
-        every call: 20 calls from one request skipped TI's NE555P as maker_not_carried."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = CappedMouser(*BROAD, mouser_part("NE555P"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        for _ in range(MAKER_SKIP_NOT_LISTED):
-            row = (await lifecycle([{"mpn": "LM358", "manufacturer": "TI"}]))["results"][0]
-            assert row["not_found"] is True  # the reply is as before
-        assert mouser.sent == ["LM358"]  # one request; the rest read its kept answer
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == set()
-        assert store.get_answer("mouser", "LM358")[0]["capped"] is True  # kept with the cap noted
-        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
-        assert (row["status"], row["source"]) == ("active", "mouser") and mouser.sent[-1] == "NE555P"
-
-    async def test_a_kept_answer_read_again_is_no_miss(self, setup):
-        """A complete "not listed" counts when Mouser gives it, not each time it's read back."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("NE555P"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        await server.mouser_get_part(part_number="TIX0001")  # kept: Mouser doesn't list it
-        for _ in range(MAKER_SKIP_NOT_LISTED):
-            store._conn.execute("DELETE FROM lifecycle")  # so part_lifecycle reads the kept answer again
-            await lifecycle([{"mpn": "TIX0001", "manufacturer": "TI"}])
-        assert mouser.sent == ["TIX0001"]
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == set()
+class TestNotListedPerSpelling:
+    """A distributor's "not listed" holds for the spelling asked; a listing answers every spelling."""
 
     async def test_a_digikey_miss_is_kept_for_its_own_spelling(self, setup):
         """DigiKey matches the spelling asked (case aside), but its "not listed" was kept by mpn_key:
@@ -1450,46 +1192,8 @@ class TestMakerEvidence:
         assert sorted(digikey.asked) == ["LM358-P", "LM358P"]
         assert sorted(mouser.sent[0].split("|")) == ["LM358-P", "LM358P"]
 
-    async def test_a_kept_listing_of_the_maker_counts_as_found(self, setup, clock):
-        """Maker counts read only this call's answers: a BOM with NXP's LPC1768 kept as listed and 20
-        NXP parts Mouser doesn't list counted 20 misses and none found, then skipped NXP's parts."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("PCF8574T", "NXP Semiconductors"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        store.put_readings([Reading("LPC1768FBD100", "NXP Semiconductors", "mouser", "active", "not stated by Mouser",
-                                    NOW - 25 * DAY)])
-        parts = [{"mpn": "LPC1768FBD100", "manufacturer": "NXP Semicon"}]
-        parts += [{"mpn": f"NXPX{i:04}", "manufacturer": "NXP Semicon"} for i in range(MAKER_SKIP_NOT_LISTED)]
-        await lifecycle(parts)
-        assert store.makers_not_carried("mouser", {"nxp semicon"}) == set()
-        # Counted on the day it was observed, so it leaves the window when its observation does
-        assert store._conn.execute("SELECT day FROM maker_parts WHERE found").fetchall() == [((NOW - 25 * DAY) // DAY,)]
-        row = (await lifecycle([{"mpn": "PCF8574T", "manufacturer": "NXP Semicon"}]))["results"][0]
-        assert row["source"] == "mouser"
 
-    async def test_a_kept_listing_in_the_call_stops_its_skip(self, setup):
-        """A maker already past the threshold isn't skipped in a call whose own parts show it listed."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("PCF8574T", "NXP Semiconductors"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        store.count_maker_parts("mouser", misses("nxp semicon", MAKER_SKIP_NOT_LISTED))
-        store.put_readings([Reading("LPC1768FBD100", "NXP Semiconductors", "mouser", "active", "not stated by Mouser",
-                                    NOW - DAY)])
-        kept, asked = (await lifecycle([{"mpn": "LPC1768FBD100", "manufacturer": "NXP Semicon"},
-                                        {"mpn": "PCF8574T", "manufacturer": "NXP Semicon"}]))["results"]
-        assert kept["source"] == asked["source"] == "mouser" and mouser.sent == ["PCF8574T"]
-
-    async def test_any_kept_listing_of_the_maker_keeps_it_carried(self, setup):
-        """A listing kept from mouser_get_part, though not in the BOM, keeps the maker carried."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("NE555P"), mouser_part("TL072CP"))
-        setup(mouser=mouser)
-        await server.mouser_get_part(part_number="TL072CP")
-        await lifecycle([{"mpn": f"TIX{i:04}", "manufacturer": "Texas Instruments"}
-                         for i in range(MAKER_SKIP_NOT_LISTED)])
-        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "Texas Instruments"}]))["results"][0]
-        assert row["source"] == "mouser"
-
+class TestLoneSurrogates:
     async def test_lone_surrogates_are_one_rows_error(self, setup):
         """An escaped lone surrogate in a JSON array string passed the checks; echoed back, the
         reply couldn't be sent as UTF-8."""
@@ -1504,104 +1208,9 @@ class TestMakerEvidence:
         assert good["status"] == "active" and mouser.sent == ["LM358P"]
 
 
-# --- Astra review round 3, 2026-11-18 ---
-
-class TestListedUnderAnotherName:
-    async def test_a_listing_under_an_equivalent_name_stops_the_skip(self, setup):
-        """The listing check compared maker keys: after 20 misses for "NXP Semicon", DigiKey listing
-        an NXP part under "NXP USA Inc." (key "nxp") didn't stop the skip, so another NXP part came
-        back maker_not_carried with no request. Stored listings are matched with makers_match."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        digikey = FakeDigiKey(dk_product("PCF8574T,118", "NXP USA Inc."), dk_product("PCA9685PW", "NXP USA Inc."))
-        _, _, store, _, _ = setup(digikey=digikey)
-        store.count_maker_parts("digikey", misses("nxp semicon", MAKER_SKIP_NOT_LISTED))
-        assert store.makers_not_carried("digikey", {"nxp semicon"}) == {"nxp semicon"}
-        await server.digikey_get_part(product_number="PCF8574T,118")  # a fresh listing, under DigiKey's name
-        row = (await lifecycle([{"mpn": "PCA9685PW", "manufacturer": "NXP Semicon"}]))["results"][0]
-        assert (row["status"], row["source"]) == ("active", "digikey") and digikey.asked[-1] == "PCA9685PW"
-
-    async def test_only_matching_makers_listings_count(self, setup):
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        digikey = FakeDigiKey(dk_product("LM358P"))
-        _, _, store, _, _ = setup(digikey=digikey)
-        store.count_maker_parts("digikey", misses("uni royal", MAKER_SKIP_NOT_LISTED))
-        await server.digikey_get_part(product_number="LM358P")  # TI's: not UNI-ROYAL's
-        assert store.makers_not_carried("digikey", {"uni royal"}, {"uni royal": {"UNI-ROYAL(Uniroyal Elec)"}}) == {
-            "uni royal"}
-
-
-# --- Astra review round 4, 2026-11-18: every returned maker counts as listed ---
-
-def misses_of(store, source):
-    return store._conn.execute("SELECT COUNT(DISTINCT mpn_key) FROM maker_parts WHERE source = ? AND NOT found",
-                               (source,)).fetchone()[0]
-
-
-def listed_makers(store, source):
-    return {row[0] for row in store._conn.execute("SELECT maker FROM listed_makers WHERE source = ?", (source,))}
-
-
-class TestEveryReturnedMakerIsListed:
-    """Results that matching left unattributed or filtered out were dropped as maker evidence, so
-    a maker a distributor plainly lists could be skipped as maker_not_carried."""
-
-    async def test_an_ambiguous_mouser_batch(self, setup):
-        """LM358|LM358P returned TI's LM358PE4, which neither number owns: no listing was kept, both
-        inputs counted as TI misses (18 + 2 = 20), and TI's NE555P came back maker_not_carried."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("LM358PE4"), mouser_part("NE555P"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED - 2))
-        await lifecycle([{"mpn": "LM358", "manufacturer": "TI"}, {"mpn": "LM358P", "manufacturer": "TI"}])
-        assert mouser.sent == ["LM358|LM358P"] and listed_makers(store, "mouser") == {"Texas Instruments"}
-        assert misses_of(store, "mouser") == MAKER_SKIP_NOT_LISTED - 2  # its own maker's part came back
-        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
-        assert (row["status"], row["source"]) == ("active", "mouser") and mouser.sent[-1] == "NE555P"
-
-    async def test_a_filtered_digikey_listing(self, setup):
-        """DigiKey's LM358P for LM358 isn't the number (filtered out): it counted as a TI miss and no
-        TI listing was kept."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        filtered = httpx.Response(200, json={"Products": [dk_product("LM358P")]})  # DigiKey's loose match
-        digikey = FakeDigiKey(dk_product("NE555P"), responses=[filtered])
-        _, _, store, _, _ = setup(digikey=digikey)
-        store.count_maker_parts("digikey", misses("texas instruments", MAKER_SKIP_NOT_LISTED - 1))
-        row = (await lifecycle([{"mpn": "LM358", "manufacturer": "TI"}]))["results"][0]
-        assert row["not_found"] is True  # the reply is as before: LM358P isn't LM358
-        assert listed_makers(store, "digikey") == {"Texas Instruments"}
-        assert misses_of(store, "digikey") == MAKER_SKIP_NOT_LISTED - 1
-        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
-        assert row["source"] == "digikey" and digikey.asked == ["LM358", "NE555P"]
-
-    async def test_mouser_get_parts_results_alone(self, setup):
-        """No part_lifecycle answer involved: mouser_get_part's unattributed result keeps TI asked."""
-        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
-        mouser = FakeMouser(mouser_part("LM358PE4"), mouser_part("NE555P"))
-        _, _, store, _, _ = setup(mouser=mouser)
-        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED))
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
-        reply = await server.mouser_get_part(part_number="LM358|LM358P")
-        assert [(r["mfr_part_number"], r["requested"]) for r in reply["results"]] == [("LM358PE4", None)]
-        assert store.readings("LM358PE4") == []  # no reading: neither number owns it
-        row = (await lifecycle([{"mpn": "NE555P", "manufacturer": "TI"}]))["results"][0]
-        assert row["source"] == "mouser" and mouser.sent[-1] == "NE555P"
-
-    async def test_answers_read_from_the_store_count_too(self, setup):
-        mouser, digikey = FakeMouser(), FakeDigiKey()
-        m, d, store, _, _ = setup(mouser=mouser, digikey=digikey)
-        kept = {"results": [_normalize_part(mouser_part("LM358PE4"))], "matched": True}
-        store.put_answer("mouser", "LM358", kept, True)
-        store.put_answer("digikey", "LM358", {"not_found": True, "_makers": ["Texas Instruments Inc."]}, False)
-        await m.get_part("LM358")
-        assert (await d.get_part("LM358"))["error"] == "Part not found: LM358"  # "_makers" is never sent
-        assert mouser.sent == [] and digikey.asked == []
-        assert listed_makers(store, "mouser") == {"Texas Instruments"}
-        assert listed_makers(store, "digikey") == {"Texas Instruments Inc."}
-
-
 class TestUnreadableMouserReply:
     """A 200 without its parts list ({"Errors": [], "SearchResults": null}) was read as an empty
-    one: a day's "not found", a 30-day Mouser "not listed" and a maker miss. It's a failed lookup."""
+    one: a day's "not found" and a 30-day Mouser "not listed". It's a failed lookup."""
 
     BODIES = [{"Errors": [], "SearchResults": None}, {"Errors": []}, {"Errors": [], "SearchResults": {"Parts": None}},
               {"Errors": [], "SearchResults": {"NumberOfResult": 0}}, {"Errors": [], "SearchResults": []}]
@@ -1633,7 +1242,6 @@ class TestUnreadableMouserReply:
         assert row == {"input": {"mpn": "TIX0001", "manufacturer": "TI"}, "mpn": "TIX0001", "status": "unknown",
                        "manufacturer": "TI", "lookup_failed": True}
         assert digikey.asked == [] and store.readings("TIX0001") == []  # no "not listed", DigiKey not asked
-        assert misses_of(store, "mouser") == 0
 
 
 class TestLifecycleByMouserPartNumber:

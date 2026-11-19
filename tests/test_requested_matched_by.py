@@ -100,7 +100,7 @@ async def mouser():
 
     def create(fake):
         store = DistributorStore(clock=Clock())
-        client = MouserClient(api_key="k", store=store, pool_window=0, sleep=no_wait)
+        client = MouserClient(api_key="k", store=store)
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
         made.append((client, store))
         return client
@@ -315,7 +315,7 @@ async def lifecycle_server(monkeypatch):
 
     def create(fake):
         store = DistributorStore(clock=Clock())
-        m = MouserClient(api_key="k", store=store, pool_window=0, sleep=no_wait)
+        m = MouserClient(api_key="k", store=store)
         m._client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
         monkeypatch.setattr(server, "_mouser_client", m)
         monkeypatch.setattr(server, "_digikey_client", None)
@@ -363,33 +363,6 @@ async def test_one_part_asked_twice_goes_to_the_first(mouser, numbers):
     first = numbers.split("|")[0]
     assert [(mpn, requested) for mpn, requested, _ in answered(reply)] == [("LM358P", first)]
     assert "not_found" not in reply
-
-
-async def test_a_shared_requests_odd_result_answers_no_one(monkeypatch):
-    """Two callers' one-part lookups share a request; a result matching neither number goes to
-    both (unmatched) callers, each with requested null, not their own number."""
-    import asyncio
-
-    gate = asyncio.Event()
-
-    async def wait(seconds):
-        await gate.wait()
-
-    store = DistributorStore(clock=Clock())
-    m = MouserClient(api_key="k", store=store, pool_window=0.1, sleep=wait)
-    m._client = httpx.AsyncClient(transport=httpx.MockTransport(FakeMouser(replies=[[
-        mouser_part("LM358P"), mouser_part("XYZ-1", mouser_pn="123-XYZ1")]])))
-    try:
-        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "OLDNAME1")]
-        for _ in range(5):
-            await asyncio.sleep(0)
-        gate.set()
-        found, other = await asyncio.gather(*tasks)
-        assert answered(found) == [("LM358P", "LM358P", "exact")]
-        assert answered(other) == [("XYZ-1", None, None)] and other["not_found"] == ["OLDNAME1"]
-    finally:
-        await m.close()
-        store.close()
 
 
 def test_packing_wording_names_jst_only():

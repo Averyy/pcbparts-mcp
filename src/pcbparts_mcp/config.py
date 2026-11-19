@@ -247,9 +247,6 @@ MOUSER_CACHE_TTL = 3 * 86400
 # "Part not found" answers are kept for less time: one that wasn't really about the part (an API
 # glitch, a part listed later) hides that part for at most this long
 MOUSER_NOT_FOUND_TTL = 86400
-# Concurrent one-part Mouser lookups that start within this many seconds share one request (up to 10
-# part numbers), so separate callers' lookups cost one request instead of several
-MOUSER_POOL_WINDOW = 0.1
 
 # DigiKey API
 DIGIKEY_CLIENT_ID = os.getenv("DIGIKEY_CLIENT_ID", "")
@@ -271,15 +268,6 @@ LIFECYCLE_TTL = 90 * 86400
 LIFECYCLE_UNKNOWN_TTL = 7 * 86400
 LIFECYCLE_NOT_LISTED_TTL = 30 * 86400
 LIFECYCLE_MAX_PARTS = 50
-# part_lifecycle stops sending a maker's parts to a distributor that, over the last MAKER_SKIP_DAYS
-# days, said "not listed" for at least MAKER_SKIP_NOT_LISTED different parts of it and listed none
-# (kept per maker, distributor and part in distributor_store.py). A miss counts only from a fresh
-# and complete answer (not read back from the store, not cut at Mouser's result cap) that returned
-# no part of that maker; any part of the maker the distributor returned in that time, in any
-# tool's answer, fresh or kept, whatever number it was put down to, stops the skip. The counts age
-# out, so a maker it starts carrying is asked again.
-MAKER_SKIP_DAYS = 30
-MAKER_SKIP_NOT_LISTED = 20
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
 DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")

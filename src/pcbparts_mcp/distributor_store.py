@@ -1,7 +1,7 @@
 """Mouser and DigiKey answers kept across restarts (DISTRIBUTOR_STORE_PATH, on the pcbparts-cache
 Docker volume next to the EasyEDA and CSE stores).
 
-Four tables in one SQLite file:
+Two tables in one SQLite file:
 - answers: each part number's full answer (stock, prices, lifecycle), so asking again within
   MOUSER_CACHE_TTL / DIGIKEY_CACHE_TTL (3 days) costs no request; a "not found" is kept
   MOUSER_NOT_FOUND_TTL / DIGIKEY_NOT_FOUND_TTL (a day). mouser_get_part, digikey_get_part and
@@ -12,15 +12,6 @@ Four tables in one SQLite file:
   answer writes here; part_lifecycle reads it. A part's reading is found by mpn_key ("LM358-P" finds
   LM358P), a "not listed" only by the spelling asked, ignoring case (DigiKey matches that spelling,
   so its miss for LM358-P says nothing about LM358P).
-- maker_parts: per UTC day, maker (maker_key), distributor and part (mpn_key), whether
-  part_lifecycle found the distributor listing that maker's part or freshly not listing the number
-  at all, kept MAKER_SKIP_DAYS (30 days): part_lifecycle stops asking a distributor about a maker it
-  never lists (maker_not_carried). Nothing about who asked.
-- listed_makers: each maker name a distributor returned a part under, and when it last did, kept
-  MAKER_SKIP_DAYS: every result of every Mouser and DigiKey answer, fresh or read from answers,
-  whatever number it's put down to (note_listed_makers). A maker listed under any name that
-  makers_match takes as the same one ("NXP USA Inc." for "NXP Semicon") is never maker_not_carried.
-  A few thousand rows at most.
 
 Rows keep when they were fetched; lifetimes are applied when they're read, so changing one applies to
 rows already stored. Only part numbers and the distributors' answers are kept, nothing about who
@@ -40,9 +31,9 @@ from typing import Any, Callable
 
 from .config import (
     DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
-    MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
-from .lifecycle import Reading, maker_key, makers_match, not_listed_key
+from .lifecycle import Reading, maker_key, not_listed_key
 from .search.mpn import mpn_key
 
 logger = logging.getLogger(__name__)
@@ -81,26 +72,6 @@ _SCHEMA = (
         PRIMARY KEY (mpn_key, maker_key, source)
     )""",
     "CREATE INDEX IF NOT EXISTS lifecycle_age ON lifecycle (observed_at)",
-    # Replaced by listed_makers before release (makers_not_carried compared exact keys with it)
-    "DROP INDEX IF EXISTS lifecycle_maker",
-    # day: whole UTC days since 1970 (observed_at // 86400); found: listed (1) or not listed (0).
-    # One row per part a day, so a part counts once however often it's looked up.
-    """CREATE TABLE IF NOT EXISTS maker_parts (
-        source TEXT NOT NULL,
-        maker_key TEXT NOT NULL,
-        day INTEGER NOT NULL,
-        mpn_key TEXT NOT NULL,
-        found INTEGER NOT NULL,
-        PRIMARY KEY (source, maker_key, day, mpn_key)
-    )""",
-    # observed_at: the newest listing under this name (put_readings)
-    """CREATE TABLE IF NOT EXISTS listed_makers (
-        source TEXT NOT NULL,
-        maker_key TEXT NOT NULL,
-        maker TEXT NOT NULL,
-        observed_at REAL NOT NULL,
-        PRIMARY KEY (source, maker_key, maker)
-    )""",
 )
 
 
@@ -248,102 +219,17 @@ class DistributorStore:
                     (key, maker, reading.source, int(reading.found), reading.observed_at, reading.status,
                      reading.mpn, reading.maker, reading.raw, reading.last_buy_date),
                 )
-            self._put_listed([(reading.source, reading.maker, reading.observed_at)
-                              for reading in readings if reading.found])
             self._conn.commit()
             return True
         except (sqlite3.Error, ValueError) as e:
             logger.warning(f"Lifecycle store write failed: {e}")
             return False
 
-    def note_listed_makers(self, source: str, makers: list[str | None], observed_at: float) -> None:
-        """Keep that this source returned parts under these maker names (as it names them) at
-        observed_at: every result of an answer, whatever number it's put down to, so the maker is
-        never maker_not_carried while it's in the window."""
-        if self._conn is None or not makers:
-            return
-        try:
-            self._put_listed([(source, maker, observed_at) for maker in makers])
-            self._conn.commit()
-        except (sqlite3.Error, ValueError) as e:
-            logger.warning(f"Distributor store maker listing failed: {e}")
-
-    def _put_listed(self, listings: list[tuple[str, str | None, float]]) -> None:
-        """listed_makers rows for (source, maker name, when) listings, newest kept; no commit."""
-        listed: dict[tuple[str, str, str], float] = {}
-        for source, maker, at in listings:
-            if isinstance(maker, str) and (key := maker_key(maker)):
-                name = (source, key, maker.strip())
-                listed[name] = max(listed.get(name, 0.0), at)
-        if listed:
-            self._conn.executemany(
-                "INSERT INTO listed_makers (source, maker_key, maker, observed_at) VALUES (?, ?, ?, ?) "
-                "ON CONFLICT (source, maker_key, maker) DO UPDATE SET observed_at = excluded.observed_at "
-                "WHERE excluded.observed_at > listed_makers.observed_at",
-                [(*name, at) for name, at in listed.items()])
-
     def put_not_listed(self, mpn: str, source: str, observed_at: float | None = None) -> bool:
         """The source has no part with this number spelled so (kept LIFECYCLE_NOT_LISTED_TTL, 30
         days). Readings of parts it does list under the number stay."""
         return self.put_readings([Reading(mpn, "", source, "unknown", None,
                                           self._clock() if observed_at is None else observed_at, found=False)])
-
-    # --- which makers a distributor carries (part_lifecycle) ---
-
-    def _first_day(self) -> int:
-        """The first UTC day of the maker counts' window (the last MAKER_SKIP_DAYS days)."""
-        return int(self._clock() // 86400) - MAKER_SKIP_DAYS + 1
-
-    def count_maker_parts(self, source: str, parts: list[tuple[str, str, bool, float]]) -> None:
-        """Keep what part_lifecycle learned about makers' parts from this source: (maker key, part's
-        mpn_key, listed, when), counted on the UTC day of when (a kept listing on the day it was
-        observed; one older than the window isn't kept). Each part once a day per maker: listed
-        wins over not listed."""
-        if self._conn is None or not parts:
-            return
-        first = self._first_day()
-        rows: dict[tuple[str, int, str], int] = {}
-        for maker, key, found, at in parts:
-            day = int(at // 86400)
-            if maker and key and day >= first:
-                rows[(maker, day, key)] = max(rows.get((maker, day, key), 0), int(found))
-        try:
-            self._conn.executemany(
-                "INSERT INTO maker_parts (source, maker_key, day, mpn_key, found) VALUES (?, ?, ?, ?, ?) "
-                "ON CONFLICT (source, maker_key, day, mpn_key) DO UPDATE SET found = excluded.found "
-                "WHERE excluded.found > maker_parts.found",
-                [(source, maker, day, key, found) for (maker, day, key), found in rows.items()])
-            self._conn.commit()
-        except (sqlite3.Error, ValueError) as e:
-            logger.warning(f"Distributor store maker count failed: {e}")
-
-    def makers_not_carried(self, source: str, makers: set[str], names: dict[str, set[str]] | None = None) -> set[str]:
-        """The maker keys this source didn't list at least MAKER_SKIP_NOT_LISTED different parts of
-        in the last MAKER_SKIP_DAYS days, while listing none: neither counted as listed by
-        part_lifecycle nor listed in any answer it gave under a name makers_match takes as the
-        maker's (listed_makers; checked only for makers the counts would skip). names: the names
-        given for each key (part_lifecycle's makers as asked; the key itself when missing)."""
-        makers = {maker for maker in makers if maker}
-        if self._conn is None or not makers:
-            return set()
-        first = self._first_day()
-        marks = ", ".join("?" * len(makers))
-        try:
-            rows = self._conn.execute(
-                f"SELECT maker_key FROM maker_parts WHERE source = ? AND day >= ? AND maker_key IN ({marks}) "
-                "GROUP BY maker_key HAVING MAX(found) = 0 AND COUNT(DISTINCT mpn_key) >= ?",
-                (source, first, *sorted(makers), MAKER_SKIP_NOT_LISTED)).fetchall()
-            skipped = {maker for (maker,) in rows}
-            if skipped:
-                listed = self._conn.execute("SELECT maker_key, maker FROM listed_makers WHERE source = ? "
-                                            "AND observed_at >= ?", (source, first * 86400)).fetchall()
-                skipped = {key for key in skipped if not any(
-                    listed_key == key or any(makers_match(name, maker) for name in (names or {}).get(key) or {key})
-                    for listed_key, maker in listed)}
-        except (sqlite3.Error, ValueError) as e:
-            logger.warning(f"Distributor store maker read failed: {e}")
-            return set()
-        return skipped
 
     # --- upkeep ---
 
@@ -363,9 +249,6 @@ class DistributorStore:
                 "DELETE FROM lifecycle WHERE observed_at <= ? AND observed_at <= ? - CASE WHEN NOT found THEN ? "
                 "WHEN status = 'unknown' THEN ? ELSE ? END",
                 (now - shortest, now, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_TTL))
-            self._conn.execute("DELETE FROM maker_parts WHERE day <= ?", (int(now // 86400) - MAKER_SKIP_DAYS,))
-            self._conn.execute("DELETE FROM listed_makers WHERE observed_at < ?",
-                               ((int(now // 86400) - MAKER_SKIP_DAYS + 1) * 86400,))
             self._conn.commit()
         except sqlite3.Error as e:
             logger.warning(f"Distributor store prune failed: {e}")

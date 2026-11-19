@@ -47,8 +47,7 @@ OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "f
 TOOL_COUNTS = ("calls", *OUTCOMES, "ms")
 DISTRIBUTOR_EVENTS = ("sent", "cached", "rate_limited")
 # From 0.10.0, on days that had any: part numbers not sent because no distributor can list them (a
-# value such as "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters) or, for
-# part_lifecycle, because that distributor hasn't listed the maker's parts lately (search/mpn.py's
+# value such as "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters: search/mpn.py's
 # NOT_SENT_REASONS). One a number, under the distributor it would have gone to first.
 DISTRIBUTOR_SKIPPED = "skipped"
 # Historical DigiKey counts from before 0.9.3: an all-digit number missed the direct lookup and
@@ -461,8 +460,7 @@ class UsageStats:
                       "numbers that missed the direct lookup and went on to a keyword search, also counted in sent. "
                       "distributors skipped (from 0.10.0, on days with any): part numbers not sent because no "
                       "distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII "
-                      "text, not 3-40 characters) or, for part_lifecycle, because that distributor hasn't listed "
-                      "the maker's parts lately; one a number. "
+                      "text, not 3-40 characters); one a number. "
                       "From 0.10.0 (earlier days have none): upstream, for each service this server calls other than "
                       "Mouser and DigiKey (those are in distributors): jlcpcb (parts search), lcsc (product data), "
                       "easyeda_products (footprint checks), easyeda_components (symbols and footprints for pinouts), "

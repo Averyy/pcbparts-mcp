@@ -32,16 +32,14 @@ def is_placeholder_mpn(mpn: str) -> bool:
 
 # Why a number isn't sent to Mouser or DigiKey (not_sent on mouser_get_part, digikey_get_part and
 # part_lifecycle replies): neither can list it, so a request would only spend the shared daily
-# limits. maker_not_carried is part_lifecycle's alone (LifecycleLookup): the distributor hasn't
-# listed any of that maker's parts lately.
-NOT_SENT_REASONS = ("placeholder", "lcsc_code", "value", "length", "not_ascii", "maker_not_carried")
+# limits.
+NOT_SENT_REASONS = ("placeholder", "lcsc_code", "value", "length", "not_ascii")
 NOT_SENT_HINTS = {
     "placeholder": "is a BOM placeholder (not fitted or not chosen), not a part number",
     "lcsc_code": "is an LCSC code, not a manufacturer part number: jlc_get_part(lcsc=...) gives its MPN",
     "value": "is a component value, not a part number: jlc_search finds parts by value",
     "length": "isn't 3-40 characters, as Mouser and DigiKey part numbers are",
     "not_ascii": "has characters Mouser and DigiKey part numbers don't use",
-    "maker_not_carried": "is by a maker whose parts this distributor hasn't listed lately",
 }
 
 # A plain electrical value, perhaps with a size, dielectric, tolerance or rating: "10k", "4.7uF",

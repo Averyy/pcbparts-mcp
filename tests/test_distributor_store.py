@@ -7,7 +7,7 @@ import pytest
 
 from pcbparts_mcp.config import (
     DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL,
-    MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
 from pcbparts_mcp.distributor_store import DistributorStore
 from pcbparts_mcp.lifecycle import (
@@ -51,7 +51,6 @@ def test_lifetimes_as_decided():
     assert (MOUSER_CACHE_TTL, DIGIKEY_CACHE_TTL) == (3 * DAY, 3 * DAY)
     assert (MOUSER_NOT_FOUND_TTL, DIGIKEY_NOT_FOUND_TTL) == (DAY, DAY)
     assert (LIFECYCLE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL) == (90 * DAY, 7 * DAY, 30 * DAY)
-    assert (MAKER_SKIP_DAYS, MAKER_SKIP_NOT_LISTED) == (30, 20)
 
 
 class TestSchema:
@@ -83,91 +82,6 @@ class TestSchema:
         clock.advance(LIFECYCLE_NOT_LISTED_TTL - LIFECYCLE_UNKNOWN_TTL)
         store.prune()
         assert {r[0] for r in store._conn.execute("SELECT mpn FROM lifecycle")} == {"LM358P"}
-
-    def test_old_column_order_still_reads_and_writes(self, tmp_path, clock):
-        """A store file made before the columns were reordered (never shipped, but on dev machines)."""
-        import sqlite3
-
-        path = tmp_path / "distributor.db"
-        conn = sqlite3.connect(path)
-        conn.execute("CREATE TABLE answers (source TEXT NOT NULL, key TEXT NOT NULL, answer TEXT NOT NULL, "
-                     "found INTEGER NOT NULL, fetched_at REAL NOT NULL, PRIMARY KEY (source, key))")
-        conn.commit()
-        conn.close()
-        store = DistributorStore(path, clock=clock)
-        try:
-            assert store.put_answer("mouser", "LM358P", {"results": [1]}, True)
-            assert store.get_answer("mouser", "LM358P") == ({"results": [1]}, NOW)
-        finally:
-            store.close()
-
-
-def misses(maker, count, at=NOW, start=0):
-    """count different parts of the maker not listed, as part_lifecycle keeps them."""
-    return [(maker, f"P{start + i:04}", False, at) for i in range(count)]
-
-
-class TestMakerParts:
-    def test_not_carried_after_enough_misses_and_none_listed(self, store, clock):
-        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED - 1))
-        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
-        clock.advance(DAY)
-        store.count_maker_parts("mouser", misses("uni royal", 1, clock(), start=MAKER_SKIP_NOT_LISTED))
-        assert store.makers_not_carried("mouser", {"uni royal", "texas instruments"}) == {"uni royal"}
-        assert store.makers_not_carried("digikey", {"uni royal"}) == set()  # per distributor
-
-    def test_one_listed_part_in_the_window_keeps_the_maker(self, store, clock):
-        store.count_maker_parts("mouser", misses("vishay intertech", 50))
-        clock.advance(10 * DAY)
-        store.count_maker_parts("mouser", [("vishay intertech", "CRCW060310K0FKEA", True, clock())])
-        assert store.makers_not_carried("mouser", {"vishay intertech"}) == set()
-
-    def test_counts_age_out_so_a_maker_is_asked_again(self, store, clock):
-        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED))
-        clock.advance((MAKER_SKIP_DAYS - 1) * DAY)
-        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}
-        clock.advance(DAY)
-        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
-        store.prune()
-        assert store._conn.execute("SELECT COUNT(*) FROM maker_parts").fetchone()[0] == 0
-
-    def test_a_part_counts_once(self, store, clock):
-        """Astra review 2026-11-18: the counts added up answers, so one part looked up 20 times
-        (or read back from the store 20 times) was 20 misses. Now each part counts once a day, and
-        different parts are what reach the threshold."""
-        for _ in range(MAKER_SKIP_NOT_LISTED):
-            store.count_maker_parts("mouser", misses("uni royal", 1, clock()) * 2)  # one part, twice a day
-            store.count_maker_parts("mouser", misses("uni royal", 1, clock()))
-            clock.advance(DAY)
-        rows = store._conn.execute("SELECT COUNT(*) FROM maker_parts").fetchone()[0]
-        assert rows == MAKER_SKIP_NOT_LISTED  # one a day
-        assert store.makers_not_carried("mouser", {"uni royal"}) == set()
-        store.count_maker_parts("mouser", misses("uni royal", MAKER_SKIP_NOT_LISTED - 1, clock(), start=1))
-        assert store.makers_not_carried("mouser", {"uni royal"}) == {"uni royal"}  # 20 different parts
-
-    def test_listed_wins_and_is_counted_on_its_own_day(self, store, clock):
-        store.count_maker_parts("mouser", misses("nxp semicon", MAKER_SKIP_NOT_LISTED))
-        store.count_maker_parts("mouser", [("nxp semicon", "P0000", True, NOW - 25 * DAY)])
-        store.count_maker_parts("mouser", [("nxp semicon", "P0001", True, NOW - MAKER_SKIP_DAYS * DAY)])  # too old
-        assert store.makers_not_carried("mouser", {"nxp semicon"}) == set()
-        assert store._conn.execute("SELECT COUNT(*) FROM maker_parts WHERE found").fetchone()[0] == 1
-        clock.advance(5 * DAY)  # the listing's day leaves the window; the misses stay
-        assert store.makers_not_carried("mouser", {"nxp semicon"}) == {"nxp semicon"}
-
-    def test_a_kept_reading_of_the_maker_keeps_it(self, store, clock):
-        store.count_maker_parts("mouser", misses("texas instruments", MAKER_SKIP_NOT_LISTED))
-        store.put_readings([reading(source="digikey", observed_at=NOW - DAY)])  # another distributor's
-        store.put_readings([reading(mpn="NOPE1", maker="", status="unknown", raw=None, found=False)])
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
-        store.put_readings([reading(maker="Texas Instruments Inc.", observed_at=NOW - (MAKER_SKIP_DAYS - 1) * DAY)])
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == set()
-        clock.advance(DAY)  # that reading is now older than the window
-        assert store.makers_not_carried("mouser", {"texas instruments"}) == {"texas instruments"}
-
-    def test_parts_and_makers_but_no_callers_kept(self, store):
-        store.count_maker_parts("mouser", misses("uni royal", 1))
-        columns = [row[1] for row in store._conn.execute("PRAGMA table_info(maker_parts)")]
-        assert columns == ["source", "maker_key", "day", "mpn_key", "found"]
 
 
 class TestAnswers:
@@ -419,9 +333,9 @@ class TestMakers:
         assert maker_key("Texas Instruments Inc.") == maker_key("texas instruments") == "texas instruments"
 
     def test_a_maker_name_never_has_an_empty_or_not_listed_key(self):
-        """JLCPCB's maker "HK" was all region words, so its key was "": its misses were never counted
-        (maker_not_carried never applied) and it shared the "not listed" rows' key. JLCPCB's "--"
-        (no letters or digits) was "" too."""
+        """JLCPCB's maker "HK" was all region words, so its key was "", which it shared with the "not
+        listed" rows (a reading without a maker has it too). JLCPCB's "--" (no letters or digits) was
+        "" too."""
         assert maker_key("HK") == maker_key("HK Ltd") == maker_key("hk32") == "hk"
         assert maker_key("--") == "#--" and maker_key("Seiko") == "seiko instruments"
         assert maker_key("GigaDevice Semicon Beijing") == "gigadevice semicon"  # regions still left out
@@ -444,7 +358,7 @@ class TestMakers:
     ], ids=["samsung", "fujitsu", "semtech", "gd"])
     def test_jlcpcbs_short_names_keep_their_own_key(self, catalog, company, alias_company):
         """JLCPCB's short maker names are keyed as the company its catalog means, never merged with
-        the company their search alias names (that would merge two makers' not-carried counts)."""
+        the company their search alias names (two makers' readings of one number would share a key)."""
         assert maker_key(catalog) == maker_key(company)
         assert maker_key(catalog) != maker_key(alias_company)
 

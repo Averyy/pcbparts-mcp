@@ -15,7 +15,6 @@ import re
 import sqlite3
 import time
 import unicodedata
-from collections import defaultdict
 from contextlib import asynccontextmanager
 from difflib import get_close_matches
 from typing import Annotated, Any, Callable, Literal, NamedTuple
@@ -37,7 +36,7 @@ from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
     DB_BUSY_MAX_WAITING, DB_BUSY_MAX_WAIT_SECONDS, DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
     HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
-    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, CSE_USER,
+    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
@@ -3394,9 +3393,8 @@ async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
     Mouser doesn't list it or Mouser's daily limit is spent. A limit in the way (Mouser's
     per-minute one, or both daily ones) leaves it unknown with retry_after (seconds); a failed
     lookup, unknown with lookup_failed. Kept parts still answer. Nothing is sent for a number
-    neither lists, or to a distributor that hasn't listed the maker's parts lately: unknown with
-    not_sent (value: "10k"; lcsc_code; placeholder; length: not 3-40 characters; not_ascii;
-    maker_not_carried).
+    neither lists: unknown with not_sent (value: "10k"; lcsc_code; placeholder; length: not 3-40
+    characters; not_ascii).
     Reply: results in input order: input (as given; a long one cut at 100 characters), mpn,
     manufacturer, status, raw (the distributor's wording; Mouser states none for most active parts:
     "not stated by Mouser"), source, observed_at, last_buy_date where DigiKey gives one. An unknown status can add not_found

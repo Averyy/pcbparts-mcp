@@ -71,21 +71,10 @@ def _min_qty(variation: dict[str, Any]) -> int:
 
 class Lookup(NamedTuple):
     """DigiKeyClient.lookup's answer. reply: get_part's; kind: "found", "not_found", "limited" or
-    "invalid"; fetched_at: when DigiKey answered; fresh: it answered this lookup's own request (not
-    read back from the store; part_lifecycle's maker counts take a miss only then); makers: the
-    maker names of every product DigiKey returned, those that aren't the number included (a
-    reply listing a maker's LM358P for LM358 is no miss for that maker)."""
+    "invalid"; fetched_at: when DigiKey answered."""
     reply: dict[str, Any]
     kind: str
     fetched_at: float
-    fresh: bool = False
-    makers: tuple[str, ...] = ()
-
-
-def _listed_makers(products: list[Any]) -> tuple[str, ...]:
-    """The maker names of DigiKey's products, as it names them, once each."""
-    names = ((p.get("Manufacturer") or {}).get("Name") if isinstance(p, dict) else None for p in products)
-    return tuple(dict.fromkeys(name.strip() for name in names if isinstance(name, str) and name.strip()))
 
 
 def _same_mpn(listed: str, asked: str, maker: str) -> bool:
@@ -426,12 +415,10 @@ class DigiKeyClient:
         return (self._quota.retry_after() if self._quota else None) or 60
 
     async def lookup(self, product_number: str, caller: str | None = None) -> Lookup:
-        """get_part's reply, what it was, when DigiKey answered, whether it answered this lookup's
-        own request and the makers it returned (Lookup). Every maker DigiKey returns, fresh or read
-        back from the store, is kept as one it lists (DistributorStore.note_listed_makers). A
-        number DigiKey can't list (search/mpn.py's not_sent_reason: a value such as "10k", an LCSC
-        code, not 3-40 characters...) isn't sent: it gets the not-found reply with not_sent,
-        without a request or the quota."""
+        """get_part's reply, what it was and when DigiKey answered (Lookup). A number DigiKey can't
+        list (search/mpn.py's not_sent_reason: a value such as "10k", an LCSC code, not 3-40
+        characters...) isn't sent: it gets the not-found reply with not_sent, without a request or
+        the quota."""
         product_number = product_number.strip()
         if not product_number:
             return Lookup({"error": "Give a DigiKey or manufacturer part number."}, "invalid", self._store.now())
@@ -445,16 +432,9 @@ class DigiKeyClient:
         if stored is not None:
             stats.count_distributor("digikey", "cached")
             answer, fetched_at = stored
-            # The makers the answer listed, those that weren't the number included ("_makers"; kept
-            # with the answer, never sent): listed, as when it was fetched
-            makers = tuple(m for m in answer.pop("_makers", None) or () if isinstance(m, str))
-            makers += _listed_makers([{"Manufacturer": {"Name": r.get("manufacturer")}}
-                                      for r in answer.get("results") or [] if isinstance(r, dict)])
-            makers = tuple(dict.fromkeys(makers))
-            self._store.note_listed_makers("digikey", list(makers), fetched_at)
             if answer.get("not_found"):
-                return Lookup(_not_found_reply(product_number), "not_found", fetched_at, False, makers)
-            return Lookup(_answering(answer, product_number), "found", fetched_at, False, makers)
+                return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
+            return Lookup(_answering(answer, product_number), "found", fetched_at)
         # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
         task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
         self._tasks.add(task)
@@ -504,11 +484,6 @@ class DigiKeyClient:
                 data = {}
             break
         fetched_at = self._store.now()
-        # Every maker DigiKey returned counts as listed, the products that aren't the number
-        # included (LM358P's maker for LM358): part_lifecycle never skips it (maker_not_carried)
-        makers = _listed_makers([*(data.get("ExactMatches") or []), *(data.get("Products") or [])])
-        self._store.note_listed_makers("digikey", list(makers), fetched_at)
-
         # DigiKey PN exact matches can have a different MPN; trust ExactMatches in full.
         candidates = list(data.get("ExactMatches") or [])
         candidates.extend(p for p in data.get("Products") or []
@@ -526,14 +501,13 @@ class DigiKeyClient:
 
         if not products:
             # Kept too (a day), so asking again for a wrong or partial number costs no request
-            self._store.put_answer("digikey", cache_key, {"not_found": True, "_makers": list(makers)}, False,
-                                   fetched_at)
+            self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
             self._store.put_not_listed(product_number, "digikey", fetched_at)
-            return Lookup(_not_found_reply(product_number), "not_found", fetched_at, True, makers)
+            return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
 
         results = [_normalize_product(p, product_number) for p in products]
         result = {"results": results, "total": len(products), "observed_at": utc_text(fetched_at)}
-        self._store.put_answer("digikey", cache_key, {**result, "_makers": list(makers)}, True, fetched_at)
+        self._store.put_answer("digikey", cache_key, result, True, fetched_at)
         # Each part's lifecycle, filed under the number asked too: DigiKey's match can drop JST's
         # (LF)(SN) endings or take a DigiKey PN, so the asked number can differ from the MPN
         readings = []
@@ -544,7 +518,7 @@ class DigiKeyClient:
                 readings.append(Reading(part["mfr_part_number"], part["manufacturer"], "digikey", status, raw,
                                         fetched_at, last_buy_date=part.get("last_buy_date")))
         self._store.put_readings(readings, also_as=product_number)
-        return Lookup(_answering(result, product_number), "found", fetched_at, True, makers)
+        return Lookup(_answering(result, product_number), "found", fetched_at)
 
     async def close(self) -> None:
         """Close the HTTP client (and the store, if this client made its own). Lookups still in

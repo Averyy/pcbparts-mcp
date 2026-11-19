@@ -4,14 +4,13 @@ Answers are kept per part number in distributor_store.py for MOUSER_CACHE_TTL (3
 day), so a batch reuses parts other calls fetched and sends only the rest. Mouser matches loosely and
 doesn't say which part number each result is for, so results are matched back to the numbers asked
 (_attribute): a number whose results can't all be put down to it alone isn't kept on its own, and the
-whole batch is kept under its joined numbers instead. Concurrent one-part lookups share one request
-(_pooled). Every answer's lifecycle goes into the lifecycle store.
+whole batch is kept under its joined numbers instead. Every answer's lifecycle goes into the
+lifecycle store.
 
 Mouser sends at most 50 results a request (MOUSER_MAX_RESULTS), however many match, so a broad number
 can crowd the others out of a batch ("LM358|TPS54331DR" can come back as 50 LM358 parts). A reply cut
 at that cap keeps no "not found" or "not listed" for any number, and the numbers it crowded out are
-asked once more without the number that filled it (_crowded_out): a pooled lookup's answer doesn't
-depend on another caller's broad number.
+asked once more without the number that filled it (_crowded_out).
 
 Each request picks its API key as it goes out (Mouser takes the key in the query string): the first
 key until its day is spent, then the next (MouserKeyPool). A daily refusal from Mouser moves the
@@ -31,7 +30,7 @@ import logging
 import re
 import time
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable
 
 import httpx
@@ -42,7 +41,6 @@ from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
     MOUSER_NOT_FOUND_TTL,
-    MOUSER_POOL_WINDOW,
 )
 from .distributor_store import DistributorStore
 from .lifecycle import MOUSER_NOT_STATED, Reading, maker_key, mouser_status, utc_text
@@ -258,37 +256,19 @@ class PartAnswer:
     that is the part itself while another number filled the reply) that couldn't be asked again
     (_fetch): Mouser may list it. Such answers are never kept, so a kept answer is always checked.
     problem: why a number wasn't checked at all (_one_by_one): the limit error that held its request
-    back, or the error Mouser gave for it asked alone. complete: False when the reply was cut at
-    Mouser's cap (a number with results there but none that is the part: the part may be past the
-    cap), kept with the answer as "capped". stored: read back from the store, not this request's.
-    part_lifecycle's maker counts take a "not listed" only from a complete answer not stored."""
+    back, or the error Mouser gave for it asked alone."""
     results: list[dict[str, Any]]
     matched: bool
     fetched_at: float
     checked: bool = True
     problem: dict[str, Any] | Exception | None = None
-    complete: bool = True
-    stored: bool = False
 
     def as_json(self) -> dict[str, Any]:
-        data: dict[str, Any] = {"results": self.results, "matched": self.matched}
-        if not self.complete:
-            data["capped"] = True
-        return data
+        return {"results": self.results, "matched": self.matched}
 
     @classmethod
     def from_json(cls, data: dict[str, Any], fetched_at: float) -> PartAnswer:
-        return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at,
-                   complete=not data.get("capped"), stored=True)
-
-
-@dataclass
-class _PoolBatch:
-    """One-part lookups waiting to go out together (_pooled)."""
-    caller: str | None
-    future: asyncio.Future
-    numbers: dict[str, str] = field(default_factory=dict)  # cache key -> the number as first given
-    started: bool = False
+        return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at)
 
 
 def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
@@ -357,14 +337,12 @@ class MouserClient:
     """Async client for Mouser Search API v2.
 
     store: the answer and lifecycle store shared with DigiKeyClient and part_lifecycle (the server
-    passes one); without one the client keeps its own in memory. pool_window: seconds a one-part
-    lookup waits for others to share its request (sleep is injectable for tests). extra_keys:
-    more API keys (MOUSER_API_KEY_2, ...), each used once the previous key's day is spent; quota
-    then needs one DailyQuota per key (a MouserKeyPool). One DailyQuota is a pool of one key."""
+    passes one); without one the client keeps its own in memory. extra_keys: more API keys
+    (MOUSER_API_KEY_2, ...), each used once the previous key's day is spent; quota then needs one
+    DailyQuota per key (a MouserKeyPool). One DailyQuota is a pool of one key."""
 
     def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | QuotaPool | None = None,
                  store: DistributorStore | None = None, clock: Callable[[], float] = time.time,
-                 pool_window: float = MOUSER_POOL_WINDOW, sleep: Callable[[float], Any] = asyncio.sleep,
                  extra_keys: Sequence[str] = ()):
         self._keys = [api_key, *extra_keys]
         self._client: httpx.AsyncClient | None = None
@@ -374,11 +352,7 @@ class MouserClient:
             raise ValueError("Each Mouser API key needs its own daily quota")
         self._owns_store = store is None
         self._store = DistributorStore(clock=clock) if store is None else store
-        self._pool_window = pool_window
-        self._sleep = sleep
-        self._pool: _PoolBatch | None = None
-        self._tasks: set[asyncio.Task] = set()  # pool sends in flight (kept so they aren't collected)
-        self._waiting: set[asyncio.Future] = set()  # pooled batches not answered yet
+        self._tasks: set[asyncio.Task] = set()  # requests in flight (_shielded; kept so they aren't collected)
 
     def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
@@ -536,7 +510,7 @@ class MouserClient:
             raise answers[_cache_key(failed[0])].problem
         results: list[dict[str, Any]] = []
         seen = set()
-        unowned = set()  # results matching no number asked (from a request shared with other lookups)
+        unowned = set()  # results matching no number their request asked (extras)
         for result, extra in [(r, False) for n in sent if _cache_key(n) in checked for r in checked[_cache_key(n)].results] \
                 + [(r, True) for r in extras]:
             identity = (result.get("part_number"), result.get("mfr_part_number"), result.get("manufacturer"))
@@ -547,7 +521,8 @@ class MouserClient:
                     unowned.add(identity)
         # Which number each result answers, as this caller spelled it, and how: the owner the
         # answers were kept by (_attribute), worked out again over this call's numbers. A result
-        # that matches none of them answers none, even when this call asked one number.
+        # that matched none of its request's numbers answers none, though it may match one of this
+        # call's kept from another request.
         answered = [n for n in sent if _cache_key(n) in checked]
         owners = _attribute(answered, results)[1] if answered else [None] * len(results)
         results = [_answering(result, None if (result.get("part_number"), result.get("mfr_part_number"),
@@ -601,11 +576,11 @@ class MouserClient:
     async def _answers(self, numbers: list[str], caller: str | None
                        ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
         """Answers by cache key from the store, then from Mouser for the numbers it doesn't have:
-        one request (a lone number waits to share it, _pooled), and one more for numbers a capped
-        reply crowded out (_fetch). Also the results matching no number asked (they're returned to
-        the caller, not kept per part), and a limit error when one held back the request: then the
-        answers are only those the store had. The request runs on as its own task (shielded), so its
-        answers are kept even if this caller gives up."""
+        one request, and one more for numbers a capped reply crowded out (_fetch). Also the results
+        matching no number asked (they're returned to the caller, not kept per part), and a limit
+        error when one held back the request: then the answers are only those the store had. The
+        request runs on as its own task (shielded), so its answers are kept even if this caller
+        gives up."""
         stats.count_parts_asked("mouser", numbers)
         answers: dict[str, PartAnswer] = {}
         missing = []
@@ -631,27 +606,18 @@ class MouserClient:
                 continue
             answers.update(kept)
             extras = list(batch.get("extras") or [])
-            self._store.note_listed_makers("mouser", [r.get("manufacturer") for r in extras if isinstance(r, dict)],
-                                           fetched_at)
             missing = []
             break
-        # Every maker a kept answer lists counts as listed, as when it was fetched (maker_not_carried)
-        for answer in answers.values():
-            self._store.note_listed_makers(
-                "mouser", [r.get("manufacturer") for r in answer.results if isinstance(r, dict)], answer.fetched_at)
         if not missing:
             stats.count_distributor("mouser", "cached")
             return answers, extras, None
-        if len(missing) == 1:
-            fresh, more, error = await self._pooled(missing[0], caller)
-        else:
-            fresh, more, error = await self._shielded(self._fetch(missing, caller))
+        fresh, more, error = await self._shielded(self._fetch(missing, caller))
         if error is not None:
             return answers, extras, error
         answers.update(fresh)
         return answers, extras + more, None
 
-    async def _fetch(self, numbers: list[str], caller: str | None, pooled: bool = False
+    async def _fetch(self, numbers: list[str], caller: str | None
                      ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
         """One request for these numbers (distinct by cache key), and when its reply was cut at
         Mouser's cap, one more for the numbers it crowded out (_crowded_out), within the limits:
@@ -673,7 +639,7 @@ class MouserClient:
             return await self._one_by_one(numbers, caller)
         if error is not None:
             return {}, [], error
-        answers, extras, again = self._keep(numbers, data, pooled)
+        answers, extras, again = self._keep(numbers, data, keep_batch=True)
         if again:
             try:
                 data, error = await self._request(again, caller)
@@ -681,7 +647,7 @@ class MouserClient:
                 logger.warning(f"Mouser: asking again for numbers a capped reply crowded out failed: {e}")
                 data = None
             if data is not None and error is None:
-                more, more_extras, _ = self._keep(again, data, pooled=True)
+                more, more_extras, _ = self._keep(again, data)
                 answers.update(more)
                 extras = extras + more_extras
         return answers, extras, None
@@ -714,7 +680,7 @@ class MouserClient:
                 for rest in numbers[index:]:
                     answers[_cache_key(rest)] = PartAnswer([], False, now, False, error)
                 break
-            more, more_extras, _ = self._keep([number], data, pooled=True)
+            more, more_extras, _ = self._keep([number], data)
             answers.update(more)
             extras += more_extras
         return answers, extras, None
@@ -723,7 +689,9 @@ class MouserClient:
         """Run coro as its own task and wait for it: a caller giving up (a cancelled tool call)
         doesn't cancel the request, whose answer is still kept for the next caller. close()
         cancels it."""
-        task = self._spawn(coro)
+        task = asyncio.create_task(coro)
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
         task.add_done_callback(_consume_exception)
         return await asyncio.shield(task)
 
@@ -763,38 +731,34 @@ class MouserClient:
             return data, None
         raise AssertionError("unreachable: the last attempt returns")
 
-    def _keep(self, numbers: list[str], data: dict[str, Any], pooled: bool
+    def _keep(self, numbers: list[str], data: dict[str, Any], keep_batch: bool = False
               ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], list[str]]:
         """One reply's answers by cache key, its extras and, when it was cut at the cap, the
         numbers it crowded out (_crowded_out: to ask again). Keeps each clean number's answer, or,
-        for a caller's own batch with an unclear result, the batch under its joined numbers (a
-        pooled request's numbers come from different calls, so that key would never be asked
-        again); and every result's lifecycle that can be put down to one number. A capped reply
-        keeps no negative (no answer without a match, no batch, no "not listed") and nothing for
-        the numbers it crowded out; their answers, and those of numbers it has no results for,
+        with keep_batch (a call's own request, not the follow-up for crowded-out numbers, whose
+        joined numbers no call asks), for a batch with an unclear result, the batch under its
+        joined numbers; and every result's lifecycle that can be put down to one number. A capped
+        reply keeps no negative (no answer without a match, no batch, no "not listed") and nothing
+        for the numbers it crowded out; their answers, and those of numbers it has no results for,
         aren't checked until they're asked again."""
         fetched_at = self._store.now()
         parts = (data.get("SearchResults") or {}).get("Parts") or []
         parts = [p for p in parts if isinstance(p, dict)]
         capped = _capped(data, parts)
         results = [_normalize_part(p) for p in parts]
-        # Every maker the reply lists counts as listed, whatever number its parts are put down to
-        # (an unclear owner keeps no reading): part_lifecycle never skips it (maker_not_carried)
-        self._store.note_listed_makers("mouser", [r.get("manufacturer") for r in results], fetched_at)
-
         per, owners, extras, clean = _attribute(numbers, results)
         again = _crowded_out(numbers, per) if capped else []
         answers = {}
         for number in numbers:
             matched = any(_touches(r, number) for r in per[number])
             checked = not capped or (bool(per[number]) and number not in again)
-            answer = PartAnswer(per[number], matched, fetched_at, checked, complete=not capped)
+            answer = PartAnswer(per[number], matched, fetched_at, checked)
             answers[_cache_key(number)] = answer
             if number in clean and checked and (matched or not capped):
                 # Its lifetime follows matched, as the reply's not_found does: unrelated results
                 # don't make a part Mouser didn't find live as long as one it did
                 self._store.put_answer("mouser", _cache_key(number), answer.as_json(), matched, fetched_at)
-        if len(numbers) > 1 and not pooled and not capped and len(clean) < len(numbers):
+        if keep_batch and len(numbers) > 1 and not capped and len(clean) < len(numbers):
             self._store.put_answer("mouser", _batch_key(numbers), {
                 "answers": {key: answer.as_json() for key, answer in answers.items()}, "extras": extras,
             }, any(answer.matched for answer in answers.values()), fetched_at)
@@ -817,79 +781,9 @@ class MouserClient:
                     self._store.put_not_listed(number, "mouser", fetched_at)
         return answers, extras, again
 
-    async def _pooled(self, number: str, caller: str | None
-                      ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
-        """One number's answer from a request shared with other one-part lookups that start within
-        pool_window (up to 10 numbers; a full batch goes at once). A result matching none of the
-        numbers goes back only to lookups whose number nothing matched. Mouser rejecting the number
-        (asked alone, or alone after rejecting the shared request) is its answer's problem, which
-        the caller reports for that number only (get_part's lookup_failed, part_lifecycle's row)."""
-        key = _cache_key(number)
-        batch = self._pool
-        if batch is None or (key not in batch.numbers and len(batch.numbers) >= MOUSER_MAX_BATCH):
-            batch = self._pool = _PoolBatch(caller, asyncio.get_running_loop().create_future())
-            batch.future.add_done_callback(_consume_exception)
-            self._waiting.add(batch.future)
-            batch.future.add_done_callback(self._waiting.discard)
-            self._spawn(self._send_after_window(batch))
-        batch.numbers.setdefault(key, number)
-        if len(batch.numbers) >= MOUSER_MAX_BATCH and not batch.started:
-            self._spawn(self._send(batch))  # full: no need to wait (the window's end then sends nothing)
-        # shield: one caller giving up (a cancelled tool call) mustn't cancel the others' request
-        answers, extras, error = await asyncio.shield(batch.future)
-        if error is not None:
-            return {}, [], error
-        answer = answers[key]
-        # Asked alone (_one_by_one, or a lone number): this number's own outcome; another caller's
-        # number can't fail it, and it doesn't fail this caller's kept answers
-        if isinstance(answer.problem, Exception):
-            return {key: answer}, [], None
-        if isinstance(answer.problem, dict):
-            return {}, [], answer.problem
-        return {key: answer}, (extras if not answer.matched else []), None
-
-    def _spawn(self, coro) -> asyncio.Task:
-        task = asyncio.create_task(coro)
-        self._tasks.add(task)
-        task.add_done_callback(self._tasks.discard)
-        return task
-
-    async def _send_after_window(self, batch: _PoolBatch) -> None:
-        try:
-            await self._sleep(self._pool_window)
-        except asyncio.CancelledError:  # close(): nothing will send this batch now
-            if self._pool is batch:
-                self._pool = None
-            if not batch.started and not batch.future.done():
-                batch.future.cancel()
-            raise
-        await self._send(batch)
-
-    async def _send(self, batch: _PoolBatch) -> None:
-        if batch.started:
-            return
-        batch.started = True
-        if self._pool is batch:
-            self._pool = None  # later lookups start a new batch
-        try:
-            result = await self._fetch(list(batch.numbers.values()), batch.caller, pooled=len(batch.numbers) > 1)
-        except asyncio.CancelledError:
-            if not batch.future.done():
-                batch.future.cancel()
-            raise
-        except Exception as e:  # each waiting lookup raises it, as its own request would have
-            if not batch.future.done():
-                batch.future.set_exception(e)
-        else:
-            if not batch.future.done():
-                batch.future.set_result(result)
-
     async def close(self) -> None:
-        """Close the HTTP client (and the store, if this client made its own). Lookups still waiting
-        for a pooled request are cancelled (a task cancelled before it starts can't do that itself)."""
-        self._pool = None
-        for future in list(self._waiting):
-            future.cancel()
+        """Close the HTTP client (and the store, if this client made its own). Requests still in
+        flight are cancelled."""
         for task in list(self._tasks):
             task.cancel()
         if self._client:
@@ -905,6 +799,6 @@ def _batch_key(numbers: list[str]) -> str:
 
 
 def _consume_exception(future: asyncio.Future) -> None:
-    """Mark a pooled request's exception as seen, so it isn't logged when every waiter gave up."""
+    """Mark a shielded request's exception as seen, so it isn't logged when its caller gave up."""
     if not future.cancelled():
         future.exception()

@@ -398,11 +398,8 @@ class TestCSE:
 
 class TestPartsAsked:
     async def test_mouser(self):
-        async def no_wait(seconds):
-            pass
-
         body = {"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}}
-        client = MouserClient(api_key="k", sleep=no_wait)
+        client = MouserClient(api_key="k")
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(200, json=body)))
         await client.get_part("LM358P|NE555P|lm358p")  # the repeat in one call is asked once
         await client.get_part("lm358p")  # answered from the stored answers: still asked

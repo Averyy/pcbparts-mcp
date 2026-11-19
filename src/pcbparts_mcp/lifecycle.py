@@ -110,8 +110,8 @@ _CATALOG_NAMES = {"seiko": "Seiko Instruments"}
 # JLCPCB's "Samsung" lists Samsung Semiconductor's DRAM and LEDs (the alias is Samsung
 # Electro-Mechanics, MLCCs), its "FUJITSU" Fujitsu Components' relays (alias: RAMXEED/FUJITSU, FRAM),
 # its "SEMTECH" the real Semtech (alias: "ST(Semtech)", generic diodes) and its "GD" HER rectifiers
-# (alias: GigaDevice). Keyed by the alias, two companies' maker-not-carried counts would merge and
-# could skip the one looked up less.
+# (alias: GigaDevice). Keyed by the alias, two companies' readings of one number in the lifecycle
+# store would share a key, and one would replace the other.
 _KEY_NAMES = {
     "ams": "ams OSRAM",
     "samsung": "Samsung Semiconductor",
@@ -186,11 +186,6 @@ def _text_forms(text: str, aliased: bool, drop: frozenset[str]) -> list[_Name]:
     return forms + [_Name(words) for part in inner for words in (_words(p, drop) for p in part.split("/")) if words]
 
 
-def maker_names(name: str | None) -> list[tuple[str, ...]]:
-    """The word lists a maker can be recognised by (_name_forms). Aliases such as TI resolve too."""
-    return [form.words for form in _name_forms((name or "").strip())]
-
-
 # The start of the lifecycle store's maker key for a "not listed" row (the distributor has no part
 # with the number, whoever makes it), followed by the spelling asked (not_listed_key): never a
 # maker_key, which is words of [a-z0-9], "#" and a name's text, or "" for no name (a reading
@@ -212,8 +207,8 @@ def not_listed_key(mpn: str | None) -> str:
 
 
 def maker_key(name: str | None) -> str:
-    """One maker's key in the lifecycle store and its maker counts ("Texas Instruments Inc." and
-    "Texas Instruments" share one): its alias-resolved name without parentheses, by its words.
+    """One maker's key in the lifecycle store ("Texas Instruments Inc." and "Texas Instruments"
+    share one): its alias-resolved name without parentheses, by its words.
     Never empty for a name that isn't: a name of region words only keeps them (JLCPCB's maker "HK"
     is "hk"), and one without letters or digits (JLCPCB's "--") is "#" and its text. JLCPCB's
     "AMS" is ams OSRAM's (_KEY_NAMES)."""
@@ -308,16 +303,13 @@ class Reading:
 class Entry:
     """One part_lifecycle input: what was given, and the MPN and maker to look up (an LCSC code is
     resolved to both from the catalog). not_sent: why its number isn't worth a request at all
-    (search/mpn.py's not_sent_reason). skip: distributors that haven't listed the maker's parts
-    lately (maker_not_carried); skipped: those of them it would have been sent to this call."""
+    (search/mpn.py's not_sent_reason)."""
     input: Any
     mpn: str | None = None
     maker: str | None = None
     lcsc: str | None = None
     error: dict[str, Any] | None = None
     not_sent: str | None = None
-    skip: set[str] = field(default_factory=set)
-    skipped: set[str] = field(default_factory=set)
 
 
 @dataclass(eq=False)
@@ -325,9 +317,9 @@ class _KeyState:
     """What's known about one spelling of an MPN during a call, from the store and this call's
     lookups. readings (parts listed under the number) are shared by every spelling of it (by
     mpn_key: LM358P's listing answers "LM358-P"); not_listed is this spelling's own (spelling_key).
-    spelling: the one sent (sendable). An entry whose spelling may not be sent uses the first of its
-    number's that may ("10-k" goes out for ["10k", "10-k"], never the value "10k"), or its own
-    state (not sendable) when none may."""
+    spelling: the one sent (sendable). An entry whose spelling may not be sent (not_sent) has its
+    own state, never sent: in ["10k", "10-k"] only "10-k" goes out, and "10k" still shares the
+    number's readings."""
     spelling: str
     sendable: bool = True
     readings: list[Reading] = field(default_factory=list)
@@ -335,13 +327,6 @@ class _KeyState:
     limited: dict[str, int] = field(default_factory=dict)  # source -> seconds until it may be asked
     day_spent: set[str] = field(default_factory=set)  # sources limited because their whole day is spent
     failed: set[str] = field(default_factory=set)
-    asked: set[str] = field(default_factory=set)  # sources a lookup went to this call
-    # sources whose "not listed" came this call from a request and complete: not read back from the
-    # store, not a reply cut at Mouser's result cap (the only misses the maker counts take)
-    missed: set[str] = field(default_factory=set)
-    # source -> the maker names of every part its answer returned for this spelling, those that
-    # aren't the number included: a reply listing a maker's LM358PE4 for LM358 is no miss for it
-    returned: dict[str, set[str]] = field(default_factory=dict)
 
     def add(self, reading: Reading) -> None:
         if reading.found:
@@ -378,12 +363,10 @@ class LifecycleLookup:
     Mouser listing the part with a status it can't name (unknown) doesn't send it to DigiKey either.
 
     Nothing goes out for a number neither distributor can list (Entry.not_sent: a value such as
-    "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters), nor to a distributor
-    for a maker it hasn't listed a part of lately (MAKER_SKIP_NOT_LISTED of its parts not listed and
-    none listed in MAKER_SKIP_DAYS days, kept per maker and part in the store; _count_makers):
-    Mouser skipped that way counts as not listing it. Both clients write what they fetch into the
-    store and their 3-day answer cache, as for mouser_get_part and digikey_get_part. Each spelling
-    of a number is asked about until a distributor lists the part (spelling_key)."""
+    "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters). Both clients write
+    what they fetch into the store and their 3-day answer cache, as for mouser_get_part and
+    digikey_get_part. Each spelling of a number is asked about until a distributor lists the part
+    (spelling_key)."""
 
     def __init__(self, store: DistributorStore, mouser: MouserClient | None = None,
                  digikey: DigiKeyClient | None = None):
@@ -399,32 +382,19 @@ class LifecycleLookup:
             if not state.sendable and not state.readings and not state.not_listed:
                 # No request: counted under the distributor it would have gone to first
                 stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
-        # The kept listings first, so a maker this call's own parts show listed isn't skipped in it
-        self._count_makers(pairs)
-        names: dict[str, set[str]] = {}  # maker key -> the names given for it
-        for entry in entries:
-            if entry.error is None and entry.maker and not entry.not_sent and (key := maker_key(entry.maker)):
-                names.setdefault(key, set()).add(entry.maker)
-        for source, client in (("mouser", self._mouser), ("digikey", self._digikey)):
-            if client is not None and names:
-                not_carried = self._store.makers_not_carried(source, set(names), names)
-                for entry in entries:
-                    if entry.maker and maker_key(entry.maker) in not_carried:
-                        entry.skip.add(source)
 
         # Mouser first, then DigiKey for what it doesn't list or can't answer today; a part with a
         # reading is never asked
         await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
         await self._ask_digikey(self._unanswered(pairs, "digikey", self._digikey_may_ask), caller)
-        self._count_makers(pairs)
         return [self._result(entry, state) for entry, state in pairs]
 
     def _states(self, entries: list[Entry]) -> list[_KeyState | None]:
         """Each entry's _KeyState (None for an entry with an error), with what the store knows: one
-        per spelling that may be sent (spelling_key), sharing its number's readings (mpn_key)."""
+        per spelling that may be sent (spelling_key), and one per number for the entries that may
+        not, all sharing the number's readings (mpn_key)."""
         shared: dict[str, list[Reading]] = {}  # mpn_key -> the number's readings
         sendable: dict[tuple[str, str], _KeyState] = {}
-        first: dict[str, _KeyState] = {}  # mpn_key -> its first spelling that may be sent
         unsendable: dict[str, _KeyState] = {}
 
         def new_state(spelling: str, may_send: bool) -> _KeyState:
@@ -438,8 +408,7 @@ class LifecycleLookup:
                 entry.not_sent = not_sent_reason(entry.mpn or "")
                 identity = (mpn_key(entry.mpn or ""), spelling_key(entry.mpn))
                 if not entry.not_sent and identity not in sendable:
-                    sendable[identity] = state = new_state(entry.mpn or "", True)
-                    first.setdefault(identity[0], state)
+                    sendable[identity] = new_state(entry.mpn or "", True)
         states: list[_KeyState | None] = []
         for entry in entries:
             key = mpn_key(entry.mpn or "")
@@ -447,8 +416,6 @@ class LifecycleLookup:
                 states.append(None)
             elif not entry.not_sent:
                 states.append(sendable[(key, spelling_key(entry.mpn))])
-            elif key in first:
-                states.append(first[key])
             else:
                 if key not in unsendable:
                     unsendable[key] = new_state(entry.mpn or "", False)
@@ -464,50 +431,15 @@ class LifecycleLookup:
 
     @staticmethod
     def _unanswered(pairs: list[tuple[Entry, _KeyState | None]], source: str, may_ask: Any = None) -> list[_KeyState]:
-        """The spellings some entry has no reading for (for its maker, if given), that this source
-        hasn't answered yet and may be asked (may_ask: a test of the spelling's state), and that
-        may be sent to it (Entry.not_sent and skip)."""
-        from . import stats
-
+        """The spellings that may be sent (Entry.not_sent) and that some entry has no reading for
+        (for its maker, if given), that this source hasn't answered yet and may be asked (may_ask:
+        a test of the spelling's state)."""
         wanted: dict[_KeyState, None] = {}
-        skipped: dict[_KeyState, None] = {}
         for entry, state in pairs:
             if state is not None and not entry.not_sent:
                 if not state.matching(entry.maker) and not state.knows(source) and (may_ask is None or may_ask(state)):
-                    if source in entry.skip:
-                        entry.skipped.add(source)
-                        skipped[state] = None
-                    else:
-                        wanted[state] = None
-        for _ in skipped.keys() - wanted.keys():
-            stats.count_distributor(source, "skipped")
+                    wanted[state] = None
         return list(wanted)
-
-    def _count_makers(self, pairs: list[tuple[Entry, _KeyState | None]]) -> None:
-        """Keep, per maker given, what each distributor's answers say of it (MAKER_SKIP_*), per part
-        (mpn_key): a listing of the number under that maker, fresh or kept, counts as listed on the
-        day it was observed; a "not listed" for a spelling sent, when the distributor has no listing
-        of the number at all, counts as a miss only when it came this call from a request and
-        complete (_KeyState.missed: a kept answer read again, or a reply cut at Mouser's result cap,
-        isn't one) and returned no part of that maker (_KeyState.returned: LM358PE4 for LM358 is no
-        miss for TI). Listed only under other makers counts as neither. A false skip leaves a part a
-        distributor carries unanswered for up to MAKER_SKIP_DAYS, so misses take the surest
-        evidence, and the store counts each part once a day (DistributorStore.count_maker_parts)."""
-        parts: dict[str, list[tuple[str, str, bool, float]]] = {}
-        for entry, state in pairs:
-            maker = maker_key(entry.maker) if state is not None and entry.maker else ""
-            if not maker:
-                continue
-            key = mpn_key(entry.mpn or "")
-            for source in ("mouser", "digikey"):
-                if listed := state.matching(entry.maker, source):
-                    parts.setdefault(source, []).append((maker, key, True, max(r.observed_at for r in listed)))
-                elif (not entry.not_sent and source in state.missed
-                      and not any(r.source == source for r in state.readings)
-                      and not any(makers_match(entry.maker, name) for name in state.returned.get(source, ()))):
-                    parts.setdefault(source, []).append((maker, key, False, state.not_listed[source]))
-        for source, answers in parts.items():
-            self._store.count_maker_parts(source, answers)
 
     async def _ask_mouser(self, wanted: list[_KeyState], caller: str | None) -> None:
         if self._mouser is None or not wanted:
@@ -515,12 +447,11 @@ class LifecycleLookup:
         from .mouser import MOUSER_MAX_BATCH, MouserAPIError, MouserError
 
         states = {spelling_key(state.spelling): state for state in wanted}
-        numbers = [state.spelling for state in wanted if 3 <= len(state.spelling) <= 40]
+        # Each 3-40 characters already: _unanswered gives only spellings not_sent_reason lets through
+        numbers = [state.spelling for state in wanted]
         chunks = [numbers[i:i + MOUSER_MAX_BATCH] for i in range(0, len(numbers), MOUSER_MAX_BATCH)]
 
         async def ask(chunk: list[str]) -> None:
-            for number in chunk:
-                states[spelling_key(number)].asked.add("mouser")
             try:
                 answers, error = await self._mouser.lookup(chunk, caller=caller)
             except (MouserError, MouserAPIError) as e:
@@ -548,17 +479,12 @@ class LifecycleLookup:
                 elif not answer.checked:
                     state.failed.add("mouser")
                 else:
-                    state.returned.setdefault("mouser", set()).update(
-                        r.get("manufacturer") for r in answer.results if r.get("manufacturer"))
                     for result in _own_listings(answer.results, number):
                         status, raw = result.get("lifecycle_status") or "unknown", result.get("lifecycle") or MOUSER_NOT_STATED
                         state.add(Reading(result.get("mfr_part_number") or number, result.get("manufacturer") or "",
                                           "mouser", status, raw, answer.fetched_at))
                     if not any(r.source == "mouser" for r in state.readings):
                         state.add(Reading(number, "", "mouser", "unknown", None, answer.fetched_at, found=False))
-                        # Read back from the store, or cut at the cap (the part may be past it): no miss
-                        if answer.complete and not answer.stored:
-                            state.missed.add("mouser")
 
         await asyncio.gather(*(ask(chunk) for chunk in chunks))
 
@@ -568,9 +494,8 @@ class LifecycleLookup:
         from .digikey import DigiKeyError
 
         async def ask(state: _KeyState) -> None:
-            state.asked.add("digikey")
             try:
-                reply, kind, fetched_at, fresh, makers = await self._digikey.lookup(state.spelling, caller=caller)
+                reply, kind, fetched_at = await self._digikey.lookup(state.spelling, caller=caller)
             except DigiKeyError as e:
                 logger.warning(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}: {e}")
                 state.failed.add("digikey")
@@ -579,13 +504,10 @@ class LifecycleLookup:
                 logger.error(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}")
                 state.failed.add("digikey")
                 return
-            state.returned.setdefault("digikey", set()).update(makers)
             if kind == "limited":
                 state.limited["digikey"] = self._digikey.retry_after()
             elif kind == "not_found":
                 state.add(Reading(state.spelling, "", "digikey", "unknown", None, fetched_at, found=False))
-                if fresh:  # not read back from the store
-                    state.missed.add("digikey")
             elif kind == "found":
                 # The client filed each part's reading under this number too (with DigiKey's full
                 # wording); from the reply only if the store couldn't keep them
@@ -625,23 +547,20 @@ class LifecycleLookup:
             others = _best_per_maker(state.readings)
             if others:  # listed, but only under other makers
                 result["makers"] = [r.as_reply() for r in others]
-        # Why no lookup went out for it: its number can't be one they list (never sent, even when
-        # another spelling of it was: that lookup's limit or failure isn't this entry's), or the
-        # distributors it would have gone to haven't listed its maker's parts lately
-        own = entry.not_sent
-        not_sent = own or (None if state.asked else "maker_not_carried" if entry.skipped else None)
-        if state.limited and not own:
+        # An entry with not_sent has a state of its own that no lookup goes out for (_states), so
+        # no limit or failure of another spelling's lookup is its own
+        if state.limited:
             result["retry_after"] = min(state.limited.values())
-        elif state.failed and not own:
+        elif state.failed:
             result["lookup_failed"] = True
         elif not state.readings:
             if state.not_listed:
                 result["not_found"] = True
                 result["observed_at"] = utc_text(min(state.not_listed.values()))
-            elif not not_sent:  # neither distributor could be asked about this number
+            elif not entry.not_sent:  # neither distributor could be asked about this number
                 result["lookup_failed"] = True
-        if not_sent:
-            result["not_sent"] = not_sent
+        if entry.not_sent:  # no lookup went out for it: its number can't be one they list
+            result["not_sent"] = entry.not_sent
         return result
 
 

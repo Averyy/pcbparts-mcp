@@ -91,30 +91,13 @@ class FakeMouser:
         return [KEYS.index(key) + 1 for key in self.keys]
 
 
-class Gate:
-    """The pool window's sleep: waits until the test opens it."""
-
-    def __init__(self):
-        self.opened = asyncio.Event()
-
-    async def __call__(self, seconds):
-        await self.opened.wait()
-
-
-async def settle():
-    """Let started lookups reach the pool and its timer start."""
-    for _ in range(5):
-        await asyncio.sleep(0)
-
-
 @pytest.fixture
 async def make(clock):
     made = []
 
-    def create(quotas, fake, pool_window=0, sleep=None):
+    def create(quotas, fake):
         n = len(quotas.quotas)
-        client = MouserClient(KEYS[0], quota=quotas, extra_keys=KEYS[1:n], clock=clock, pool_window=pool_window,
-                              **({"sleep": sleep} if sleep else {}))
+        client = MouserClient(KEYS[0], quota=quotas, extra_keys=KEYS[1:n], clock=clock)
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
         made.append(client)
         return client
@@ -455,44 +438,22 @@ class TestRedaction:
             await m.close()
 
 
-class TestPooledAndStored:
-    async def test_pooled_lookups_share_a_request_on_the_next_key(self, make, clock):
-        gate = Gate()
+class TestStored:
+    async def test_a_batch_on_the_next_key_is_kept_per_part(self, make, clock):
         quotas = pool(clock, limit=(1, 1000, 1000))
         fake = FakeMouser(part("LM358P"), part("NE555P"))
-        m = make(quotas, fake, pool_window=0.1, sleep=gate)
+        m = make(quotas, fake)
         assert quotas.acquire() == (0, None)  # key 1's day is spent
-        tasks = [asyncio.create_task(m.get_part(n, caller="198.51.100.1")) for n in ("LM358P", "NE555P", "lm358p")]
-        await settle()
-        assert fake.keys == []
-        gate.opened.set()
-        a, b, c = await asyncio.gather(*tasks)
+        batch = await m.get_part("LM358P|NE555P", caller="198.51.100.1")
         assert fake.sent == ["LM358P|NE555P"] and fake.used == [2]
-        assert [r["mfr_part_number"] for r in a["results"]] == ["LM358P"]
-        # The same answer, with requested as each caller spelled it
-        assert [r["requested"] for r in c["results"]] == ["lm358p"]
-        assert a == {**c, "results": [{**r, "requested": "LM358P"} for r in c["results"]]}
-        assert [r["mfr_part_number"] for r in b["results"]] == ["NE555P"]
-        # Kept per part: asking again costs nothing on any key
+        assert [r["mfr_part_number"] for r in batch["results"]] == ["LM358P", "NE555P"]
+        # Kept per part: asking again costs nothing on any key, with requested as spelled
+        alone = await m.get_part("lm358p")
+        assert [(r["mfr_part_number"], r["requested"]) for r in alone["results"]] == [("LM358P", "lm358p")]
         assert (await m.get_part("NE555P|LM358P"))["total"] == 2
         assert len(fake.keys) == 1
         assert [q.status()["used_today"] for q in quotas.quotas] == [1, 1, 0]
-        assert mouser_stats() == {"sent": 1, "cached": 1, "rate_limited": 0}
-
-    async def test_pooled_request_refused_goes_on(self, make, clock):
-        gate = Gate()
-        quotas = pool(clock)
-        fake = FakeMouser(part("LM358P"), part("NE555P"))
-        fake.script(KEYS[0], httpx.Response(403, json=DAILY_403))
-        m = make(quotas, fake, pool_window=0.1, sleep=gate)
-        tasks = [asyncio.create_task(m.get_part(n)) for n in ("LM358P", "NE555P")]
-        await settle()
-        gate.opened.set()
-        a, b = await asyncio.gather(*tasks)
-        assert a["total"] == 1 and b["total"] == 1
-        assert fake.used == [1, 2] and fake.sent == ["LM358P|NE555P"] * 2
-        assert mouser_stats()["sent"] == 2
-
+        assert mouser_stats() == {"sent": 1, "cached": 2, "rate_limited": 0}
 
 class TestServer:
     async def test_lifespan_pools_every_key(self, monkeypatch, caplog, tmp_path):
