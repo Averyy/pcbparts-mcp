@@ -828,8 +828,12 @@ class TestNotSentReason:
         ("4.7µF", "value"), ("1.5A", "value"), ("3.3V", "value"), ("0.25W", "value"), ("100mW", "value"),
         ("1.5a", "value"), ("10k 50V", "value"), ("100nF 25V X7R", "value"),
         # Astra round 7: E-series values (3 significant digits at most) in every form
-        ("220R", "value"), ("15.8k", "value"), ("158k", "value"), ("1000k", "value"), ("2200R", "value"),
+        ("220R", "value"), ("15.8k", "value"), ("1000k", "value"), ("2200R", "value"),
         ("4700pF", "value"), ("4K7", "value"), ("4R75", "value"), ("1.21k 0603", "value"), ("10uH", "value"),
+        # Astra round 8: a unit, a decimal point or a multiplier as the decimal point make it a value
+        # (3 significant digits at most); a bare code only with 2
+        ("47K", "value"), ("1M", "value"), ("4.75k", "value"), ("158kΩ", "value"), ("193mH", "value"),
+        ("12.5pF", "value"), ("15K8", "value"), ("100 ohm", "value"), ("47K 1%", "value"),
         ("DNP", "placeholder"), ("N/A", "placeholder"), ("C7950", "lcsc_code"), ("c2040", "lcsc_code"),
         ("AB", "length"), ("X" * 41, "length"), ("LM358P中文", "not_ascii"), ("ＬＭ358", "not_ascii"),
     ]
@@ -851,6 +855,9 @@ class TestNotSentReason:
         # Astra round 7: Hammond's 1590K, 1590R and 1590M matched as resistor codes; 159 and 155 aren't
         # E-series values, and 1591 has 4 significant digits
         "1590K", "1590R", "1590M", "1550M", "1591K", "1590K 0603",
+        # Astra round 8: Hammond's 193M and 158M filter chokes; a bare code with 3 significant digits
+        # can't be told from a part number
+        "193M", "158M", "158k", "193M 0603",
     ]
 
     @pytest.mark.parametrize("number", SENT, ids=[f"pn{i}" for i in range(len(SENT))])
@@ -858,12 +865,6 @@ class TestNotSentReason:
         from pcbparts_mcp.search.mpn import not_sent_reason
         assert not_sent_reason(number) is None
 
-    def test_e192_table(self):
-        """IEC 60063's E192 (the finest E-series, 3 significant digits), E96 every other value."""
-        from pcbparts_mcp.search.mpn import E192
-        assert len(E192) == 192 and {"100", "158", "475", "920", "988"} <= E192 and not {"159", "155", "919"} & E192
-        e96 = sorted(E192, key=int)[::2]
-        assert e96[:6] == ["100", "102", "105", "107", "110", "113"] and e96[-3:] == ["931", "953", "976"]
 
 
 class TestIntegerAndUnitLetterIsSent:
@@ -877,7 +878,7 @@ class TestIntegerAndUnitLetterIsSent:
         assert fake.sent == ["1590A|100V"] and "not_sent" not in reply
         assert [r["mfr_part_number"] for r in reply["results"]] == ["1590A"]
 
-    HAMMOND = ["1590K", "1590R", "1590M", "1550M", "1591K"]
+    HAMMOND = ["1590K", "1590R", "1590M", "1550M", "1591K", "193M", "158M"]
 
     async def test_resistor_shaped_part_numbers_through_mouser(self, setup):
         """Astra review round 7: 1590K, 1590R and 1590M passed for resistor codes (1590 kOhm...)."""
@@ -900,8 +901,9 @@ class TestIntegerAndUnitLetterIsSent:
         setup(mouser=mouser, digikey=FakeDigiKey())
         parts = [{"mpn": n, "manufacturer": "Hammond Manufacturing"} for n in self.HAMMOND] + ["2200R", "15.8k"]
         rows = (await lifecycle(parts))["results"]
-        assert [(r["status"], r.get("source")) for r in rows[:5]] == [("active", "mouser")] * 5
-        assert [r.get("not_sent") for r in rows[5:]] == ["value", "value"]
+        count = len(self.HAMMOND)
+        assert [(r["status"], r.get("source")) for r in rows[:count]] == [("active", "mouser")] * count
+        assert [r.get("not_sent") for r in rows[count:]] == ["value", "value"]
         assert sorted(mouser.sent[0].split("|")) == sorted(self.HAMMOND)
 
     async def test_digikey_get_part(self, setup):

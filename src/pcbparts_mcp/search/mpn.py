@@ -46,22 +46,26 @@ NOT_SENT_HINTS = {
 
 # A plain electrical value, perhaps with a size, dielectric, tolerance or rating: "10k", "4.7uF",
 # "1R", "100nF 50V 0603", "4K7 1%". A false "value" means a real part number is never sent, so
-# only these are values (_VALUE_TOKEN):
-# - a resistor code, the multiplier as the decimal point or the suffix: 10k, 4k7, 1R5, 2M2, 0R1, 100R, 4.7k
-# - a number with an SI-prefixed unit: 100nF, 4.7uF/µF, 22pF, 10uH, 1mH, 3.3mA, 2.2kΩ, 8MHz, 100mW
-#   (a whole number takes only the prefixes each unit is written with, in SI case: 1590MA isn't one)
-# - a number with a decimal point and a unit: 1.5A, 3.3V, 0.25W; and ohms written out: 16Ω, 100 ohm
-# A whole number and one unit letter (1590A, Hammond's enclosure; 100V, 220W, 1000F, 47H) is a part
-# number on its own, and counts only beside a value: the 50V of "100nF 50V" (_VALUE_RATING). And
-# every number, in each of these forms, ratings too, must be one a component value is written with
-# (_series_digits): values come from the E-series, whose finest (E192) has 3 significant digits, so
-# a number with 2 at most or an E192 value's 3 (15.8k, 4R75); not Hammond's 1590K, 1590R or 1590M
-# (159 is no E-series value), 1591K or Wurth's 9774025151R. A part number has more than a number and
-# a unit ("1N4148", "LM358", "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
+# only these are values:
+# - a number with a unit, SI-prefixed or not: 100nF, 4.7uF/µF, 22pF, 10uH, 1mH, 3.3mA, 2.2kΩ, 8MHz,
+#   16Ω, 100 ohm, 1.5A, 3.3V, 0.25W (a whole number takes only the prefixes each unit is written
+#   with, in SI case: 1590MA isn't one; a whole number and a bare unit letter isn't one, below)
+# - a resistor code with its multiplier as the decimal point (4k7, 1R5, 2M2, 0R1, 4R75), or after a
+#   decimal number (15.8k, 4.75k)
+# each with 3 significant digits at most, as the E-series has (E192, the finest, has 3); and a bare
+# code, a whole number and a multiplier letter (10k, 47K, 100R, 220R, 1M, 2200R, 1000k), only with 2
+# at most: with 3 or more it can't be told from a part number (Hammond's 193M and 158M chokes, its
+# 1590K, 1590R and 1590M enclosures). A whole number and one unit letter (1590A, Hammond's
+# enclosure; 100V, 220W, 1000F, 47H) is a part number on its own, and counts only beside a value: the
+# 50V of "100nF 50V" (_VALUE_RATING). Zeros before and after a number's digits aren't significant
+# (1000k has 1, 2200R 2, 0R1 1). A part number has more than a number and a unit ("1N4148", "LM358",
+# "0805B103K500NT", "2N7002"), so it never matches the whole pattern.
 _VALUE_NUMBER = r"(\d+)(?:\.(\d+))?"
 _OHMS = r"(?:Ω|[Oo]hms?|OHMS?)"
+_MULTIPLIER = r"(?:[rRkKmM]|[Mm]eg|MEG)"
+_BARE_CODE = re.compile(rf"(\d+){_MULTIPLIER}")  # 2 significant digits at most
 _VALUE_TOKEN = re.compile(
-    r"(\d+)(?:\.(\d+))?(?:[rRkKmM]|[Mm]eg|MEG)"  # resistor code, the multiplier as the suffix
+    rf"(\d+)\.(\d+){_MULTIPLIER}"  # a decimal number and its multiplier
     r"|(\d+)[rRkKmM](\d+)"  # the multiplier as the decimal point
     # a whole number with an SI prefix, each unit with the prefixes it's written with
     rf"|(\d+)(?:[pnuµμm][Ff]|[nuµμm][Hh]|[nuµμm]A|[mk][Vv]|[mk]W|[mkKMG]{_OHMS}|[kKMG]Hz)"
@@ -75,17 +79,11 @@ _VALUE_RATING = re.compile(rf"(?:±\s?)?{_VALUE_NUMBER}\s?(?:%|(?i:[pnuµμmkg]?
 _VALUE_UNITS = r"(?i:[pnuµμmkg]?(?:f|h|a|v|w|hz|Ω|ohms?)|[rkm]|meg|%)"
 _VALUE_GAP = re.compile(r"[\s,;/]+")
 
-# The E192 series' significant digits (IEC 60063): 10 ** (i / 192) to 3 digits, but 920 for 919. E96
-# and E48 are among them, and E24, E12, E6 and E3 have 2 at most (10, 47, 91).
-E192 = frozenset(str(round(10 ** (i / 192) * 100)) for i in range(192)) - {"919"} | {"920"}
 
-
-def _series_digits(*digit_runs: str) -> bool:
-    """Whether a value's digits (its whole and decimal parts) are a component value's: at most 2
-    significant digits, or 3 that are an E192 value. Zeros before and after are left out: 1000k is
-    1, 2200R 22, 0R1 1, 15.8k 158 (E192), 1590K 159 (none: a part number)."""
-    digits = "".join(digit_runs).strip("0")
-    return len(digits) <= 2 or (len(digits) == 3 and digits in E192)
+def _significant(match: re.Match) -> int:
+    """How many significant digits a value's number has (its whole and decimal parts; zeros before
+    and after left out)."""
+    return len("".join(group for group in match.groups() if group).strip("0"))
 
 
 def _is_value(text: str) -> bool:
@@ -99,12 +97,12 @@ def _is_value(text: str) -> bool:
             joined.append(token)
     values = 0
     for token in joined:
-        if match := _VALUE_TOKEN.fullmatch(token):
-            if not _series_digits(*(group for group in match.groups() if group)):
+        if (match := _BARE_CODE.fullmatch(token)) or (match := _VALUE_TOKEN.fullmatch(token)):
+            if _significant(match) > (2 if match.re is _BARE_CODE else 3):
                 return False
             values += 1
         elif match := _VALUE_RATING.fullmatch(token):
-            if not _series_digits(*(group for group in match.groups() if group)):
+            if _significant(match) > 3:
                 return False
         elif not _VALUE_EXTRA.fullmatch(token):
             return False
