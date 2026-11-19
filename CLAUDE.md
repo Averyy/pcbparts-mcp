@@ -17,7 +17,7 @@ Rules and gotchas only. History goes in `CHANGELOG.md`; how things work goes in 
 - One version for all unreleased work; bump only after that version has been released. Bump in `pyproject.toml` and `uv.lock`. Patch is the default; ask before a minor or major bump.
 - `CHANGELOG.md`: head the entry `## X.Y.Z (YYYY-MM-DD)` (the `release` job publishes that section as the GitHub release; without it the job fails). Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
 - Don't create releases or tags by hand.
-- The project is in beta with real external users and contributors: breaking changes must be deliberate, and dependency pins stay exact.
+- The project is in beta with real external users and contributors: breaking changes must be deliberate (semver bump, changelog note), and dependency pins stay exact.
 
 ## Commands
 
@@ -51,11 +51,13 @@ Python runs through `uv`, never pip.
 - Never add or tune a limit, cap or queue threshold from the synthetic load test alone: its traffic has neither prod's slow searches nor its bursts. Check prod's `/mcp/stats` (`per_ip_refusals`, `refused_hours`) after any limiter change.
 - 429 bodies keep the JSON `retry_after` field: clients read it.
 - Keep uvicorn's `proxy_headers=False`: otherwise callers' IPs could land on every access-log line.
+- Keep `BodySizeLimitMiddleware`'s size guard (declared and streamed bodies) and its streamed replies.
 - Refused IPs appear only in the hourly log lines; stats stay anonymous (counts only, no IPs, queries or part numbers).
 
 ## Data rules
 
-- `data/catalog/price_tiers.tsv.gz` stays out of git: never `git add -f` it.
+- `data/catalog/price_tiers.tsv.gz` stays out of git: never `git add -f` it. A missing or bad tier file must never fail a build.
+- The server never downloads the AI platforms' address lists at runtime; the image build refreshes the committed copy.
 - Don't hand-edit `data/catalog/sold_out/*.jsonl` (a malformed row fails the scrape and the image build); `scripts/backfill_sold_out.py` rebuilds them. Nothing that reads `components` (search, counts, alternatives) may see the `sold_out` table.
 - Sensor corrections go in `data/sensors/curated.json`, per field with evidence, and always win over scraped data: fix a general cause in the scraper or build rule instead. `scripts/build_sensor_db.py` runs alone in the Docker image, so it must not import other `scripts/` modules.
 - Edits to design-rule files follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.

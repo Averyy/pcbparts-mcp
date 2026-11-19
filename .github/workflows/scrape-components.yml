@@ -65,7 +65,9 @@ jobs:
 
   scrape:
     needs: check
-    if: needs.check.outputs.run == 'true'
+    # A dispatched run always scrapes, even if the check job itself failed; a scheduled one only
+    # when the check said today's scrape is missing (or couldn't tell)
+    if: always() && (github.event_name != 'schedule' || needs.check.outputs.run != 'false')
     runs-on: ubuntu-latest
     timeout-minutes: 60  # ~8-15 min with 10 workers, plenty of buffer
 
