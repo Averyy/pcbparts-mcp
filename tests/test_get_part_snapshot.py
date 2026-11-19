@@ -20,7 +20,7 @@ from conftest import write_catalog_category
 import pcbparts_mcp.server as server
 from pcbparts_mcp import stats
 from pcbparts_mcp.catalog_files import PRICE_TIERS_FILE, write_price_tiers, write_sold_out
-from pcbparts_mcp.client import JLCPCBClient
+from pcbparts_mcp.client import JLCPCBClient, JLCPCBUnavailable
 from pcbparts_mcp.db import ComponentDatabase
 from pcbparts_mcp.easyeda_store import FootprintAnswer
 from pcbparts_mcp.stats import LCSC_LOOKUP_EVENTS, UsageStats
@@ -147,7 +147,18 @@ FAILURES = {
     "timeout": (lambda: WaferTimeout("https://jlcpcb.com", 30), "JLCPCB request timed out — try again later"),
     "http": (lambda: Reply({}, 503), "JLCPCB returned HTTP 503 — try again later"),
     "api": (lambda: Reply({"code": 500, "message": "busy"}), "JLCPCB API error: busy"),
+    # A 200 that isn't a JSON object (an error page): our own message, not the decoder's
+    "not_json": (lambda: NotJson(), "JLCPCB returned an unreadable response — try again later"),
+    "not_object": (lambda: Reply(["busy"]), "JLCPCB returned an unreadable response — try again later"),
 }
+
+
+class NotJson(Reply):
+    def __init__(self):
+        super().__init__(None)
+
+    def json(self):
+        return json.loads("<html>busy</html>")
 
 
 @pytest.fixture
@@ -217,11 +228,29 @@ class TestSnapshotByDefault:
         assert all(field in reply["hint"] for field in ("live=true", "min_order", "reel_qty", "lcsc_url"))
         assert outcome(reply) == "ok" and lookups() == counted(snapshot=1)
 
-    async def test_without_price_breaks_the_one_piece_tier(self, env):
+    async def test_without_price_tiers_it_goes_live(self, env):
+        """A server without price tiers would answer with the 1-piece price alone: the default goes
+        live, as before 0.10.2, so the reply has every tier."""
         env.use("plain")
+        jlcpcb = env.answer(lambda body: found(body["keyword"]))
         reply = await server.jlc_get_part(lcsc="C7950")
+        assert jlcpcb.sent == 1 and reply["data_source"]["kind"] == "live_lookup"
+        assert reply["prices"] == [{"qty": "1+", "price": 0.06}, {"qty": "100+", "price": 0.05}]
+        assert "hint" not in reply and lookups() == counted(live=1)
+
+    async def test_without_price_tiers_a_failed_live_lookup_falls_back(self, env):
+        env.use("plain")
+        jlcpcb = env.answer(lambda body: RateLimited("https://jlcpcb.com"))
+        reply = await server.jlc_get_part(lcsc="C7950")
+        assert jlcpcb.sent == 1 and reply["live_failed"] is True and reply["data_source"]["kind"] == "snapshot"
         assert reply["prices"] == [{"qty": "1+", "price": 0.054}] and reply["price_tiers_as_of"] is None
-        assert reply["data_source"]["kind"] == "snapshot" and upstream() == {}
+        assert lookups() == counted(fallback=1)
+
+    async def test_with_price_tiers_no_request(self, env):
+        jlcpcb = env.answer(refuse)
+        reply = await server.jlc_get_part(lcsc="C1525")
+        assert jlcpcb.sent == 0 and upstream() == {} and reply["data_source"]["kind"] == "snapshot"
+        assert reply["price_tiers_as_of"] == "2026-11-19T15:10:00Z" and lookups() == counted(snapshot=1)
 
     async def test_no_datasheet_and_unknown_footprint(self, env):
         """JLCPCB lists no datasheet: no link that would find nothing (no_datasheet says so). A part
@@ -378,6 +407,79 @@ class TestStockCheckFallback:
         reply = await server.jlc_stock_check(query="C7950")
         assert reply["results"][0]["stock"] == 7 and "live_failed" not in reply
         assert lookups("jlc_stock_check") == counted(live=1)
+
+
+class TestOnlyAnOutageFallsBack:
+    """The fallback means "JLCPCB didn't answer" (JLCPCBUnavailable). A reply that came but
+    couldn't be read is that error, logged, as before 0.10.2: never the snapshot marked live_failed
+    (a review probe got live_error "year 33658 is out of range" and "Invalid IPv6 URL")."""
+
+    @pytest.fixture
+    def unreadable(self, env, monkeypatch):
+        env.answer(lambda body: found(body["keyword"]))
+
+        def transform(item, slim=True, with_prices=False):
+            raise ValueError("year 33658 is out of range")
+        monkeypatch.setattr(env.client, "_transform_part", transform)
+        return env
+
+    async def test_get_part(self, unreadable, caplog):
+        reply = await server.jlc_get_part(lcsc="C7950", live=True)
+        assert reply == {"error": "year 33658 is out of range"}
+        assert lookups() == counted(live_failed=1)
+        assert "JLCPCB's reply couldn't be read" in caplog.text
+
+    async def test_stock_check(self, unreadable, caplog):
+        assert await server.jlc_stock_check(query="C7950") == {"error": "year 33658 is out of range"}
+        # A keyword query too: the error alone, without the "didn't answer" hint
+        assert await server.jlc_stock_check(query="LM358") == {"error": "year 33658 is out of range"}
+        assert lookups("jlc_stock_check") == counted(live_failed=1)
+        assert "JLCPCB's reply couldn't be read" in caplog.text
+
+    async def test_other_exceptions_are_raised_and_counted(self, env, monkeypatch):
+        async def broken(*args, **kwargs):
+            raise KeyError("productPrice")
+        monkeypatch.setattr(env.client, "get_part", broken)
+        monkeypatch.setattr(env.client, "search", broken)
+        with pytest.raises(KeyError):
+            await server.jlc_get_part(lcsc="C7950", live=True)
+        with pytest.raises(KeyError):
+            await server.jlc_stock_check(query="C7950")
+        assert lookups() == counted(live_failed=1) and lookups("jlc_stock_check") == counted(live_failed=1)
+
+    @pytest.mark.parametrize("failure", FAILURES)
+    async def test_every_outage_is_one_class(self, env, failure):
+        """Each FAILURES case raises JLCPCBUnavailable (a ValueError, so other tools' handlers still
+        catch it), with the message the replies give."""
+        assert issubclass(JLCPCBUnavailable, ValueError)
+        env.answer(lambda body: FAILURES[failure][0]())
+        with pytest.raises(JLCPCBUnavailable) as raised:
+            await env.client._request("https://jlcpcb.com", {"keyword": "C7950"})
+        assert str(raised.value) == FAILURES[failure][1]
+
+
+class TestMalformedLinks:
+    """One malformed datasheet link in JLCPCB's listing failed the whole part (a ValueError or
+    OverflowError out of get_part): the link is left out instead, as for any unreadable expiry."""
+
+    @pytest.mark.parametrize("extra, kept", [
+        ({"dataManualFileAccessIdUrl":
+          "https://jlc.example/1.pdf?x-oss-date=20261119T150000Z&x-oss-expires=1000000000000"}, "maker_datasheet"),
+        ({"dataManualFileAccessIdUrl": "https://[jlc.example/1.pdf?Expires=99999999999"}, "maker_datasheet"),
+        ({"dataManualFileAccessIdUrl": "https://jlc.example/1.pdf?Expires=1e400"}, "maker_datasheet"),
+        ({"dataManualFileAccessIdUrl": "https://jlc.example/1.pdf?Expires=nan"}, "maker_datasheet"),
+        ({"dataManualOfficialLink": "https://[maker.example/x.pdf"}, None),
+    ], ids=["year", "ipv6", "inf", "nan", "maker_ipv6"])
+    async def test_left_out(self, env, extra, kept):
+        env.answer(lambda body: Reply({"code": 200, "data": {"componentPageInfo": {
+            "list": [{**live_item(body["keyword"]), **extra}]}}}))
+        if kept is None:  # no maker link and no JLCPCB PDF: LCSC is asked for its copy (it has none)
+            env.client._lcsc_session = Session(lambda body: Reply({"code": 200, "result": None}))
+        reply = await server.jlc_get_part(lcsc="C7950", live=True)
+        assert reply["data_source"]["kind"] == "live_lookup" and "datasheet_pdf" not in reply
+        maker = "https://www.onsemi.com/pdf/datasheet/lm358-d.pdf"
+        assert (reply.get("maker_datasheet") == maker) is (kept is not None)
+        assert lookups() == counted(live=1)
 
 
 def bom_tool_reads(reply):

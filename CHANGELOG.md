@@ -12,7 +12,14 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 - **`jlc_get_part`**: new `live` argument. `live=true` does a live lookup, which also gives `min_order`, `reel_qty`, the `datasheet` page, `maker_datasheet` and `lcsc_url`.
 - Catalog reads run up to 3 at once (were one at a time): a quick lookup no longer waits behind a slow search. Replies are unchanged.
 - Searches are faster: the query parser compiles its keyword patterns once instead of on every search.
+- The per-address rate limit is 200 requests a minute (was 100): `RATE_LIMIT_REQUESTS`'s default, and the value in the Dockerfile and compose files.
+- A `datasheet_pdf` link leads to the maker's datasheet or LCSC's PDF when JLCPCB keeps no PDF of its own (it was a 404).
+- A server without price-tier data answers `jlc_get_part(lcsc=...)` live, as before.
 - The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
+
+### Fixed
+
+- A JLCPCB listing with a malformed datasheet link or expiry no longer fails the part's lookup; an unreadable JLCPCB reply is the error "JLCPCB returned an unreadable response".
 
 ### Added
 

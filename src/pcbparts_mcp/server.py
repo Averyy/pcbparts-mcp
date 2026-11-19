@@ -42,7 +42,8 @@ from .config import (
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
 )
-from .client import DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient
+from .client import (DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient,
+                     JLCPCBUnavailable)
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
@@ -138,7 +139,8 @@ async def lifespan(app):
     _client.set_alternative_price_tiers(db.get_price_tiers, tiers_as_of)
     _price_tiers_info = {"as_of": tiers_as_of, "parts": db.price_tiers_parts()}
     logger.info(f"Price tiers: {_price_tiers_info['parts']:,} parts, scraped {tiers_as_of}" if tiers_as_of else
-                "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only")
+                "Price tiers: none loaded; jlc_get_parts and jlc_get_part(mpn) give the 1-piece price only, "
+                "jlc_get_part(lcsc) answers live")
     _easyeda_seeded = db.easyeda_seed_size()
     store_size = _client.easyeda_store_size()
     _easyeda_stored = (time.monotonic(), store_size)
@@ -324,7 +326,7 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -654,7 +656,7 @@ def _load_platform_ranges() -> platform_ranges.PlatformRanges:
 
 
 class RateLimitMiddleware:
-    """Rate limiting middleware: RATE_LIMIT_REQUESTS (100) requests a rolling minute per address,
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (200) requests a rolling minute per address,
     and PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's
     and OpenAI's published ranges), the limit _limit_for() gives each address. An IPv4 address is
     counted by itself and an IPv6 address by its /64 (_limit_key()), except a platform address.
@@ -1180,10 +1182,9 @@ async def jlc_stock_check(
             # A BOM line's stock and its price at the order quantity, from one reply
             with_prices=bool(lcsc_code),
         )
-    except ValueError as e:
-        # Client raises ValueError with actionable messages (rate limited / WAF / timeout).
-        # Return them as a dict so they survive mask_error_details=True. One LCSC code: the
-        # database's row for it, if it has one, marked live_failed.
+    except JLCPCBUnavailable as e:
+        # JLCPCB didn't answer (rate limited / WAF / timeout ...): its message, as a dict so it survives
+        # mask_error_details=True. One LCSC code: the database's row for it, if it has one, marked live_failed.
         if not lcsc_code:
             return {"error": str(e), "hint": _LIVE_SEARCH_DOWN_HINT}
         # A snapshot row has stock >= 10 (a gone one's is unknown, as its note says): only a higher
@@ -1196,6 +1197,15 @@ async def jlc_stock_check(
             return reply
         stats.count_lcsc_lookup("jlc_stock_check", "live_failed")
         return {"error": str(e), "hint": f"The daily snapshot doesn't list {lcsc_code} either; try again later."}
+    except ValueError as e:  # JLCPCB answered, but its reply couldn't be read: the error, as before 0.10.2
+        logger.exception("jlc_stock_check: JLCPCB's reply couldn't be read")
+        if lcsc_code:
+            stats.count_lcsc_lookup("jlc_stock_check", "live_failed")
+        return {"error": str(e)}
+    except Exception:  # raised as before (FastMCP logs it); still one lookup counted
+        if lcsc_code:
+            stats.count_lcsc_lookup("jlc_stock_check", "live_failed")
+        raise
     if lcsc_code:
         stats.count_lcsc_lookup("jlc_stock_check", "live")
     if lcsc_code and not result.get("error"):
@@ -2419,21 +2429,21 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
     availability), or the JLCPCB parts matching a manufacturer part number.
 
     Reply: an LCSC code answers from the daily catalog snapshot (stock >= 10; data_as_of), without
-    min_order, reel_qty, datasheet, maker_datasheet or lcsc_url; live=true, or a code not in the
-    snapshot, asks JLCPCB (live, held up to an hour) and adds them. live_failed: JLCPCB didn't answer,
-    so the snapshot's row answers (note). prices lists quantity tiers; datasheet is LCSC's viewer page
-    (null when LCSC has none) and datasheet_pdf the PDF: a short link on this server that stays valid
-    (LCSC's own link for LCSC's copy); maker_datasheet is the maker's own link where JLCPCB lists one
-    (most TI parts); datasheet_note says when there is no PDF, or that datasheet_pdf is LCSC's copy
-    (specs come from LCSC too when JLCPCB lists none); specs_note says when LCSC lists no specs, or
-    what the listing leaves out for the part type (Isat's definition, MLCC DC-bias loss, RF cable
-    ends, MOSFET RDS(on)/Vgs(th) typical and maximum mixed, multi-diode loading); spec_evidence cites
-    reviewed maker values, conditions and sources; spec_discrepancies flags catalog/document
-    conflicts without replacing catalog specs. no_datasheet/no_datasheet_note refer only to JLCPCB
-    availability; lcsc_url is the LCSC product page; pcba_type is "economic" or "standard_only"
-    (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard assembly).
-    Lifecycle: part_lifecycle gives it from Mouser and DigiKey. Footprint pads: jlc_get_pinout(lcsc,
-    footprint=true).
+    min_order, reel_qty, datasheet, maker_datasheet, datasheet_note or lcsc_url; live=true, a code not
+    in the snapshot, or a server without price tiers, asks JLCPCB (live, held up to an hour) and adds
+    them. live_failed: JLCPCB didn't answer, so the snapshot's row answers (note). prices lists quantity
+    tiers; datasheet is LCSC's viewer page (null when LCSC has none) and datasheet_pdf the PDF: a short
+    link on this server that stays valid (LCSC's link for its copy); maker_datasheet is the maker's own
+    link where JLCPCB lists one (most TI parts); datasheet_note says when there is no PDF, or that
+    datasheet_pdf is LCSC's copy (specs come from LCSC too when JLCPCB lists none); specs_note says when
+    LCSC lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC
+    DC-bias loss, RF cable ends, MOSFET RDS(on)/Vgs(th) typical and maximum mixed, multi-diode loading);
+    spec_evidence cites reviewed maker values, conditions and sources; spec_discrepancies flags
+    catalog/document conflicts without replacing catalog specs. no_datasheet/no_datasheet_note refer
+    only to JLCPCB availability; lcsc_url is the LCSC product page; pcba_type is "economic" or
+    "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
+    assembly). Lifecycle: part_lifecycle gives it from Mouser and DigiKey. Footprint pads:
+    jlc_get_pinout(lcsc, footprint=true).
     has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results, total,
     exact (the number itself matched) and ambiguous (several parts match). Non-exact replies
     add match (separators, packing, alias, alternative, lcsc or related), matched_mpn, and a note
@@ -2516,8 +2526,9 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
             reply["gone_matches"] = len(gone)
         return reply
 
-    # LCSC code: the daily snapshot answers, unless live=true or the snapshot doesn't list the part
-    # (it left, or is new or unknown); then JLCPCB does, and the database's row if JLCPCB doesn't answer
+    # LCSC code: the daily snapshot answers, unless live=true, the snapshot doesn't list the part (it
+    # left, or is new or unknown) or the server has no price tiers (the snapshot's prices would be the
+    # 1-piece price alone); then JLCPCB does, and the database's row if JLCPCB doesn't answer
     if not _client:
         raise RuntimeError("Client not initialized")
     code = lcsc.strip().upper()
@@ -2529,12 +2540,19 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
 
     try:
         result = await _client.get_part(lcsc)
-    except ValueError as e:  # actionable JLCPCB messages (rate limited / WAF / timeout), all "JLCPCB didn't answer"
+    except JLCPCBUnavailable as e:  # JLCPCB didn't answer (rate limited / WAF / timeout ...): its message
         if (reply := await _part_from_database(code, live_error=str(e))) is not None:
             stats.count_lcsc_lookup("jlc_get_part", "fallback")
             return reply
         stats.count_lcsc_lookup("jlc_get_part", "live_failed")
         return {"error": str(e)}
+    except ValueError as e:  # JLCPCB answered, but its reply couldn't be read: the error, as before 0.10.2
+        logger.exception(f"jlc_get_part({code}): JLCPCB's reply couldn't be read")
+        stats.count_lcsc_lookup("jlc_get_part", "live_failed")
+        return {"error": str(e)}
+    except Exception:  # raised as before (FastMCP logs it); still one lookup counted
+        stats.count_lcsc_lookup("jlc_get_part", "live_failed")
+        raise
     stats.count_lcsc_lookup("jlc_get_part", "live")
     if not result:
         return {"error": f"Part {lcsc} not found"}
@@ -2546,7 +2564,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
 
 # Once on jlc_get_part(lcsc)'s snapshot reply: where it's from, and what live=true adds
 _SNAPSHOT_HINT = ("From the daily snapshot (stock >= 10) of data_as_of. live=true gives live stock, plus min_order, "
-                  "reel_qty, the datasheet page, maker_datasheet and lcsc_url.")
+                  "reel_qty, the datasheet page, maker_datasheet and lcsc_url, and checks an unknown (null) "
+                  "EasyEDA footprint.")
 _NO_SPECS_IN_SNAPSHOT = ("JLCPCB lists no specs for this part, so searches with spec filters leave it out; "
                          "live=true adds LCSC's where it has them.")
 
@@ -2574,10 +2593,13 @@ async def _part_from_database(code: str, live_error: str | None = None) -> dict[
     JLCPCBClient.known_footprint), data_as_of, prices_as_of, price_tiers_as_of and _SNAPSHOT_HINT.
     With live_error (the live lookup failed): marked live_failed, with that error and a note
     instead of the hint, and a part kept after it left the snapshot (gone) answers too. None when
-    the database has neither, or can't be read."""
+    the database has neither, or can't be read; without live_error also when the database has no
+    price tiers (price_tiers_as_of None), so the live reply gives every tier, as before 0.10.2."""
     db, client = get_db(), _client
 
     def read() -> tuple[Any, ...]:
+        if live_error is None and db.price_tiers_as_of() is None:
+            return None, None, None, None, None
         part = db.get_part_snapshot(code, gone=live_error is not None)
         seed = client.footprint_seed(code) if part is not None and not part.get("gone") else None
         return part, seed, db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
@@ -3486,7 +3508,7 @@ async def cse_search(
     Reply: results and total; rows include has_model, has_3d, model_quality and cse_part_id,
     without confirming individual ECAD formats. Use cse_get_kicad for actual KiCad files.
     Slow (a search takes about 15 s, longer when busy; answers are kept): only when you need ECAD
-    models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part.
+    models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part (live=true if unknown).
     Search requests use CSE_REQUEST_TIMEOUT (default 45s per request phase); a non-Success API
     status is retried once after 3 s. No overall tool deadline; search requires no credentials.
 
@@ -3529,7 +3551,7 @@ async def cse_get_kicad(
     """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
     ComponentSearchEngine; works for any manufacturer. Slow (a search of about 15 s, then a
     download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
-    jlc_get_part.
+    jlc_get_part (live=true if unknown).
     Requires CSEARCH_USER and CSEARCH_PASS. Reply: part_id, search metadata when resolved by query,
     kicad_symbol and kicad_footprint (either file may be null). No overall tool deadline; search
     requests use CSE_REQUEST_TIMEOUT (default 45s per request phase), model downloads 30s per phase.
@@ -3920,7 +3942,9 @@ async def health(request):
 
 async def datasheet_redirect(request):
     """/mcp/datasheet/<lcsc> (jlc_get_part's datasheet_pdf): a redirect to the part's datasheet PDF
-    on JLCPCB's storage, signed when asked, so the link never goes stale."""
+    on JLCPCB's storage, signed when asked, so the link never goes stale; when JLCPCB keeps none,
+    to the maker's datasheet or LCSC's PDF, as the live reply gives (JLCPCBClient.datasheet_pdf_url).
+    The target only ever comes from JLCPCB's or LCSC's listing for the code in the path."""
     lcsc = request.path_params["lcsc"].strip().upper()
     if not _client:
         return JSONResponse({"error": "Server is starting; try again in a moment"}, status_code=503)

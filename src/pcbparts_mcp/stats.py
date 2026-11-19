@@ -105,8 +105,9 @@ REFUSAL_GROUPS = ("everyone_else", "platform_ranges", "server_busy", "too_many_c
 HOURLY_SINCE_0_10_1 = ("failed_hours", "refused_hours")
 # From 0.10.2, per day (None on days saved before): how the LCSC-code lookups of jlc_get_part, and
 # jlc_stock_check's one-code queries, were answered, one event a lookup: snapshot (from the database,
-# no request), live (JLCPCB answered, found or not), fallback (JLCPCB didn't answer; the database
-# did, live_failed) and live_failed (JLCPCB didn't answer and the database has nothing: the error)
+# no request), live (a live lookup answered, found or not, including its 1-hour cache), fallback
+# (JLCPCB didn't answer; the database did, live_failed) and live_failed (the live lookup failed and
+# nothing answered instead: the error)
 LCSC_LOOKUP_TOOLS = ("jlc_get_part", "jlc_stock_check")
 LCSC_LOOKUP_EVENTS = ("snapshot", "live", "fallback", "live_failed")
 
@@ -543,9 +544,9 @@ class UsageStats:
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "
                       "restart twice. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code "
                       "lookups and jlc_stock_check's one-code queries were answered, one each: snapshot (the "
-                      "daily snapshot, no request), live (JLCPCB answered), fallback (JLCPCB didn't answer and "
-                      "the snapshot did: live_failed in the reply) and live_failed (JLCPCB didn't answer, "
-                      "nothing to fall back on: the error)."),
+                      "daily snapshot, no request), live (answered from a live lookup, including its 1-hour "
+                      "cache), fallback (JLCPCB didn't answer and the snapshot did: live_failed in the reply) "
+                      "and live_failed (the live lookup failed and nothing answered instead: the error)."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,

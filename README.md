@@ -121,7 +121,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 
 ## Good to know
 
-- `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
+- `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list, or on a server without price tiers), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
 - The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev, and repeat lookups are answered from kept copies. Self-host with your own keys to get your own limits.
@@ -168,7 +168,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
 | `HTTP_HOST` | `0.0.0.0` | Bind address (`127.0.0.1` or `::1`: localhost only; `::`: all IPv6); keep `0.0.0.0` in Docker, whose compose file already publishes on 127.0.0.1 |
 | `HTTP_PORT` | `8080` | Server port |
-| `RATE_LIMIT_REQUESTS` | `100` | Requests per minute per IP or IPv6 /64 |
+| `RATE_LIMIT_REQUESTS` | `200` | Requests per minute per IP or IPv6 /64 |
 | `PLATFORM_RATE_LIMIT` | `1000` | Per-IP limit for the AI platforms' published ranges (at least `RATE_LIMIT_REQUESTS`) |
 | `DB_STUCK_WAIT_SECONDS` | `60` | A database queue that starts no call for this many seconds makes `/health` 503, then the server exits for Docker to restart |
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges (empty: normal limit) |
@@ -186,7 +186,7 @@ The five `_PATH` settings keep that data across restarts; outside Docker they're
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
-- **Rate limit:** 100 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
+- **Rate limit:** 200 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
 - **Health:** `https://pcbparts.dev/health`: version, caches, distributor quotas and database status as JSON; HTTP 503 when a database call is stuck
 - **Usage stats:** `https://pcbparts.dev/mcp/stats`: anonymous daily counts of tool calls, outcomes, upstream requests and refusals (the endpoint lists every field). No IPs, queries or part numbers are kept.
 

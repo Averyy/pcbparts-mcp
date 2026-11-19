@@ -850,6 +850,7 @@ EXCEPTION_MESSAGES = {
     "JLCPCB request timed out — try again later": "failed",
     "JLCPCB returned HTTP {} — try again later": "failed",
     "JLCPCB API error: {}": "failed",
+    "JLCPCB returned an unreadable response — try again later": "failed",
     "UUID is required": "bad_request",
     "Invalid UUID format": "bad_request",
     "EasyEDA has no symbol {}": "not_found",
@@ -897,7 +898,8 @@ class TestErrorSorting:
         from pcbparts_mcp.server import _error_kind
         client = (SRC / "client.py").read_text(encoding="utf-8")
         raised = {_text(node.args[0]) for node in ast.walk(ast.parse(client))
-                  if isinstance(node, ast.Call) and getattr(node.func, "id", "") in ("ValueError", "EasyEDAComponentNotFound")
+                  if isinstance(node, ast.Call)
+                  and getattr(node.func, "id", "") in ("ValueError", "EasyEDAComponentNotFound", "JLCPCBUnavailable")
                   and node.args}
         assert raised - set(EXCEPTION_MESSAGES) == set(), "classify these in EXCEPTION_MESSAGES"
         wrong = {t: _error_kind(_render(t)) for t, kind in EXCEPTION_MESSAGES.items() if _error_kind(_render(t)) != kind}

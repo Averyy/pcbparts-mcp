@@ -56,8 +56,10 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
-# Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1
-RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 100, 1)
+# Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1. HTTP requests, not tool
+# calls: most clients send three per call, and a BOM tool loading a board at its normal pace sends
+# 120-180 a minute (ordinary addresses were refused at the earlier 100 on 2026-11-19).
+RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 200, 1)
 # The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
 # per address instead of RATE_LIMIT_REQUESTS: claude.ai and ChatGPT connectors call from them for
 # many users at once. 1,000 (about 330 tool calls) is about half what the 1-CPU server is estimated to
