@@ -6,7 +6,7 @@ comments are the source of truth, and `CHANGELOG.md` has the history.
 
 ## EasyEDA `/api/products` rate limit
 
-**EasyEDA `/api/products` is rate-limited per IP**: measured at 24 requests, then a bare CloudFront 403 with no `Retry-After` that clears in about 2 minutes (2026-10-09). Stay under 20 requests per 2 minutes. Since 0.5.6 the client enforces that per process (budget and cooldown in `_check_easyeda_footprint()`), but the budget is per client instance (the server has one; each integration test class has its own), so test runs and anything else running at the same time add up. On the first EasyEDA 403, STOP sending. Don't re-run tests or retry by hand: heavy traffic during a block appears to stretch it from ~2 minutes to over 30. Check prod with one `jlc_get_part` instead. Details and numbers: `docs/ref-easyeda-api.md`.
+**EasyEDA `/api/products` is rate-limited per IP**: measured at 24 requests, then a bare CloudFront 403 with no `Retry-After` that clears in about 2 minutes (2026-10-09). Stay under 20 requests per 2 minutes. Since 0.5.6 the client enforces that per process (budget and cooldown in `_check_easyeda_footprint()`), but the budget is per client instance (the server has one; each integration test class has its own), so test runs and anything else running at the same time add up. On the first EasyEDA 403, STOP sending. Don't re-run tests or retry by hand: heavy traffic during a block appears to stretch it from ~2 minutes to over 30. Check prod with one `jlc_get_part(lcsc=..., live=true)` instead. Details and numbers: `docs/ref-easyeda-api.md`.
 
 ## EasyEDA footprint seed
 
