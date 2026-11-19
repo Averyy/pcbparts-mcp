@@ -306,7 +306,7 @@
                     <tbody>
                         <tr><td>Per-IP rate-limit counters (for IPv6, per /64 block)</td><td>Only the last minute counts; in memory only</td></tr>
                         <tr><td>Hourly tallies behind the log lines: each IP address (for rate-limit refusals of IPv6 addresses, its /64 block) with its count of Mouser and DigiKey lookups or refusals, at most 1,000 addresses per tally</td><td>Until the hour ends and its log line is written, or the server stops; in memory only</td></tr>
-                        <tr><td>The app name each IP address (for IPv6, its /64 block) last connected with</td><td>Until that address has made no connection or tool call for 10 minutes; in memory only</td></tr>
+                        <tr><td>The app name each IP address (for IPv6, its /64 block) last connected with</td><td>Until that address has made no connection or tool call for about 10 minutes; in memory only</td></tr>
                         <tr><td>Daily caller and part-number hashes and their salts</td><td>Until first needed on the next UTC day, or a server restart; in memory only</td></tr>
                         <tr><td>Anonymous daily usage counts, including rate-limit refusal counts (no IP addresses)</td><td>365 days (the 30 most recent are public)</td></tr>
                         <tr><td>Application logs (request time, path and result; hourly lines with the top IP addresses for Mouser and DigiKey lookups and for rate-limit refusals; error details)</td><td>Capped at about 30 MB, oldest entries overwritten first; cleared with each new release</td></tr>

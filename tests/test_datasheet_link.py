@@ -289,3 +289,13 @@ class TestUnsignedFallback:
         assert reply.headers["location"] == "https://www.ti.com/lit/ds/symlink/tps61023.pdf"
         assert reply.headers["cache-control"] == "no-store"
         assert missing.status_code == 404 and missing.json() == {"error": "No datasheet PDF found for C6"}
+
+
+def test_a_link_that_is_not_text_is_no_link():
+    """LCSC's pdfUrl or a listing's link as a list or a number raised inside the redirect (a 500)."""
+    from pcbparts_mcp.client import _on_lcsc, lcsc_datasheet_pdf, maker_datasheet_link
+    assert lcsc_datasheet_pdf({"pdfUrl": ["https://datasheet.lcsc.com/x.pdf"]}) is None
+    assert lcsc_datasheet_pdf({"pdfUrl": 7}) is None and lcsc_datasheet_pdf({"pdfUrl": ""}) is None
+    assert lcsc_datasheet_pdf({"pdfUrl": "https://datasheet.lcsc.com/x.pdf"}) == "https://datasheet.lcsc.com/x.pdf"
+    assert _on_lcsc(["https://datasheet.lcsc.com/x.pdf"]) is False and _on_lcsc(None) is False
+    assert maker_datasheet_link(12345, ["x"], None, "https://www.onsemi.com/pdf/a.pdf") == "https://www.onsemi.com/pdf/a.pdf"

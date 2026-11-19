@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 from fastmcp import Client
-from wafer import ChallengeDetected, ConnectionFailed, EmptyResponse, RateLimited, WaferHTTPError, WaferTimeout
+from wafer import ChallengeDetected, ConnectionFailed, EmptyResponse, RateLimited, WaferError, WaferHTTPError, WaferTimeout
 
 from conftest import write_catalog_category
 
@@ -145,6 +145,8 @@ FAILURES = {
     "empty": (lambda: EmptyResponse("https://jlcpcb.com", 200), "JLCPCB returned empty response — try again later"),
     "connection": (lambda: ConnectionFailed("https://jlcpcb.com", "reset"), "JLCPCB connection failed — try again later"),
     "timeout": (lambda: WaferTimeout("https://jlcpcb.com", 30), "JLCPCB request timed out — try again later"),
+    # Any other wafer failure (too many redirects, an oversized reply) is no answer either
+    "other_wafer": (lambda: WaferError("too many redirects"), "JLCPCB connection failed — try again later"),
     "http": (lambda: Reply({}, 503), "JLCPCB returned HTTP 503 — try again later"),
     "api": (lambda: Reply({"code": 500, "message": "busy"}), "JLCPCB API error: busy"),
     # A 200 that isn't a JSON object (an error page): our own message, not the decoder's
@@ -469,7 +471,9 @@ class TestMalformedLinks:
         ({"dataManualFileAccessIdUrl": "https://jlc.example/1.pdf?Expires=1e400"}, "maker_datasheet"),
         ({"dataManualFileAccessIdUrl": "https://jlc.example/1.pdf?Expires=nan"}, "maker_datasheet"),
         ({"dataManualOfficialLink": "https://[maker.example/x.pdf"}, None),
-    ], ids=["year", "ipv6", "inf", "nan", "maker_ipv6"])
+        ({"dataManualOfficialLink": 12345}, None),  # not even text
+        ({"dataManualOfficialLink": ["https://maker.example/x.pdf"]}, None),
+    ], ids=["year", "ipv6", "inf", "nan", "maker_ipv6", "maker_number", "maker_list"])
     async def test_left_out(self, env, extra, kept):
         env.answer(lambda body: Reply({"code": 200, "data": {"componentPageInfo": {
             "list": [{**live_item(body["keyword"]), **extra}]}}}))

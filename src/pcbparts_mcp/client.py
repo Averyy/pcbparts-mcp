@@ -247,7 +247,7 @@ def maker_datasheet_link(*urls: str | None) -> str | None:
     the PDF). A gpn isn't turned into a PDF name: LM73100's datasheet is lm7310.pdf. Other links are
     kept as listed (some need their query, Infineon's ?fileId=); LCSC's own aren't maker links."""
     for url in urls:
-        url = (url or "").strip()
+        url = url.strip() if isinstance(url, str) else ""  # a listing can hold anything
         if not url.startswith(("https://", "http://")):
             continue
         try:
@@ -272,11 +272,14 @@ def item_maker_datasheet(item: dict[str, Any]) -> str | None:
 
 def lcsc_datasheet_pdf(product: dict[str, Any] | None) -> str | None:
     """LCSC's copy of the datasheet as a PDF (pdfUrl in its product data), or None."""
-    return (product or {}).get("pdfUrl") or None
+    url = (product or {}).get("pdfUrl")
+    return url if isinstance(url, str) and url else None
 
 
 def _on_lcsc(url: str) -> bool:
     """An http(s) link on LCSC's own hosts (lcsc.com and its subdomains: datasheet.lcsc.com)."""
+    if not isinstance(url, str):
+        return False
     try:
         parsed = urlparse(url)
         host = (parsed.hostname or "").lower()
@@ -761,6 +764,9 @@ class JLCPCBClient:
             except WaferTimeout:
                 logger.warning(f"JLCPCB request timeout: {log_keyword}")
                 raise JLCPCBUnavailable("JLCPCB request timed out — try again later")
+            except WaferError as e:  # too many redirects, an oversized reply, a failed token: no answer either
+                logger.warning(f"JLCPCB request failed ({type(e).__name__}): {log_keyword}")
+                raise JLCPCBUnavailable("JLCPCB connection failed — try again later")
             logger.debug(f"JLCPCB response: {response.status_code}")
             try:
                 response.raise_for_status()
