@@ -15,6 +15,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 - The per-address rate limit is 200 requests a minute (was 100): `RATE_LIMIT_REQUESTS`'s default, and the value in the Dockerfile and compose files.
 - A `datasheet_pdf` link leads to the maker's datasheet or LCSC's PDF when JLCPCB keeps no PDF of its own (it was a 404).
 - A server without price-tier data answers `jlc_get_part(lcsc=...)` live, as before.
+- A part-number miss in `jlc_get_part` suggests `mouser_get_part` or `digikey_get_part` only while that distributor can answer: not when its daily limit is spent or it isn't set up.
 - The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
 
 ### Fixed

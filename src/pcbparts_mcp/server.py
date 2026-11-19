@@ -2499,8 +2499,8 @@ async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bo
                         "part number. Search by value and package with jlc_search instead.")
             else:
                 hint = ("The local catalog only lists in-stock parts (stock >= 10). "
-                        f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock, "
-                        "or mouser_get_part / digikey_get_part for other distributors.")
+                        f"Try jlc_stock_check(query={json.dumps(mpn)}) for low or zero stock"
+                        + _other_distributors_clause() + ".")
                 if LCSC_CODE.fullmatch(mpn.strip()):
                     hint = (f"'{mpn.strip()}' looks like an LCSC code: "
                             f"jlc_get_part(lcsc=\"{mpn.strip().upper()}\") looks it up live, "
@@ -3912,6 +3912,36 @@ def _snapshot_health() -> dict[str, Any]:
         return {"data_as_of": _snapshot_as_of, "age_hours": None, "stale": None}
     age = (_health_clock() - scraped) / 3600
     return {"data_as_of": _snapshot_as_of, "age_hours": round(age, 1), "stale": age > SNAPSHOT_STALE_HOURS}
+
+
+# A per-minute wait is short; anything longer is a spent day or a pause the distributor asked for
+_DISTRIBUTOR_SPENT_SECONDS = 120
+
+
+def _usable_distributor_tools() -> list[str]:
+    """The distributor lookup tools worth suggesting right now: configured, and not waiting on a
+    spent daily limit or a pause. Suggesting a spent one only earns the caller the limit error
+    (14,000 refused digikey_get_part calls on 2026-11-19, nearly every one a different part)."""
+    tools = []
+    for name, tool in (("mouser", "mouser_get_part"), ("digikey", "digikey_get_part")):
+        quota = _distributor_quotas.get(name)
+        if quota is None:
+            continue
+        try:
+            wait = quota.retry_after()
+        except Exception:  # a hint must never fail a lookup
+            logger.exception(f"Couldn't read the {name} limit for a hint")
+            continue
+        if wait is None or wait <= _DISTRIBUTOR_SPENT_SECONDS:
+            tools.append(tool)
+    return tools
+
+
+def _other_distributors_clause() -> str:
+    """", or mouser_get_part / digikey_get_part for other distributors" for the tools usable now;
+    empty when neither is."""
+    tools = _usable_distributor_tools()
+    return f", or {' / '.join(tools)} for other distributors" if tools else ""
 
 
 # Health check endpoint
