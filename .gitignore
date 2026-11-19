@@ -95,3 +95,8 @@ data/easyeda/*.tmp
 
 # Local Claude notes, never committed
 CLAUDE.local.md
+
+# Local planning notes (never committed)
+/todo-*.md
+/research-*.md
+docs/do-later.md

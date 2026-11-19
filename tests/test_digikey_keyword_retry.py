@@ -179,7 +179,7 @@ async def test_miss_has_cached_hint(digikey, keyword, pn):
     assert await client.get_part(pn) == result
     assert_keyword_request(fake, pn)
     assert client._store.get_answer("digikey", pn.upper())[0]["not_found"] is True
-    assert DIGIKEY_NOT_FOUND_TTL == 86400
+    assert DIGIKEY_NOT_FOUND_TTL == 3 * 86400
 
 
 @pytest.mark.parametrize("pn", ["NOPE-ND", "nope-nd"])

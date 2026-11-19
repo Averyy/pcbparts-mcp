@@ -1,5 +1,6 @@
-"""0.10.0: Mouser answers kept per part (3 days), every Mouser/DigiKey answer feeding the 90-day
-lifecycle store, and part_lifecycle. No network: httpx.MockTransport fakes and fake clocks."""
+"""0.10.0: Mouser answers kept per part (3 days), every Mouser/DigiKey answer feeding the lifecycle
+store (90 days; obsolete a year, 0.10.2), and part_lifecycle. No network: httpx.MockTransport fakes and
+fake clocks."""
 
 import asyncio
 import datetime
@@ -10,12 +11,18 @@ import httpx
 import pytest
 from fastmcp import Client
 
+import pcbparts_mcp.distributor_store as distributor_store
+import pcbparts_mcp.mouser as mouser_module
 import pcbparts_mcp.server as server
 from pcbparts_mcp import stats
 from pcbparts_mcp.cache import DailyQuota, Pacer, QuotaPool
+from pcbparts_mcp.config import (
+    DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_TTL, MOUSER_CACHE_TTL,
+    MOUSER_NOT_FOUND_TTL,
+)
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.distributor_store import DistributorStore
-from pcbparts_mcp.lifecycle import Reading
+from pcbparts_mcp.lifecycle import Reading, mouser_status, utc_text
 from pcbparts_mcp.mouser import MouserClient, MouserError, _normalize_part
 
 UTC = datetime.timezone.utc
@@ -132,6 +139,16 @@ async def lifecycle(parts):
     return await server.part_lifecycle(parts=parts)
 
 
+# A Mouser "not found" lifetime: the configured one, and one shorter than a found answer's, so the
+# rules that keep a miss for less time than a find stay tested while the two are configured equal
+NOT_FOUND_TTLS = pytest.mark.parametrize("not_found_ttl", [MOUSER_NOT_FOUND_TTL, DAY], ids=["configured", "shorter"])
+
+
+def use_not_found_ttl(monkeypatch, ttl: float) -> None:
+    monkeypatch.setattr(mouser_module, "MOUSER_NOT_FOUND_TTL", ttl)
+    monkeypatch.setitem(distributor_store.ANSWER_TTLS, "mouser", (MOUSER_CACHE_TTL, ttl))
+
+
 async def settle():
     """Let started lookups reach their requests."""
     for _ in range(5):
@@ -167,17 +184,20 @@ class TestMouserPerPart:
         # Its lifecycle is kept (it's LM358P's own); LM358 was never "not listed" by an unclear batch
         assert [r.mpn for r in store.readings("LM358P")] == ["LM358P"]
 
-    async def test_a_kept_batch_forgets_its_not_found_parts_after_a_day(self, setup, clock):
+    @NOT_FOUND_TTLS
+    async def test_a_kept_batch_forgets_its_not_found_parts_in_time(self, setup, clock, monkeypatch, not_found_ttl):
+        use_not_found_ttl(monkeypatch, not_found_ttl)
         fake = FakeMouser(mouser_part("LM358P"))
         m, _, _, _, _ = setup(mouser=fake)
         assert (await m.get_part("LM358|LM358P|NOPE1"))["not_found"] == ["NOPE1"]
-        clock.advance(DAY - 1)
+        clock.advance(not_found_ttl - 1)
         await m.get_part("LM358|LM358P|NOPE1")
         assert len(fake.sent) == 1
         clock.advance(1)
         fake.parts.append(mouser_part("NOPE1"))  # listed since
         assert "not_found" not in await m.get_part("LM358|LM358P|NOPE1")
-        assert fake.sent[1:] == ["LM358|NOPE1"]  # LM358P is kept on its own
+        # LM358P is kept on its own while a found answer lives
+        assert fake.sent[1:] == (["LM358|NOPE1"] if not_found_ttl < MOUSER_CACHE_TTL else ["LM358|LM358P|NOPE1"])
 
     async def test_result_matching_no_number_keeps_nothing_per_part(self, setup):
         odd = mouser_part("XYZ-1", mouser_pn="123-XYZ1")
@@ -191,24 +211,19 @@ class TestMouserPerPart:
         assert store.readings("XYZ-1") == [] and store.readings("NE555P") == []
         assert await m.get_part("LM358P|NE555P") == reply and len(fake.sent) == 1
 
-    async def test_kept_three_days_and_not_found_one(self, setup, clock):
+    @pytest.mark.parametrize("number, ttl", [("LM358P", MOUSER_CACHE_TTL), ("NOPE1", MOUSER_NOT_FOUND_TTL)],
+                             ids=["found", "not_found"])
+    async def test_kept_for_their_lifetime(self, setup, clock, number, ttl):
+        """A found part and a miss are each answered from the store until their lifetime ends (3 days
+        both), then asked again."""
         fake = FakeMouser(mouser_part("LM358P"))
         m, _, _, _, _ = setup(mouser=fake)
-        await m.get_part("LM358P")
-        await m.get_part("NOPE1")
-        clock.advance(DAY - 1)
-        await m.get_part("LM358P")
-        await m.get_part("NOPE1")
+        first = await m.get_part(number)
+        clock.advance(ttl - 1)
+        assert await m.get_part(number) == first and len(fake.sent) == 1
+        clock.advance(1)
+        await m.get_part(number)
         assert len(fake.sent) == 2
-        clock.advance(1)
-        await m.get_part("NOPE1")
-        assert len(fake.sent) == 3
-        clock.advance(2 * DAY - 1)
-        await m.get_part("LM358P")
-        assert len(fake.sent) == 3
-        clock.advance(1)
-        await m.get_part("LM358P")
-        assert len(fake.sent) == 4
 
     async def test_observed_at_is_the_oldest_answer(self, setup, clock):
         fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
@@ -232,30 +247,39 @@ class TestMouserPerPart:
         assert store.readings("LM358P")[0].raw == "not stated by Mouser"
         assert [(r.found, r.source) for r in store.readings("NOPE1")] == [(False, "mouser")]
 
-    async def test_unrelated_results_dont_make_a_miss_live_three_days(self, setup, clock):
+    @NOT_FOUND_TTLS
+    async def test_unrelated_results_dont_make_a_miss_live_as_a_find(self, setup, clock, monkeypatch, not_found_ttl):
         """A lone number owns whatever Mouser returns for it; when none of it matches, the reply's
-        not_found names it and it's kept a day, not as long as a found part."""
+        not_found names it and it's kept as a miss (MOUSER_NOT_FOUND_TTL), not as a found part."""
+        use_not_found_ttl(monkeypatch, not_found_ttl)
         odd = mouser_part("XYZ-1", mouser_pn="123-XYZ1")
         fake = FakeMouser(responses=[httpx.Response(200, json={"Errors": [], "SearchResults": {
             "NumberOfResult": 1, "Parts": [odd]}})] * 2)
-        m, _, _, _, _ = setup(mouser=fake)
+        m, _, store, _, _ = setup(mouser=fake)
         reply = await m.get_part("OLDNAME1")
         assert reply["not_found"] == ["OLDNAME1"] and [r["mfr_part_number"] for r in reply["results"]] == ["XYZ-1"]
-        clock.advance(DAY - 1)
+        assert store._conn.execute("SELECT key, found FROM answers").fetchall() == [("OLDNAME1", 0)]
+        clock.advance(not_found_ttl - 1)
         assert await m.get_part("OLDNAME1") == reply and len(fake.sent) == 1
         clock.advance(1)
         await m.get_part("OLDNAME1")
         assert len(fake.sent) == 2
 
-    async def test_a_kept_batch_with_an_unmatched_answer_lasts_a_day(self, setup, clock):
+    @NOT_FOUND_TTLS
+    async def test_a_kept_batch_with_an_unmatched_answer_lasts_as_a_miss(self, setup, clock, monkeypatch,
+                                                                         not_found_ttl):
         """The kept-batch check reads matched too (an answer can hold results and still not match)."""
+        use_not_found_ttl(monkeypatch, not_found_ttl)
         fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
         m, _, store, _, _ = setup(mouser=fake)
         found, odd = _normalize_part(mouser_part("LM358P")), _normalize_part(mouser_part("XYZ-1", mouser_pn="123-XYZ1"))
         store.put_answer("mouser", "batch:LM358P|OLDNAME1", {"answers": {
             "LM358P": {"results": [found], "matched": True}, "OLDNAME1": {"results": [odd], "matched": False}},
             "extras": []}, True, clock())
-        clock.advance(DAY)
+        clock.advance(not_found_ttl - 1)
+        await m.get_part("LM358P|OLDNAME1")
+        assert fake.sent == []
+        clock.advance(1)
         await m.get_part("LM358P|OLDNAME1")
         assert fake.sent == ["LM358P|OLDNAME1"]
 
@@ -359,6 +383,18 @@ class TestDigiKeyStore:
         assert reply["observed_at"] == "2026-11-18T12:00:00+00:00"
         (reading,) = store.readings("TPS1234")
         assert (reading.status, reading.raw, reading.last_buy_date) == ("last_time_buy", "Active (end of life)", "2027-03-31")
+
+    @pytest.mark.parametrize("number, ttl", [("TPS1234", DIGIKEY_CACHE_TTL), ("NOPE1", DIGIKEY_NOT_FOUND_TTL)],
+                             ids=["found", "not_found"])
+    async def test_kept_for_their_lifetime(self, setup, clock, number, ttl):
+        fake = FakeDigiKey(dk_product("TPS1234"))
+        _, d, _, _, _ = setup(digikey=fake)
+        first = await d.get_part(number)
+        clock.advance(ttl - 1)
+        assert await d.get_part(number) == first and fake.asked == [number]
+        clock.advance(1)
+        await d.get_part(number)
+        assert fake.asked == [number, number]
 
     async def test_not_found_is_kept_as_not_listed(self, setup):
         fake = FakeDigiKey()
@@ -1171,8 +1207,8 @@ class TestNotListedPerSpelling:
 
     async def test_a_digikey_miss_is_kept_for_its_own_spelling(self, setup):
         """DigiKey matches the spelling asked (case aside), but its "not listed" was kept by mpn_key:
-        a miss for LM358-P answered LM358P not_found for 30 days without asking, though DigiKey lists
-        it. Mouser's is kept the same way (whether its search ignores separators isn't known)."""
+        a miss for LM358-P answered LM358P not_found while it was kept, without asking, though DigiKey
+        lists it. Mouser's is kept the same way (whether its search ignores separators isn't known)."""
         mouser, digikey = FakeMouser(), FakeDigiKey(dk_product("LM358P"))
         _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
         assert (await lifecycle(["LM358-P"]))["results"][0]["not_found"] is True
@@ -1210,7 +1246,7 @@ class TestLoneSurrogates:
 
 class TestUnreadableMouserReply:
     """A 200 without its parts list ({"Errors": [], "SearchResults": null}) was read as an empty
-    one: a day's "not found" and a 30-day Mouser "not listed". It's a failed lookup."""
+    one: a kept "not found" and a kept Mouser "not listed". It's a failed lookup."""
 
     BODIES = [{"Errors": [], "SearchResults": None}, {"Errors": []}, {"Errors": [], "SearchResults": {"Parts": None}},
               {"Errors": [], "SearchResults": {"NumberOfResult": 0}}, {"Errors": [], "SearchResults": []}]
@@ -1246,7 +1282,7 @@ class TestUnreadableMouserReply:
 
 class TestLifecycleByMouserPartNumber:
     """part_lifecycle(["595-LM358P"]): Mouser answered LM358P (its Mouser PN), but only the MPN was
-    compared, so the row was not_found after a DigiKey request and a 30-day DigiKey "not listed"."""
+    compared, so the row was not_found after a DigiKey request and a kept DigiKey "not listed"."""
 
     async def test_the_mouser_pn_is_the_part(self, setup):
         mouser, digikey = FakeMouser(mouser_part("LM358P")), FakeDigiKey(dk_product("LM358P"))
@@ -1266,3 +1302,59 @@ class TestLifecycleByMouserPartNumber:
         setup(mouser=mouser, digikey=digikey)
         row = (await lifecycle(["595-LM358P"]))["results"][0]
         assert row["not_found"] is True and digikey.asked == ["595-LM358P"]
+
+
+# --- 0.10.2: obsolete readings kept a year ---
+
+class TestObsoleteKeptAYear:
+    """An obsolete reading is used for a year (a part doesn't come back from obsolete), every other
+    reading 90 days. Which reading answers is unchanged: a stated status beats Mouser's blank, then
+    the newest. observed_at is always the reading's own time."""
+
+    OLD = 200 * DAY  # past the other readings' 90 days, within the obsolete year
+
+    async def test_old_obsolete_alone_answers_until_a_year(self, setup, clock):
+        mouser, digikey = FakeMouser(mouser_part("LM358P")), FakeDigiKey(dk_product("LM358P"))
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        store.put_readings([Reading("LM358P", "Texas Instruments Inc.", "digikey", "obsolete", "Obsolete", NOW)])
+        for step in (LIFECYCLE_TTL, self.OLD - LIFECYCLE_TTL, LIFECYCLE_OBSOLETE_TTL - self.OLD - 1):
+            clock.advance(step)
+            store.prune()  # the hourly prune keeps it
+            for row in (await lifecycle(["LM358P", {"mpn": "LM358P", "manufacturer": "TI"}]))["results"]:
+                assert (row["status"], row["source"], row["observed_at"]) == (
+                    "obsolete", "digikey", "2026-11-18T12:00:00+00:00")
+        assert mouser.sent == [] and digikey.asked == []  # answered from the store, no request
+        clock.advance(1)  # a year: expired, and asked again
+        row = (await lifecycle(["LM358P"]))["results"][0]
+        assert mouser.sent == ["LM358P"] and digikey.asked == []
+        assert (row["status"], row["source"], row["observed_at"]) == ("active", "mouser", utc_text(clock()))
+
+    @pytest.mark.parametrize("old_source, newer_source, newer, status, source", [
+        ("digikey", "mouser", None, "obsolete", "digikey"),  # Mouser's blank isn't a stated status
+        ("digikey", "mouser", "Discontinued", "obsolete", "digikey"),  # nor is unknown
+        ("digikey", "mouser", "Not Recommended for New Designs", "nrnd", "mouser"),  # both stated: the newest
+        ("mouser", "digikey", "Active", "active", "digikey"),
+    ], ids=["blank", "unknown", "nrnd", "dk_active"])
+    async def test_beside_a_newer_reading_from_the_other_distributor(self, setup, old_source, newer_source,
+                                                                     newer, status, source):
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        store.put_readings([Reading("LM358P", "Texas Instruments Inc.", old_source, "obsolete", "Obsolete",
+                                    NOW - self.OLD)])
+        newer_status, raw = mouser_status(newer) if newer_source == "mouser" else ("active", newer)
+        store.put_readings([Reading("LM358P", "Texas Instruments", newer_source, newer_status, raw, NOW - 10 * DAY)])
+        observed = utc_text(NOW - (self.OLD if source == old_source else 10 * DAY))
+        for row in (await lifecycle(["LM358P", {"mpn": "LM358P", "manufacturer": "TI"}]))["results"]:
+            assert (row["status"], row["source"], row["observed_at"], "makers" in row) == (status, source, observed, False)
+        assert mouser.sent == [] and digikey.asked == []
+
+    async def test_an_expired_obsolete_leaves_the_newer_reading(self, setup):
+        mouser, digikey = FakeMouser(), FakeDigiKey()
+        _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
+        store.put_readings([Reading("LM358P", "Texas Instruments Inc.", "digikey", "obsolete", "Obsolete",
+                                    NOW - LIFECYCLE_OBSOLETE_TTL),
+                            Reading("LM358P", "Texas Instruments", "mouser", "active", "not stated by Mouser",
+                                    NOW - 10 * DAY)])
+        row = (await lifecycle(["LM358P"]))["results"][0]
+        assert (row["status"], row["source"], row["observed_at"]) == ("active", "mouser", utc_text(NOW - 10 * DAY))
+        assert mouser.sent == [] and digikey.asked == []

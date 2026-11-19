@@ -223,5 +223,5 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 ## Quotas
 
 - Mouser and DigiKey daily limits are shared by everyone (DigiKey's resets at 00:00 UTC); at most 25 requests a minute for Mouser, 100 for DigiKey.
-- Kept answers are shared and cost no request: Mouser and DigiKey parts 3 days (not found: 1 day); lifecycle readings 90 days (no usable status: a week; not listed: 30 days). `observed_at` dates them.
+- Kept answers are shared and cost no request: Mouser and DigiKey parts 3 days, found or not; lifecycle readings 90 days, no usable status and not listed included (obsolete: 1 year). `observed_at` dates them.
 - Batch Mouser lookups, one DigiKey part at a time, `part_lifecycle` for lifecycle; don't retry a quota error. Self-hosting with your own keys gives your own limits.

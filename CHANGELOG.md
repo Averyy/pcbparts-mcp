@@ -17,6 +17,7 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 - A server without price-tier data answers `jlc_get_part(lcsc=...)` live, as before.
 - A part-number miss in `jlc_get_part` no longer suggests `mouser_get_part` or `digikey_get_part`.
 - The daily scrape is started by a cron job on the server, with GitHub's schedule as a backup that skips when the day's scrape is already on `main` (`docs/ref-scrape-schedule.md`).
+- Kept Mouser and DigiKey answers last longer: a part not found 3 days (was a day), like a found one; lifecycle readings 90 days (unknown was a week, not listed 30 days), obsolete ones a year.
 
 ### Fixed
 

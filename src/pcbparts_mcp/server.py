@@ -176,8 +176,8 @@ async def lifespan(app):
     # Mouser/DigiKey daily request counts, kept across restarts when DISTRIBUTOR_QUOTA_PATH is set
     quota_store = QuotaStore(DISTRIBUTOR_QUOTA_PATH) if DISTRIBUTOR_QUOTA_PATH else None
     _distributor_quotas.clear()
-    # Their answers (3 days) and lifecycle readings (90 days), kept across restarts when
-    # DISTRIBUTOR_STORE_PATH is set
+    # Their answers (3 days) and lifecycle readings (90 days; obsolete a year), kept across
+    # restarts when DISTRIBUTOR_STORE_PATH is set
     _distributor_store = DistributorStore(DISTRIBUTOR_STORE_PATH or None)
     _distributor_stored = (float("-inf"), None)
     _distributor_store.prune()
@@ -3324,7 +3324,7 @@ async def mouser_get_part(part_number: str) -> dict:
     it only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
     Mouser; for lifecycle use part_lifecycle. Batch up to 10 parts per call. Don't retry a quota
     error.
-    Reply: answers are kept up to 3 days (not found: a day); observed_at is the oldest used.
+    Reply: answers are kept up to 3 days; observed_at is the oldest used.
     lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
     including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
     NRND); lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown (null is active).
@@ -3375,11 +3375,11 @@ async def digikey_get_part(product_number: str) -> dict:
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
     lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date where given.
-    Answers are kept up to 3 days (not found: a day; observed_at). A number several makers use
-    returns each maker's listing, most stock first. requested is the number asked, matched_by how:
-    exact, separators, packing (JST's (LF)/(SN) endings set aside) or digikey_pn are that part;
-    prefix and other need checking. A number that can't be a DigiKey part number isn't sent
-    (not_sent, as in mouser_get_part, plus length: not 3-40 characters).
+    Answers are kept up to 3 days (observed_at). A number several makers use returns each maker's
+    listing, most stock first. requested is the number asked, matched_by how: exact, separators,
+    packing (JST's (LF)/(SN) endings set aside) or digikey_pn are that part; prefix and other need
+    checking. A number that can't be a DigiKey part number isn't sent (not_sent, as in
+    mouser_get_part, plus length: not 3-40 characters).
 
     Args:
         product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
@@ -3499,8 +3499,9 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
 async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
-    digikey_get_part for lifecycle. Readings are shared and kept up to 90 days; other parts are
-    asked of Mouser, and of DigiKey only when Mouser doesn't list them or its daily limit is spent.
+    digikey_get_part for lifecycle. Readings are shared and kept up to 90 days (obsolete: a year);
+    other parts are asked of Mouser, and of DigiKey only when Mouser doesn't list them or its daily
+    limit is spent.
     Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
     "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
     last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
