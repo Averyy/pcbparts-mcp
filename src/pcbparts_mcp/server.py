@@ -59,7 +59,7 @@ from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key
+from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key, not_sent_reason
 from .search.query_builder import package_family_adjustments
 from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
@@ -3345,8 +3345,11 @@ async def part_lifecycle(parts: list[Any] | dict[str, Any] | str) -> dict:
         return error
 
     entries = [_lifecycle_entry(item) for item in items]
-    for entry in entries:  # an MPN Mouser can't take ("|", below) beside a valid code: the catalog's instead
-        if entry.error is None and entry.lcsc and entry.mpn and "|" in entry.mpn:
+    # Beside a valid code, a given MPN no distributor lists (not_sent_reason: a value such as "10k",
+    # an LCSC code, not 3-40 characters, not ASCII) or one Mouser can't take ("|", below) is set
+    # aside for the catalog's; a usable one still wins over it
+    for entry in entries:
+        if entry.error is None and entry.lcsc and entry.mpn and ("|" in entry.mpn or not_sent_reason(entry.mpn)):
             entry.mpn = None
     codes = list(dict.fromkeys(e.lcsc for e in entries if e.error is None and e.lcsc and not (e.mpn and e.maker)))
     if codes:  # an LCSC code's MPN and maker from the catalog snapshot, or from a part kept after it left it

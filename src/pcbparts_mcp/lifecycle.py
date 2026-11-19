@@ -103,6 +103,23 @@ _DROPS = (_NAME_NOISE, _COMPANY_WORDS, frozenset())
 # crystals, MS412FE batteries), not Seiko Epson, which JLCPCB lists as "Seiko Epson".
 _CATALOG_NAMES = {"seiko": "Seiko Instruments"}
 
+# Names keyed (maker_key) as the maker JLCPCB means by them rather than by their alias, which names
+# another maker: JLCPCB's "AMS" is ams OSRAM (AS5047P, AS7341, OSRAM LEDs; _MAKER_FAMILIES), while
+# the alias "ams" (for jlc_search) is Advanced Monolithic Systems, JLCPCB's maker of AMS1117.
+# makers_match still takes "AMS" as either (a BOM's "AMS" can mean an AMS1117's maker). Likewise
+# JLCPCB's "Samsung" lists Samsung Semiconductor's DRAM and LEDs (the alias is Samsung
+# Electro-Mechanics, MLCCs), its "FUJITSU" Fujitsu Components' relays (alias: RAMXEED/FUJITSU, FRAM),
+# its "SEMTECH" the real Semtech (alias: "ST(Semtech)", generic diodes) and its "GD" HER rectifiers
+# (alias: GigaDevice). Keyed by the alias, two companies' maker-not-carried counts would merge and
+# could skip the one looked up less.
+_KEY_NAMES = {
+    "ams": "ams OSRAM",
+    "samsung": "Samsung Semiconductor",
+    "fujitsu": "Fujitsu Components",
+    "semtech": "Semtech Corporation",
+    "gd": "GD (rectifiers)",
+}
+
 # Makers known under names the word rules can't tie together: one company's divisions, or a maker
 # and its own sales arm. A name belongs to a family when it matches one of its names (by the word
 # rules), and two names of one family are one maker: JLCPCB's "Vishay Intertech" is Mouser's
@@ -184,11 +201,12 @@ def maker_key(name: str | None) -> str:
     """One maker's key in the lifecycle store and its maker counts ("Texas Instruments Inc." and
     "Texas Instruments" share one): its alias-resolved name without parentheses, by its words.
     Never empty for a name that isn't: a name of region words only keeps them (JLCPCB's maker "HK"
-    is "hk"), and one without letters or digits (JLCPCB's "--") is "#" and its text."""
+    is "hk"), and one without letters or digits (JLCPCB's "--") is "#" and its text. JLCPCB's
+    "AMS" is ams OSRAM's (_KEY_NAMES)."""
     name = (name or "").strip()
     if not name:
         return ""
-    resolved = _resolved(name)
+    resolved = _resolved(_KEY_NAMES.get(name.casefold(), name))
     outer, inner = re.sub(r"\([^)]*\)", " ", resolved), re.findall(r"\(([^)]*)\)", resolved)
     for drop in _DROPS:
         if words := _words(outer, drop) or next((w for part in inner if (w := _words(part, drop))), ()):

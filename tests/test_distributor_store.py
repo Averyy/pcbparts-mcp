@@ -380,6 +380,25 @@ class TestMakers:
             assert maker_key(name) not in ("", NOT_LISTED_MAKER_KEY), name
         assert maker_key("") == maker_key("  ") == maker_key(None) == ""
 
+    def test_jlcpcbs_ams_is_keyed_as_ams_osram(self):
+        """The key follows what JLCPCB means by "AMS" (ams OSRAM), not its alias; the matching
+        still takes "AMS" as either maker."""
+        assert maker_key("AMS") == maker_key("ams OSRAM") == maker_key("ams-OSRAM USA INC.") == "ams osram"
+        assert maker_key("Advanced Monolithic Systems") == "advanced monolithic systems"
+        assert makers_match("AMS", "ams OSRAM") and makers_match("AMS", "Advanced Monolithic Systems")
+
+    @pytest.mark.parametrize("catalog,company,alias_company", [
+        ("Samsung", "Samsung Semiconductor", "Samsung Electro-Mechanics"),
+        ("FUJITSU", "Fujitsu Components", "RAMXEED/FUJITSU"),
+        ("SEMTECH", "Semtech Corporation", "ST(Semtech)"),
+        ("GD", "GD (HER rectifiers)", "GigaDevice Semicon Beijing"),
+    ], ids=["samsung", "fujitsu", "semtech", "gd"])
+    def test_jlcpcbs_short_names_keep_their_own_key(self, catalog, company, alias_company):
+        """JLCPCB's short maker names are keyed as the company its catalog means, never merged with
+        the company their search alias names (that would merge two makers' not-carried counts)."""
+        assert maker_key(catalog) == maker_key(company)
+        assert maker_key(catalog) != maker_key(alias_company)
+
     @pytest.mark.parametrize("maker", ["HK", ""], ids=["hk", "none"])
     def test_not_listed_never_replaces_a_reading(self, store, maker):
         """A "not listed" row and a reading by a maker whose key was "" (HK's, or a reading without

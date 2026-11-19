@@ -1156,6 +1156,20 @@ class TestMakerIdentity:
         assert given["status"] == "active" and mouser.sent == ["SC-32S-TEST"]
         assert (epson["manufacturer"], epson["status"]) == ("EPSON", "obsolete")  # Epson's own still answers
 
+    async def test_jlcpcbs_ams_counts_as_ams_osram(self, setup, monkeypatch):
+        """maker_key("AMS") was the alias's Advanced Monolithic Systems (JLCPCB's AMS1117 maker), so
+        that maker's misses skipped JLCPCB's "AMS" parts, which are ams OSRAM's."""
+        from pcbparts_mcp.config import MAKER_SKIP_NOT_LISTED
+        from pcbparts_mcp.lifecycle import maker_key
+        mouser = FakeMouser(mouser_part("AS5047P-ATSM", "ams OSRAM"))
+        _, _, store, _, _ = setup(mouser=mouser)
+        store.count_maker_lookups("mouser", {maker_key("Advanced Monolithic Systems"): (MAKER_SKIP_NOT_LISTED, 0)})
+        lcsc_catalog(monkeypatch, {"C976416": {"model": "AS5047P-ATSM", "manufacturer": "AMS"}})
+        row = (await lifecycle(["C976416"]))["results"][0]
+        assert (row["status"], row["source"], row["manufacturer"]) == ("active", "mouser", "ams OSRAM")
+        assert store._conn.execute("SELECT maker_key, found FROM maker_lookups WHERE found").fetchall() == [
+            ("ams osram", 1)]
+
     async def test_hk_is_a_maker(self, setup):
         """JLCPCB's maker "HK" had an empty maker key (all region words), so its misses were never
         counted and maker_not_carried never applied to it."""
@@ -1221,6 +1235,22 @@ class TestCodeBesideAnUnusableMpn:
         assert [(r["mpn"], r["status"], r.get("error")) for r in rows] == [("LM358P", "active", None)] * 5
         assert rows[4]["manufacturer"] == "Texas Instruments" and mouser.sent == ["LM358P"]
         assert rows[0]["input"] == {"lcsc": "C7950", "mpn": "N/A"}
+
+    async def test_a_given_mpn_no_distributor_lists_is_set_aside(self, setup, monkeypatch):
+        """A given MPN not_sent_reason rejects beside a valid code answered not_sent instead of the
+        code's part; a usable given MPN still wins over the catalog's."""
+        lcsc_catalog(monkeypatch, {"C7950": {"model": "LM358P", "manufacturer": "Texas Instruments"}})
+        mouser = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
+        setup(mouser=mouser)
+        parts = [{"lcsc": "C7950", "mpn": mpn} for mpn in ("10k", "C7950", "AB", "LM358P中文", "X" * 41)]
+        parts += [{"lcsc": "C7950", "mpn": "10k", "manufacturer": "TI"}, {"lcsc": "C7950", "mpn": "NE555P"}]
+        rows = (await lifecycle(parts))["results"]
+        assert [(r["mpn"], r["status"], r.get("not_sent")) for r in rows] == [("LM358P", "active", None)] * 6 + [
+            ("NE555P", "active", None)]
+        assert [r["input"] for r in rows] == parts and rows[5]["manufacturer"] == "Texas Instruments"
+        assert len(mouser.sent) == 1 and set(mouser.sent[0].split("|")) == {"LM358P", "NE555P"}
+        alone, = (await lifecycle([{"lcsc": "X1", "mpn": "10k"}]))["results"]  # no valid code: as before
+        assert (alone["mpn"], alone["not_sent"]) == ("10k", "value")
 
     async def test_without_a_valid_code_they_stay_errors(self, setup):
         setup(mouser=FakeMouser())
