@@ -4,6 +4,25 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
 
+## 0.10.3 (2026-11-20)
+
+### Changed
+
+- **Mouser and DigiKey lookups**: each address gets 200 a day, both counted together (`DISTRIBUTOR_DAILY_PER_ADDRESS`). A few bad actors were burning through the requests everyone shares; the cap keeps it fair. Stored answers are free.
+- **`digikey_get_part`**: the argument is `part_number`, as in `mouser_get_part`; `product_number` still works, and both accept `mpn`.
+- `jlc_get_parts` also accepts `lcsc` for `parts`, and `jlc_stock_history` `parts` for `lcsc`.
+- The per-address rate limit is 300 requests a minute (was 200).
+- **`cse_get_kicad`**: SamacSys's daily download limit is reported as that (was "CSE returned invalid zip file"), and downloads pause 30 minutes after it.
+- **`cse_get_kicad`**: stored KiCad files are kept for good (were a year).
+- **`datasheet_pdf` links**: a visit beyond 20 new links a minute waits up to 30 seconds before any 429.
+
+### Added
+
+- **`/mcp/stats`**: `distributor_limits` (which limit held Mouser and DigiKey lookups back, and their own refusals), `datasheet_links` (link visits) and `db_waits` (database jobs that waited).
+- Lookups held back by a limit are logged per hour with the addresses held back most; Mouser daily refusals are logged.
+- **`cse_get_kicad`**: models that couldn't be downloaded go on a wanted list (`/health` `cse_stored.wanted`); `python -m pcbparts_mcp.cse_store` prints it and imports ZIPs.
+- `LOG_PATH`: the application log is also kept in daily files for `LOG_KEEP_DAYS` (7) days, across deploys.
+
 ## 0.10.2 (2026-11-19)
 
 ### Changed

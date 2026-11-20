@@ -56,10 +56,13 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
+# Optional application log, separate from stdout's per-request log. Docker keeps it on the cache volume.
+LOG_PATH = os.getenv("LOG_PATH", "")
+LOG_KEEP_DAYS = number_setting("LOG_KEEP_DAYS", 7, 1)
 # Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1. HTTP requests, not tool
 # calls: most clients send three per call, and a BOM tool loading a board at its normal pace sends
 # 120-180 a minute (ordinary addresses were refused at the earlier 100 on 2026-11-19).
-RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 200, 1)
+RATE_LIMIT_REQUESTS = number_setting("RATE_LIMIT_REQUESTS", 300, 1)
 # The AI platforms' shared outbound addresses (platform_ranges.py) get this many requests a minute
 # per address instead of RATE_LIMIT_REQUESTS: claude.ai and ChatGPT connectors call from them for
 # many users at once. 1,000 (about 330 tool calls) is about half what the 1-CPU server is estimated to
@@ -73,6 +76,8 @@ PLATFORM_RATE_LIMIT = number_setting("PLATFORM_RATE_LIMIT", 1000, 1)
 # (server._exit_if_stuck). Far above any one query (an ordinary search takes up to 1 s on the VPS);
 # a long queue that keeps moving never counts.
 DB_STUCK_WAIT_SECONDS = number_setting("DB_STUCK_WAIT_SECONDS", 60.0, 1.0)
+# Measurement only: a database job counts as having waited once its queue delay reaches this.
+DB_WAIT_COUNTED_SECONDS = 0.1
 # Anthropic's published outbound ranges (https://platform.claude.com/docs/en/api/ip-addresses, "will
 # not change without notice"), comma-separated; set empty to give them the normal limit
 ANTHROPIC_IP_RANGES = [r.strip() for r in os.getenv("ANTHROPIC_IP_RANGES", "160.79.104.0/21,153.61.208.0/20").split(",")
@@ -278,6 +283,8 @@ DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
 # Requests a day for each Mouser key and DigiKey app. 0 sends none: only kept answers are given, and
 # a lookup that needs a request is refused as over the daily quota.
 DISTRIBUTOR_DAILY_LIMIT = number_setting("DISTRIBUTOR_DAILY_LIMIT", 1000, 0)
+# Sent lookups per address per UTC day, Mouser and DigiKey counted together. 0 disables this cap.
+DISTRIBUTOR_DAILY_PER_ADDRESS = number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 200, 0)
 # Our caps per rolling minute, below each API's own: Mouser allows 30 a minute, DigiKey 120 (and
 # suspends an app for ten minutes for going over its per-second threshold).
 MOUSER_PER_MINUTE = 25
@@ -299,12 +306,13 @@ USAGE_STATS_PATH = os.getenv("USAGE_STATS_PATH", "")
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15
 CSE_STATUS_RETRY_DELAY = 3.0  # seconds before asking again after a status other than "Success"
+CSE_QUOTA_RETRY_SECONDS = 1800  # retry model downloads after SamacSys's daily quota refusal
 CSE_REQUEST_TIMEOUT = float(os.getenv("CSE_REQUEST_TIMEOUT", "45"))
 CSE_CACHE_TTL = 3600
 CSE_KICAD_CACHE_TTL = 60 * 60 * 24  # Cache extracted KiCad files for 24 hours
 # SQLite file of CSE searches and KiCad files (cse_store.py), kept across restarts; empty = memory only.
-# A search where every part has a model, and a part's KiCad files, are kept a year; a search with a
-# part that has no model yet (CSE builds them on request), or with no parts, a week.
+# A search where every part has a model is kept a year; a search with a part that has no model yet
+# (CSE builds them on request), or with no parts, a week. KiCad files are kept for good.
 CSE_STORE_PATH = os.getenv("CSE_STORE_PATH", "")
 CSE_FOUND_TTL = 365 * 86400
 CSE_NOT_FOUND_TTL = 7 * 86400

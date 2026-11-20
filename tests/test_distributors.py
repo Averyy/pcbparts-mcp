@@ -720,7 +720,7 @@ class TestGracefulDegradation:
         original = srv._digikey_client
         srv._digikey_client = None
         try:
-            result = await digikey_get_part(product_number="LM358P")
+            result = await digikey_get_part(part_number="LM358P")
             assert "error" in result
             assert "DIGIKEY_CLIENT_ID" in result["error"]
         finally:

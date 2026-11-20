@@ -212,9 +212,9 @@ async def test_digikey_jst_finish(digikey, monkeypatch):
     fake = FakeDigiKey({"ExactMatches": [], "Products": [
         dk_product("B2B-PH-K-S", "JST Sales America Inc.", ("455-1704-ND",), 315042)]})
     monkeypatch.setattr(server, "_digikey_client", digikey(fake))
-    reply = await server.digikey_get_part(product_number="B2B-PH-K-S(LF)(SN)")
+    reply = await server.digikey_get_part(part_number="B2B-PH-K-S(LF)(SN)")
     assert answered(reply) == [("B2B-PH-K-S", "B2B-PH-K-S(LF)(SN)", "packing")]
-    again = await server.digikey_get_part(product_number=" b2b-ph-k-s(lf)(sn) ")  # kept: no request
+    again = await server.digikey_get_part(part_number=" b2b-ph-k-s(lf)(sn) ")  # kept: no request
     assert answered(again) == [("B2B-PH-K-S", "b2b-ph-k-s(lf)(sn)", "packing")]
     assert len(fake.asked) == 1
 

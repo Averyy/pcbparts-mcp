@@ -266,11 +266,11 @@ class TestServerWiring:
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:
                 await initialize(c, "backplane-check", "203.0.113.9")
                 await initialize(c, "cursor", "198.51.100.7")
-                await call(c, "digikey_get_part", {"product_number": "LM358P"}, "203.0.113.9")  # ok
-                await call(c, "digikey_get_part", {"product_number": "NE555P"}, "203.0.113.9")  # day's limit spent
+                await call(c, "digikey_get_part", {"part_number": "LM358P"}, "203.0.113.9")  # ok
+                await call(c, "digikey_get_part", {"part_number": "NE555P"}, "203.0.113.9")  # day's limit spent
                 await call(c, "mouser_get_part", {"part_number": "LM358P"}, "203.0.113.9")  # not configured
-                await call(c, "digikey_get_part", {"product_number": "LM358P"}, "198.51.100.7")  # cached
-                await call(c, "digikey_get_part", {"product_number": "LM358P"}, "192.0.2.1")  # no initialize
+                await call(c, "digikey_get_part", {"part_number": "LM358P"}, "198.51.100.7")  # cached
+                await call(c, "digikey_get_part", {"part_number": "LM358P"}, "192.0.2.1")  # no initialize
                 await call(c, "get_design_rules", {"topic": "usb"}, "203.0.113.9")  # not a distributor tool
                 response = await c.get("/mcp/stats")
         assert sessions and all(params is None for params in sessions)  # FastMCP gives no app at call time
@@ -292,7 +292,7 @@ class TestServerWiring:
         """Over stdio or another stateful session the session's own clientInfo names the app."""
         from fastmcp import Client
         async with Client(server.mcp) as client:
-            await client.call_tool("digikey_get_part", {"product_number": "LM358P"})  # not configured: failed
+            await client.call_tool("digikey_get_part", {"part_number": "LM358P"})  # not configured: failed
         day = stats.usage.summary()["days"][0]
         assert list(day["distributor_apps"]["digikey_get_part"]) == list(day["apps"]) != ["unknown"]
 
@@ -313,7 +313,7 @@ class TestServerWiring:
                 for method, params in (("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
                                                        "clientInfo": {"name": "cursor", "version": "1"}}),
                                        ("tools/call", {"name": "digikey_get_part",
-                                                       "arguments": {"product_number": "LM358P"}})):
+                                                       "arguments": {"part_number": "LM358P"}})):
                     response = await c.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": method,
                                                           "params": params}, headers=headers)
                     assert response.status_code == 200 and "result" in response.text

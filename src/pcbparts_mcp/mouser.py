@@ -415,7 +415,9 @@ class MouserClient:
         if not isinstance(data, dict):
             raise MouserError("Mouser API returned an unreadable response")
         if key_quota is not None:
-            key_quota.clear_expired_pause()
+            if resumed := key_quota.clear_expired_pause():
+                logger.info(f"Mouser key {key_index + 1} accepted again at {utc_text(resumed['resumed_at'])}; "
+                            f"daily refusal since {utc_text(resumed['at'])}, after {resumed['retries']} retries")
         return data
 
     def _refused_for_limit(self, err: dict | None, key_index: int = 0, headers: Any = None) -> MouserRateLimited:
@@ -428,10 +430,16 @@ class MouserClient:
         day by another request in flight would otherwise keep only the longer pause, and the pool
         would send the next request on another key at once."""
         text = " ".join(str(err.get(key) or "") for key in ("Message", "ResourceKey")).lower() if err else ""
+        # A bare 429 whose headers say none are left is the day too (note_response paused for it)
+        daily = "day" in text or (err is None and _header_int(headers or {}, "x-ratelimit-remaining") == 0)
+        stats.count_distributor_limit("mouser", "refusals", "daily" if daily else "minute")
         if self._quota is not None:
             key_quota = self._quota.quotas[key_index]
             if "day" in text:
-                key_quota.pause_daily_unknown_reset()
+                if key_quota.pause_daily_unknown_reset():
+                    logger.warning(f"Mouser key {key_index + 1} daily refusal at {utc_text(key_quota.now())}: "
+                                   f"our count {key_quota._count}/{key_quota._limit}; "
+                                   f"tries again at {utc_text(key_quota._paused_until)}")
             elif err is not None or _header_int(headers or {}, "x-ratelimit-remaining") != 0:
                 wait = 60 if err is not None else (_header_int(headers or {}, "retry-after") or 60)
                 self._quota.share_penalty(key_quota.now() + wait, "burst")
@@ -536,7 +544,7 @@ class MouserClient:
             reply["not_sent"] = not_sent
         if limited:
             reply["not_checked"] = limited
-            reply["retry_after"] = self.retry_after()
+            reply["retry_after"] = self.retry_after(caller)
         if failed:
             reply["lookup_failed"] = failed
         # The oldest answer used: parts fetched by other calls can be up to MOUSER_CACHE_TTL old
@@ -560,18 +568,19 @@ class MouserClient:
         answers, _, error = await self._answers(numbers, caller)
         return {n: answers[_cache_key(n)] for n in numbers if _cache_key(n) in answers}, error
 
-    def retry_after(self) -> int:
+    def retry_after(self, caller: str | None = None) -> int:
         """Seconds until Mouser may be asked again (60 when the limits don't say)."""
-        return (self._quota.retry_after() if self._quota else None) or 60
+        return (self._quota.retry_after(caller) if self._quota else None) or 60
 
-    def held_back(self) -> bool:
+    def held_back(self, caller: str | None = None) -> bool:
         """Whether the limits would hold a request back now (a pause, every key's day, the minute)."""
-        return self._quota is not None and self._quota.retry_after() is not None
+        return self._quota is not None and self._quota.retry_after(caller) is not None
 
-    def day_spent(self) -> bool:
-        """Whether every key's day is spent (by our count or Mouser's daily refusal): nothing goes
-        out until a reset, not just for a minute. False without a quota (no way to tell)."""
-        return self._quota is not None and self._quota.active_index() is None
+    def day_spent(self, caller: str | None = None) -> bool:
+        """Whether the caller's or every key's day is spent: nothing goes out until a reset,
+        not just for a minute. False without a quota (no way to tell)."""
+        return self._quota is not None and (self._quota.address_error(caller) is not None
+                                           or self._quota.active_index() is None)
 
     async def _answers(self, numbers: list[str], caller: str | None
                        ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
@@ -713,6 +722,8 @@ class MouserClient:
                 key_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
                     stats.count_distributor("mouser", "rate_limited")
+                    stats.count_distributor_limit("mouser", "held_back", self._quota.last_refusal_cause)
+                    self._quota.held_back.record(caller)
                     return None, quota_error
             stats.count_distributor("mouser", "sent")
             try:

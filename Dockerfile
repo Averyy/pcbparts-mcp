@@ -88,7 +88,7 @@ ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 ENV HTTP_HOST=0.0.0.0
 ENV HTTP_PORT=8080
-ENV RATE_LIMIT_REQUESTS=200
+ENV RATE_LIMIT_REQUESTS=300
 
 # EasyEDA footprint answers, Mouser/DigiKey answers and lifecycle readings, and Mouser/DigiKey daily
 # request counts that survive restarts (dir created and owned by appuser above).
@@ -97,6 +97,7 @@ ENV CSE_STORE_PATH=/app/cache/cse.db
 ENV DISTRIBUTOR_STORE_PATH=/app/cache/distributor.db
 ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
 ENV USAGE_STATS_PATH=/app/cache/usage_stats.json
+ENV LOG_PATH=/app/cache/logs/application.log
 
 # Run as non-root user
 USER appuser

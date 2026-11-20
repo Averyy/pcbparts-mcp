@@ -378,7 +378,7 @@ async def main():
             print("\n--- digikey_get_part ---")
 
             await test_tool(session, "digikey get part", "digikey_get_part", {
-                "product_number": "LM358P",
+                "part_number": "LM358P",
             }, [
                 lambda r: None if r.get("results") is not None or "credentials" in r.get("error", "").lower() or r.get("digikey_pn") else f"unexpected: {list(r.keys())}",
             ])

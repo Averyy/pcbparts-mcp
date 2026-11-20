@@ -1,16 +1,22 @@
 """CSE answers kept across restarts (cse_store.py): a year for a search where every part has a
 model and for KiCad files, a week for a search with a part that has no model yet or no parts."""
 
+import asyncio
 import io
+import logging
+import sys
+from types import SimpleNamespace
 import time
 import zipfile
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 
 from pcbparts_mcp.config import CSE_FOUND_TTL, CSE_NOT_FOUND_TTL
 from pcbparts_mcp.cse import CSEClient
 from pcbparts_mcp.cse_store import CSEStore, query_key
+from pcbparts_mcp import config, cse as cse_module, cse_archive, cse_store, stats
 
 DAY = 86400
 
@@ -89,12 +95,13 @@ class TestStore:
         assert store.get_search("NOPE123", 0, now=6 * DAY) is not None
         assert store.get_search("NOPE123", 0, now=8 * DAY) is None
 
-    def test_kicad_files_kept_a_year(self, tmp_path):
+    def test_kicad_files_kept_for_good(self, tmp_path):
         store = CSEStore(tmp_path / "cse.db")
         files = {"kicad_symbol": "(sym)", "kicad_footprint": "(mod)"}
-        store.put_kicad(12345, files, fetched_at=0)
-        assert store.get_kicad("12345", now=CSE_FOUND_TTL - DAY) == files
-        assert store.get_kicad(12345, now=CSE_FOUND_TTL + DAY) is None
+        store.put_kicad(12345, files, fetched_at=0)  # stored in 1970: far past any TTL
+        assert store.get_kicad("12345") == files and store.get_kicad(12345) == files
+        store.prune()
+        assert store.get_kicad(12345) == files
 
     def test_kept_across_instances(self, tmp_path):
         CSEStore(tmp_path / "cse.db").put_search("LM358P", 0, {"results": [{"has_model": True}]})
@@ -113,7 +120,7 @@ class TestStore:
         store.put_kicad(1, {"kicad_symbol": "x"}, fetched_at=now - 400 * DAY)
         store.put_kicad(2, {"kicad_symbol": "y"}, fetched_at=now)
         store.prune(now=now)
-        assert store.counts() == {"searches": 1, "kicad": 1}
+        assert store.counts() == {"searches": 1, "kicad": 2, "wanted": 0}  # KiCad files have no TTL
 
     def test_unusable_path_never_raises(self, tmp_path):
         blocker = tmp_path / "file"
@@ -122,7 +129,7 @@ class TestStore:
         assert not store.enabled
         assert store.get_search("LM358P", 0) is None
         assert store.put_search("LM358P", 0, {"results": []}) is False
-        assert store.counts() == {"searches": 0, "kicad": 0}
+        assert store.counts() == {"searches": 0, "kicad": 0, "wanted": 0}
 
     def test_query_key(self):
         assert query_key("  LM358P ") == query_key("lm358p") == "lm358p"
@@ -221,7 +228,7 @@ class TestClient:
         assert CSEClient().store_counts() is None
         client = client_with(tmp_path / "cse.db", lambda url: response({"status": "Success", "parts": [part(1)]}))
         await client.search("P1")
-        assert client.store_counts() == {"searches": 1, "kicad": 0}
+        assert client.store_counts() == {"searches": 1, "kicad": 0, "wanted": 0}
         await client.close()
 
 
@@ -237,3 +244,245 @@ async def test_lifetime_follows_models(tmp_path, parts, expected):
     now = time.time()
     assert store.get_search("Q", 0, now=now + expected - DAY) is not None
     assert store.get_search("Q", 0, now=now + expected + DAY) is None
+
+
+QUOTA = "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work."
+QUOTA_BODY = b"Error: Daily part download quota exceeded"
+
+
+@pytest.fixture
+async def model_client(tmp_path, monkeypatch):
+    monkeypatch.setattr(cse_module, "CSE_USER", "test-login@example.com")
+    monkeypatch.setattr(cse_module, "CSE_PASS", "s3cr3t<value>")
+    monkeypatch.setattr(cse_module, "CSE_RATE_LIMIT", 0)
+    now, answers, downloads = [1793546220.0], [], []
+    client = CSEClient(str(tmp_path / "cse.db"), clock=lambda: now[0])
+
+    def answer(request):
+        if "model.php" in request.url.path:
+            downloads.append(request.url.params["partID"])
+            now[0] += 0.5
+            body = answers.pop(0)
+            return httpx.Response(200, content=body, headers={"content-type": "text/plain;charset=UTF-8"})
+        return httpx.Response(200, json={"status": "Success", "parts": [part(1)]})
+
+    client._http = httpx.AsyncClient(transport=httpx.MockTransport(answer))
+    yield client, now, answers, downloads
+    await client.close()
+
+
+class TestDownloadRefusals:
+    async def test_reported_quota_pause_renewal_and_recovery(self, model_client, caplog):
+        client, now, answers, downloads = model_client
+        caplog.set_level(logging.INFO, logger="pcbparts_mcp")
+        answers.extend([QUOTA_BODY, QUOTA_BODY, kicad_zip()])
+        client._store.put_kicad(90, {"kicad_symbol": "stored"}, fetched_at=now[0] - 100)
+        client._store.put_kicad(91, {"kicad_symbol": "old"}, fetched_at=now[0] - DAY - 1)
+        assert (await client.get_kicad(query="P1"))["error"] == QUOTA
+        first_refused = now[0]
+        assert downloads == ["1"]
+        row = client._store.wanted()[0]
+        assert row["part_number"] == "P1" and row["manufacturer"] == "TI" and row["reason"] == "quota"
+        assert row["times_asked"] == 1
+        assert "HTTP 200; content type text/plain;charset=UTF-8; 41 bytes; 0.500 seconds" in caplog.text
+        assert "CSE daily download quota refused at 2026-11-01T15:17:00Z: 1 downloads stored in the last 24 h; next try at 2026-11-01T15:47:00Z" in caplog.text
+        assert "CSE model wanted: part 1 (P1): quota" in caplog.text
+        assert (await client.get_kicad(part_id=90))["kicad_symbol"] == "stored"
+        assert (await client.get_kicad(query="new search"))["error"] == QUOTA  # searches still run
+        assert (await client.get_kicad(part_id=1))["error"] == QUOTA
+        assert downloads == ["1"]
+        assert client._store.wanted()[0]["times_asked"] == 3
+        now[0] = first_refused + config.CSE_QUOTA_RETRY_SECONDS
+        assert (await client.get_kicad(part_id=1))["error"] == QUOTA
+        assert client._refused_since == first_refused
+        now[0] += config.CSE_QUOTA_RETRY_SECONDS
+        assert (await client.get_kicad(part_id=1))["kicad_symbol"] == "(kicad_symbol_lib)"
+        assert client._refused_since is None and client._store.wanted() == []
+        assert downloads == ["1", "1", "1"]
+        assert sum("CSE downloads accepted again at" in record.message for record in caplog.records) == 1
+        assert sum("CSE daily download quota refused at" in record.message for record in caplog.records) == 2
+        assert sum("CSE model wanted:" in record.message for record in caplog.records) == 1
+        upstream = stats.usage.summary()["totals"]["upstream"]["cse"]
+        assert upstream["sent"] == 5 and upstream["rate_limited"] == 4 and upstream["cached"] >= 1
+
+    async def test_only_one_probe_after_pause(self, model_client, monkeypatch):
+        client, now, answers, downloads = model_client
+        answers.extend([QUOTA_BODY, kicad_zip()])
+        await client.get_kicad(part_id=1)
+        now[0] += config.CSE_QUOTA_RETRY_SECONDS
+        started, release = asyncio.Event(), asyncio.Event()
+        original = client._http.get
+
+        async def delayed(*args, **kwargs):
+            started.set()
+            await release.wait()
+            return await original(*args, **kwargs)
+
+        monkeypatch.setattr(client._http, "get", delayed)
+        probe = asyncio.create_task(client.get_kicad(part_id=2))
+        await started.wait()
+        assert (await client.get_kicad(part_id=3))["error"] == QUOTA
+        release.set()
+        assert "error" not in await probe
+        assert downloads == ["1", "2"]
+
+    async def test_no_part_data_is_not_found_and_not_wanted(self, model_client, caplog):
+        client, now, answers, downloads = model_client
+        answers.append(b"Error: no part data available for partID 999999999")
+        assert await client.get_kicad(part_id=999999999) == {"error": "No ECAD model available for part 999999999"}
+        assert client._store.wanted() == [] and client._refused_since is None
+        assert "HTTP 200" in caplog.text and "999999999" in caplog.text
+
+    @pytest.mark.parametrize("body,reason,error", [
+        (b"<html><b>Error:</b> denied test-login@example.com s3cr3t&lt;value&gt; other@example.org\n now</html>",
+         "refused", "CSE refused the model download for part 1: Error: denied *** *** *** now"),
+        (b"<html>Something   unexpected</html>", "invalid_zip", "CSE returned invalid zip file"),
+    ], ids=["refused", "invalid"])
+    async def test_cleaned_refusal_or_invalid_reply(self, model_client, caplog, body, reason, error):
+        client, now, answers, downloads = model_client
+        answers.append(body)
+        assert (await client.get_kicad(part_id=1))["error"] == error
+        assert client._store.wanted()[0]["reason"] == reason
+        assert len([r for r in caplog.records if r.levelno == logging.WARNING]) == 1
+        assert "test-login" not in caplog.text and "s3cr3t" not in caplog.text and "other@example.org" not in caplog.text
+        assert "<html>" not in caplog.text
+
+    async def test_refusal_text_is_limited(self, model_client, caplog):
+        client, now, answers, downloads = model_client
+        answers.append(b"Error: " + b"x" * 400)
+        reply = await client.get_kicad(part_id=1)
+        assert len(reply["error"].split(": ", 1)[1]) == 150
+        assert len(caplog.records[0].message.rsplit("; ", 1)[1]) == 200
+
+    async def test_metadata_from_stored_search_for_part_id(self, model_client):
+        client, now, answers, downloads = model_client
+        client._store.put_search("stored", 0, {"results": [{"cse_part_id": "1", "mfr_part_number": "P1",
+                                                          "manufacturer": "Maker", "has_model": True}]})
+        answers.append(QUOTA_BODY)
+        await client.get_kicad(part_id=1)
+        assert client._store.wanted()[0]["part_number"] == "P1"
+        assert client._store.wanted()[0]["manufacturer"] == "Maker"
+
+    async def test_nonzip_http_failure_is_logged_without_changing_its_error(self, model_client, monkeypatch, caplog):
+        client, now, answers, downloads = model_client
+        monkeypatch.setattr(client._http, "get", AsyncMock(return_value=httpx.Response(
+            503, content=b"<p>Unavailable test-login@example.com</p>", headers={"content-type": "text/html"})))
+        assert (await client.get_kicad(part_id=1))["error"] == "CSE model download failed (HTTP 503)"
+        assert "HTTP 503; content type text/html" in caplog.text
+        assert "Unavailable ***" in caplog.text and "test-login" not in caplog.text
+        assert client._store.wanted() == []
+
+    def test_email_masking_before_a_credential_can_break_up_the_address(self, monkeypatch):
+        monkeypatch.setattr(cse_module, "CSE_USER", "fake-login")
+        monkeypatch.setattr(cse_module, "CSE_PASS", "example")
+        assert cse_module._clean_body(b"Error: ask support@example.com, fake-login example") == "Error: ask ***, *** ***"
+
+
+class TestWantedStore:
+    def test_upsert_count_order_and_removal(self, tmp_path):
+        store = CSEStore(tmp_path / "cse.db")
+        assert store.mark_wanted(1, "quota", {"mfr_part_number": "P1", "manufacturer": "TI"}, now=10)
+        store.mark_wanted(2, "refused", {}, now=20)
+        store.mark_wanted(1, "invalid_zip", {}, now=30)
+        rows = store.wanted()
+        assert [r["part_id"] for r in rows] == ["1", "2"]
+        assert rows[0] == dict(part_id="1", part_number="P1", manufacturer="TI", reason="invalid_zip",
+                               first_asked=10, last_asked=30, times_asked=2)
+        assert store.counts()["wanted"] == 2
+        store.put_kicad(1, {"kicad_symbol": "x"}, fetched_at=40)
+        assert store.counts()["wanted"] == 1 and store.wanted()[0]["part_id"] == "2"
+
+    def test_recent_count_boundaries(self, tmp_path):
+        store = CSEStore(tmp_path / "cse.db")
+        for part_id, at in enumerate([0, 86400, 86401, 172800, 172801]):
+            store.put_kicad(part_id, {"kicad_symbol": "x"}, fetched_at=at)
+        assert store.kicad_last_24h(now=172800) == 2
+
+    def test_unavailable_and_broken_store_never_raise(self, tmp_path):
+        store = CSEStore(tmp_path / "cse.db")
+        store._conn.execute("DROP TABLE wanted")
+        store._conn.execute("DROP TABLE kicad")
+        store._conn.execute("DROP TABLE searches")
+        assert store.wanted() == [] and store.kicad_last_24h(0) == 0
+        assert store.part_info(1) == {} and not store.mark_wanted(1, "quota", {}, now=0)
+        store.close()
+        assert store.wanted() == [] and store.kicad_last_24h(0) == 0
+        assert not store.mark_wanted(1, "quota", {}, now=0)
+
+
+class TestStoreCLI:
+    @pytest.fixture
+    def store(self, tmp_path, monkeypatch):
+        path = tmp_path / "cse.db"
+        monkeypatch.setattr(config, "CSE_STORE_PATH", str(path))
+        return CSEStore(path)
+
+    def test_wanted_tsv(self, store, capsys):
+        store.mark_wanted(1, "quota", {"mfr_part_number": "P1"}, now=0)
+        store.mark_wanted(2, "refused", {}, now=60)
+        assert cse_store.main(["wanted"]) == 0
+        lines = capsys.readouterr().out.splitlines()
+        assert lines[0] == "part_id\tpart_number\tmanufacturer\treason\tfirst_asked\tlast_asked\ttimes_asked"
+        assert lines[1].startswith("2\t\t\trefused\t1970-01-01T00:01:00Z")
+        assert lines[2].endswith("1970-01-01T00:00:00Z\t1970-01-01T00:00:00Z\t1")
+
+    @pytest.mark.parametrize("filename,number", [("arbitrary.zip", "p1"), ("LIB_p1.zip", "P1")], ids=["folder", "file"])
+    async def test_import_matches_and_serves_without_network(self, store, tmp_path, monkeypatch, filename, number):
+        store.mark_wanted(1, "quota", {"mfr_part_number": number}, now=0)
+        incoming = tmp_path / filename
+        incoming.write_bytes(kicad_zip())
+        assert cse_store.main(["import", str(incoming)]) == 0
+        assert store.wanted() == [] and store.get_kicad(1)["kicad_symbol"] == "(kicad_symbol_lib)"
+        client = CSEClient(str(store.path))
+        client._http = AsyncMock()
+        monkeypatch.setattr(cse_module, "CSE_USER", "fake")
+        monkeypatch.setattr(cse_module, "CSE_PASS", "fake")
+        try:
+            assert (await client.get_kicad(part_id=1))["kicad_footprint"] == "(module P1)"
+            client._http.get.assert_not_called()
+        finally:
+            await client.close()
+
+    @pytest.mark.parametrize("ambiguous", [False, True], ids=["missing", "ambiguous"])
+    def test_import_needs_explicit_id_when_not_unique(self, store, tmp_path, capsys, ambiguous):
+        if ambiguous:
+            for part_id in (1, 2):
+                store.mark_wanted(part_id, "quota", {"mfr_part_number": "P1"}, now=0)
+        incoming = tmp_path / "LIB_P1.zip"
+        incoming.write_bytes(kicad_zip())
+        assert cse_store.main(["import", str(incoming)]) == 1
+        assert "pass --part-id" in capsys.readouterr().err
+        assert cse_store.main(["import", "--part-id", "17", str(incoming)]) == 0
+        assert store.get_kicad(17)
+
+    def test_stdin_and_mixed_file_failures(self, store, tmp_path, monkeypatch, capsys):
+        monkeypatch.setattr(sys, "stdin", SimpleNamespace(buffer=io.BytesIO(kicad_zip())))
+        assert cse_store.main(["import", "--part-id", "1", "-"]) == 0
+        assert store.get_kicad(1)
+        incoming = tmp_path / "LIB_P1.zip"
+        incoming.write_bytes(kicad_zip())
+        store.mark_wanted(2, "quota", {"mfr_part_number": "P1"}, now=0)
+        assert cse_store.main(["import", str(incoming), str(tmp_path / "missing.zip")]) == 1
+        output = capsys.readouterr()
+        assert "stored kicad_footprint, kicad_symbol" in output.out and "missing.zip" in output.err
+        assert store.get_kicad(2)
+
+    @pytest.mark.parametrize("args", [["import", "-"], ["import", "--part-id", "1", "a.zip", "b.zip"]], ids=["stdin", "multi"])
+    def test_invalid_arguments(self, store, args):
+        with pytest.raises(SystemExit) as error:
+            cse_store.main(args)
+        assert error.value.code == 2
+
+    def test_import_uses_shared_extraction_rules(self, store, tmp_path, monkeypatch):
+        monkeypatch.setattr(cse_archive, "MAX_KICAD_FILE_SIZE", 5)
+        incoming = tmp_path / "LIB_P1.zip"
+        with zipfile.ZipFile(incoming, "w") as archive:
+            archive.writestr("P1/KiCad/good.kicad_mod", "abc")
+            archive.writestr("P1/KiCad/huge.kicad_sym", "too long")
+            archive.writestr("P1/Altium/wrong.kicad_sym", "abc")
+            archive.writestr("P1/KiCad/other.step", "abc")
+        assert cse_store.main(["import", "--part-id", "1", str(incoming)]) == 0
+        assert store.get_kicad(1) == {"kicad_footprint": "abc"}
+        monkeypatch.setattr(cse_archive, "MAX_ZIP_SIZE", 10)
+        assert cse_store.main(["import", "--part-id", "2", str(incoming)]) == 1
+        assert store.get_kicad(2) is None
