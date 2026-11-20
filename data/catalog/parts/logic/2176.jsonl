@@ -123,6 +123,7 @@
 {"l":"C54110220","m":"TPUL2T323DR","f":"Texas Instruments","p":"SOIC-16","t":"e","c":2176,"d":"SOIC-16 Monostable Multivibrators ROHS","a":[],"x":0}
 {"l":"C54300541","m":"RS1G123XVS8","f":"Jiangsu RUNIC Tech","p":"VSSOP-8","t":"e","c":2176,"d":"VSSOP-8 Monostable Multivibrators ROHS","a":[["Function","-"]],"x":0,"n":1}
 {"l":"C54523446","m":"TPUL2T223DR","f":"Texas Instruments","p":"SOIC-16","t":"e","c":2176,"d":"SOIC-16 Monostable Multivibrators ROHS","a":[],"x":0,"n":1}
+{"l":"C54551223","m":"TPUL2G123BQBR","f":"Texas Instruments","p":"WQFN-16(3.5x2.5)","t":"e","c":2176,"d":"WQFN-16(3.5x2.5) Monostable Multivibrators ROHS","a":[],"x":0}
 {"l":"C54799242","m":"PTPUL1G113DCURQ1","f":"Texas Instruments","p":"VSSOP-8","t":"e","c":2176,"d":"VSSOP-8 Monostable Multivibrators ROHS","a":[],"x":0,"n":1}
 {"l":"C54809311","m":"TPUL2G122PWR","f":"Texas Instruments","p":"TSSOP-16","t":"e","c":2176,"d":"TSSOP-16 Monostable Multivibrators ROHS","a":[],"x":0,"n":1}
 {"l":"C56242458","m":"74HC123D","f":"MDD(Microdiode Semiconductor)","p":"SOP-16","t":"e","c":2176,"d":"SOP-16 Monostable Multivibrators ROHS","a":[],"x":0,"n":1}

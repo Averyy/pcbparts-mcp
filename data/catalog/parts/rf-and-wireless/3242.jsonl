@@ -167,7 +167,6 @@
 {"l":"C17525905","m":"MASW-011145-TR0500","f":"MACOM","p":"QFN-20(3x3)","t":"e","c":3242,"d":"-3.465V~-3.135V、3.135V~3.465V -40℃~+105℃ 1.3dB 27GHz~31GHz 37dBm 45dB Integrated control logic SPDT QFN-20(3x3) RF Switches ROHS","a":[["Frequency range","27GHz~31GHz"],["Voltage - Supply","-3.465V~-3.135V、3.135V~3.465V"],["Insertion loss","1.3dB"],["Features","Integrated control logic"],["P1dB","37dBm"],["Circuit","SPDT"],["isolation","45dB"],["operating temperature","-40℃~+105℃"]],"x":0}
 {"l":"C17534598","m":"MASWSS0178TR-3000","f":"MACOM","p":"MSOP-8-EP","t":"e","c":3242,"d":"-40℃~+85℃ 0.6dB 55dB 5V Integrated impedance matching network MSOP-8-EP RF Switches ROHS","a":[["Frequency range","-"],["Voltage - Supply","5V"],["Insertion loss","0.6dB"],["Features","Integrated impedance matching network"],["isolation","55dB"],["operating temperature","-40℃~+85℃"]],"x":0}
 {"l":"C17542283","m":"MASW-007588-TR3000","f":"MACOM","p":"PQFN-12(3x3)","t":"e","c":3242,"d":"-40℃~+85℃ 0.9dB 0Hz~6GHz 28dB 40dBm 8.5V SPDT PQFN-12(3x3) RF Switches ROHS","a":[["Frequency range","0Hz~6GHz"],["Voltage - Supply","8.5V"],["Insertion loss","0.9dB"],["Features","-"],["P1dB","40dBm"],["Circuit","SPDT"],["isolation","28dB"],["operating temperature","-40℃~+85℃"]],"x":0}
-{"l":"C17567109","m":"MASW-007921-TR3000","f":"MACOM","p":"PDFN-8(2x2)","t":"e","c":3242,"d":"-40℃~+85℃ 0.85dB 0Hz~7GHz 30dB 8.5V SPDT PDFN-8(2x2) RF Switches ROHS","a":[["Frequency range","0Hz~7GHz"],["Voltage - Supply","8.5V"],["Insertion loss","0.85dB"],["Features","-"],["Circuit","SPDT"],["isolation","30dB"],["operating temperature","-40℃~+85℃"]],"x":0}
 {"l":"C17663157","m":"SKY13415-485LF","f":"Skyworks Solutions","p":"QFN-14(2x2)","t":"e","c":3242,"d":"-40℃~+85℃ 0.4dB 100MHz~3GHz 2.5V~4.8V 34dB Integrated control logic、Integrated impedance matching network QFN-14(2x2) RF Switches ROHS","a":[["Frequency range","100MHz~3GHz"],["Voltage - Supply","2.5V~4.8V"],["Insertion loss","0.4dB"],["Features","Integrated control logic、Integrated impedance matching network"],["isolation","34dB"],["operating temperature","-40℃~+85℃"]],"x":0}
 {"l":"C19267604","m":"AW13412HDNR","f":"AWINIC(Shanghai Awinic Tech)","p":"DFN-6L(1.1x0.7)","t":"e","c":3242,"d":"-40℃~+85℃ 0.4dB 100MHz~4.2GHz 2.5V~3.3V 23dB Integrated control logic SPDT DFN-6L(1.1x0.7) RF Switches ROHS","a":[["Frequency range","100MHz~4.2GHz"],["Voltage - Supply","2.5V~3.3V"],["Insertion loss","0.4dB"],["Features","Integrated control logic"],["P1dB","35dBm"],["Circuit","SPDT"],["isolation","23dB"],["operating temperature","-40℃~+85℃"]],"x":0}
 {"l":"C19267651","m":"TS8029N","f":"Tagore Technology","p":"QFN32(5x5)","t":"e","c":3242,"d":"QFN32(5x5) RF Switches ROHS","a":[],"x":0,"n":1}
@@ -259,6 +258,7 @@
 {"l":"C54937165","m":"GSR1330S","f":"GSRMICRO","p":"QFN-8(1.5x1.5)","t":"e","c":3242,"d":"QFN-8(1.5x1.5) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C54937166","m":"GSR1411S","f":"GSRMICRO","p":"QFN-6(1.5x1.5)","t":"e","c":3242,"d":"QFN-6(1.5x1.5) RF Switches ROHS","a":[],"x":0}
 {"l":"C54937167","m":"GSR1415S","f":"GSRMICRO","p":"QFN-6(1.5x1.5)","t":"e","c":3242,"d":"QFN-6(1.5x1.5) RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C54937168","m":"GSR1385S","f":"GSRMICRO","p":"QFN-6(1x1)","t":"e","c":3242,"d":"QFN-6(1x1) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C54937169","m":"GSR1386S","f":"GSRMICRO","p":"QFN-8(1.1x1.1)","t":"e","c":3242,"d":"QFN-8(1.1x1.1) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C54937170","m":"GSR1317S","f":"GSRMICRO","p":"QFN-8(1.5x1.5)","t":"e","c":3242,"d":"QFN-8(1.5x1.5) RF Switches ROHS","a":[],"x":0}
 {"l":"C55042605","m":"MASWSS0115TR-TP","f":"TECH PUBLIC","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0,"n":1}
@@ -292,6 +292,7 @@
 {"l":"C55209247","m":"GSR1315S","f":"GSRMICRO","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0}
 {"l":"C55535533","m":"XLSKY13351-378LF","f":"XINLUDA","p":"DFN-6(1x1)","t":"e","c":3242,"d":"SPDT DFN-6(1x1) RF Switches ROHS","a":[["Circuit","SPDT"]],"x":0}
 {"l":"C55863036","m":"MPSW0060TC","f":"MEGSINE","p":"QFN-20(4x4)","t":"e","c":3242,"d":"QFN-20(4x4) RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56132496","m":"MSPE4259-63","f":"MSKSEMI","p":"SC-70-6","t":"e","c":3242,"d":"SC-70-6 RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147527","m":"FM1630S","f":"Shenzhen Fuman Elec","p":"DFN-6(0.7x1.1)","t":"e","c":3242,"d":"DFN-6(0.7x1.1) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147528","m":"FM3418S","f":"Shenzhen Fuman Elec","p":"QFN-14(2x2)","t":"e","c":3242,"d":"QFN-14(2x2) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147529","m":"FM8586","f":"Shenzhen Fuman Elec","p":"QFN-14(2x2)","t":"e","c":3242,"d":"QFN-14(2x2) RF Switches ROHS","a":[],"x":0,"n":1}
