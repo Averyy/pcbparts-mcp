@@ -11,8 +11,9 @@ import logging
 import httpx
 import pytest
 
-from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally, DailyQuota, QuotaStore
-from pcbparts_mcp.digikey import DigiKeyClient, DigiKeyError
+from pcbparts_mcp import stats
+from pcbparts_mcp.cache import SELF_HOSTING_URL, CallerTally, DailyQuota, Pacer, QuotaPool, QuotaStore
+from pcbparts_mcp.digikey import DigiKeyClient, DigiKeyError, DigiKeyRateLimited
 from pcbparts_mcp.mouser import MouserAPIError, MouserClient
 
 UTC = datetime.timezone.utc
@@ -84,15 +85,244 @@ class FakeDigiKey:
         return self.responses.pop(0)
 
 
-def digikey(fake: FakeDigiKey, q: DailyQuota | None) -> DigiKeyClient:
+def digikey(fake: FakeDigiKey, q: DailyQuota | None, clock=None) -> DigiKeyClient:
     client = DigiKeyClient(client_id="id", client_secret="secret", quota=q)
     client._http = httpx.AsyncClient(transport=httpx.MockTransport(fake))
+    if clock is not None:
+        async def sleep(seconds):
+            clock.advance(seconds)
+
+        client._pacer = Pacer(5, clock=clock, sleep=sleep)
     return client
 
 
 def ok(remaining: str | None = None) -> httpx.Response:
     headers = {"x-ratelimit-limit": "1000", "x-ratelimit-remaining": remaining} if remaining else {}
     return httpx.Response(200, json=PRODUCT, headers=headers)
+
+
+class TestLimitCauses:
+    @pytest.mark.parametrize("reason,expected", [("daily", "distributor_daily"),
+                                                 ("daily_unknown", "distributor_daily"),
+                                                 ("burst", "distributor_minute"),
+                                                 ("refused", "distributor_refused"),
+                                                 ("invalid_key", "other")])
+    def test_pause_cause_from_state(self, clock, reason, expected):
+        quotas = [quota(clock) for _ in range(2)]
+        pool = QuotaPool(quotas)
+        assert pool.pause_cause() is None
+        for q in quotas:
+            q.pause(clock.now + 60, reason)
+        assert pool.pause_cause() == expected
+        assert pool.acquire()[1] is not None and pool.last_refusal_cause == expected
+        assert all(q.remaining == 1000 for q in quotas)
+        clock.advance(60)
+        assert pool.pause_cause() is None
+        assert pool.acquire() == (0, None) and pool.last_refusal_cause is None
+
+    def test_daily_count_and_penalty_precedence(self, clock):
+        quotas = [quota(clock, limit=1) for _ in range(2)]
+        pool = QuotaPool(quotas)
+        assert pool.acquire() == (0, None) and pool.acquire() == (1, None)
+        quotas[0].pause(clock.now + 3600, "daily_unknown")
+        assert pool.pause_cause() == "daily_count"
+        assert pool.acquire()[1] and pool.last_refusal_cause == "daily_count"
+        pool.share_penalty(clock.now + 60, "burst")
+        assert pool.pause_cause() == "distributor_minute"
+        pool.share_penalty(clock.now + 70, "refused")
+        assert pool.pause_cause() == "distributor_refused"
+
+    def test_daily_pause_only_matters_with_our_requests_left(self, clock):
+        quotas = [quota(clock, limit=1), quota(clock)]
+        pool = QuotaPool(quotas)
+        pool.acquire()  # first quota spent by our count
+        quotas[1].pause(clock.now + 60, "daily")
+        assert pool.pause_cause() == "distributor_daily"
+        quotas[1]._pause_reason = "invalid_key"
+        quotas[0].pause(clock.now + 60, "daily")  # spent by our count, so not distributor_daily
+        assert pool.pause_cause() == "other"
+
+    def test_minute_cap_still_refuses_exactly_at_cap(self, clock):
+        pool = QuotaPool([quota(clock), quota(clock)], per_minute=2)
+        assert pool.acquire() == (0, None) and pool.acquire() == (0, None)
+        assert pool.pause_cause() is None
+        assert pool.acquire()[1] and pool.last_refusal_cause == "minute_cap"
+        clock.advance(59)
+        assert pool.acquire()[1] and pool.last_refusal_cause == "minute_cap"
+        clock.advance(1)
+        assert pool.acquire() == (0, None) and pool.last_refusal_cause is None
+
+
+class TestDailyRefusalEpisodes:
+    def test_open_retry_resume_and_new_episode(self, clock):
+        q = quota(clock, name="Mouser")
+        q.check()
+        assert q.pause_daily_unknown_reset() is True
+        first = {"at": NOW, "count": 1, "last_refused_at": NOW, "retries": 0, "resumed_at": None}
+        assert q._daily_refusals == [first]
+        clock.advance(1)
+        assert q.pause_daily_unknown_reset() is False  # concurrent reply, same pause
+        assert q.clear_expired_pause() is None and q._daily_refusals == [first]
+        clock.advance(3599)
+        q.check()
+        assert q.pause_daily_unknown_reset() is True
+        assert q._daily_refusals == [{**first, "last_refused_at": NOW + 3600, "retries": 1}]
+        clock.advance(3600)
+        q.check()
+        resumed = q.clear_expired_pause()
+        assert resumed == {**first, "last_refused_at": NOW + 3600, "retries": 1, "resumed_at": NOW + 7200}
+        assert q.clear_expired_pause() is None
+        assert q.pause_daily_unknown_reset() is True
+        assert len(q._daily_refusals) == 2 and q._daily_refusals[-1]["count"] == 3
+        assert "daily_refusals" not in q.status()
+
+    def test_episodes_survive_reload_and_utc_date_changes(self, tmp_path, clock):
+        path = tmp_path / "quota.json"
+        q = quota(clock, path, name="Mouser")
+        q.check()
+        q.pause_daily_unknown_reset()
+        clock.advance(3600)
+        q.check()
+        q.pause_daily_unknown_reset()
+        assert quota(clock, path, name="Mouser")._daily_refusals == q._daily_refusals
+        clock.now = MIDNIGHT
+        restarted = quota(clock, path, name="Mouser")
+        assert restarted._count == 0 and restarted._daily_refusals == q._daily_refusals
+        restarted.check()
+        resumed = restarted.clear_expired_pause()
+        assert resumed["at"] == NOW and resumed["resumed_at"] == MIDNIGHT and resumed["retries"] == 1
+        assert quota(clock, path, name="Mouser")._daily_refusals == restarted._daily_refusals
+
+    def test_only_thirty_most_recent_episodes_kept(self, tmp_path, clock):
+        path = tmp_path / "quota.json"
+        q = quota(clock, path, name="Mouser")
+        for _ in range(35):
+            q.check()
+            q.pause_daily_unknown_reset()
+            clock.advance(3600)
+            q.clear_expired_pause()
+        assert len(q._daily_refusals) == 30 and q._daily_refusals[0]["at"] == NOW + 5 * 3600
+        assert quota(clock, path, name="Mouser")._daily_refusals == q._daily_refusals
+        state = json.loads(path.read_text(encoding="utf-8"))
+        episode = state["Mouser"]["daily_refusals"][-1]
+        state["Mouser"]["daily_refusals"] = [episode] * 35
+        path.write_text(json.dumps(state), encoding="utf-8")
+        assert len(quota(clock, path, name="Mouser")._daily_refusals) == 30
+
+    @pytest.mark.parametrize("bad", [None, "x", {}, [None], [{}],
+                                     [{"at": float("inf"), "count": 1, "last_refused_at": NOW,
+                                       "retries": 0, "resumed_at": None}],
+                                     [{"at": NOW, "count": True, "last_refused_at": NOW,
+                                       "retries": 0, "resumed_at": None}]])
+    def test_malformed_history_is_empty_not_broken_quota(self, tmp_path, clock, bad):
+        path = tmp_path / "quota.json"
+        path.write_text(json.dumps({"Mouser": {"date": "2026-10-16", "count": 7,
+                                               "daily_refusals": bad}}), encoding="utf-8")
+        q = quota(clock, path, name="Mouser")
+        assert q._daily_refusals == [] and q._count == 7
+        assert q.pause_daily_unknown_reset() and q._daily_refusals[-1]["count"] == 7
+
+    def test_request_through_closes_episode_whatever_the_last_pause_was_for(self, clock):
+        q = quota(clock, name="Mouser")
+        q.pause_daily_unknown_reset()
+        clock.advance(3600)
+        q.pause(clock.now + 60, "burst")  # a per-minute pause replaced the ended daily one's reason
+        assert q.clear_expired_pause() is None  # still paused: an answer to an earlier request
+        assert q._daily_refusals[-1]["resumed_at"] is None
+        clock.advance(60)
+        resumed = q.clear_expired_pause()
+        assert resumed is not None and resumed["resumed_at"] == NOW + 3660
+        assert q.daily_refusals() == [resumed] and q._pause_reason == ""
+        assert q.clear_expired_pause() is None  # closed once
+
+
+class TestDistributorLimitStats:
+    @pytest.mark.parametrize("status,headers,label,cause", [
+        (429, DAILY_429_HEADERS, "daily", "distributor_daily"),
+        (429, {}, "minute", "distributor_minute"),
+        (403, {}, "refused", "distributor_refused"),
+        (403, DAILY_429_HEADERS, "refused", "distributor_refused")],
+        ids=["day", "min", "403", "403zero"])
+    async def test_sent_refusals_and_held_back_lookups(self, monkeypatch, clock, status, headers, label, cause):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        fake = FakeDigiKey(httpx.Response(status, json={}, headers=headers))
+        client = digikey(fake, quota(clock), clock=clock)
+        try:
+            for i in range(4):
+                assert "error" in await client.get_part(f"PART{i}A")
+            day = stats.usage.summary()["days"][0]
+            counts = day["distributor_limits"]["digikey"]
+            assert counts["refusals"][label] == 1 and sum(counts["refusals"].values()) == 1
+            assert counts["held_back"][cause] == 3
+            assert sum(counts["held_back"].values()) == day["distributors"]["digikey"]["rate_limited"] == 3
+            assert sum(counts["held_back_hours"]) == 3
+            assert day["distributors"]["digikey"]["sent"] == fake.product_requests == 1
+        finally:
+            await client.close()
+
+    async def test_success_with_zero_remaining_is_not_a_refusal(self, monkeypatch, clock):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        client = digikey(FakeDigiKey(ok("0")), quota(clock), clock=clock)
+        try:
+            assert "error" not in await client.get_part("TEST123")
+            assert "error" in await client.get_part("PART2A")
+            counts = stats.usage.summary()["days"][0]["distributor_limits"]["digikey"]
+            assert sum(counts["refusals"].values()) == 0
+            assert counts["held_back"]["distributor_daily"] == 1
+        finally:
+            await client.close()
+
+    @pytest.mark.parametrize("status,headers,label", [(429, {}, "minute"), (429, DAILY_429_HEADERS, "daily"),
+                                                     (403, {}, "refused")], ids=["min", "day", "403"])
+    async def test_token_refusal_counts(self, monkeypatch, clock, status, headers, label):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        client = digikey(FakeDigiKey(), quota(clock), clock=clock)
+        await client._http.aclose()
+        client._http = httpx.AsyncClient(transport=httpx.MockTransport(
+            lambda request: httpx.Response(status, json={}, headers=headers)))
+        try:
+            assert "error" in await client.get_part("TEST123")
+            day = stats.usage.summary()["days"][0]
+            assert day["distributor_limits"]["digikey"]["refusals"][label] == 1
+            assert sum(day["distributor_limits"]["digikey"]["held_back"].values()) == 1
+            assert day["distributors"]["digikey"]["rate_limited"] == 1
+            assert day["distributors"]["digikey"]["sent"] == 0  # sent counts lookups, never token requests
+        finally:
+            await client.close()
+
+    async def test_token_limit_without_explanatory_pause_is_other(self, monkeypatch, clock):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        client = digikey(FakeDigiKey(), quota(clock), clock=clock)
+
+        async def limited(caller=None):
+            raise DigiKeyRateLimited("token limit")
+
+        monkeypatch.setattr(client, "_ready_app", limited)
+        try:
+            assert "error" in await client.get_part("TEST123")
+            day = stats.usage.summary()["days"][0]
+            assert day["distributor_limits"]["digikey"]["held_back"]["other"] == 1
+            assert day["distributors"]["digikey"]["rate_limited"] == 1
+        finally:
+            await client.close()
+
+    async def test_acquire_minute_cap_is_counted(self, monkeypatch, clock):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        q = DailyQuota("DigiKey", 1000, clock=clock, per_minute=1)
+        client = digikey(FakeDigiKey(), q, clock=clock)
+        client._quota.acquire()  # consume minute without sending a request
+
+        async def ready(caller=None):
+            return 0, "tok"
+
+        monkeypatch.setattr(client, "_ready_app", ready)
+        try:
+            assert "error" in await client.get_part("TEST123")
+            day = stats.usage.summary()["days"][0]
+            assert day["distributor_limits"]["digikey"]["held_back"]["minute_cap"] == 1
+            assert day["distributors"]["digikey"]["rate_limited"] == 1
+        finally:
+            await client.close()
 
 
 class TestCountsSurviveRestarts:
@@ -268,14 +498,14 @@ class TestToolErrors:
     async def test_digikey_tool_shows_what_went_wrong(self, clock, monkeypatch):
         from pcbparts_mcp import server
         monkeypatch.setattr(server, "_digikey_client", digikey(FakeDigiKey(httpx.Response(503)), quota(clock)))
-        result = await server.digikey_get_part(product_number="TEST123")
+        result = await server.digikey_get_part(part_number="TEST123")
         assert result == {"error": "DigiKey part lookup failed: DigiKey API returned HTTP 503"}
 
     async def test_digikey_tool_returns_the_daily_limit_error(self, clock, monkeypatch):
         from pcbparts_mcp import server
         fake = FakeDigiKey(httpx.Response(429, json=DAILY_429_BODY, headers=DAILY_429_HEADERS))
         monkeypatch.setattr(server, "_digikey_client", digikey(fake, quota(clock)))
-        result = await server.digikey_get_part(product_number="LM358P")
+        result = await server.digikey_get_part(part_number="LM358P")
         assert result["error"].startswith("DigiKey daily quota exceeded")
 
     async def test_mouser_tool_shows_the_status_but_never_the_key(self, monkeypatch):
@@ -536,7 +766,7 @@ class TestCallerIp:
         monkeypatch.setattr(server, "_mouser_client", Recorder())
         monkeypatch.setattr(server, "_digikey_client", Recorder())
         await server.mouser_get_part(part_number="M1")
-        await server.digikey_get_part(product_number="D1")
+        await server.digikey_get_part(part_number="D1")
         assert seen == {"M1": "203.0.113.7", "D1": "203.0.113.7"}
 
     async def test_shutdown_logs_the_hour_so_far(self, tmp_path, monkeypatch, caplog):

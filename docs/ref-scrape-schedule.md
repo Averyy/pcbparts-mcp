@@ -17,12 +17,16 @@ to 10 hours late and one day (2026-11-17) didn't run at all. So the scrape is st
 
 ## Setting up the server's cron job
 
+**Check the server's clock first** (`timedatectl`): the entries below give the time in UTC, and
+Debian's and Ubuntu's cron runs every job in the server's own time zone and ignores `CRON_TZ`
+(`man 5 crontab` doesn't mention it there). On a server set to UTC, as prod is, 11:30 is 11:30 UTC.
+On any other zone, convert the time, or use a systemd timer (`OnCalendar=*-*-* 11:30:00 UTC`).
+
 **If the server already has the GitHub CLI logged in** (`gh auth status` shows the `repo` scope), no
 new token is needed. Use `gh`'s full path, since cron has a minimal `PATH` (`which gh`):
 
 ```cron
-CRON_TZ=UTC
-30 11 * * * /usr/bin/gh workflow run scrape-components.yml --repo OWNER/REPO --ref main >> /var/log/pcbparts-scrape-trigger.log 2>&1
+30 11 * * * { date -u; /usr/bin/gh workflow run scrape-components.yml --repo OWNER/REPO --ref main; } >> /var/log/pcbparts-scrape-trigger.log 2>&1
 ```
 
 That login can do much more than start a workflow. For a credential that can do only that, use a
@@ -39,11 +43,10 @@ dedicated token instead:
    umask 077 && printf '%s' 'github_pat_...' > /root/.pcbparts-scrape-token
    ```
 
-3. **Add the cron entry** (`crontab -e` as root). `CRON_TZ=UTC` makes the time independent of the
-   server's time zone; 11:30 UTC is 6:30 AM EST, and the scrape and deploy take about 35 minutes:
+3. **Add the cron entry** (`crontab -e` as root). 11:30 UTC is 6:30 AM EST (7:30 PM in China, after
+   the day's stock changes), and the scrape and deploy take about 35 minutes:
 
    ```cron
-   CRON_TZ=UTC
    30 11 * * * curl -fsS -X POST -H "Authorization: Bearer $(cat /root/.pcbparts-scrape-token)" -H "Accept: application/vnd.github+json" https://api.github.com/repos/OWNER/REPO/actions/workflows/scrape-components.yml/dispatches -d '{"ref":"main"}' >> /var/log/pcbparts-scrape-trigger.log 2>&1 || echo "$(date -u +\%FT\%TZ) trigger failed" >> /var/log/pcbparts-scrape-trigger.log
    ```
 

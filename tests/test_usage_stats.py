@@ -257,7 +257,12 @@ class TestUsageStats:
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
             "distributors": {}, "reasons": {}, "why_empty": {},
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0},
-            "lcsc_lookups": {}, "distributor_apps": {}}
+            "lcsc_lookups": {}, "distributor_apps": {}, "distributor_limits": {},
+            "datasheet_links": dict.fromkeys(stats.DATASHEET_LINK_EVENTS, 0),
+            "db_waits": {"jobs": 0, "waited": 0, "longest_ms": 0, "waited_hours": [0] * 24,
+                         "longest_ms_hours": [0] * 24,
+                         "components": {"jobs": 0, "waited": 0, "longest_ms": 0,
+                                        "waited_hours": [0] * 24, "longest_ms_hours": [0] * 24}}}
 
     def test_calls_per_utc_hour(self, tmp_path):
         clock = Clock(datetime.datetime(2026, 10, 18, 0, 30, tzinfo=UTC).timestamp())
@@ -579,7 +584,7 @@ class TestServerWiring:
         from pcbparts_mcp import server
         async with Client(server.mcp) as client:
             await client.call_tool("get_design_rules", {"topic": "ldo"})
-            await client.call_tool("digikey_get_part", {"product_number": "LM358P"})  # no credentials: error reply
+            await client.call_tool("digikey_get_part", {"part_number": "LM358P"})  # no credentials: error reply
             with pytest.raises(ToolError):
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
@@ -766,6 +771,8 @@ ERROR_REPLIES = {
     "CSE model download failed (network/connection error)": "failed",
     "CSE model download too large ({} bytes, max {})": "failed",
     "CSE returned invalid zip file": "failed",
+    "CSE refused the model download for part {}: {}": "failed",
+    "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work.": "rate_limited",
     "CSE search failed. Check server logs for details.": "failed",
     "CSE get_kicad failed. Check server logs for details.": "failed",
     "Mouser API key not configured. Set MOUSER_API_KEY in environment.": "failed",
@@ -783,6 +790,7 @@ ERROR_REPLIES = {
     "{} daily quota exceeded ({} requests/day on this shared server). It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded ({}). It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded on this shared server. It resets at {}.{}": "rate_limited",
+    "This address has used its {} Mouser and DigiKey lookups for today on this shared server; the count resets at 00:00 UTC. Answers pcbparts already has stored still work.{}": "rate_limited",
     "{} daily quota exceeded (counted by {}). {} doesn't say when its count resets, so this server tries again at {}.{}": "rate_limited",
     "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
     "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",
@@ -802,7 +810,6 @@ ERROR_REPLIES = {
     "Focus too long (max 200 characters)": "bad_request",
     "MPN too long (max 100 characters)": "bad_request",
     "Part number too long (max 500 characters)": "bad_request",
-    "Product number too long (max 500 characters)": "bad_request",
     "Too many {} (max {}, got {})": "bad_request",
     "Query contains invalid characters": "bad_request",
     "Query contains no searchable terms": "bad_request",
@@ -828,6 +835,7 @@ ERROR_REPLIES = {
     "No part found in the local snapshot for MPN '{}'": "not_found",
     "No parts found for '{}'": "not_found",
     "No ECAD model available for '{}'": "not_found",
+    "No ECAD model available for part {}": "not_found",
     "No KiCad files found in model archive for part {}": "not_found",
     "No EasyEDA symbol available for {}": "not_found",
     "No EasyEDA symbol UUID for {}": "not_found",

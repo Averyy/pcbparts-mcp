@@ -438,7 +438,7 @@ class TestOneSharedCache:
     async def test_digikey_answer_then_lifecycle_is_free(self, setup):
         mouser, digikey = FakeMouser(), FakeDigiKey(dk_product("AP2553W6-7", "Diodes Incorporated", "Not For New Designs"))
         setup(mouser=mouser, digikey=digikey)
-        await server.digikey_get_part(product_number="AP2553W6-7")
+        await server.digikey_get_part(part_number="AP2553W6-7")
         result = (await lifecycle(["AP2553W6-7"]))["results"][0]
         assert (result["status"], result["raw"], result["source"]) == ("nrnd", "Not For New Designs", "digikey")
         assert mouser.sent == [] and digikey.asked == ["AP2553W6-7"]
@@ -804,7 +804,7 @@ class TestIntegerAndUnitLetterIsSent:
         fake = FakeDigiKey(*(dk_product(n, "Hammond Manufacturing") for n in self.HAMMOND))
         setup(digikey=fake)
         for number in self.HAMMOND:
-            reply = await server.digikey_get_part(product_number=number)
+            reply = await server.digikey_get_part(part_number=number)
             assert reply["results"][0]["manufacturer"] == "Hammond Manufacturing" and "not_sent" not in reply
         assert fake.asked == self.HAMMOND
 
@@ -822,7 +822,7 @@ class TestIntegerAndUnitLetterIsSent:
         fake = FakeDigiKey(dk_product("1590A", "Hammond Manufacturing"), dk_product("1590B", "Hammond Manufacturing"))
         setup(digikey=fake)
         for number in ("1590A", "1590B"):
-            reply = await server.digikey_get_part(product_number=number)
+            reply = await server.digikey_get_part(part_number=number)
             assert reply["results"][0]["manufacturer"] == "Hammond Manufacturing" and "not_sent" not in reply
         assert fake.asked == ["1590A", "1590B"]
 
@@ -860,7 +860,7 @@ class TestNotSent:
     async def test_digikey_lone_number(self, setup):
         fake = FakeDigiKey()
         _, d, _, _, dq = setup(digikey=fake)
-        reply = await server.digikey_get_part(product_number="10k 0402")
+        reply = await server.digikey_get_part(part_number="10k 0402")
         assert reply["error"] == "Part not found: 10k 0402"  # what a client reads as a completed miss
         assert reply["not_sent"] == "value" and "component value" in reply["hint"]
         assert fake.asked == [] and dq.status()["used_today"] == 0

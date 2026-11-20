@@ -244,7 +244,7 @@ class DigiKeyClient:
             app.token_lock = asyncio.Lock()
         return app.token_lock
 
-    async def _ensure_token(self, app_index: int = 0) -> str:
+    async def _ensure_token(self, app_index: int = 0, caller: str | None = None) -> str:
         """Get a valid OAuth2 token, refreshing if needed."""
         # Fast path: token is still valid (with 100s safety margin)
         app = self._apps[app_index]
@@ -258,6 +258,8 @@ class DigiKeyClient:
             # Token requests take a pacer slot too, then check pauses: one may have begun while
             # this waited for the lock or the slot (another lookup's 403, say)
             await self._pacer.wait()
+            if self._quota and (error := self._quota.address_error(caller)):
+                raise DigiKeyRateLimited(error["error"])
             if self._quota and (paused := self._quota.paused_error()):
                 raise DigiKeyRateLimited(paused["error"])
             if self._quota and self._quota.active_index() != app_index:
@@ -318,6 +320,10 @@ class DigiKeyClient:
         users of the same credentials count too); see DailyQuota.note_response(). Its API User
         Agreement (section 6) suspends an app for ten minutes, with 403s, for going over its
         per-second threshold, and can end the agreement after three suspensions."""
+        if response.status_code in (403, 429):
+            label = ("refused" if response.status_code == 403 else
+                     "daily" if _header_int(response.headers, "x-ratelimit-remaining") == 0 else "minute")
+            stats.count_distributor_limit("digikey", "refusals", label)
         if self._quota is not None:
             self._quota.note_response(app_index, response.status_code, response.headers)
 
@@ -326,7 +332,7 @@ class DigiKeyClient:
         app = self._apps[app_index]
         return bool(app.access_token) and time.time() < app.token_expires_at - margin
 
-    async def _ready_app(self) -> tuple[int | None, str | None]:
+    async def _ready_app(self, caller: str | None = None) -> tuple[int | None, str | None]:
         """The app the next request will use and its token, right after this lookup's pacer slot.
 
         Token first, pacer second: a slow token refresh holds lookups before their slots, so they
@@ -343,14 +349,14 @@ class DigiKeyClient:
             return self._token_valid(index, margin=0 if index in refreshed else 100)
 
         while True:
-            if self._quota and self._quota.paused_error():
+            if self._quota and (self._quota.address_error(caller) or self._quota.paused_error()):
                 return None, None
             index = self._quota.active_index() if self._quota else 0
             if index is not None and not ready(index):
                 if index in refreshed:
                     raise DigiKeyError("DigiKey token request returned an expired token")
                 try:
-                    await self._ensure_token(index)
+                    await self._ensure_token(index, caller)
                 except DigiKeyAppSpent:
                     continue  # that app's day is used up: the next app takes over
                 refreshed.add(index)
@@ -410,9 +416,9 @@ class DigiKeyClient:
         """
         return (await self.lookup(product_number, caller))[0]
 
-    def retry_after(self) -> int:
+    def retry_after(self, caller: str | None = None) -> int:
         """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
-        return (self._quota.retry_after() if self._quota else None) or 60
+        return (self._quota.retry_after(caller) if self._quota else None) or 60
 
     async def lookup(self, product_number: str, caller: str | None = None) -> Lookup:
         """get_part's reply, what it was and when DigiKey answered (Lookup). A number DigiKey can't
@@ -450,20 +456,34 @@ class DigiKeyClient:
         # reaches DigiKey, and nothing is counted that isn't sent. At most two requests a lookup:
         # one more after a daily refusal on app 1 (on app 2), or after an early-expired token.
         for attempt in range(2):
+            if self._quota and (error := self._quota.address_error(caller)):
+                stats.count_distributor("digikey", "rate_limited")
+                stats.count_distributor_limit("digikey", "held_back", "address_daily")
+                self._quota.held_back.record(caller)
+                return Lookup(error, "limited", self._store.now())
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
                 stats.count_distributor("digikey", "rate_limited")
+                stats.count_distributor_limit("digikey", "held_back", self._quota.pause_cause())
+                self._quota.held_back.record(caller)
                 return Lookup(paused, "limited", self._store.now())
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
-                app_index, token = await self._ready_app()
+                app_index, token = await self._ready_app(caller)
             except DigiKeyRateLimited as e:  # a pause began during a token request
                 stats.count_distributor("digikey", "rate_limited")
+                stats.count_distributor_limit("digikey", "held_back",
+                                              ("address_daily" if self._quota.address_error(caller)
+                                               else self._quota.pause_cause()) if self._quota else "other")
+                if self._quota:
+                    self._quota.held_back.record(caller)
                 return Lookup({"error": str(e)}, "limited", self._store.now())
             if self._quota:
                 app_index, quota_error = self._quota.acquire(caller)
                 if quota_error:
                     stats.count_distributor("digikey", "rate_limited")
+                    stats.count_distributor_limit("digikey", "held_back", self._quota.last_refusal_cause)
+                    self._quota.held_back.record(caller)
                     return Lookup(quota_error, "limited", self._store.now())
             stats.count_distributor("digikey", "sent")
             try:

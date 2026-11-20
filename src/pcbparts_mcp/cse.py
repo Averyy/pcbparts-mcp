@@ -8,20 +8,26 @@ rs.componentsearchengine.com/ga/model.php — requires CSEARCH_USER/CSEARCH_PASS
 """
 
 import asyncio
+import html
 import io
 import logging
+import re
+import time
 import zipfile
-from typing import Any
+from datetime import datetime, timezone
+from typing import Any, Callable
 
 import httpx
 
 from . import stats
 from .cache import TTLCache
+from .cse_archive import MAX_ZIP_SIZE as _MAX_ZIP_SIZE, extract_kicad
 from .cse_store import CSEStore, query_key
 from .config import (
     CSE_CONCURRENT_LIMIT,
     CSE_RATE_LIMIT,
     CSE_STATUS_RETRY_DELAY,
+    CSE_QUOTA_RETRY_SECONDS,
     CSE_REQUEST_TIMEOUT,
     CSE_CACHE_TTL,
     CSE_KICAD_CACHE_TTL,
@@ -40,11 +46,32 @@ _CSE_MODEL_URL = "https://rs.componentsearchengine.com/ga/model.php"
 # Max results per page from the API
 _PAGE_SIZE = 10
 
-# KiCad file extensions we extract from the model zip
-_KICAD_EXTENSIONS = (".kicad_sym", ".kicad_mod")
 
-# Max zip download size (50MB) to prevent zip bombs
-_MAX_ZIP_SIZE = 50 * 1024 * 1024
+def _body_text(content: bytes) -> str:
+    return " ".join(re.sub(r"<[^>]*>", " ", html.unescape(content.decode("utf-8", errors="replace"))).split())
+
+
+def _clean_body(content: bytes) -> str:
+    """One safe log/reply line, with neither the Basic-auth login nor email addresses."""
+    text = re.sub(r"[\w.!#$%&'*+/=?^`{|}~-]+@[\w.-]+\.[A-Za-z]{2,}", "***", _body_text(content))
+    for secret in sorted((CSE_USER, CSE_PASS), key=len, reverse=True):
+        if secret:
+            for form in (secret, _body_text(secret.encode("utf-8"))):
+                if form:
+                    text = re.sub(re.escape(form), "***", text, flags=re.I)
+    return text
+
+
+def _utc_iso(at: float) -> str:
+    return datetime.fromtimestamp(at, timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _warn_nonzip(response: httpx.Response, part_id: int | str, elapsed: float) -> str:
+    cleaned = _clean_body(response.content)
+    logger.warning("CSE model download for part %s: HTTP %s; content type %s; %s bytes; %.3f seconds; %s",
+                   part_id, response.status_code, response.headers.get("content-type", ""),
+                   len(response.content), elapsed, cleaned[:200])
+    return cleaned
 
 
 def _normalize_part(part: dict) -> dict:
@@ -94,7 +121,11 @@ class CSEClient:
     No API key or authentication required.
     """
 
-    def __init__(self, store_path: str | None = None):
+    def __init__(self, store_path: str | None = None, *, clock: Callable[[], float] | None = None):
+        self._clock = clock or time.time
+        self._quota_until = 0.0
+        self._refused_since: float | None = None
+        self._quota_probe: asyncio.Lock | None = None
         self._cache = TTLCache(ttl=CSE_CACHE_TTL)
         self._kicad_cache = TTLCache(ttl=CSE_KICAD_CACHE_TTL, max_size=CSE_KICAD_CACHE_MAX_SIZE)
         # Answers that outlive this process (cse_store.py), behind the memory caches. Only the server
@@ -246,9 +277,32 @@ class CSEClient:
                 "kicad_footprint": cached.get("kicad_footprint"),
             }
 
-        # Download the model zip (authenticated)
+        # Only one probe goes out after a quota pause; other callers still get stored files above.
+        if self._refused_since is not None:
+            if self._clock() < self._quota_until or self._quota_probe is not None and self._quota_probe.locked():
+                return self._quota_error(resolved_part_id, part_info)
+            if self._quota_probe is None:
+                self._quota_probe = asyncio.Lock()
+            async with self._quota_probe:
+                return await self._download_kicad(resolved_part_id, part_info)
+        return await self._download_kicad(resolved_part_id, part_info)
+
+    def _wanted(self, part_id: int | str, reason: str, part_info: dict[str, Any]) -> None:
+        if self._store:
+            self._store.mark_wanted(part_id, reason, part_info or self._store.part_info(part_id), now=self._clock())
+
+    def _quota_error(self, part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
+        stats.count_upstream("cse", "rate_limited")
+        self._wanted(part_id, "quota", part_info)
+        return {"error": "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work."}
+
+    async def _download_kicad(self, resolved_part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
+        # Check again inside the semaphore: a download ahead of this one may have refused quota.
         try:
             async with self._get_semaphore():
+                if self._clock() < self._quota_until:
+                    return self._quota_error(resolved_part_id, part_info)
+                started = self._clock()
                 stats.count_upstream("cse", "sent")
                 response = await self._get_http().get(
                     _CSE_MODEL_URL,
@@ -256,10 +310,16 @@ class CSEClient:
                     auth=(CSE_USER, CSE_PASS),
                     timeout=30,
                 )
+                elapsed = self._clock() - started
                 await asyncio.sleep(CSE_RATE_LIMIT)
         except httpx.HTTPError:
             return {"error": "CSE model download failed (network/connection error)"}
 
+        # Log non-ZIP HTTP errors too, while retaining their existing authentication/HTTP replies.
+        nonzip_logged = False
+        if isinstance(response.content, bytes) and not zipfile.is_zipfile(io.BytesIO(response.content)):
+            _warn_nonzip(response, resolved_part_id, elapsed)
+            nonzip_logged = True
         if response.status_code == 401:
             return {"error": "CSE authentication failed. Check CSEARCH_USER and CSEARCH_PASS."}
         if response.status_code != 200:
@@ -270,36 +330,41 @@ class CSEClient:
         if content_length > _MAX_ZIP_SIZE:
             return {"error": f"CSE model download too large ({content_length} bytes, max {_MAX_ZIP_SIZE})"}
 
-        # Extract KiCad files from zip in memory — no temp files
-        kicad_files: dict[str, str] = {}
         try:
-            with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
-                for name in zf.namelist():
-                    lower = name.lower()
-                    # Only extract from the KiCad directory
-                    if "/kicad/" not in lower:
-                        continue
-                    # Check decompressed size before reading
-                    info = zf.getinfo(name)
-                    if info.file_size > 10 * 1024 * 1024:  # 10MB per file max
-                        logger.warning(f"Skipping oversized file in zip: {name} ({info.file_size} bytes)")
-                        continue
-                    if any(lower.endswith(ext) for ext in _KICAD_EXTENSIONS):
-                        content = zf.read(name).decode("utf-8", errors="replace")
-                        if lower.endswith(".kicad_sym"):
-                            kicad_files["kicad_symbol"] = content
-                        elif lower.endswith(".kicad_mod"):
-                            kicad_files["kicad_footprint"] = content
+            kicad_files = extract_kicad(response.content)
         except zipfile.BadZipFile:
+            text = _body_text(response.content)
+            cleaned = (_clean_body(response.content) if nonzip_logged else
+                       _warn_nonzip(response, resolved_part_id, elapsed))
+            if "quota" in text.lower():
+                now = self._clock()
+                self._quota_until = now + CSE_QUOTA_RETRY_SECONDS
+                if self._refused_since is None:
+                    self._refused_since = now
+                recent = self._store.kicad_last_24h(now) if self._store else 0
+                logger.warning("CSE daily download quota refused at %s: %s downloads stored in the last 24 h; next try at %s",
+                               _utc_iso(now), recent, _utc_iso(self._quota_until))
+                return self._quota_error(resolved_part_id, part_info)
+            if text.lower().startswith("error:"):
+                if re.search(r"no\s+part\s+data\s+(?:is\s+)?available", text, re.I):
+                    return {"error": f"No ECAD model available for part {resolved_part_id}"}
+                self._wanted(resolved_part_id, "refused", part_info)
+                return {"error": f"CSE refused the model download for part {resolved_part_id}: {cleaned[:150]}"}
+            self._wanted(resolved_part_id, "invalid_zip", part_info)
             return {"error": "CSE returned invalid zip file"}
 
+        if self._refused_since is not None:
+            logger.info("CSE downloads accepted again at %s; refused since %s",
+                        _utc_iso(self._clock()), _utc_iso(self._refused_since))
+            self._refused_since = None
+            self._quota_until = 0.0
         if not kicad_files:
             return {"error": f"No KiCad files found in model archive for part {resolved_part_id}"}
 
         # Cache the extracted text (zip is discarded)
-        self._kicad_cache.set(cache_key, kicad_files)
+        self._kicad_cache.set(f"kicad:{resolved_part_id}", kicad_files)
         if self._store:
-            self._store.put_kicad(resolved_part_id, kicad_files)
+            self._store.put_kicad(resolved_part_id, kicad_files, fetched_at=self._clock())
 
         return {
             "part_id": resolved_part_id,

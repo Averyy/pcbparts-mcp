@@ -311,9 +311,9 @@ class TestJLCPCB:
         client = jlcpcb_client(clock, jlcpcb)
         assert await client.datasheet_pdf_url("C1") is None  # one search: JLCPCB has no PDF for it
         assert await client.datasheet_pdf_url("C1") is None  # the missing link is held for a while
-        client._datasheet_signings = [clock()] * client_module.DATASHEET_SIGNINGS_PER_MINUTE
+        client._datasheet_tokens = -client_module.DATASHEET_SIGNINGS_PER_MINUTE
         with pytest.raises(DatasheetLinkBusy):
-            await client.datasheet_pdf_url("C2")  # the minute's signing budget is spent
+            await client.datasheet_pdf_url("C2")  # the next slot is more than 30 s away
         assert upstream() == {"jlcpcb": counts(sent=1, cached=1, rate_limited=1)}
 
 

@@ -10,7 +10,9 @@ were looked up with Mouser and DigiKey and how many of them were different, and 
 rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the failed calls and the turned-away requests
 in each UTC hour. From 0.10.2 also how LCSC-code lookups were answered (snapshot, live or a
 fallback), and which apps called the Mouser and DigiKey tools (distributor_apps; server.py links a
-call to its app in memory). No IPs, queries or part numbers are kept: callers and distinct part
+call to its app in memory). From 0.10.3 also why distributor lookups were held back, in each UTC
+hour, and the limits distributors themselves refused for (distributor_limits). No IPs, queries or part
+numbers are kept: callers and distinct part
 numbers are counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
 twice; each day's `restarts` (from 0.10.0) says how many there were.
@@ -33,6 +35,8 @@ import secrets
 import time
 from pathlib import Path
 from typing import Any, Callable
+
+from .config import DB_WAIT_COUNTED_SECONDS
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +76,7 @@ REASONS = frozenset({
     "service_not_ready", "not_configured", "no_pcba_types", "query_too_complex", "board_db_failed", "jlcpcb_waf",
     "jlcpcb_unavailable", "easyeda_failed", "mouser_failed", "digikey_failed", "cse_auth_failed", "cse_lookup_failed",
     "cse_download_http_4xx", "cse_download_http_5xx", "cse_download_http", "cse_download_network",
-    "cse_download_too_large", "cse_invalid_zip", "lifecycle_lookup_failed", "exception", "unexpected_error",
+    "cse_download_too_large", "cse_invalid_zip", "cse_download_refused", "lifecycle_lookup_failed", "exception", "unexpected_error",
     "other",  # a label not listed above
 })
 # How the checks behind jlc_search's why_empty went
@@ -120,12 +124,51 @@ LCSC_LOOKUP_EVENTS = ("snapshot", "live", "fallback", "live_failed")
 DISTRIBUTOR_TOOLS = ("mouser_get_part", "digikey_get_part", "part_lifecycle")
 DISTRIBUTOR_APP_COUNTS = ("calls", "rate_limited")
 APP_LINK_MINUTES = 10
+# From 0.10.3: fixed, anonymous labels only, never an app/key number or a per-key count.
+DISTRIBUTOR_LIMIT_CAUSES = ("minute_cap", "daily_count", "address_daily", "distributor_daily", "distributor_minute",
+                            "distributor_refused", "other")
+DISTRIBUTOR_LIMIT_REFUSALS = ("daily", "minute", "refused")
+DATASHEET_LINK_EVENTS = ("visits", "reused", "signed", "waited", "refused", "failed", "not_found")
+
+
+def _new_distributor_limits() -> dict[str, Any]:
+    return {"held_back": dict.fromkeys(DISTRIBUTOR_LIMIT_CAUSES, 0), "held_back_hours": [0] * 24,
+            "refusals": dict.fromkeys(DISTRIBUTOR_LIMIT_REFUSALS, 0)}
+
+
+def _new_db_waits(*, components: bool = True) -> dict[str, Any]:
+    return {"jobs": 0, "waited": 0, "longest_ms": 0, "waited_hours": [0] * 24, "longest_ms_hours": [0] * 24,
+            **({"components": _new_db_waits(components=False)} if components else {})}
+
+
+def _clean_db_waits(value: Any, *, components: bool = True) -> dict[str, Any] | None:
+    if not isinstance(value, dict):
+        return None
+    clean = {key: max(0, _int(value.get(key))) for key in ("jobs", "waited", "longest_ms")}
+    for field in ("waited_hours", "longest_ms_hours"):
+        clean[field] = [max(0, h or 0) for h in (_hours(value.get(field)) or [0] * 24)]
+    if components:
+        clean["components"] = _clean_db_waits(value.get("components"), components=False) or _new_db_waits(components=False)
+    return clean
+
+
+def _add_db_waits(total: dict[str, Any], counts: dict[str, Any]) -> None:
+    for field in ("jobs", "waited"):
+        total[field] += counts[field]
+    total["longest_ms"] = max(total["longest_ms"], counts["longest_ms"])
+    for hour in range(24):
+        total["waited_hours"][hour] += counts["waited_hours"][hour]
+        total["longest_ms_hours"][hour] = max(total["longest_ms_hours"][hour], counts["longest_ms_hours"][hour])
+    if "components" in counts:
+        _add_db_waits(total["components"], counts["components"])
 
 
 def _new_day() -> dict[str, Any]:
     return {"tools": {}, "hours": [0] * 24, "apps": {}, "callers": 0, "distributors": {}, "reasons": {}, "why_empty": {},
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
-            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {}}
+            **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {},
+            "distributor_limits": {}, "datasheet_links": dict.fromkeys(DATASHEET_LINK_EVENTS, 0),
+            "db_waits": _new_db_waits()}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -209,6 +252,18 @@ def _clean_day(day: dict) -> dict[str, Any]:
                                   for tool, apps in by_tool.items()
                                   if tool in DISTRIBUTOR_TOOLS and isinstance(apps, dict)}
                                  if isinstance(by_tool, dict) else None)
+    # None: not counted (a day saved before 0.10.3). Drop unknown names and labels on load.
+    limits = day.get("distributor_limits")
+    clean["distributor_limits"] = ({name: {
+        "held_back": {label: _int(_dict(counts.get("held_back")).get(label)) for label in DISTRIBUTOR_LIMIT_CAUSES},
+        "held_back_hours": [h or 0 for h in (_hours(counts.get("held_back_hours")) or [0] * 24)],
+        "refusals": {label: _int(_dict(counts.get("refusals")).get(label)) for label in DISTRIBUTOR_LIMIT_REFUSALS}}
+        for name, counts in limits.items() if name in PARTS_ASKED and isinstance(counts, dict)}
+        if isinstance(limits, dict) else None)
+    links = day.get("datasheet_links")
+    clean["datasheet_links"] = ({event: _int(links.get(event)) for event in DATASHEET_LINK_EVENTS}
+                                if isinstance(links, dict) else None)
+    clean["db_waits"] = _clean_db_waits(day.get("db_waits"))
     clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
     return clean
 
@@ -339,6 +394,12 @@ class UsageStats:
             day["lcsc_lookups"] = {}
         if day["distributor_apps"] is None:  # likewise
             day["distributor_apps"] = {}
+        if day["distributor_limits"] is None:  # a day saved before 0.10.3: count from now on
+            day["distributor_limits"] = {}
+        if day["datasheet_links"] is None:
+            day["datasheet_links"] = dict.fromkeys(DATASHEET_LINK_EVENTS, 0)
+        if day["db_waits"] is None:
+            day["db_waits"] = _new_db_waits()
         for field in HOURLY_SINCE_0_10_1:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
@@ -403,6 +464,21 @@ class UsageStats:
             counts = self._day()["upstream"].setdefault(source, dict.fromkeys(UPSTREAM_EVENTS, 0))
             counts[event] += count
 
+    def record_distributor_limit(self, name: str, kind: str, label: str | None) -> None:
+        """One unsent lookup (held_back) or sent request refused by the distributor (refusals).
+        Only fixed labels are kept; unknown causes count as other. No credential details."""
+        if name not in PARTS_ASKED or kind not in ("held_back", "refusals"):
+            return
+        if kind == "held_back":
+            label = label if label in DISTRIBUTOR_LIMIT_CAUSES else "other"
+        elif label not in DISTRIBUTOR_LIMIT_REFUSALS:
+            return
+        now = self._now()
+        counts = self._day(now)["distributor_limits"].setdefault(name, _new_distributor_limits())
+        counts[kind][label] += 1
+        if kind == "held_back":
+            counts["held_back_hours"][now.hour] += 1
+
     def record_parts_asked(self, distributor: str, numbers: list[str]) -> None:
         """Part numbers a Mouser/DigiKey lookup asked for (distinct within the lookup), whether they
         were answered from the stored answers, with a request, or turned away by the limits (not
@@ -438,6 +514,25 @@ class UsageStats:
         if tool in LCSC_LOOKUP_TOOLS and event in LCSC_LOOKUP_EVENTS:
             counts = self._day()["lcsc_lookups"].setdefault(tool, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
             counts[event] += 1
+
+    def record_datasheet_link(self, event: str) -> None:
+        """Anonymous /mcp/datasheet counts; no code or target link is kept."""
+        if event in DATASHEET_LINK_EVENTS:
+            self._day()["datasheet_links"][event] += 1
+
+    def record_db_wait(self, seconds: float, components: bool = False,
+                       started_at: datetime.datetime | None = None) -> None:
+        """One started database job; queue delay only, no query time or identifying data."""
+        now = started_at or self._now()
+        counts = self._day(now)["db_waits"]
+        milliseconds = max(0, round(seconds * 1000))
+        for target in (counts, counts["components"]) if components else (counts,):
+            target["jobs"] += 1
+            target["longest_ms"] = max(target["longest_ms"], milliseconds)
+            target["longest_ms_hours"][now.hour] = max(target["longest_ms_hours"][now.hour], milliseconds)
+            if seconds >= DB_WAIT_COUNTED_SECONDS:
+                target["waited"] += 1
+                target["waited_hours"][now.hour] += 1
 
     def record_why_empty(self, result: str) -> None:
         """How the checks behind a why_empty reply went: one of WHY_EMPTY_RESULTS."""
@@ -480,9 +575,23 @@ class UsageStats:
         total_refusals: dict[str, int] = {}
         total_lookups: dict[str, dict[str, int]] = {}
         total_distributor_apps: dict[str, dict[str, dict[str, int]]] = {}
+        total_distributor_limits: dict[str, dict[str, Any]] = {}
+        total_datasheet_links = dict.fromkeys(DATASHEET_LINK_EVENTS, 0)
+        total_db_waits = _new_db_waits()
         total_hours = [0] * 24
         for date in dates:
             day = self._days[date]
+            if day["db_waits"] is not None:
+                _add_db_waits(total_db_waits, day["db_waits"])
+            for event, count in (day["datasheet_links"] or {}).items():
+                total_datasheet_links[event] += count
+            for name, counts in (day["distributor_limits"] or {}).items():
+                total = total_distributor_limits.setdefault(name, _new_distributor_limits())
+                for kind in ("held_back", "refusals"):
+                    for label, count in counts[kind].items():
+                        total[kind][label] += count
+                for hour, count in enumerate(counts["held_back_hours"]):
+                    total["held_back_hours"][hour] += count
             for name, c in (day["lcsc_lookups"] or {}).items():
                 total = total_lookups.setdefault(name, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
                 for key, value in c.items():
@@ -539,6 +648,9 @@ class UsageStats:
                 "restarts": day["restarts"],
                 "lcsc_lookups": _lookups_view(day["lcsc_lookups"]),
                 "distributor_apps": _distributor_apps_view(day["distributor_apps"]),
+                "distributor_limits": day["distributor_limits"],
+                "datasheet_links": day["datasheet_links"],
+                "db_waits": day["db_waits"],
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -571,7 +683,8 @@ class UsageStats:
                       "sent is HTTP requests sent, one each, not tool calls; retries the further attempts the HTTP "
                       "client made on its own for them, where it reports them (a timeout reports none); cached "
                       "answers given without a request (memory cache, on-disk store or seed); rate_limited requests "
-                      "this server's own budget or pause for that service kept back. parts_asked: part numbers "
+                      "this server's own budget or pause for that service kept back (for cse, also sent "
+                      "model downloads SamacSys refused for quota). parts_asked: part numbers "
                       "asked for with Mouser and DigiKey, whether stored answers gave them, a request did or the "
                       "limits turned them away (total; skipped ones aren't counted), and how many "
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
@@ -593,7 +706,20 @@ class UsageStats:
                       "distributor_apps (from 0.10.2; null before): calls to mouser_get_part, digikey_get_part "
                       "and part_lifecycle by app, and how many were rate_limited; a call counts under the app "
                       f"its address last connected with (remembered for {APP_LINK_MINUTES} minutes after the "
-                      "address's last connection or tool call), else under unknown."),
+                      "address's last connection or tool call), else under unknown. "
+                      "distributor_limits (from 0.10.3; null before): for mouser and digikey, held_back counts lookups "
+                      "not sent, by cause: minute_cap and daily_count (this server's limits), address_daily (the "
+                      "address's daily cap), distributor_daily, distributor_minute and distributor_refused (pauses "
+                      "after the distributor refused), other; it adds up to distributors rate_limited. "
+                      "held_back_hours: the same by UTC hour. refusals: sent requests the distributor refused "
+                      "(daily, minute, refused). "
+                      "datasheet_links (from 0.10.3; null before): visits to datasheet_pdf links: reused (no "
+                      "JLCPCB request), signed (one was made), waited (of those, after waiting for a slot), "
+                      "refused (429), failed (502), not_found (404). "
+                      "db_waits (from 0.10.3; null before): database jobs (jobs), those that waited at least "
+                      f"{DB_WAIT_COUNTED_SECONDS:g} s for a worker (waited), the longest wait (longest_ms), and "
+                      "waited_hours and longest_ms_hours by UTC hour; components: the same for the component "
+                      "catalog alone. In totals the longest is the maximum."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -611,6 +737,9 @@ class UsageStats:
                 "per_ip_refusals": _refusals_view(total_refusals),
                 "lcsc_lookups": _lookups_view(total_lookups),
                 "distributor_apps": _distributor_apps_view(total_distributor_apps),
+                "distributor_limits": total_distributor_limits,
+                "datasheet_links": total_datasheet_links,
+                "db_waits": total_db_waits,
             },
             "days": out,
         }
@@ -671,11 +800,25 @@ usage = UsageStats()
 
 
 # Counting never breaks a lookup: the clients call these instead of usage's methods
+def count_db_wait(seconds: float, components: bool, started_at: datetime.datetime) -> None:
+    try:
+        usage.record_db_wait(seconds, components, started_at)
+    except Exception:
+        logger.exception("Usage stats: couldn't count a database wait")
+
+
 def count_distributor(name: str, event: str) -> None:
     try:
         usage.record_distributor(name, event)
     except Exception:
         logger.exception("Usage stats: couldn't count a distributor lookup")
+
+
+def count_distributor_limit(name: str, kind: str, label: str | None) -> None:
+    try:
+        usage.record_distributor_limit(name, kind, label)
+    except Exception:
+        logger.exception("Usage stats: couldn't count a distributor limit")
 
 
 def count_parts_asked(distributor: str, numbers: list[str]) -> None:
@@ -697,3 +840,10 @@ def count_lcsc_lookup(tool: str, event: str) -> None:
         usage.record_lcsc_lookup(tool, event)
     except Exception:
         logger.exception("Usage stats: couldn't count an LCSC-code lookup")
+
+
+def count_datasheet_link(event: str) -> None:
+    try:
+        usage.record_datasheet_link(event)
+    except Exception:
+        logger.exception("Usage stats: couldn't count a datasheet link")

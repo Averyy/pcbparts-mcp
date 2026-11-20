@@ -178,8 +178,8 @@ class TestSettings:
         ("DB_STUCK_WAIT_SECONDS", "-1", 1.0, True),
         ("DB_STUCK_WAIT_SECONDS", " 1.5 ", 1.5, False),
         ("DB_STUCK_WAIT_SECONDS", "300", 300.0, False),
-        ("RATE_LIMIT_REQUESTS", "12.5", 200, True),  # was a ValueError at import
-        ("RATE_LIMIT_REQUESTS", "", 200, False),
+        ("RATE_LIMIT_REQUESTS", "12.5", 300, True),  # was a ValueError at import
+        ("RATE_LIMIT_REQUESTS", "", 300, False),
         ("RATE_LIMIT_REQUESTS", "1000000", 1000000, False),
     ], ids=["inf", "nan", "zero", "neg", "float", "stuck", "intfloat", "blank", "big"])
     def test_bad_settings_fall_back(self, monkeypatch, name, value, used, warned):

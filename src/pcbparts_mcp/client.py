@@ -175,6 +175,7 @@ PDF_LINK_SECONDS = 1800  # how long JLCPCB signs a datasheet link for (x-oss-exp
 # /mcp/datasheet/<lcsc> signs links on request: at most this many JLCPCB lookups a minute for all
 # callers together (links already held are reused), so the short links can't drive JLCPCB traffic
 DATASHEET_SIGNINGS_PER_MINUTE = 20
+DATASHEET_MAX_WAIT = 30
 DATASHEET_LINK_CACHE_MAX = 5000
 # A part without a datasheet PDF isn't looked up again for this long
 DATASHEET_MISSING_TTL = 600
@@ -339,7 +340,9 @@ def _pdf_link_expiring(result: dict[str, Any] | None, now: float) -> bool:
 class JLCPCBClient:
     """Async client for JLCPCB component search API with anti-detection via wafer."""
 
-    def __init__(self, easyeda_store_path: str | None = None):
+    def __init__(self, easyeda_store_path: str | None = None, *,
+                 clock: Callable[[], float] | None = None,
+                 sleep: Callable[[float], Awaitable[None]] | None = None):
         self._jlcpcb_session: wafer.AsyncSession | None = None
         self._easyeda_session: wafer.AsyncSession | None = None
         self._easyeda_products_session: wafer.AsyncSession | None = None
@@ -384,9 +387,13 @@ class JLCPCBClient:
         # Part details cache: lcsc -> (timestamp, result_dict | None)
         self._part_cache: dict[str, tuple[float, dict[str, Any] | None]] = {}
         # Signed datasheet links for /mcp/datasheet: lcsc -> (url or None, valid until), and the
-        # times of recent JLCPCB lookups for them
+        # shared signing budget: a burst of 20, replenished one slot every 3 seconds.
         self._datasheet_links: dict[str, tuple[str | None, float]] = {}
-        self._datasheet_signings: list[float] = []
+        self._datasheet_clock = clock or time.time
+        self._datasheet_sleep = sleep or asyncio.sleep
+        self._datasheet_tokens = float(DATASHEET_SIGNINGS_PER_MINUTE)
+        self._datasheet_updated: float | None = None
+        self._datasheet_inflight: dict[str, asyncio.Task[str | None]] = {}
         # Locks for thread-safe cache access during concurrent async operations
         self._easyeda_cache_lock: asyncio.Lock | None = None
         self._easyeda_component_cache_lock: asyncio.Lock | None = None
@@ -554,6 +561,11 @@ class JLCPCBClient:
 
     async def close(self):
         """Release persistent HTTP sessions and the footprint store."""
+        pending = list(self._datasheet_inflight.values())
+        for task in pending:
+            task.cancel()
+        if pending:
+            await asyncio.gather(*pending, return_exceptions=True)
         self._jlcpcb_session = None
         self._easyeda_session = None
         self._easyeda_products_session = None
@@ -1605,40 +1617,84 @@ class JLCPCBClient:
 
         Reuses a link from the part cache or an earlier redirect; otherwise makes one JLCPCB search
         request (never EasyEDA, unlike get_part), and one to LCSC when JLCPCB lists neither PDF nor
-        maker link, within DATASHEET_SIGNINGS_PER_MINUTE for all callers (raises DatasheetLinkBusy
-        beyond it). JLCPCB errors raise ValueError (JLCPCBUnavailable), as elsewhere.
+        maker link. A burst beyond DATASHEET_SIGNINGS_PER_MINUTE waits for its slot, up to
+        DATASHEET_MAX_WAIT seconds (raises DatasheetLinkBusy beyond it). Simultaneous visits for
+        a part share one request. JLCPCB errors raise ValueError (JLCPCBUnavailable), as elsewhere.
         """
         lcsc = lcsc.strip().upper()
         if not lcsc.startswith("C") or not (lcsc[1:].isascii() and lcsc[1:].isdigit()):
             return None
-        now = time.time()
+        found, url = await self._held_datasheet(lcsc)
+        if found:
+            return url
+        task = self._datasheet_inflight.get(lcsc)
+        if task is not None:
+            url = await asyncio.shield(task)
+            _count_upstream("jlcpcb", "cached")
+            stats.count_datasheet_link("reused")
+            return url
+        task = asyncio.create_task(self._sign_datasheet(lcsc))
+        self._datasheet_inflight[lcsc] = task
+
+        def finished(done: asyncio.Task) -> None:
+            self._datasheet_inflight.pop(lcsc, None)
+            # A disconnected visitor doesn't cancel the shared request or leave an unread exception.
+            if not done.cancelled():
+                done.exception()
+
+        task.add_done_callback(finished)
+        return await asyncio.shield(task)
+
+    async def _held_datasheet(self, lcsc: str) -> tuple[bool, str | None]:
+        now = self._datasheet_clock()
         async with self._get_part_cache_lock():
             entry = self._part_cache.get(lcsc)
         part = entry[1] if entry else None
         if part and (url := _cached_datasheet(part, now)):
             _count_upstream("jlcpcb", "cached")
-            return url
+            stats.count_datasheet_link("reused")
+            return True, url
         held = self._datasheet_links.get(lcsc)
         if held and (held[0] is None and now < held[1] or held[0] and held[1] - now >= PDF_LINK_MIN_REMAINING):
             _count_upstream("jlcpcb", "cached")
-            return held[0]
+            stats.count_datasheet_link("reused")
+            return True, held[0]
+        return False, None
 
-        self._datasheet_signings = [t for t in self._datasheet_signings if t > now - 60]
-        if len(self._datasheet_signings) >= DATASHEET_SIGNINGS_PER_MINUTE:
+    async def _sign_datasheet(self, lcsc: str) -> str | None:
+        now = self._datasheet_clock()
+        spacing = 60 / DATASHEET_SIGNINGS_PER_MINUTE
+        if self._datasheet_updated is not None:
+            self._datasheet_tokens = min(float(DATASHEET_SIGNINGS_PER_MINUTE),
+                                        self._datasheet_tokens + max(0, now - self._datasheet_updated) / spacing)
+        self._datasheet_updated = now
+        delay = max(0.0, (1 - self._datasheet_tokens) * spacing)
+        if delay > DATASHEET_MAX_WAIT:
             _count_upstream("jlcpcb", "rate_limited")
-            # A sweep of LED candidates hit this after ~10 links and only read "try again in a minute"
-            wait = max(1, math.ceil(60 - (now - min(self._datasheet_signings))))
+            wait = max(1, math.ceil(delay - DATASHEET_MAX_WAIT))
             raise DatasheetLinkBusy(
                 f"This server signs at most {DATASHEET_SIGNINGS_PER_MINUTE} new datasheet links a minute for all "
                 f"users; try again in {wait}s. A datasheet_pdf link a live jlc_get_part reply gave in the last "
                 f"{(PDF_LINK_SECONDS - PDF_LINK_MIN_REMAINING) // 60} minutes opens without one.", retry_after=wait)
-        self._datasheet_signings.append(now)
+        # Reserve before awaiting: negative tokens are the slots already promised to other visits.
+        self._datasheet_tokens -= 1
+        if delay:
+            await self._datasheet_sleep(delay)
+            found, url = await self._held_datasheet(lcsc)
+            if found:
+                # The reserved slot went unused (for example, get_part refreshed this link).
+                self._datasheet_tokens = min(float(DATASHEET_SIGNINGS_PER_MINUTE), self._datasheet_tokens + 1)
+                return url
+        stats.count_datasheet_link("signed")
+        if delay:
+            stats.count_datasheet_link("waited")
         response = await self._request(JLCPCB_SEARCH_URL, {
             "keyword": lcsc, "currentPage": 1, "pageSize": 10, "searchSource": "search",
         })
         items = ((response.get("data") or {}).get("componentPageInfo") or {}).get("list") or []
         item = next((i for i in items if i.get("componentCode") == lcsc), None)
-        url, _ = datasheet_pdf_link((item or {}).get("dataManualFileAccessIdUrl"))
+        now = self._datasheet_clock()
+        url, _ = datasheet_pdf_link((item or {}).get("dataManualFileAccessIdUrl"), now=now)
         if url:
             valid_until = _signed_url_expiry(url) or now
         else:  # no PDF on JLCPCB's storage (TPS61023DRLR C919459): what the live reply gives instead

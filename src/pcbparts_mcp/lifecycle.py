@@ -470,12 +470,12 @@ class LifecycleLookup:
                 if answers is None:
                     state.failed.add("mouser")
                 elif answer is None or isinstance(answer.problem, dict) or (
-                        answer.problem is None and not answer.checked and self._mouser.held_back()):
+                        answer.problem is None and not answer.checked and self._mouser.held_back(caller)):
                     if answer is None and error is None:
                         state.failed.add("mouser")
                         continue
-                    state.limited["mouser"] = self._mouser.retry_after()
-                    if self._mouser.day_spent():
+                    state.limited["mouser"] = self._mouser.retry_after(caller)
+                    if self._mouser.day_spent(caller):
                         state.day_spent.add("mouser")
                 elif not answer.checked:
                     state.failed.add("mouser")
@@ -506,7 +506,7 @@ class LifecycleLookup:
                 state.failed.add("digikey")
                 return
             if kind == "limited":
-                state.limited["digikey"] = self._digikey.retry_after()
+                state.limited["digikey"] = self._digikey.retry_after(caller)
             elif kind == "not_found":
                 state.add(Reading(state.spelling, "", "digikey", "unknown", None, fetched_at, found=False))
             elif kind == "found":

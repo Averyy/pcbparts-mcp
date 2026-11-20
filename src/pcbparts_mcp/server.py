@@ -30,14 +30,14 @@ from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import __version__, platform_ranges, stats
-from .cache import SELF_HOSTING_URL, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
+from .cache import SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
     DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
-    HTTP_HOST, HTTP_PORT, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
+    HTTP_HOST, HTTP_PORT, LOG_PATH, LOG_KEEP_DAYS, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
-    DISTRIBUTOR_DAILY_LIMIT, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
+    DISTRIBUTOR_DAILY_LIMIT, DISTRIBUTOR_DAILY_PER_ADDRESS, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
@@ -47,7 +47,7 @@ from .client import (DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDACo
 from .mouser import MouserAPIError, MouserClient, MouserError
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
-from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match
+from .lifecycle import Entry, LifecycleLookup, STATUSES, makers_match, utc_text
 from .cse import CSEClient
 from .mounting import english_package
 from .db_worker import BOARD_POOL, COMPONENT_POOL, RULES_POOL, SENSOR_POOL, database_pressure, offload, run_db
@@ -79,7 +79,7 @@ _cse_client: CSEClient | None = None
 _distributor_store: DistributorStore | None = None
 _distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
-_distributor_quotas: dict[str, DailyQuota | QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
+_distributor_quotas: dict[str, QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
@@ -176,6 +176,12 @@ async def lifespan(app):
     # Mouser/DigiKey daily request counts, kept across restarts when DISTRIBUTOR_QUOTA_PATH is set
     quota_store = QuotaStore(DISTRIBUTOR_QUOTA_PATH) if DISTRIBUTOR_QUOTA_PATH else None
     _distributor_quotas.clear()
+    # Same published ranges as RateLimitMiddleware; local files only, never a runtime download.
+    address_ranges = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE).ranges
+
+    # One count for both distributors: an address's Mouser and DigiKey lookups share the day's cap
+    address_daily = AddressDailyQuota(DISTRIBUTOR_DAILY_PER_ADDRESS,
+                                      key=lambda ip: None if ip in address_ranges else _address_key(ip))
     # Their answers (3 days) and lifecycle readings (90 days; obsolete a year), kept across
     # restarts when DISTRIBUTOR_STORE_PATH is set
     _distributor_store = DistributorStore(DISTRIBUTOR_STORE_PATH or None)
@@ -195,12 +201,19 @@ async def lifespan(app):
                                  store_key="Mouser" if index == 0 else f"Mouser#{index + 1}",
                                  own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
                       for index in range(1 + len(MOUSER_EXTRA_API_KEYS))]
-        mouser_quota = MouserKeyPool(key_quotas, per_minute=MOUSER_PER_MINUTE)
+        mouser_quota = MouserKeyPool(key_quotas, per_minute=MOUSER_PER_MINUTE, address_daily=address_daily)
         _distributor_quotas["mouser"] = mouser_quota
         _mouser_client = MouserClient(MOUSER_API_KEY, quota=mouser_quota, store=_distributor_store,
                                       extra_keys=MOUSER_EXTRA_API_KEYS)
         counts = ", ".join(str(q.status()["used_today"]) for q in key_quotas)
         logger.info(f"Mouser client initialized: {len(key_quotas)} key(s) (requests today: {counts})")
+        for index, quota in enumerate(key_quotas):
+            if kept := quota.daily_refusals()[-5:]:
+                episodes = "; ".join(
+                    f"{utc_text(e['at'])}, count {e['count']}, " +
+                    (f"accepted again {utc_text(e['resumed_at'])}" if e["resumed_at"] is not None else "still refused")
+                    for e in kept)
+                logger.info(f"Mouser key {index + 1} kept daily refusals: {episodes}")
     elif MOUSER_EXTRA_API_KEYS:
         logger.warning("Extra Mouser keys are set without MOUSER_API_KEY: Mouser lookups are off")
 
@@ -216,7 +229,7 @@ async def lifespan(app):
                                 store_key="DigiKey" if index == 0 else "DigiKey#2",
                                 own_key="DigiKey API credentials (free at https://developer.digikey.com)")
                       for index in range(2 if second_app else 1)]
-        digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE)
+        digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE, address_daily=address_daily)
         _distributor_quotas["digikey"] = digikey_quota
         _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota,
                                         second_app=second_app, store=_distributor_store)
@@ -248,6 +261,7 @@ async def lifespan(app):
         await minute_task
     for quota in _distributor_quotas.values():
         quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
+        quota.held_back.flush()
     _refused_callers.flush()
     stats.usage.save()
     if _cse_client:
@@ -299,8 +313,8 @@ def _exit_if_stuck(stuck_checks: int) -> int:
 
 
 async def _every_minute() -> None:
-    """Every minute, log the finished hour's per-IP Mouser/DigiKey request counts and per-IP rate
-    limit refusals (one line each, for hours that had any), save the usage counts and drop expired
+    """Every minute, log the finished hour's sent and held-back Mouser/DigiKey counts and per-IP
+    rate limit refusals (one line each, for hours that had any), save the usage counts and drop expired
     address-to-app links (AppsByAddress); every hour,
     drop expired Mouser/DigiKey answers from the store; exit if a database worker is stuck
     (_exit_if_stuck)."""
@@ -312,6 +326,9 @@ async def _every_minute() -> None:
         try:
             for quota in _distributor_quotas.values():
                 quota.callers.flush_if_due()
+                quota.held_back.flush_if_due()
+                if quota.address_daily is not None:
+                    quota.address_daily.reset_if_due()
             _refused_callers.flush_if_due()
             stats.usage.save()
             _apps_by_address.expire()  # none outlives its lifetime by more than a minute when quiet
@@ -357,10 +374,12 @@ _NOT_FOUND_ERRORS = (
 _ERROR_KINDS = [(kind, re.compile(pattern, re.S)) for kind, pattern in (
     # a limit turned the request away: ours, Mouser's, DigiKey's, JLCPCB's or EasyEDA's
     ("rate_limited", r"\w+ daily quota exceeded "),
+    ("rate_limited", r"This address has used its \d+ Mouser and DigiKey lookups for today on this shared server;"),
     ("rate_limited", r"\w+ lookups are limited to "),
     ("rate_limited", r"\w+ is limiting requests"),
     ("rate_limited", r"\w+ refused this server's requests"),
     ("rate_limited", r"JLCPCB rate limited"),
+    ("rate_limited", r"SamacSys's daily model download limit for this shared server is used up;"),
     ("rate_limited", r"Couldn't check EasyEDA for .* right now"),
     ("failed", r"Stock history is not available on this server"),
     # the request was invalid
@@ -408,6 +427,7 @@ _FAILED_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in (
     ("cse_download_network", r"CSE model download failed \(network"),
     ("cse_download_too_large", r"CSE model download too large"),
     ("cse_invalid_zip", r"CSE returned invalid zip file"),
+    ("cse_download_refused", r"CSE refused the model download for part "),
 )]
 
 # What an empty reply's hint opens with: its most specific cause comes first
@@ -688,6 +708,46 @@ class UsageStatsMiddleware(FastMCPMiddleware):
             logger.exception("Usage stats: couldn't count a tool call")
 
 
+# Other names callers send for a tool's argument, each seen in prod's rejected calls: the two
+# distributor tools take the same thing, and digikey_get_part's was product_number until 0.10.3
+# (clients with that name built in keep working); the two batch tools name their list differently.
+# Renamed before the arguments are validated, so the tool list shows one name.
+ARGUMENT_ALIASES: dict[str, dict[str, tuple[str, ...]]] = {
+    "mouser_get_part": {"part_number": ("product_number", "mpn")},
+    "digikey_get_part": {"part_number": ("product_number", "mpn")},
+    "jlc_get_parts": {"parts": ("lcsc",)},
+    "jlc_stock_history": {"lcsc": ("parts",)},
+}
+
+
+def _with_argument_aliases(tool: str, arguments: Any) -> Any:
+    """The call's arguments with an alias renamed to the tool's own name: only when that name isn't
+    given and exactly one of its aliases is (anything else is left for validation to refuse)."""
+    aliases = ARGUMENT_ALIASES.get(tool)
+    if not aliases or not isinstance(arguments, dict):
+        return arguments
+    for name, others in aliases.items():
+        given = [other for other in others if other in arguments]
+        if name not in arguments and len(given) == 1:
+            arguments = {name if key == given[0] else key: value for key, value in arguments.items()}
+    return arguments
+
+
+class ArgumentAliasMiddleware(FastMCPMiddleware):
+    """Accepts ARGUMENT_ALIASES in tool calls. Never breaks a call: on any surprise the call goes on as sent."""
+
+    async def on_call_tool(self, context, call_next):
+        try:
+            message = context.message
+            arguments = _with_argument_aliases(message.name, message.arguments)
+            if arguments is not message.arguments:
+                context = context.copy(message=message.model_copy(update={"arguments": arguments}))
+        except Exception:
+            logger.exception("Argument aliases: couldn't read a tool call")
+        return await call_next(context)
+
+
+mcp.add_middleware(ArgumentAliasMiddleware())
 mcp.add_middleware(UsageStatsMiddleware())
 
 
@@ -737,7 +797,7 @@ def _load_platform_ranges() -> platform_ranges.PlatformRanges:
 
 
 class RateLimitMiddleware:
-    """Rate limiting middleware: RATE_LIMIT_REQUESTS (200) requests a rolling minute per address,
+    """Rate limiting middleware: RATE_LIMIT_REQUESTS (300) requests a rolling minute per address,
     and PLATFORM_RATE_LIMIT for the AI platforms' shared addresses (platform_ranges.py: Anthropic's
     and OpenAI's published ranges), the limit _limit_for() gives each address. An IPv4 address is
     counted by itself and an IPv6 address by its /64 (_limit_key()), except a platform address.
@@ -3366,7 +3426,7 @@ async def mouser_get_part(part_number: str) -> dict:
         openWorldHint=True,
     )
 )
-async def digikey_get_part(product_number: str) -> dict:
+async def digikey_get_part(part_number: str) -> dict:
     """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out: use it
     only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
     DigiKey; one part per call, not whole BOMs; for lifecycle use part_lifecycle. Don't retry a
@@ -3382,16 +3442,16 @@ async def digikey_get_part(product_number: str) -> dict:
     mouser_get_part, plus length: not 3-40 characters).
 
     Args:
-        product_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
+        part_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
             partial one can find nothing and still uses a request. One keyword search per lookup.
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
-    if product_number and len(product_number) > 500:
-        return {"error": "Product number too long (max 500 characters)"}
+    if part_number and len(part_number) > 500:
+        return {"error": "Part number too long (max 500 characters)"}
 
     try:
-        return await _digikey_client.get_part(product_number, caller=_caller_ip())
+        return await _digikey_client.get_part(part_number, caller=_caller_ip())
     except DigiKeyError as e:  # our own message (HTTP status) or DigiKey's OAuth error
         message = _redact(str(e))  # every app's credentials, in the log as in the reply
         logger.error(f"DigiKey part lookup failed: {type(e).__name__}: {message}")
@@ -3643,7 +3703,7 @@ async def cse_get_kicad(
     Requires CSEARCH_USER and CSEARCH_PASS. Reply: part_id, search metadata when resolved by query,
     kicad_symbol and kicad_footprint (either file may be null). No overall tool deadline; search
     requests use CSE_REQUEST_TIMEOUT (default 45s per request phase), model downloads 30s per phase.
-    A non-Success search status is retried once after 3 s.
+    A non-Success search status is retried once after 3 s; shared daily download limits may apply.
 
     Args:
         query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"), max 500 characters; picks the first search
@@ -4034,11 +4094,16 @@ async def datasheet_redirect(request):
     to the maker's datasheet or LCSC's PDF, as the live reply gives (JLCPCBClient.datasheet_pdf_url).
     The target only ever comes from JLCPCB's or LCSC's listing for the code in the path."""
     lcsc = request.path_params["lcsc"].strip().upper()
+    counted = bool(re.fullmatch(r"C[0-9]+", lcsc))
+    if counted:
+        stats.count_datasheet_link("visits")
     if not _client:
         return JSONResponse({"error": "Server is starting; try again in a moment"}, status_code=503)
     try:
         url = await _client.datasheet_pdf_url(lcsc)
     except DatasheetLinkBusy as e:
+        if counted:
+            stats.count_datasheet_link("refused")
         # The per-IP limiter's 429 fields (llms.txt), with this budget's own reason
         wait = e.retry_after
         seconds = f"{wait} second{'' if wait == 1 else 's'}"
@@ -4048,9 +4113,13 @@ async def datasheet_redirect(request):
                                           f"links a minute for all its users; try again in {seconds}."},
                             status_code=429, headers={"Retry-After": str(wait)})
     except ValueError as e:  # JLCPCB rate limit, WAF challenge or timeout: details stay in the log
+        if counted:
+            stats.count_datasheet_link("failed")
         logger.warning(f"Datasheet link for {lcsc} failed: {e}")
         return JSONResponse({"error": "The datasheet source didn't answer; try again later"}, status_code=502)
     if not url:
+        if counted:
+            stats.count_datasheet_link("not_found")
         return JSONResponse({"error": f"No datasheet PDF found for {lcsc}"}, status_code=404)
     return RedirectResponse(url, status_code=302, headers={"Cache-Control": "no-store"})
 
@@ -4185,6 +4254,17 @@ def main():
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger("pcbparts_mcp").setLevel(logging.INFO)
 
+    log_options = {}
+    if LOG_PATH:
+        # Configure uvicorn exactly as run() would, before attaching the persistent handler:
+        # dictConfig closes existing handlers. Don't let run() configure them a second time.
+        from logging.config import dictConfig
+        from .file_logging import configure_file_logging
+
+        dictConfig(uvicorn.config.LOGGING_CONFIG)
+        configure_file_logging(LOG_PATH, LOG_KEEP_DAYS)
+        log_options["log_config"] = None
+
     # Suppress /health access log spam (Docker healthchecks every 10-30s)
     logging.getLogger("uvicorn.access").addFilter(_HealthFilterLog())
 
@@ -4197,6 +4277,7 @@ def main():
         # 127.0.0.1 unless set), which would put callers' IPs on every access-log line if the proxy
         # ever connected from there; _client_ip() reads X-Forwarded-For itself
         proxy_headers=False,
+        **log_options,
     )
 
 

@@ -3,7 +3,7 @@
 > MCP tools for electronic parts: parametric search of JLCPCB's in-stock catalog (daily snapshot, 630K+ parts), live JLCPCB, Mouser and DigiKey stock and prices, lifecycle status, EasyEDA pinouts and footprints, SamacSys KiCad files, reference boards, sensors and PCB design rules.
 
 - Endpoint: `https://pcbparts.dev/mcp` (Streamable HTTP, stateless), no auth
-- Rate limit: 200 requests a minute per IP or IPv6 /64 (see Rate limit)
+- Rate limit: 300 requests a minute per IP or IPv6 /64 (see Rate limit)
 - Health: `https://pcbparts.dev/health`
 - Source and self-hosting: https://github.com/Averyy/pcbparts-mcp
 
@@ -153,7 +153,7 @@ Up to 50 parts from the snapshot in one tool call, database only; no specs, data
 
 ### digikey_get_part
 
-- `product_number` (required, max 500 characters): one DigiKey PN or full MPN; one keyword search each (a partial number can find nothing and still uses a request). JST's `(LF)`/`(SN)` endings are optional (`matched_by` then `packing`; `mfr_part_number` is DigiKey's spelling).
+- `part_number` (required, max 500 characters; `product_number` still works): one DigiKey PN or full MPN; one keyword search each (a partial number can find nothing and still uses a request). JST's `(LF)`/`(SN)` endings are optional (`matched_by` then `packing`; `mfr_part_number` is DigiKey's spelling).
 - Reply: `results` (each maker's listing, most stock first), `total`, `observed_at`. Results: Mouser's fields except `unit_weight_g`; `price_breaks` are `qty`, `price` in `currency`; `matched_by` has `digikey_pn` (the result's `part_number`) for `mouser_pn`, and `other` is a listing DigiKey called exact whose MPN and PN both differ.
   - `part_number`, `price`, `price_breaks`, `min_qty`: one packaging's (the PN given, else the smallest order), named by `packaging`; `other_packaging` (`part_number`, `packaging`, `min_qty`, `price`) lists the rest; `reel_fee`/`marketplace` where they apply.
   - `lifecycle`: DigiKey's product status. `lifecycle_status`: Active `active`, Not For New Designs `nrnd`, Last Time Buy (or end of life still marked Active) `last_time_buy`, Obsolete `obsolete`, else (Discontinued at Digi-Key) `unknown`. `last_buy_date`: YYYY-MM-DD.
@@ -161,7 +161,7 @@ Up to 50 parts from the snapshot in one tool call, database only; no specs, data
 
 ### part_lifecycle
 
-Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas). Others are asked of Mouser (10 per request), and of DigiKey only when Mouser doesn't list them for the maker given or its daily limit is spent. Only the shared limits cap lookups.
+Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas). Others are asked of Mouser (10 per request), and of DigiKey only when Mouser doesn't list them for the maker given or its daily limit is spent. Shared limits and the per-address daily cap apply.
 
 - `parts` (required): `jlc_get_parts`' forms. An LCSC code fills in a missing or unusable MPN or maker from the snapshot (gone parts included); a usable `mpn` wins. `manufacturer` picks among makers sharing a number (loosely). MPNs match ignoring case, `-`, space, `_`, `/` and JST endings; "not listed" holds only for the spelling asked ("LM358P" is still asked after "LM358-P").
 - Reply: `results` (input order), `total`, `status_counts`, `retry_after` (the smallest, when any part waited). Result: `input` (as in `jlc_get_parts`), `lcsc`, `mpn`, `status`, and with a reading `manufacturer`, `raw` (the distributor's wording), `source` (`mouser`/`digikey`), `observed_at`, `last_buy_date`.
@@ -184,7 +184,7 @@ Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas).
 SamacSys ComponentSearchEngine; slow (about 15 s a search, more when busy; cached).
 
 - `cse_search`: `query` (required, max 500 characters), `limit` (default 5, 1-10). Results: `source`, `mfr_part_number`, `manufacturer`, `description`, `datasheet_url`, `has_model` (some ECAD model; formats unconfirmed), `has_3d`, `model_quality`, `cse_part_id`, `pin_count`, `image_url`; plus `total`.
-- `cse_get_kicad`: `query` (max 500 characters; the first result with `has_model`) or `part_id` (`cse_part_id`; wins). Needs the server's SamacSys login. Reply: `part_id`, search fields when found by query, `kicad_symbol` (`.kicad_sym` text), `kicad_footprint` (`.kicad_mod` text); either may be null (over 10 MiB is skipped).
+- `cse_get_kicad`: `query` (max 500 characters; the first result with `has_model`) or `part_id` (`cse_part_id`; wins). Needs the server's SamacSys login. Reply: `part_id`, search fields when found by query, `kicad_symbol` (`.kicad_sym` text), `kicad_footprint` (`.kicad_mod` text); either may be null (over 10 MiB is skipped). An `error` says when SamacSys's daily download limit is used up (stored files still work).
 
 ### board_search, board_get
 
@@ -211,17 +211,18 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 
 ## Rate limit
 
-- 200 HTTP requests per rolling minute per IPv4 address or IPv6 /64; 1,000 per address in the AI platforms' published ranges (Anthropic's, used by claude.ai and Claude connectors; OpenAI's ChatGPT connectors list).
+- 300 HTTP requests per rolling minute per IPv4 address or IPv6 /64; 1,000 per address in the AI platforms' published ranges (Anthropic's, used by claude.ai and Claude connectors; OpenAI's ChatGPT connectors list).
 - Each MCP message (`initialize`, `tools/call`, ...) counts: a stateless client's tool call is about three. `/health` isn't counted. Bodies over 1 MB: HTTP 413.
 - Replies (`/health`'s too) carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` (seconds until your oldest counted request leaves the minute; 0 with none).
 - Refused: HTTP 429, `Retry-After` and `{error, retry_after, reason, resets_at, tell_user}` (`resets_at`: when, in UTC; `tell_user`: a sentence for the user). Wait `retry_after` seconds, then resend. `per_ip_rate_limit` and `too_many_clients` refusals aren't counted; a `datasheet_rate_limit` refusal is, so retrying sooner can hit `per_ip_rate_limit`. `reason`:
   - `per_ip_rate_limit`: your address used its limit.
   - `too_many_clients`: the server is serving as many addresses as it can.
-  - `datasheet_rate_limit`: from a `datasheet_pdf` link; at most 20 new links a minute are signed for everyone. Links a live `jlc_get_part` reply gave in the last 25 minutes open without one.
+  - `datasheet_rate_limit`: from a `datasheet_pdf` link; 20 new links a minute for everyone; a visit beyond that waits up to 30 s, then gets the 429. Links a live `jlc_get_part` reply gave in the last 25 minutes open without one.
 - Heavy use: self-host (Source above).
 
 ## Quotas
 
 - Mouser and DigiKey daily limits are shared by everyone (DigiKey's resets at 00:00 UTC); at most 25 requests a minute for Mouser, 100 for DigiKey.
+- Each address (IPv6: /64) gets 200 Mouser and DigiKey lookups combined per UTC day; stored answers are free and the AI platforms' addresses are exempt. Past it: `error` "This address has used its 200 Mouser and DigiKey lookups for today..."; `part_lifecycle` gives `unknown` with `retry_after`.
 - Kept answers are shared and cost no request: Mouser and DigiKey parts 3 days, found or not; lifecycle readings 90 days, no usable status and not listed included (obsolete: 1 year). `observed_at` dates them.
 - Batch Mouser lookups, one DigiKey part at a time, `part_lifecycle` for lifecycle; don't retry a quota error. Self-hosting with your own keys gives your own limits.

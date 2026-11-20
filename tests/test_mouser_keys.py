@@ -111,6 +111,107 @@ def mouser_stats():
     return stats.usage.summary()["days"][0]["distributors"]["mouser"]
 
 
+class TestLimitStatsAndLogs:
+    @pytest.mark.parametrize("body,label,cause", [(DAILY_403, "daily", "distributor_daily"),
+                                                  (MINUTE_403, "minute", "distributor_minute")],
+                             ids=["day", "min"])
+    async def test_refusals_sent_and_held_back_add_up(self, make, clock, monkeypatch, body, label, cause):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        fake = FakeMouser()
+        fake.script(KEYS[0], httpx.Response(403, json=body))
+        m = make(pool(clock, n=1), fake)
+        for i in range(4):
+            assert "error" in await m.get_part(f"PART{i}A")
+        day = stats.usage.summary()["days"][0]
+        counts = day["distributor_limits"]["mouser"]
+        assert counts["refusals"][label] == 1 and sum(counts["refusals"].values()) == 1
+        assert counts["held_back"][cause] == 3
+        assert sum(counts["held_back"].values()) == day["distributors"]["mouser"]["rate_limited"] == 3
+        assert sum(counts["held_back_hours"]) == 3
+        assert day["distributors"]["mouser"]["sent"] == len(fake.sent) == 1
+        public = json.dumps([day, m._quota.status()])
+        assert all(text not in public for text in (*KEYS, "daily_refusals", "resumed_at", "key 1"))
+
+    async def test_bare_429_with_none_left_counts_as_a_daily_refusal(self, make, clock, monkeypatch):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        fake = FakeMouser()
+        fake.script(KEYS[0], httpx.Response(429, headers={"x-ratelimit-remaining": "0",
+                                                          "x-ratelimit-resettime": "2026-11-20T00:00:00Z"}))
+        m = make(pool(clock, n=1), fake)
+        assert "error" in await m.get_part("PART0A")
+        refusals = stats.usage.summary()["days"][0]["distributor_limits"]["mouser"]["refusals"]
+        assert refusals == {"daily": 1, "minute": 0, "refused": 0}
+
+    async def test_minute_cap_and_daily_count_are_one_cause_each(self, make, clock, monkeypatch):
+        monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
+        m = make(pool(clock, n=1, limit=2, per_minute=1), FakeMouser())
+        assert "error" not in await m.get_part("PART0A")
+        assert "error" in await m.get_part("PART1A")
+        clock.advance(60)
+        assert "error" not in await m.get_part("PART1A")
+        assert "error" in await m.get_part("PART2A")
+        day = stats.usage.summary()["days"][0]
+        held = day["distributor_limits"]["mouser"]["held_back"]
+        assert held["minute_cap"] == held["daily_count"] == 1
+        assert sum(held.values()) == day["distributors"]["mouser"]["rate_limited"] == 2
+
+    async def test_daily_pause_and_acceptance_logs_once_without_key_text(self, make, clock, caplog):
+        quotas = pool(clock, n=2)
+        # Start on key 2, to check the log uses the selected key's number.
+        quotas.quotas[0].pause(MIDNIGHT, "invalid_key")
+        fake = FakeMouser()
+        fake.script(KEYS[1], httpx.Response(403, json=DAILY_403), httpx.Response(403, json=DAILY_403))
+        m = make(quotas, fake)
+        with caplog.at_level(logging.INFO, logger="pcbparts_mcp.mouser"):
+            assert "error" in await m.get_part("PART0A")
+            # A concurrent refusal must not open/update an episode or log another pause.
+            m._refused_for_limit(DAILY_403["Errors"][0], 1)
+            assert "error" in await m.get_part("PART1A")  # unsent while paused
+            clock.advance(3600)
+            assert "error" in await m.get_part("PART1A")
+            clock.advance(3600)
+            assert "error" not in await m.get_part("PART2A")
+            assert "error" not in await m.get_part("PART3A")  # only first acceptance logs
+        messages = [(r.levelno, r.getMessage()) for r in caplog.records if r.name == "pcbparts_mcp.mouser"]
+        assert messages == [
+            (logging.WARNING, "Mouser key 2 daily refusal at 2026-11-18T20:00:00+00:00: our count 1/1000; "
+                              "tries again at 2026-11-18T21:00:00+00:00"),
+            (logging.WARNING, "Mouser key 2 daily refusal at 2026-11-18T21:00:00+00:00: our count 2/1000; "
+                              "tries again at 2026-11-18T22:00:00+00:00"),
+            (logging.INFO, "Mouser key 2 accepted again at 2026-11-18T22:00:00+00:00; "
+                           "daily refusal since 2026-11-18T20:00:00+00:00, after 1 retries")]
+        assert len(quotas.quotas[1]._daily_refusals) == 1
+        assert not any(key in caplog.text for key in KEYS)
+
+    async def test_startup_lists_last_five_kept_episodes_per_key(self, clock, tmp_path, monkeypatch, caplog):
+        path = tmp_path / "quota.json"
+        quotas = pool(clock, path=path)
+        for _ in range(7):
+            quotas.quotas[0].check()
+            quotas.quotas[0].pause_daily_unknown_reset()
+            clock.advance(3600)
+            quotas.quotas[0].clear_expired_pause()
+        quotas.quotas[1].check()
+        quotas.quotas[1].pause_daily_unknown_reset()
+        monkeypatch.setattr(server, "DISTRIBUTOR_QUOTA_PATH", str(path))
+        monkeypatch.setattr(server, "MOUSER_API_KEY", KEYS[0])
+        monkeypatch.setattr(server, "MOUSER_EXTRA_API_KEYS", list(KEYS[1:]))
+        with caplog.at_level(logging.INFO, logger="pcbparts_mcp.server"):
+            async with Client(server.mcp):
+                health = json.loads((await server.health(None)).body)
+        messages = [m for m in caplog.messages if "kept daily refusals:" in m]
+        assert messages == [
+            "Mouser key 1 kept daily refusals: " + "; ".join([
+                "2026-11-18T22:00:00+00:00, count 3, accepted again 2026-11-18T23:00:00+00:00",
+                "2026-11-18T23:00:00+00:00, count 4, accepted again 2026-11-19T00:00:00+00:00",
+                "2026-11-19T00:00:00+00:00, count 1, accepted again 2026-11-19T01:00:00+00:00",
+                "2026-11-19T01:00:00+00:00, count 2, accepted again 2026-11-19T02:00:00+00:00",
+                "2026-11-19T02:00:00+00:00, count 3, accepted again 2026-11-19T03:00:00+00:00"]),
+            "Mouser key 2 kept daily refusals: 2026-11-19T03:00:00+00:00, count 1, still refused"]
+        assert not any(key in caplog.text for key in KEYS)
+        assert "daily_refusals" not in json.dumps(health)
+
+
 class TestConfig:
     def test_read_in_order_until_one_is_missing(self):
         env = {"MOUSER_API_KEY_2": " b ", "MOUSER_API_KEY_3": "c", "MOUSER_API_KEY_5": "e"}

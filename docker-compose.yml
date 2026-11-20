@@ -13,14 +13,16 @@ services:
       - web
     volumes:
       # EasyEDA footprint answers, CSE searches/KiCad files and Mouser/DigiKey answers and lifecycle
-      # (EASYEDA_STORE_PATH, CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH), request counts, usage stats; `docker compose down` keeps named volumes
+      # (EASYEDA_STORE_PATH, CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH), request counts, usage stats,
+      # and application logs (Dockerfile's LOG_PATH=/app/cache/logs/application.log, kept 7 days);
+      # `docker compose down` keeps named volumes
       - pcbparts-cache:/app/cache
     env_file:
       - path: .env
         required: false
     environment:
       - HTTP_PORT=8080
-      - RATE_LIMIT_REQUESTS=200
+      - RATE_LIMIT_REQUESTS=300
       - PYTHONUNBUFFERED=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]

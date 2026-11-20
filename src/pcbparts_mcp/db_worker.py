@@ -16,6 +16,8 @@ from contextvars import copy_context
 from functools import partial, wraps
 from typing import Any, Callable, NamedTuple, ParamSpec, TypeVar
 
+from . import stats
+
 P = ParamSpec("P")
 T = TypeVar("T")
 
@@ -56,12 +58,14 @@ class DatabasePressure:
             self._waiting.setdefault(pool, {})[token] = self._clock()
         return token
 
-    def started(self, pool: ThreadPoolExecutor, token: object) -> None:
-        """A worker took this job: the pool's queue is moving, and the job runs until discard()."""
+    def started(self, pool: ThreadPoolExecutor, token: object) -> float:
+        """A worker took this job: return its queue wait; it runs until discard()."""
         with self._lock:
             now = self._last_start[pool] = self._clock()
+            queued = self._waiting.get(pool, {}).get(token, now)
             self._remove(self._waiting, pool, token)
             self._running.setdefault(pool, {})[token] = now
+            return max(0.0, now - queued)
 
     def discard(self, pool: ThreadPoolExecutor, token: object) -> None:
         """A job is gone: it finished, was cancelled before starting, or couldn't be submitted."""
@@ -121,10 +125,17 @@ async def run_db(pool: ThreadPoolExecutor, func: Callable[P, T], *args: P.args, 
     call = partial(func, *args, **kwargs)
     pressure = database_pressure
     token = pressure.enqueue(pool)
+    loop = asyncio.get_running_loop()
 
     def invoke():
-        pressure.started(pool, token)
+        wait = pressure.started(pool, token)
         try:
+            # UsageStats belongs to the event loop. Capture the UTC start time here, so a
+            # delayed callback (or a query spanning midnight) still counts in the right hour.
+            try:
+                loop.call_soon_threadsafe(stats.count_db_wait, wait, pool is COMPONENT_POOL, stats.usage._now())
+            except Exception:
+                pass  # measurement must not stop work, even if a cancelled caller's loop closed
             return call()
         finally:
             pressure.discard(pool, token)  # no longer running

@@ -278,7 +278,7 @@ class TestSettings:
 
     def test_defaults(self):
         got = self.settings()
-        assert (got["platform"], got["normal"]) == (1000, 200)
+        assert (got["platform"], got["normal"]) == (1000, 300)
         assert got["anthropic"] == ANTHROPIC
         assert Path(got["openai"]) == COMMITTED
 
@@ -300,7 +300,7 @@ class TestSettings:
         ("PLATFORM_RATE_LIMIT", "0", 1, True),  # 0 refused every platform request
         ("PLATFORM_RATE_LIMIT", "2500", 2500, False),
         ("RATE_LIMIT_REQUESTS", "-5", 1, True),
-        ("RATE_LIMIT_REQUESTS", "abc", 200, True),
+        ("RATE_LIMIT_REQUESTS", "abc", 300, True),
         ("RATE_LIMIT_REQUESTS", " 250 ", 250, False),
     ], ids=["empty", "comma", "exp", "zero", "ok", "neg", "text", "padded"])
     def test_bad_limits_fall_back(self, monkeypatch, name, value, used, warned):

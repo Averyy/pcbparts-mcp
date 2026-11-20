@@ -1,6 +1,8 @@
 """Short datasheet links (0.8.0): jlc_get_part's datasheet_pdf was a ~1.2KB signed link that
 expired in 30 minutes; it is now /mcp/datasheet/<lcsc>, which signs a fresh link on each visit."""
 
+import asyncio
+import json
 import re
 from datetime import datetime, timezone
 from types import SimpleNamespace
@@ -11,6 +13,7 @@ import pytest
 import pcbparts_mcp.client as client_module
 import pcbparts_mcp.server as server
 from pcbparts_mcp.client import DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, JLCPCBClient
+from pcbparts_mcp import stats
 
 ISSUED = 1793546220.0  # 2026-11-01T15:17:00Z
 
@@ -31,7 +34,10 @@ def clock(monkeypatch):
 @pytest.fixture
 def live(monkeypatch, clock):
     """A client whose JLCPCB search returns a freshly signed link; EasyEDA must not be called."""
-    client = JLCPCBClient()
+    async def sleep(seconds):
+        clock[0] += seconds
+
+    client = JLCPCBClient(clock=lambda: clock[0], sleep=sleep)
     calls = []
 
     async def request(url, params):
@@ -83,13 +89,12 @@ class TestSigning:
         for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
             await client.datasheet_pdf_url(f"C{100 + n}")
         assert await client.datasheet_pdf_url("C100") == signed(ISSUED, "C100")  # held links still work
-        clock[0] += 20
-        with pytest.raises(DatasheetLinkBusy) as busy:
-            await client.datasheet_pdf_url("C999")
-        assert busy.value.retry_after == 40 and "try again in 40s" in str(busy.value)
-        assert f"at most {DATASHEET_SIGNINGS_PER_MINUTE}" in str(busy.value) and "25 minutes" in str(busy.value)
-        clock[0] += 41
-        assert await client.datasheet_pdf_url("C999")
+        assert await client.datasheet_pdf_url("C999") == signed(ISSUED + 3, "C999")
+        assert clock[0] == ISSUED + 3
+        clock[0] += 60  # idle restores the full burst
+        for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
+            await client.datasheet_pdf_url(f"C{200 + n}")
+        assert clock[0] == ISSUED + 63
 
 
 class TestRoute:
@@ -240,7 +245,7 @@ class TestUnsignedFallback:
         assert await listed.datasheet_pdf_url("C919459") == "https://www.ti.com/lit/ds/symlink/tps61023.pdf"
         assert (listed._jlcpcb_session.sent, listed._lcsc_session.sent) == (1, 0)
         assert await listed.datasheet_pdf_url("C919459") == "https://www.ti.com/lit/ds/symlink/tps61023.pdf"
-        assert listed._jlcpcb_session.sent == 1 and len(listed._datasheet_signings) == 1  # held, one budget slot
+        assert listed._jlcpcb_session.sent == 1 and listed._datasheet_tokens == 19  # held, one budget slot
         assert self.upstream()["jlcpcb"]["sent"] == 1 and self.upstream()["jlcpcb"]["cached"] == 1
 
     async def test_lcsc_copy(self, listed):
@@ -267,14 +272,21 @@ class TestUnsignedFallback:
         assert listed._jlcpcb_session.sent == 0
         assert await listed.datasheet_pdf_url("C5") is None and listed._jlcpcb_session.sent == 1  # not that host
 
-    async def test_the_budget_still_applies(self, listed, clock):
+    async def test_the_budget_still_applies(self, listed, clock, monkeypatch):
+        sleeps = []
+
+        async def sleep(seconds):
+            sleeps.append(seconds)
+            clock[0] += seconds
+
+        monkeypatch.setattr(listed, "_datasheet_sleep", sleep)
         for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
             LISTINGS.setdefault(f"C{900 + n}", {"dataManualOfficialLink": TI_LISTED})
         try:
             for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
                 assert await listed.datasheet_pdf_url(f"C{900 + n}")
-            with pytest.raises(DatasheetLinkBusy):
-                await listed.datasheet_pdf_url("C919459")
+            assert await listed.datasheet_pdf_url("C919459")
+            assert sleeps == [3]
         finally:
             for n in range(DATASHEET_SIGNINGS_PER_MINUTE):
                 LISTINGS.pop(f"C{900 + n}", None)
@@ -299,3 +311,179 @@ def test_a_link_that_is_not_text_is_no_link():
     assert lcsc_datasheet_pdf({"pdfUrl": "https://datasheet.lcsc.com/x.pdf"}) == "https://datasheet.lcsc.com/x.pdf"
     assert _on_lcsc(["https://datasheet.lcsc.com/x.pdf"]) is False and _on_lcsc(None) is False
     assert maker_datasheet_link(12345, ["x"], None, "https://www.onsemi.com/pdf/a.pdf") == "https://www.onsemi.com/pdf/a.pdf"
+
+
+class TestQueue:
+    async def test_slots_up_to_30_seconds_then_429_and_retry(self, live, clock, monkeypatch):
+        client, calls = live
+        for n in range(20):
+            await client.datasheet_pdf_url(f"C{100 + n}")
+        sleepers = []
+        ready = asyncio.Event()
+
+        async def sleep(seconds):
+            released = asyncio.Event()
+            sleepers.append((seconds, released))
+            if len(sleepers) == 10:
+                ready.set()
+            await released.wait()
+
+        monkeypatch.setattr(client, "_datasheet_sleep", sleep)
+        pending = [asyncio.create_task(client.datasheet_pdf_url(f"C{200 + n}")) for n in range(10)]
+        await ready.wait()
+        assert [seconds for seconds, _ in sleepers] == list(range(3, 31, 3))
+        assert len(calls) == 20
+        with pytest.raises(DatasheetLinkBusy) as busy:
+            await client.datasheet_pdf_url("C999")
+        assert busy.value.retry_after == 3 and "try again in 3s" in str(busy.value)
+        assert "25 minutes" in str(busy.value)
+        # Held links don't need a slot, even with a full queue.
+        assert await client.datasheet_pdf_url("C100") == signed(ISSUED, "C100")
+        for (delay, released), task in zip(sleepers, pending):
+            clock[0] = ISSUED + delay
+            released.set()
+            assert await task
+        assert len(calls) == 30
+        counts = stats.usage.summary()["totals"]["datasheet_links"]
+        assert counts["signed"] == 30 and counts["waited"] == 10 and counts["reused"] == 1
+        assert stats.usage.summary()["totals"]["upstream"]["jlcpcb"]["rate_limited"] == 1
+
+    async def test_simultaneous_visits_share_one_request(self, live, clock, monkeypatch):
+        client, calls = live
+        started, release = asyncio.Event(), asyncio.Event()
+        request = client._request
+
+        async def held_request(url, params):
+            started.set()
+            await release.wait()
+            return await request(url, params)
+
+        monkeypatch.setattr(client, "_request", held_request)
+        first = asyncio.create_task(client.datasheet_pdf_url("C15127"))
+        await started.wait()
+        followers = [asyncio.create_task(client.datasheet_pdf_url("c15127")) for _ in range(5)]
+        release.set()
+        answers = await asyncio.gather(first, *followers)
+        assert answers == [signed(ISSUED)] * 6 and calls == ["C15127"]
+        counts = stats.usage.summary()["totals"]["datasheet_links"]
+        assert counts["signed"] == 1 and counts["reused"] == 5
+        assert client._datasheet_inflight == {}
+
+    async def test_after_wait_rechecks_held_links(self, live, clock, monkeypatch):
+        client, calls = live
+        for n in range(20):
+            await client.datasheet_pdf_url(f"C{100 + n}")
+
+        async def sleep(seconds):
+            clock[0] += seconds
+            client._part_cache["C15127"] = (clock[0], {
+                "datasheet_pdf": signed(clock[0]), "datasheet_pdf_expires": "2026-11-01T16:00:00Z"})
+
+        monkeypatch.setattr(client, "_datasheet_sleep", sleep)
+        assert await client.datasheet_pdf_url("C15127") == signed(ISSUED + 3)
+        assert len(calls) == 20
+        counts = stats.usage.summary()["totals"]["datasheet_links"]
+        assert counts["signed"] == 20 and counts["waited"] == 0 and counts["reused"] == 1
+        # Reusing the refreshed link returns the unused slot to the budget.
+        assert await client.datasheet_pdf_url("C999") == signed(ISSUED + 3, "C999")
+        assert clock[0] == ISSUED + 3 and len(calls) == 21
+
+    async def test_failed_shared_request_is_not_kept(self, live, monkeypatch):
+        client, calls = live
+        original = client._request
+
+        async def failed(url, params):
+            raise ValueError("source failed")
+
+        monkeypatch.setattr(client, "_request", failed)
+        with pytest.raises(ValueError, match="source failed"):
+            await client.datasheet_pdf_url("C15127")
+        monkeypatch.setattr(client, "_request", original)
+        assert await client.datasheet_pdf_url("C15127") == signed(ISSUED)
+        assert calls == ["C15127"]
+
+    async def test_disconnect_keeps_the_shared_request_and_close_cancels_it(self, live, monkeypatch):
+        client, calls = live
+        started, release = asyncio.Event(), asyncio.Event()
+
+        async def blocked(url, params):
+            started.set()
+            await release.wait()
+
+        monkeypatch.setattr(client, "_request", blocked)
+        visitor = asyncio.create_task(client.datasheet_pdf_url("C15127"))
+        await started.wait()
+        shared = client._datasheet_inflight["C15127"]
+        visitor.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await visitor
+        assert not shared.done()
+        await client.close()
+        assert shared.cancelled() and client._datasheet_inflight == {}
+
+    async def test_a_counter_fault_does_not_break_the_link(self, live, monkeypatch):
+        class Broken(stats.UsageStats):
+            def record_datasheet_link(self, event):
+                raise RuntimeError("counter fault")
+
+        monkeypatch.setattr(stats, "usage", Broken())
+        client, calls = live
+        assert await client.datasheet_pdf_url("C15127") == signed(ISSUED)
+        assert await client.datasheet_pdf_url("C15127") == signed(ISSUED)
+        assert calls == ["C15127"]
+
+
+class TestDatasheetStats:
+    async def test_route_counts_statuses_and_ignores_bad_codes(self, live, monkeypatch):
+        client, calls = live
+        monkeypatch.setattr(server, "_client", client)
+        transport = httpx.ASGITransport(app=server.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://localhost") as http:
+            assert (await http.get("/mcp/datasheet/C15127")).status_code == 302
+            assert (await http.get("/mcp/datasheet/C15127")).status_code == 302
+            assert (await http.get("/mcp/datasheet/C1")).status_code == 404
+            assert (await http.get("/mcp/datasheet/C1")).status_code == 404
+            assert (await http.get("/mcp/datasheet/XYZ")).status_code == 404
+
+            async def failed(url, params):
+                raise ValueError("no upstream")
+
+            monkeypatch.setattr(client, "_request", failed)
+            assert (await http.get("/mcp/datasheet/C502")).status_code == 502
+            client._datasheet_tokens = -20
+            assert (await http.get("/mcp/datasheet/C429")).status_code == 429
+            body = (await http.get("/mcp/stats")).json()
+        expected = dict(visits=6, reused=2, signed=3, waited=0, refused=1, failed=1, not_found=2)
+        assert body["days"][0]["datasheet_links"] == expected
+        assert body["totals"]["datasheet_links"] == expected
+        assert "C15127" not in json.dumps(body)
+
+    def test_persistence_cleaning_and_old_days(self, tmp_path):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {
+            "2026-11-01": {"datasheet_links": {"visits": 4, "reused": "bad", "signed": float("inf"),
+                                              "waited": True, "C15127": 999}},
+            "2026-10-31": {},
+        }}), encoding="utf-8")
+        usage = stats.UsageStats(clock=lambda: ISSUED)
+        usage.open(path)
+        days = usage.summary()["days"]
+        assert days[1]["datasheet_links"] is None
+        assert days[0]["datasheet_links"] == dict(visits=4, reused=0, signed=0, waited=0, refused=0, failed=0, not_found=0)
+        usage.record_datasheet_link("signed")
+        usage.record_datasheet_link("C15127")  # arbitrary text cannot reach the saved counts
+        usage.save()
+        loaded = stats.UsageStats(clock=lambda: ISSUED)
+        loaded.open(path)
+        assert loaded.summary() == usage.summary()
+        assert "C15127" not in path.read_text(encoding="utf-8")
+        assert "datasheet_links" in loaded.summary()["about"]
+
+    def test_counting_on_an_old_day_starts_with_zero(self, tmp_path):
+        path = tmp_path / "usage.json"
+        path.write_text(json.dumps({"days": {"2026-11-01": {}}}), encoding="utf-8")
+        usage = stats.UsageStats(clock=lambda: ISSUED)
+        usage.open(path)
+        assert usage.summary()["days"][0]["datasheet_links"] is None
+        usage.record_datasheet_link("visits")
+        assert usage.summary()["days"][0]["datasheet_links"]["visits"] == 1

@@ -145,6 +145,7 @@ EMPTY = {"results": [], "total": 0}
     ({"error": "Part C5 not found"}, "lcsc_not_found"),
     ({"error": "Part not found: 209"}, "part_not_found"),
     ({"error": "No ECAD model available for 'X'"}, "no_ecad_model"),
+    ({"error": "No ECAD model available for part 999999999"}, "no_ecad_model"),
     ({"error": "No KiCad files found in model archive for part 7"}, "no_kicad_in_archive"),
 ])
 def test_empty_reasons(content, reason):
@@ -158,6 +159,7 @@ def test_empty_reasons(content, reason):
     ("CSE model download failed (HTTP 302)", "cse_download_http"),
     ("CSE model download failed (network/connection error)", "cse_download_network"),
     ("CSE get_kicad failed. Check server logs for details.", "cse_lookup_failed"),
+    ("CSE refused the model download for part 7: Error: access denied", "cse_download_refused"),
     ("JLCPCB blocked request with WAF challenge — try again later", "jlcpcb_waf"),
     ("JLCPCB returned an unreadable response — try again later", "jlcpcb_unavailable"),
     ("Something nobody expected", "unexpected_error"),
@@ -168,6 +170,18 @@ def test_failed_reasons(message, reason):
 
 def test_a_raised_exception_is_counted_as_one():
     assert server._call_reason("failed", {}, RuntimeError("boom")) == "exception"
+
+
+def test_address_daily_refusal_is_rate_limited_without_a_failure_reason():
+    message = ("This address has used its 100 Mouser and DigiKey lookups for today on this shared server; "
+               "the count resets at 00:00 UTC. Answers pcbparts already has stored still work.")
+    assert server._error_kind(message) == "rate_limited"
+    # Reasons label only not_found and failed calls, as for the shared daily quota refusal.
+    context = SimpleNamespace(message=SimpleNamespace(name="digikey_get_part"))
+    server.UsageStatsMiddleware._record(context, 0.0, result=SimpleNamespace(structured_content={"error": message}))
+    day = stats.usage.summary()["days"][0]
+    assert day["tools"]["digikey_get_part"]["rate_limited"] == 1
+    assert day["reasons"] == {}
 
 
 @pytest.mark.parametrize("why_empty,result", [

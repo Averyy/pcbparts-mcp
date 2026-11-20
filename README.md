@@ -124,7 +124,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 - `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list, or on a server without price tiers), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev, and repeat lookups are answered from kept copies. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 200 Mouser and DigiKey lookups combined a day; stored answers are free. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -168,25 +168,28 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
 | `HTTP_HOST` | `0.0.0.0` | Bind address (`127.0.0.1` or `::1`: localhost only; `::`: all IPv6); keep `0.0.0.0` in Docker, whose compose file already publishes on 127.0.0.1 |
 | `HTTP_PORT` | `8080` | Server port |
-| `RATE_LIMIT_REQUESTS` | `200` | Requests per minute per IP or IPv6 /64 |
+| `RATE_LIMIT_REQUESTS` | `300` | Requests per minute per IP or IPv6 /64 |
 | `PLATFORM_RATE_LIMIT` | `1000` | Per-IP limit for the AI platforms' published ranges (at least `RATE_LIMIT_REQUESTS`) |
 | `DB_STUCK_WAIT_SECONDS` | `60` | A database queue that starts no call for this many seconds makes `/health` 503, then the server exits for Docker to restart |
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges (empty: normal limit) |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily requests to each of Mouser and DigiKey (`0`: kept answers only) |
+| `DISTRIBUTOR_DAILY_PER_ADDRESS` | `200` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts and pauses |
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
+| `LOG_PATH` | set in Docker; else empty | Application log file, kept across deploys (empty: none) |
+| `LOG_KEEP_DAYS` | `7` | Days of log files to keep |
 | `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | EasyEDA footprint answers |
 | `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | SamacSys searches and KiCad files |
 | `DISTRIBUTOR_STORE_PATH` | `/app/cache/distributor.db` in Docker | Mouser/DigiKey answers and lifecycle readings |
 
-The five `_PATH` settings keep that data across restarts; outside Docker they're unset and it stays in memory. The compose files mount a named volume at `/app/cache`. An unusable or out-of-range number falls back to its default or nearest allowed value, with a warning at startup.
+The `_PATH` settings keep that data across restarts; outside Docker they're unset, data stays in memory and logs go only to the console. The compose files mount a named volume at `/app/cache`. An unusable or out-of-range number falls back to its default or nearest allowed value, with a warning at startup.
 
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
-- **Rate limit:** 200 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
+- **Rate limit:** 300 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
 - **Health:** `https://pcbparts.dev/health`: version, caches, distributor quotas and database status as JSON; HTTP 503 when a database call is stuck
 - **Usage stats:** `https://pcbparts.dev/mcp/stats`: anonymous daily counts of tool calls, outcomes, upstream requests and refusals (the endpoint lists every field). No IPs, queries or part numbers are kept.
 
