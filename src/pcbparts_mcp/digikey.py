@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, NamedTuple
@@ -11,7 +12,9 @@ from typing import Any, Callable, NamedTuple
 import httpx
 
 from . import stats
-from .cache import SELF_HOSTING_URL, DailyQuota, Pacer, QuotaPool, _header_int
+from .cache import (
+    SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, Pacer, QuotaPool, _header_int, _next_utc_midnight,
+)
 from .client import _sent
 from .config import (
     DIGIKEY_CLIENT_ID,
@@ -23,7 +26,7 @@ from .config import (
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
-from .digikey_site import DigiKeySite, SiteFailed, SiteUnavailable
+from .digikey_site import AddressCapReached, DigiKeySite, SiteFailed, SiteUnavailable
 from .distributor_store import DistributorStore
 from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
 from .search.mpn import NOT_SENT_HINTS, distributor_match, not_sent_reason, same_jst_part
@@ -32,6 +35,9 @@ logger = logging.getLogger(__name__)
 
 # What a user needs to run the server with DigiKey's own limits, named in the limit errors
 OWN_CREDENTIALS = "DigiKey API credentials (free at https://developer.digikey.com)"
+# The limit replies' advice, as DailyQuota words it for these credentials
+_OWN_CREDENTIALS_ADVICE = (f" To skip the shared limits, run pcbparts-mcp with your own {OWN_CREDENTIALS}: "
+                           f"{SELF_HOSTING_URL}. Meanwhile use jlc_search.")
 
 
 class DigiKeyError(ValueError):
@@ -224,11 +230,18 @@ class DigiKeyClient:
         store: DistributorStore | None = None,
         clock: Callable[[], float] = time.time,
         site: DigiKeySite | None = None,
+        address_daily: AddressDailyQuota | None = None,
     ):
         """store: the answer and lifecycle store shared with MouserClient and part_lifecycle (the
         server passes one); without one the client keeps its own in memory. site: the server passes
-        one only without credentials, where digikey_site.enabled(); lookups then go through it."""
+        one only without credentials, where digikey_site.enabled(); lookups then go through it.
+        address_daily: with site, the per-address day shared with Mouser (with credentials the
+        quota pool has it); callers and held_back: the site path's hourly per-IP log lines."""
         self._site = site
+        self._closed = False
+        self._address_daily = address_daily if site is not None else None
+        self.callers = CallerTally("DigiKey") if site is not None else None
+        self.held_back = CallerTally("DigiKey", what="calls held back") if site is not None else None
         self._inflight: dict[str, asyncio.Task] = {}  # cache key -> its running site lookup
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:
@@ -244,6 +257,8 @@ class DigiKeyClient:
         self._tasks: set[asyncio.Task] = set()  # lookups whose caller may have given up (_shielded)
 
     def _get_http(self) -> httpx.AsyncClient:
+        if self._closed:  # shutting down: nothing goes out after close()
+            raise httpx.ConnectError("DigiKey client closed")
         if self._http is None:
             self._http = httpx.AsyncClient(timeout=15.0)
         return self._http
@@ -437,8 +452,31 @@ class DigiKeyClient:
     def retry_after(self, caller: str | None = None) -> int:
         """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
         if self._site is not None:
-            return self._site.retry_after()
+            return self._seconds_to_utc_midnight() if self._address_capped(caller) else self._site.retry_after()
         return (self._quota.retry_after(caller) if self._quota else None) or 60
+
+    def _seconds_to_utc_midnight(self) -> int:
+        now = self._store.now()
+        return max(1, math.ceil(_next_utc_midnight(now) - now))
+
+    def _seconds_until(self, moment: float) -> int:
+        return max(1, math.ceil(moment - self._store.now()))
+
+    def _held_wait(self, hold: tuple[float, bool], pause: int) -> int:
+        """retry_after for a number that found no slot, in a batch a pause then stopped: its
+        address's reset when that's what stops it, else no sooner than the pause ends."""
+        moment, capped = hold
+        return self._seconds_until(moment) if capped else max(self._seconds_until(moment), pause)
+
+    def _address_capped(self, caller: str | None) -> bool:
+        return self._address_daily is not None and self._address_daily.capped(caller)
+
+    def _hold_back_for_address(self, caller: str | None, lookups: int = 1) -> None:
+        """Counts for site lookups the per-address day stopped (none of them sent)."""
+        for _ in range(lookups):
+            stats.count_distributor("digikey", "rate_limited")
+            stats.count_distributor_limit("digikey", "held_back", "address_daily")
+            self.held_back.record(caller)
 
     @property
     def unmetered(self) -> bool:
@@ -449,9 +487,11 @@ class DigiKeyClient:
         """For /health without credentials: when a pause ends (None when not paused); else None."""
         return self._site.status() if self._site is not None else None
 
-    def can_answer_now(self) -> bool:
-        """A lookup could go out now without credentials (not paused): for the miss hint."""
-        return self._site is not None and not self._site.status().get("paused_until")
+    def can_answer_now(self, caller: str | None = None) -> bool:
+        """A lookup could go out now without credentials (not paused, and caller's address hasn't
+        used its day): for the miss hint, which mustn't send a caller to a refusal."""
+        return (self._site is not None and not self._site.status().get("paused_until")
+                and not self._address_capped(caller))
 
     async def lookup(self, product_number: str, caller: str | None = None) -> Lookup:
         """get_part's reply, what it was and when DigiKey answered (Lookup). A number DigiKey can't
@@ -475,7 +515,7 @@ class DigiKeyClient:
                 return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
             return Lookup(_answering(answer, product_number), "found", fetched_at)
         if self._site is not None:
-            return await self._lookup_site(product_number, cache_key)
+            return await self._lookup_site(product_number, cache_key, caller)
         # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
         task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
         self._tasks.add(task)
@@ -575,39 +615,63 @@ class DigiKeyClient:
         self._store.put_readings(readings, also_as=product_number)
         return Lookup(_answering(result, product_number), "found", fetched_at)
 
-    async def _lookup_site(self, product_number: str, cache_key: str) -> Lookup:
+    async def _lookup_site(self, product_number: str, cache_key: str, caller: str | None = None) -> Lookup:
         """lookup() without credentials, for a number the store doesn't have. One lookup a number
-        at a time: a second caller for it waits for the first's answer (counted as cached)."""
-        task = self._inflight.get(cache_key)
-        if task is None:
-            task = asyncio.create_task(self._fetch_site(product_number, cache_key))
-            self._inflight[cache_key] = task
-            self._tasks.add(task)
-            task.add_done_callback(self._tasks.discard)
-            task.add_done_callback(lambda done: self._inflight.get(cache_key) is done and self._inflight.pop(cache_key))
-            task.add_done_callback(lambda done: done.cancelled() or done.exception())
-        else:
-            stats.count_distributor("digikey", "cached")
-        result = await asyncio.shield(task)
+        at a time: a second caller for it waits for the first's answer (counted as cached, free).
+        The caller that starts a lookup is charged one of its address's day as its first request
+        goes out (_charge), so a lookup that sends nothing costs nothing."""
+        while True:
+            task = self._inflight.get(cache_key)
+            joined = task is not None
+            if not joined:
+                if self._address_capped(caller):  # no need to queue it
+                    self._hold_back_for_address(caller)
+                    return self._address_limited()
+                task = asyncio.create_task(self._fetch_site(product_number, cache_key, caller))
+                self._inflight[cache_key] = task
+                self._tasks.add(task)
+                task.add_done_callback(self._tasks.discard)
+                task.add_done_callback(
+                    lambda done: self._inflight.get(cache_key) is done and self._inflight.pop(cache_key))
+                task.add_done_callback(lambda done: done.cancelled() or done.exception())
+            try:
+                result = await asyncio.shield(task)
+            except BaseException:  # the shared lookup failed (or this call was cancelled): answered all the same
+                if joined:
+                    stats.count_distributor("digikey", "cached")
+                raise
+            if result.kind != "address_capped":
+                if joined:
+                    stats.count_distributor("digikey", "cached")
+                break
+            if not joined:  # its own address's day ran out while it waited for a slot
+                return self._address_limited()
+            # The lookup it joined was its starter's, refused by that address's day: ask again, now
+            # charged to this caller if it sends. Drop the finished task first: its cleanup callback
+            # may not have run yet, and awaiting a done task doesn't yield, so this would spin on it
+            if self._inflight.get(cache_key) is task:
+                del self._inflight[cache_key]
         if result.kind == "found":
             return Lookup(_answering(result.reply, product_number), "found", result.fetched_at)
         if result.kind == "not_found":
             return Lookup(_not_found_reply(product_number), "not_found", result.fetched_at)
         return result
 
-    async def _fetch_site(self, product_number: str, cache_key: str) -> Lookup:
+    async def _fetch_site(self, product_number: str, cache_key: str, caller: str | None = None) -> Lookup:
         """One lookup through the site, kept in the store as an API answer is (found: the stored
         answer, without requested and matched_by)."""
         assert self._site is not None
+        sent: set[str] = set()  # gets the number once its first request goes out
         try:
-            answer = await self._site.lookup(product_number)
-        except SiteUnavailable as e:
-            self._count_site_limited(e)
+            answer = await self._site.lookup(product_number, sent=sent, charge=self._charge(caller))
+        except AddressCapReached:  # its address's day ran out while it waited for a slot (counted by _charge)
+            return self._address_capped_lookup()
+        except SiteUnavailable as e:  # a request out was counted as sent by _charge; else held back here
+            if not sent and self._held_back_unsent(caller, e, 1):
+                return self._address_capped_lookup()
             return Lookup(_site_limited(e), "limited", self._store.now())
-        except SiteFailed:
-            stats.count_distributor("digikey", "sent")
+        except SiteFailed:  # its request went out (counted by _charge)
             raise DigiKeyError("DigiKey request failed (network/connection or server error)") from None
-        stats.count_distributor("digikey", "sent")
         fetched_at = self._store.now()
         if not answer.results:
             self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
@@ -630,25 +694,62 @@ class DigiKeyClient:
                 readings.append(Reading(mpn, maker, "digikey", status, raw, fetched_at, last_buy_date=buy_by))
         return readings
 
-    @staticmethod
-    def _count_site_limited(error: SiteUnavailable, lookups: int = 1) -> None:
-        """Counts for lookups a SiteUnavailable stopped: sent ones (and the refusal, once, when one
-        of their requests got it), or held back when none of their requests went out."""
-        if error.refused:
-            stats.count_distributor_limit("digikey", "refusals", "refused")
-        for _ in range(lookups):
-            if error.sent:
-                stats.count_distributor("digikey", "sent")
-            else:
-                stats.count_distributor("digikey", "rate_limited")
-                stats.count_distributor_limit("digikey", "held_back",
-                                              "distributor_refused" if error.paused else "other")
+    def _charge(self, caller: str | None, refused: dict[str, float] | None = None) -> Callable[[str], bool]:
+        """For DigiKeySite: called just before a number's first request, with no await between it
+        and the send, so the check and the count can't be split by another lookup. False (nothing
+        sent) once caller's address has used its day; exempt callers are never counted. Both outcomes
+        are counted here, as they happen (sent in /mcp/stats and the hourly "requests sent" line;
+        a refusal as held back), so a lookup cancelled or stopped later, or still running at
+        shutdown, neither loses nor repeats a count. refused: gets
+        each number refused and when its address's day resets (00:00 UTC after the refusal), so a
+        batch stopped afterwards doesn't count it again and its retry_after holds past midnight."""
+        day = self._address_daily
 
-    async def lifecycle(self, numbers: list[str]) -> dict[str, LifecycleAnswer]:
+        def charge(number: str, check: bool = False) -> bool:
+            """check: before waiting for a slot and the pacer, whether the number may go out at all
+            (refused, and counted, if not; nothing recorded otherwise). The call at the send counts."""
+            if day is not None and day.capped(caller):
+                self._hold_back_for_address(caller)
+                if refused is not None:
+                    refused[number] = _next_utc_midnight(self._store.now())
+                return False
+            if check:
+                return True
+            if day is not None:
+                day.record(caller)
+            stats.count_distributor("digikey", "sent")
+            self.callers.record(caller)
+            return True
+        return charge
+
+    def _held_back_unsent(self, caller: str | None, error: SiteUnavailable, lookups: int) -> bool:
+        """Counts for lookups a SiteUnavailable stopped before their first request: as the address's
+        day when caller has used it (it couldn't have sent anyway; the API path checks it first),
+        else as the site's limit. True for the address's day."""
+        if lookups <= 0:
+            return False
+        if self._address_capped(caller):
+            self._hold_back_for_address(caller, lookups)
+            return True
+        for _ in range(lookups):
+            stats.count_distributor("digikey", "rate_limited")
+            stats.count_distributor_limit("digikey", "held_back", "distributor_refused" if error.paused else "other")
+            self.held_back.record(caller)
+        return False
+
+    def _address_limited(self) -> Lookup:
+        return Lookup(self._address_daily.error(_OWN_CREDENTIALS_ADVICE), "limited", self._store.now())
+
+    def _address_capped_lookup(self) -> Lookup:
+        """_fetch_site's answer when its starter's address had used its day: that caller's alone, so
+        _lookup_site lets a caller that joined it ask again with its own."""
+        return Lookup(self._address_daily.error(_OWN_CREDENTIALS_ADVICE), "address_capped", self._store.now())
+
+    async def lifecycle(self, numbers: list[str], caller: str | None = None) -> dict[str, LifecycleAnswer]:
         """part_lifecycle's DigiKey readings without credentials, for numbers that may be sent
         (search/mpn.py's not_sent_reason): stored answers first, then one batch for the rest
-        (statuses only, no prices; DigiKeySite.statuses). With credentials part_lifecycle uses
-        lookup() for each instead."""
+        (statuses only, no prices; DigiKeySite.statuses), each one of caller's address's day; past
+        it, "limited" until 00:00 UTC. With credentials part_lifecycle uses lookup() for each."""
         assert self._site is not None
         numbers = list(dict.fromkeys(n.strip() for n in numbers if n.strip()))
         stats.count_parts_asked("digikey", numbers)
@@ -672,25 +773,60 @@ class DigiKeyClient:
             answers[number] = LifecycleAnswer("found", readings, fetched_at)
         if not wanted:
             return answers
+        if self._address_capped(caller):  # its day is used: held back without queueing (the charge
+            # at each number's first request decides for a batch that runs out midway)
+            self._hold_back_for_address(caller, len(wanted))
+            now, wait = self._store.now(), self._seconds_to_utc_midnight()
+            return {**answers, **{number: LifecycleAnswer("limited", [], now, wait) for number in wanted}}
+        sent: set[str] = set()  # the numbers whose first request went out, each charged as it went
+        refused: dict[str, float] = {}  # number -> its day's reset, for those the charge refused (and counted)
+        # A task of this client's, so close() cancels and waits for it as for a single lookup (and
+        # cancelling this call cancels it too)
+        # number -> (when it may be asked again, whether its address's day is what stops it), for
+        # those that found no slot (counted then)
+        held: dict[str, tuple[float, bool]] = {}
+
+        def hold(number: str, error: SiteUnavailable) -> None:
+            now = self._store.now()
+            capped = self._held_back_unsent(caller, error, 1)
+            held[number] = (_next_utc_midnight(now) if capped else now + error.retry_after, capped)
+
+        batch = asyncio.ensure_future(self._site.statuses(wanted, sent=sent, charge=self._charge(caller, refused),
+                                                          held=hold))
+        self._tasks.add(batch)
+        batch.add_done_callback(self._tasks.discard)
         try:
-            found = await self._site.statuses(wanted)
-        except SiteUnavailable as e:
-            self._count_site_limited(e, len(wanted))
+            found = await batch
+        except SiteUnavailable as e:  # the numbers sent were counted by _charge; the rest held back here
+            unsent = [n for n in wanted if n not in sent and n not in refused and n not in held]
+            wait = self._seconds_to_utc_midnight() if self._held_back_unsent(caller, e, len(unsent)) else e.retry_after
             now = self._store.now()
-            return {**answers, **{n: LifecycleAnswer("limited", [], now, e.retry_after) for n in wanted}}
-        except SiteFailed:
-            for _ in wanted:
-                stats.count_distributor("digikey", "sent")
+            return {**answers, **{n: LifecycleAnswer("limited", [], now, self._seconds_until(refused[n]) if n in refused
+                                                     else self._held_wait(held[n], e.retry_after) if n in held
+                                                     else wait if n in unsent else e.retry_after)
+                                  for n in wanted}}
+        except SiteFailed:  # every number tried failed (each sent); one never sent was refused: all counted by _charge
             now = self._store.now()
-            return {**answers, **{n: LifecycleAnswer("failed", [], now) for n in wanted}}
+            return {**answers, **{n: LifecycleAnswer("limited", [], now, self._seconds_until(refused[n])) if n in refused
+                                  else LifecycleAnswer("failed", [], now) for n in wanted}}
         fetched_at = self._store.now()
         for number in wanted:
             value = found.get(number)
+            if isinstance(value, AddressCapReached):  # the day ran out before its first request (counted by _charge)
+                reset = refused.get(number)
+                answers[number] = LifecycleAnswer("limited", [], fetched_at, self._seconds_until(reset) if reset
+                                                  else self._seconds_to_utc_midnight())
+                continue
             if isinstance(value, SiteUnavailable):  # no request slot in time for this one
-                self._count_site_limited(value)
+                if number in held:  # never sent: counted as it gave up; no sooner than a pause begun since
+                    answers[number] = LifecycleAnswer("limited", [], fetched_at,
+                                                      self._held_wait(held[number], self._site.paused_for()))
+                    continue
+                if number not in sent and self._held_back_unsent(caller, value, 1):  # sent: counted by _charge
+                    answers[number] = LifecycleAnswer("limited", [], fetched_at, self._seconds_to_utc_midnight())
+                    continue
                 answers[number] = LifecycleAnswer("limited", [], fetched_at, value.retry_after)
                 continue
-            stats.count_distributor("digikey", "sent")
             if not isinstance(value, list):  # its own lookup failed (SiteFailed)
                 answers[number] = LifecycleAnswer("failed", [], fetched_at)
                 continue
@@ -706,9 +842,15 @@ class DigiKeyClient:
 
     async def close(self) -> None:
         """Close the HTTP client (and the store, if this client made its own). Lookups still in
-        flight are cancelled."""
-        for task in list(self._tasks):
-            task.cancel()
+        flight are cancelled, and waited for, so what they sent is counted before the server's
+        last save of the stats."""
+        self._closed = True
+        while self._tasks:  # one started while waiting is cancelled too
+            tasks = list(self._tasks)
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            self._tasks.difference_update(tasks)
         if self._site is not None:
             await self._site.close()
         if self._http:

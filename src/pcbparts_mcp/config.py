@@ -59,6 +59,7 @@ HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
 # Optional application log, separate from stdout's per-request log. Docker keeps it on the cache volume.
 LOG_PATH = os.getenv("LOG_PATH", "")
 LOG_KEEP_DAYS = number_setting("LOG_KEEP_DAYS", 7, 1)
+LOG_MAX_BYTES_PER_DAY = number_setting("LOG_MAX_BYTES_PER_DAY", 50_000_000, 1)
 # Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1. HTTP requests, not tool
 # calls: most clients send three per call, and a BOM tool loading a board at its normal pace sends
 # 120-180 a minute (ordinary addresses were refused at the earlier 100 on 2026-11-19).
@@ -289,7 +290,7 @@ DIGIKEY_MAX_RESULTS = 10
 # a lookup that needs a request is refused as over the daily quota.
 DISTRIBUTOR_DAILY_LIMIT = number_setting("DISTRIBUTOR_DAILY_LIMIT", 1000, 0)
 # Sent lookups per address per UTC day, Mouser and DigiKey counted together. 0 disables this cap.
-DISTRIBUTOR_DAILY_PER_ADDRESS = number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 200, 0)
+DISTRIBUTOR_DAILY_PER_ADDRESS = number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 1000, 0)
 # Our caps per rolling minute, below each API's own: Mouser allows 30 a minute, DigiKey 120 (and
 # suspends an app for ten minutes for going over its per-second threshold).
 MOUSER_PER_MINUTE = 25
@@ -304,9 +305,16 @@ DISTRIBUTOR_QUOTA_PATH = os.getenv("DISTRIBUTOR_QUOTA_PATH", "")
 # restarts. The Docker image sets /app/cache/distributor.db (the pcbparts-cache volume). Unset means
 # memory only: a restart empties both.
 DISTRIBUTOR_STORE_PATH = os.getenv("DISTRIBUTOR_STORE_PATH", "")
-# Anonymous daily usage counts served at /mcp/stats (stats.py), kept across restarts. The Docker image
+# Private daily usage counts served at /mcp/stats (stats.py), kept across restarts. The Docker image
 # sets /app/cache/usage_stats.json (the pcbparts-cache volume). Unset means memory only.
 USAGE_STATS_PATH = os.getenv("USAGE_STATS_PATH", "")
+STATS_TOKEN = os.getenv("STATS_TOKEN", "")
+# Private per-day rows and failed queries; empty disables both (popular terms still count).
+CALL_LOG_DIR = os.getenv("CALL_LOG_DIR", "")
+CALL_LOG_DAYS = number_setting("CALL_LOG_DAYS", 30, 1)
+CALL_LOG_MAX_ROWS = number_setting("CALL_LOG_MAX_ROWS", 1_000_000, 1)
+FAILED_QUERY_DAYS = number_setting("FAILED_QUERY_DAYS", 7, 1)
+FAILED_QUERY_CAP = number_setting("FAILED_QUERY_CAP", 5000, 1)
 
 CSE_CONCURRENT_LIMIT = 3
 CSE_RATE_LIMIT = 0.15

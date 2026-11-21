@@ -819,6 +819,9 @@
 
         .tab-content { display: none; max-width: 680px; margin: 0 auto; }
         .tab-content.active { display: block; }
+        .setup-terms { position: relative; z-index: 1; max-width: 680px; margin: 20px auto 0; text-align: center; color: var(--silk-dim); font-size: 0.85rem; }
+        .setup-terms a { color: var(--copper-bright); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--copper); }
+        .setup-terms a:hover { color: var(--silk); }
 
         .code-block {
             border-radius: 6px;
@@ -1906,10 +1909,12 @@
       <span class="str">"mcp__pcbparts__jlc_stock_check"</span>,
       <span class="str">"mcp__pcbparts__jlc_stock_history"</span>,
       <span class="str">"mcp__pcbparts__jlc_get_part"</span>,
+      <span class="str">"mcp__pcbparts__jlc_get_parts"</span>,
       <span class="str">"mcp__pcbparts__jlc_find_alternatives"</span>,
       <span class="str">"mcp__pcbparts__jlc_get_pinout"</span>,
       <span class="str">"mcp__pcbparts__mouser_get_part"</span>,
       <span class="str">"mcp__pcbparts__digikey_get_part"</span>,
+      <span class="str">"mcp__pcbparts__part_lifecycle"</span>,
       <span class="str">"mcp__pcbparts__cse_search"</span>,
       <span class="str">"mcp__pcbparts__cse_get_kicad"</span>,
       <span class="str">"mcp__pcbparts__sensor_recommend"</span>,
@@ -1999,6 +2004,7 @@
                         </div>
                     </div>
                 </div>
+                <p class="setup-terms">By connecting, you agree to the <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a>.</p>
             </div>
         </section>
 
@@ -2113,10 +2119,11 @@
                     <div class="footer-contact">
                         <a href="/llms.txt">llms.txt</a>
                         <a href="/privacy.html">Privacy</a>
+                        <a href="/terms.html">Terms</a>
                         <a href="mailto:info@pcbparts.dev">info@pcbparts.dev</a>
                     </div>
                 </div>
-                <p>&copy; <span id="current-year"></span> PCB Parts MCP. An independent project. Not affiliated with or endorsed by JLCPCB, EasyEDA, Mouser, DigiKey, or SamacSys.</p>
+                <p>&copy; <span id="current-year"></span> PCB Parts MCP. An independent project run by Avery L. Not affiliated with or endorsed by JLCPCB, EasyEDA, Mouser, DigiKey, or SamacSys.</p>
                 <p>Component data comes from JLCPCB's parts library, EasyEDA, Mouser Electronics, DigiKey, and SamacSys ComponentSearchEngine. All product names, logos, and trademarks are property of their respective owners.</p>
                 <p>For official parts information, visit <a href="https://jlcpcb.com/parts" target="_blank">jlcpcb.com/parts</a>, <a href="https://www.mouser.com" target="_blank">mouser.com</a>, or <a href="https://www.digikey.com" target="_blank">digikey.com</a>.</p>
             </div>

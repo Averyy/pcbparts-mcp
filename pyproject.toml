@@ -10,7 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     # MCP SDK and FastMCP framework. fastmcp 3.x DNS-rebinding protection 421s any Host header not
     # in a localhost-only default — we pass allowed_hosts in http_app (server.create_app).
-    "mcp==1.25.0",
+    "mcp==1.30.0",
     "fastmcp==3.4.3",
     # Anti-detection HTTP client (TLS fingerprinting, WAF solving, rotation)
     "wafer-py==0.7.15",

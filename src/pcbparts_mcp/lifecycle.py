@@ -396,7 +396,7 @@ class LifecycleLookup:
 
         # A part with a reading is never asked
         if digikey_first:
-            await self._ask_digikey_batch(self._unanswered(pairs, "digikey"))
+            await self._ask_digikey_batch(self._unanswered(pairs, "digikey"), caller)
             await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
         else:  # Mouser first, then DigiKey for what it doesn't list or can't answer today
             await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
@@ -538,12 +538,13 @@ class LifecycleLookup:
 
         await asyncio.gather(*(ask(state) for state in wanted))
 
-    async def _ask_digikey_batch(self, wanted: list[_KeyState]) -> None:
-        """DigiKey without a daily quota: every wanted spelling in one DigiKeyClient.lifecycle call."""
+    async def _ask_digikey_batch(self, wanted: list[_KeyState], caller: str | None = None) -> None:
+        """DigiKey without a daily quota: every wanted spelling in one DigiKeyClient.lifecycle call
+        (caller's address day still applies)."""
         if self._digikey is None or not wanted:
             return
         try:
-            answers = await self._digikey.lifecycle([state.spelling for state in wanted])
+            answers = await self._digikey.lifecycle([state.spelling for state in wanted], caller=caller)
         except Exception as e:  # those parts' lookups failed; Mouser is asked instead
             logger.error(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}")
             answers = {}

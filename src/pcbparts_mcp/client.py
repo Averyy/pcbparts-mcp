@@ -125,9 +125,14 @@ async def _sent(source: str, request: Awaitable[Any]) -> Any:
     _count_upstream(source, "sent")
     try:
         response = await request
+    except asyncio.CancelledError as e:
+        stats.count_upstream_status(source, e)
+        raise
     except Exception as e:
+        stats.count_upstream_status(source, e)
         _count_upstream(source, "retries", _wafer_retries(e))
         raise
+    stats.count_upstream_status(source, response)
     _count_upstream(source, "retries", _wafer_retries(response))
     return response
 

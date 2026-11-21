@@ -419,9 +419,8 @@ async def test_server_wires_default_caps_and_shutdown_flushes_tallies(clock, mon
             pools = list(server._distributor_quotas.values())
             assert len(pools) == 2 and pools[0].address_daily is pools[1].address_daily  # one count for both
             for name, pool in server._distributor_quotas.items():
-                assert pool.address_daily.limit == 200
-                for _ in range(200):
-                    pool.address_daily.record(ADDRESS)
+                assert pool.address_daily.limit == 1000
+                pool.address_daily.record(ADDRESS, 1000)
                 assert pool.address_error(ADDRESS) is not None
                 assert pool.address_error(None) is None
                 assert pool.address_error("160.79.104.1") is None
@@ -457,7 +456,31 @@ def test_config_default_minimum_and_disabled():
     from pcbparts_mcp import config
     from pcbparts_mcp.config import number_setting
 
-    assert config.DISTRIBUTOR_DAILY_PER_ADDRESS == 200  # the shipped default (no setting in the test run)
-    for raw, expected in (("", 200), ("0", 0), ("-1", 0), ("bad", 200)):
-        assert number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 200, 0,
+    assert config.DISTRIBUTOR_DAILY_PER_ADDRESS == 1000  # the shipped default since 0.10.5 (200 before)
+    for raw, expected in (("", 1000), ("0", 0), ("-1", 0), ("bad", 1000)):
+        assert number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 1000, 0,
                               environ={"DISTRIBUTOR_DAILY_PER_ADDRESS": raw}, warnings=[]) == expected
+
+
+async def test_minute_task_drops_previous_day_addresses_without_any_quota_pool(clock, monkeypatch):
+    """DigiKey without credentials and no Mouser key: the address day belongs to no pool."""
+    from types import SimpleNamespace
+    day = AddressDailyQuota(5, key=lambda ip: ip, clock=clock)
+    day.record(ADDRESS)
+    clock.now = MIDNIGHT
+    monkeypatch.setattr(server, "_distributor_quotas", {})
+    monkeypatch.setattr(server, "_digikey_client", SimpleNamespace(_address_daily=day, callers=None, held_back=None))
+    monkeypatch.setattr(server, "_caller_tallies", lambda: [])
+    monkeypatch.setattr(server, "_exit_if_stuck", lambda count: count)
+    calls = 0
+
+    async def minute(seconds):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise asyncio.CancelledError
+
+    monkeypatch.setattr(server.asyncio, "sleep", minute)
+    with pytest.raises(asyncio.CancelledError):
+        await server._every_minute()
+    assert day._counts == {}

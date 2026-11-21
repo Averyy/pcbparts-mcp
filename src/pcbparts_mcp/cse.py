@@ -21,6 +21,7 @@ import httpx
 
 from . import stats
 from .cache import TTLCache
+from .client import _sent
 from .cse_archive import MAX_ZIP_SIZE as _MAX_ZIP_SIZE, extract_kicad
 from .cse_store import CSEStore, query_key
 from .config import (
@@ -181,8 +182,7 @@ class CSEClient:
         for attempt in range(2):
             try:
                 async with self._get_semaphore():
-                    stats.count_upstream("cse", "sent")
-                    response = await self._get_http().get(_CSE_API_URL, params=params)
+                    response = await _sent("cse", self._get_http().get(_CSE_API_URL, params=params))
                     await asyncio.sleep(CSE_RATE_LIMIT)
             except httpx.HTTPError:
                 raise ValueError("CSE API request failed (network/connection error)")
@@ -303,13 +303,12 @@ class CSEClient:
                 if self._clock() < self._quota_until:
                     return self._quota_error(resolved_part_id, part_info)
                 started = self._clock()
-                stats.count_upstream("cse", "sent")
-                response = await self._get_http().get(
+                response = await _sent("cse", self._get_http().get(
                     _CSE_MODEL_URL,
                     params={"partID": str(resolved_part_id)},
                     auth=(CSE_USER, CSE_PASS),
                     timeout=30,
-                )
+                ))
                 elapsed = self._clock() - started
                 await asyncio.sleep(CSE_RATE_LIMIT)
         except httpx.HTTPError:

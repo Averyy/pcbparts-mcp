@@ -155,12 +155,12 @@ _JST_FINISH = re.compile(r"(?:\s*\((?:lf|sn)\))+$")
 
 def same_jst_part(listed: str, asked: str, maker: str) -> bool:
     """Whether a JST part's listed number is the one asked once JST's (LF)/(SN) endings are set
-    aside, ignoring case and outer spaces. Always False for other makers, and for a number that is
-    nothing but those endings."""
+    aside, ignoring case and separators as mpn_key does. Always False for other makers, and for a
+    number that is nothing but those endings."""
     if "jst" not in (maker or "").casefold().split():
         return False
-    core = _JST_FINISH.sub("", (listed or "").strip().casefold())
-    return bool(core) and core == _JST_FINISH.sub("", (asked or "").strip().casefold())
+    core = mpn_key(_JST_FINISH.sub("", (listed or "").strip().casefold()))
+    return bool(core) and core == mpn_key(_JST_FINISH.sub("", (asked or "").strip().casefold()))
 
 
 # matched_by on mouser_get_part / digikey_get_part results: how a result matches the number it

@@ -3,7 +3,7 @@
 import pytest
 
 import pcbparts_mcp.server as server
-from pcbparts_mcp import stats
+from pcbparts_mcp import call_log, stats
 from pcbparts_mcp.catalog_files import read_catalog, write_catalog
 
 
@@ -70,9 +70,20 @@ def _no_real_footprint_store(monkeypatch):
     monkeypatch.setattr(server, "DISTRIBUTOR_QUOTA_PATH", "")
     monkeypatch.setattr(server, "DISTRIBUTOR_STORE_PATH", "")
     monkeypatch.setattr(server, "USAGE_STATS_PATH", "")
+    monkeypatch.setattr(server, "STATS_TOKEN", "")
+    monkeypatch.setattr(server, "CALL_LOG_DIR", "")
+    monkeypatch.setattr(call_log, "recorder", call_log.CallLog())
+    monkeypatch.setattr(server, "_observation_errors", set())
     for name in ("MOUSER_API_KEY", "DIGIKEY_CLIENT_ID", "DIGIKEY_CLIENT_SECRET", "DIGIKEY_CLIENT_ID_2", "DIGIKEY_CLIENT_SECRET_2"):
         monkeypatch.setattr(server, name, "")
     monkeypatch.setattr(server, "MOUSER_EXTRA_API_KEYS", [])
     monkeypatch.setattr(server, "MOUSER_KEY_WARNINGS", [])
     monkeypatch.setattr(stats, "usage", stats.UsageStats())
     monkeypatch.setattr(server, "_apps_by_address", server.AppsByAddress())
+
+
+@pytest.fixture
+def stats_headers(monkeypatch):
+    """Opt in to the private stats handler without depending on a secret in the shell."""
+    monkeypatch.setattr(server, "STATS_TOKEN", "test-stats-token")
+    return {"Authorization": "Bearer test-stats-token"}

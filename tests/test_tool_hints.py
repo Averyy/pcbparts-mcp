@@ -1,6 +1,6 @@
 """0.10.5: tool hints and wording. Tools that can call JLCPCB, EasyEDA, Mouser, DigiKey or SamacSys are
 marked open-world and the rest read local data only; the server reports its own version; the
-distributor tools describe their shared limits instead of ranking services. No network."""
+distributor tools clarify their shared limits and retain JLCPCB-first guidance. No network."""
 
 from fastmcp import Client
 

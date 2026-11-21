@@ -224,6 +224,6 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 ## Quotas
 
 - Mouser and DigiKey daily limits are shared by everyone (DigiKey's resets at 00:00 UTC); at most 25 requests a minute for Mouser, 100 for DigiKey.
-- Each address (IPv6: /64) gets 200 Mouser and DigiKey lookups combined per UTC day; stored answers are free and the AI platforms' addresses are exempt. Past it: `error` "This address has used its 200 Mouser and DigiKey lookups for today..."; `part_lifecycle` gives `unknown` with `retry_after`.
+- Each address (IPv6: /64) gets 1,000 Mouser and DigiKey lookups combined per UTC day; stored answers are free and the AI platforms' addresses are exempt. Past it: `error` "This address has used its 1000 Mouser and DigiKey lookups for today..."; `part_lifecycle` gives `unknown` with `retry_after`.
 - Kept answers are shared and cost no request: Mouser 3 days; DigiKey 1 day (misses 3); lifecycle readings 60 days when active, 30 when `nrnd`/`last_time_buy`, a year when obsolete, 90 otherwise. `observed_at` dates them.
 - Batch Mouser lookups, one DigiKey part at a time, `part_lifecycle` for lifecycle; don't retry a quota error. Self-hosting with your own keys gives your own limits.

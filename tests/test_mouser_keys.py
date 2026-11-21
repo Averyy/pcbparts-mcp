@@ -606,7 +606,10 @@ class TestServer:
             status = await health()
             # every key out: key 2 tries again first, an hour after its refusal
             assert status["used_today"] == 2 and status["paused_until"] == "2026-11-18 21:00 UTC"
-            public = json.dumps([status, stats.usage.summary(), quotas.acquire()[1]])
+            summary = stats.usage.summary()
+            # Fixed public latency bounds include 30000 ms; that isn't a leaked quota/key count.
+            summary.pop("latency_bounds_ms")
+            public = json.dumps([status, summary, quotas.acquire()[1]])
             assert not any(text in public for text in ("Mouser#", "key 2", "key 3", "3000", "2000", *KEYS))
 
     def test_hourly_line_and_switch_log_name_the_key(self, clock, caplog):

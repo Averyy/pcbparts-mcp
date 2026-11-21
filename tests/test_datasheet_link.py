@@ -434,7 +434,7 @@ class TestQueue:
 
 
 class TestDatasheetStats:
-    async def test_route_counts_statuses_and_ignores_bad_codes(self, live, monkeypatch):
+    async def test_route_counts_statuses_and_ignores_bad_codes(self, live, monkeypatch, stats_headers):
         client, calls = live
         monkeypatch.setattr(server, "_client", client)
         transport = httpx.ASGITransport(app=server.app)
@@ -452,7 +452,7 @@ class TestDatasheetStats:
             assert (await http.get("/mcp/datasheet/C502")).status_code == 502
             client._datasheet_tokens = -20
             assert (await http.get("/mcp/datasheet/C429")).status_code == 429
-            body = (await http.get("/mcp/stats")).json()
+            body = (await http.get("/mcp/stats", headers=stats_headers)).json()
         expected = dict(visits=6, reused=2, signed=3, waited=0, refused=1, failed=1, not_found=2)
         assert body["days"][0]["datasheet_links"] == expected
         assert body["totals"]["datasheet_links"] == expected

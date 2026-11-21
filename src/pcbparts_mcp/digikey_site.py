@@ -18,6 +18,7 @@ The pause lives in memory: a restart clears it.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import contextvars
 import datetime
 import json
@@ -27,12 +28,15 @@ import os
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Iterator
 from urllib.parse import quote
 
 import wafer
+from wafer._base import _is_binary_content_type
+from wafer._retry import calculate_backoff
 
 from .cache import Cooldown, Pacer
+from . import stats
 from .client import _count_upstream, _sent
 from .config import (
     DIGIKEY_LOCALE_CURRENCY, DIGIKEY_LOCALE_LANGUAGE, DIGIKEY_LOCALE_SITE, DIGIKEY_MAX_RESULTS, number_setting,
@@ -59,7 +63,7 @@ DIGIKEY_SITE_PER_SECOND = number_setting("DIGIKEY_LOOKUP_PER_SECOND", 5.0, 0.1)
 DIGIKEY_SITE_SLOT_WAIT = 90.0
 DIGIKEY_SITE_PAUSE = 300.0
 DIGIKEY_SITE_PAUSE_MAX = 12 * 3600.0
-DIGIKEY_SITE_TIMEOUT = 20.0  # wafer's total budget per request...
+DIGIKEY_SITE_TIMEOUT = 20.0  # total budget from the first send, including its retry...
 DIGIKEY_SITE_ATTEMPT_TIMEOUT = 8.0  # ...and per attempt, so its one retry fits
 
 BASE_URL = "https://www.digikey.com/products/api/v5"
@@ -82,10 +86,22 @@ class SiteRefused(Exception):
     JSON was expected. Every lookup pauses at once."""
 
 
+def _refused_request(reason: str) -> "SiteRefused":
+    """A request the site refused, counted for /mcp/stats (distributor_limits.digikey.refusals) as
+    it's classified, once per request: a lookup stopped or cancelled afterwards loses none."""
+    stats.count_distributor_limit("digikey", "refusals", "refused")
+    return SiteRefused(reason)
+
+
 class SiteFailed(Exception):
     """One lookup's failure: a timeout, no connection, a 5xx, another 4xx, or an answer this code
     doesn't know (one number's oddity, or a change on DigiKey's side, which then fails every
     lookup). That lookup fails; FAILURES_BEFORE_PAUSE in a row pause as a refusal does."""
+
+
+class AddressCapReached(Exception):
+    """The caller's address had used its day when a number's first request was about to go out
+    (lookup()/statuses() charge=): nothing was sent for it. Not a site failure: no pause, no count."""
 
 
 class SiteUnavailable(Exception):
@@ -106,6 +122,32 @@ _UNREADABLE = (KeyError, TypeError, ValueError, AttributeError, IndexError)
 
 # The running lookup's count of requests sent (a one-item list, shared with the tasks it starts)
 _lookup_sends: contextvars.ContextVar[list[int] | None] = contextvars.ContextVar("digikey_lookup_sends", default=None)
+# lookup()/statuses(): the numbers with a request out so far, the charge made as each number's first
+# request goes out, and the number a task asks for (each of a batch's numbers runs in its own task,
+# which has its own copy of the context)
+_batch_sent: contextvars.ContextVar[set[str] | None] = contextvars.ContextVar("digikey_batch_sent", default=None)
+_batch_charge: contextvars.ContextVar[Callable[[str], bool] | None] = contextvars.ContextVar(
+    "digikey_batch_charge", default=None)
+_batch_number: contextvars.ContextVar[str | None] = contextvars.ContextVar("digikey_batch_number", default=None)
+# statuses(held=...): told at once when a number gives up waiting for a slot before its first request
+_batch_held: contextvars.ContextVar[Callable[[str, "SiteUnavailable"], None] | None] = contextvars.ContextVar(
+    "digikey_batch_held", default=None)
+
+
+@contextlib.contextmanager
+def _scope(sent: set[str] | None, charge: Callable[[str], bool] | None, number: str | None = None,
+           held: Callable[[str, "SiteUnavailable"], None] | None = None) -> Iterator[None]:
+    """One lookup's or batch's sent set, charge and held callback (and a lookup's number) for the
+    requests it makes."""
+    tokens = [(_batch_sent, _batch_sent.set(set() if sent is None else sent)), (_batch_charge, _batch_charge.set(charge)),
+              (_batch_held, _batch_held.set(held))]
+    if number is not None:
+        tokens.append((_batch_number, _batch_number.set(number)))
+    try:
+        yield
+    finally:
+        for var, token in reversed(tokens):
+            var.reset(token)
 
 
 
@@ -334,10 +376,11 @@ def _is_exact(asked: str, mpn: str, maker: str, digikey_numbers: Iterable[str]) 
 
 
 def _digikeys_pick(asked: str, mpn: str) -> bool:
-    """For a product DigiKey's own search chose for the number: its MPN is the number with leading
-    zeros (Molex's 0039012045 for 39012045). A near match stays out (MA2C700A0F for MA2C700A)."""
+    """Leading-zero padding on long numeric catalog numbers (Molex's 0039012045 for 39012045),
+    only when DigiKey chose the product itself. Require eight digits before padding: short
+    numbers (0805 vs 805) and alphanumeric ordering codes must keep their leading zeros."""
     asked_key, listed_key = mpn_key(asked.strip()).lstrip("0"), mpn_key((mpn or "").strip()).lstrip("0")
-    return bool(asked_key) and asked_key == listed_key
+    return len(asked_key) >= 8 and asked_key.isascii() and asked_key.isdigit() and asked_key == listed_key
 
 
 @dataclass
@@ -619,12 +662,12 @@ def _listing_matches(body: dict[str, Any], asked: str) -> list[int] | None:
 
 
 def _new_session() -> Any:
-    """One retry for a 5xx or a dropped connection. No identity rotation (max_rotations=0): a 403,
-    429 or challenge comes back as the reply, so it pauses after its one request, without wafer
-    sending it again under a new identity (which also drops F5's cookie) or sleeping out a long
-    Retry-After until the budget is gone."""
+    """_send owns the one retry so every attempt is paced and counted. No identity rotation:
+    a 403, 429 or challenge comes back as the reply, so it pauses after its one request, without
+    wafer sending it again under a new identity (which also drops F5's cookie) or sleeping out a
+    long Retry-After until the budget is gone."""
     return wafer.AsyncSession(timeout=DIGIKEY_SITE_TIMEOUT, attempt_timeout=DIGIKEY_SITE_ATTEMPT_TIMEOUT,
-                              max_retries=1, max_rotations=0, cache_dir=None)
+                              max_retries=0, max_rotations=0, cache_dir=None)
 
 
 class DigiKeySite:
@@ -638,10 +681,12 @@ class DigiKeySite:
         self._session_factory = session_factory  # None: _new_session, looked up when first needed
         self._session: Any = None
         self._clock = clock
+        self._sleep = sleep
         self._concurrency = concurrency
         self._slots: asyncio.Semaphore | None = None  # created in the running loop
         self._pacer = Pacer(per_second, clock=clock, sleep=sleep)
         self._slot_wait = slot_wait
+        self._closed = False  # close(): nothing goes out afterwards, not even a lookup queued before it
         self._pause = Cooldown(pause, pause_max, clock=clock)
         self._failing: set[str] = set()  # the numbers whose lookups failed since the last that worked
         self._test_due = False  # the next lookup tests the site after a pause
@@ -652,6 +697,10 @@ class DigiKeySite:
     def retry_after(self) -> int:
         """Seconds until a lookup may be made (a short wait when only busy)."""
         return max(1, math.ceil(self._pause.remaining)) if self._pause.active else math.ceil(self._slot_wait)
+
+    def paused_for(self) -> int:
+        """Whole seconds until the pause ends; 0 when not paused."""
+        return max(1, math.ceil(self._pause.remaining)) if self._pause.active else 0
 
     def status(self) -> dict[str, Any]:
         """For /health: when the pause ends (None when not paused). Why stays in the log."""
@@ -724,21 +773,27 @@ class DigiKeySite:
             await asyncio.gather(*tasks, return_exceptions=True)
             raise
 
-    async def _guarded(self, work: Callable[[], Any], key: str) -> Any:
+    async def _guarded(self, work: Callable[[], Any], key: str | Callable[[], str],
+                       answered: Callable[[Any], bool] | None = None) -> Any:
         """Run one lookup's requests with the pause rules around them. key: the number (or the
-        batch's numbers) for counting failures."""
+        batch's numbers tried, read when it fails) for counting failures. answered: whether a
+        result that came back holds an answer from the site (a batch's numbers can all have failed
+        or found no slot one by one); only a lookup with a request out and an answer passes."""
         testing = await self._admit()
         sends = [0]
         token = _lookup_sends.set(sends)
         passed = False
         try:
             result = await work()
-            passed = True
+            # A lookup that sent nothing (every number refused by its charge), or whose numbers all
+            # failed or found no slot, proves nothing about the site: it leaves a due test due and the
+            # pause's backoff and the run of failures as they were
+            passed = sends[0] > 0 and (answered is None or answered(result))
         except SiteRefused as e:
             self._refused(str(e))
             raise SiteUnavailable(self.retry_after(), paused=True, sent=True, refused=True) from None
         except SiteFailed as e:
-            self._failed(str(e), key)
+            self._failed(str(e), key() if callable(key) else key)
             if self._pause.active:  # the failure that made it a run of them: paused, as for a refusal
                 raise SiteUnavailable(self.retry_after(), paused=True, sent=True) from None
             raise
@@ -748,7 +803,7 @@ class DigiKeySite:
             # An answer this code can't read: that number's oddity, or DigiKey changed (then every
             # lookup fails, and the run of failures pauses)
             logger.exception("DigiKey answer not understood")
-            self._failed(f"answer not understood ({type(e).__name__})", key)
+            self._failed(f"answer not understood ({type(e).__name__})", key() if callable(key) else key)
             if self._pause.active:
                 raise SiteUnavailable(self.retry_after(), paused=True, sent=True) from None
             raise SiteFailed(f"answer not understood ({type(e).__name__})") from None
@@ -760,7 +815,8 @@ class DigiKeySite:
                 if self._testing is not None:
                     self._testing.set()
                     self._testing = None
-        self._succeeded(testing)
+        if passed:
+            self._succeeded(testing)
         return result
 
     # --- requests ---
@@ -771,8 +827,14 @@ class DigiKeySite:
                 "accept": "application/json, text/plain, */*"}
 
     async def _send(self, path: str) -> Any:
-        """One GET within the slots and the pacer; wafer's own failures sorted into ours. Nothing
-        goes out once a pause has begun, however long the request had been waiting its turn."""
+        """One GET and at most one retry, each paced and counted. Keep wafer's retry conditions,
+        backoff and attempt cap within one total budget, starting after the initial queue wait.
+        Nothing goes out once a pause has begun, including a retry waiting its turn. A number whose
+        address has used its day is refused before taking a slot or a pacer turn from anyone."""
+        if ((number := _batch_number.get()) is not None and (batch := _batch_sent.get()) is not None
+                and number not in batch and (charge := _batch_charge.get()) is not None
+                and not charge(number, check=True)):
+            raise AddressCapReached()
         if self._slots is None:
             self._slots = asyncio.Semaphore(self._concurrency)
         waited = self._slots.locked()
@@ -784,20 +846,61 @@ class DigiKeySite:
         else:
             await self._slots.acquire()
         try:
-            await self._pacer.wait()
-            if self._pause.active:
-                raise SiteUnavailable(self.retry_after(), paused=True)
-            if self._session is None:
-                self._session = (self._session_factory or _new_session)()
-            if waited:
-                _count_upstream("digikey", "waited")
-            if (sends := _lookup_sends.get()) is not None:
-                sends[0] += 1
-            self._pacer.mark()
-            return await _sent("digikey", self._session.get(BASE_URL + path, headers=self._headers()))
+            url = BASE_URL + path
+            deadline = None
+            for attempt in range(2):
+                if deadline is None:
+                    await self._pacer.wait()
+                else:
+                    remaining = deadline - self._clock()
+                    if remaining <= 0:
+                        raise wafer.WaferTimeout(url, DIGIKEY_SITE_TIMEOUT)
+                    try:
+                        await asyncio.wait_for(self._pacer.wait(), remaining)
+                    except TimeoutError:
+                        raise wafer.WaferTimeout(url, DIGIKEY_SITE_TIMEOUT) from None
+                if self._pause.active:
+                    raise SiteUnavailable(self.retry_after(), paused=True)
+                if self._closed:  # shutting down: answered as busy, never sent
+                    raise SiteUnavailable(self.retry_after(), paused=False)
+                if self._session is None:
+                    self._session = (self._session_factory or _new_session)()
+                if deadline is None:
+                    deadline = self._clock() + DIGIKEY_SITE_TIMEOUT
+                remaining = deadline - self._clock()
+                if remaining <= 0:
+                    raise wafer.WaferTimeout(url, DIGIKEY_SITE_TIMEOUT)
+                if ((batch := _batch_sent.get()) is not None and (number := _batch_number.get()) is not None
+                        and number not in batch):
+                    # The number's first request: charged now, with no await before it goes out
+                    if (charge := _batch_charge.get()) is not None and not charge(number):
+                        raise AddressCapReached()
+                    batch.add(number)
+                if waited and attempt == 0:
+                    _count_upstream("digikey", "waited")
+                if (sends := _lookup_sends.get()) is not None:
+                    sends[0] += 1
+                self._pacer.mark()
+                try:
+                    response = await _sent("digikey", self._session.get(
+                        url, headers=self._headers(), timeout=remaining, attempt_timeout=DIGIKEY_SITE_ATTEMPT_TIMEOUT))
+                except (wafer.ConnectionFailed, wafer.WaferTimeout, wafer.EmptyResponse) as exc:
+                    if attempt or getattr(exc, "challenge_type", None) is not None:
+                        raise
+                else:
+                    # Pinned wafer retries 5xx and empty text 200s, but not binary responses or
+                    # challenges. Body-read failures arrive above as ConnectionFailed.
+                    if attempt or getattr(response, "challenge_type", None) is not None or not (
+                            500 <= response.status_code < 600 or (response.status_code == 200
+                            and not _is_binary_content_type((response.headers or {}).get("content-type", ""))
+                            and not response.text.strip())):
+                        return response
+                await self._sleep(min(calculate_backoff(0), max(0.0, deadline - self._clock())))
         except (wafer.ChallengeDetected, wafer.RateLimited) as e:
-            raise SiteRefused(f"{type(e).__name__} ({getattr(e, 'challenge_type', None) or 'no type'})") from None
+            raise _refused_request(f"{type(e).__name__} ({getattr(e, 'challenge_type', None) or 'no type'})") from None
         except wafer.WaferError as e:
+            if getattr(e, "challenge_type", None) is not None:
+                raise _refused_request(f"{type(e).__name__} ({e.challenge_type})") from None
             raise SiteFailed(type(e).__name__) from None
         finally:
             self._slots.release()
@@ -805,15 +908,16 @@ class DigiKeySite:
     async def _get(self, kind: str, path: str) -> Any:
         """The JSON answer to one GET, or None for 204 (no such product)."""
         response = await self._send(path)
-        if response.status_code == 400 and (response.content or b"").strip() == _F5_REFUSAL:
+        if (response.status_code == 400 and getattr(response, "challenge_type", None) is None
+                and (response.content or b"").strip() == _F5_REFUSAL):
             response = await self._send(path)  # the refusal set F5's cookie: once more with it
             if response.status_code == 400 and (response.content or b"").strip() == _F5_REFUSAL:
-                raise SiteRefused(f"{kind}: refused twice (HTTP 400)")
+                raise _refused_request(f"{kind}: refused twice (HTTP 400)")
         status = response.status_code
         if getattr(response, "challenge_type", None):
-            raise SiteRefused(f"{kind}: challenge {response.challenge_type} (HTTP {status})")
+            raise _refused_request(f"{kind}: challenge {response.challenge_type} (HTTP {status})")
         if status in (403, 429):
-            raise SiteRefused(f"{kind}: HTTP {status}")
+            raise _refused_request(f"{kind}: HTTP {status}")
         if status >= 500:
             raise SiteFailed(f"{kind}: HTTP {status}")
         if status == 204:
@@ -822,7 +926,7 @@ class DigiKeySite:
             raise SiteFailed(f"{kind}: HTTP {status}")
         content_type = str((response.headers or {}).get("content-type") or "")
         if "json" not in content_type:
-            raise SiteRefused(f"{kind}: not JSON ({content_type[:40] or 'no content type'})")
+            raise _refused_request(f"{kind}: not JSON ({content_type[:40] or 'no content type'})")
         try:
             return response.json()
         except ValueError:
@@ -905,10 +1009,15 @@ class DigiKeySite:
         return [product for i, body in zip(ids, bodies) if body is not None
                 and (product := parse_detail(body, i)) is not None]
 
-    async def lookup(self, number: str) -> SiteAnswer:
+    async def lookup(self, number: str, sent: set[str] | None = None,
+                     charge: Callable[[str], bool] | None = None) -> SiteAnswer:
         """The part's answer (SiteAnswer; no results: DigiKey doesn't list it). Raises
-        SiteUnavailable (paused, busy) or SiteFailed (this lookup only)."""
-        return await self._guarded(lambda: self._lookup(number.strip()), number.strip().casefold())
+        SiteUnavailable (paused, busy), SiteFailed (this lookup only) or AddressCapReached. sent:
+        gets the number once its first request goes out; charge: called just before that request,
+        which is not sent when it returns False."""
+        number = number.strip()
+        with _scope(sent, charge, number):
+            return await self._guarded(lambda: self._lookup(number), number.casefold())
 
     async def _lookup(self, number: str) -> SiteAnswer:
         ids, picked = await self._candidates(number)
@@ -937,15 +1046,36 @@ class DigiKeySite:
         return SiteAnswer([to_result(p, number) for p in products], list(statuses.values()),
                           [p.product_id for p in products])
 
-    async def statuses(self, numbers: list[str]) -> dict[str, list[tuple[str, str, str | None, str | None]] | Exception]:
+    async def statuses(self, numbers: list[str], sent: set[str] | None = None,
+                       charge: Callable[[str], bool] | None = None,
+                       held: Callable[[str, "SiteUnavailable"], None] | None = None
+                       ) -> dict[str, list[tuple[str, str, str | None, str | None]] | Exception]:
         """Lifecycle only, for many numbers at once: each number's product list, one comparison
         request for every product (status and maker), and a product page only for Last Time Buy
         parts (the date). Per number: its statuses ([] when DigiKey doesn't list it), or the
         SiteFailed / busy SiteUnavailable that number met, so one number's trouble doesn't lose
         the others (a Last Time Buy page that fails only loses its date). A refusal or a pause
-        stops the batch, and a batch where every number failed raises, both as lookup() does."""
+        stops the batch, and a batch where every number failed raises, both as lookup() does.
+        sent: gets each number as its first request goes out (kept when the batch stops or is
+        cancelled); charge: called just before each number's first request, and a number it refuses
+        gets AddressCapReached as its result, with nothing sent; held: told as a number gives up
+        waiting for a slot before its first request (its SiteUnavailable is still its result)."""
         numbers = [n.strip() for n in numbers]
-        return await self._guarded(lambda: self._statuses(numbers), "|".join(sorted(n.casefold() for n in numbers)))
+        sent = set() if sent is None else sent
+
+        def tried() -> str:  # a failed batch's numbers, without those its charge refused (never sent)
+            return "|".join(sorted(n.casefold() for n in numbers if n in sent)) or "|".join(
+                sorted(n.casefold() for n in numbers))
+
+        with _scope(sent, charge, held=held):
+            return await self._guarded(lambda: self._statuses(numbers), tried,
+                                       answered=lambda found: any(isinstance(v, list) for v in found.values()))
+
+    @staticmethod
+    async def _for_number(number: str, coroutine: Any) -> Any:
+        """Run one number's requests with it marked as theirs (this task's context only)."""
+        _batch_number.set(number)
+        return await coroutine
 
     async def _isolated(self, coroutine: Any) -> Any:
         """The coroutine's result, or the trouble that is one number's alone within a batch (a
@@ -953,18 +1083,22 @@ class DigiKeySite:
         refusal or a pause still stops the whole batch."""
         try:
             return await coroutine
-        except SiteFailed as e:
+        except (SiteFailed, AddressCapReached) as e:
             return e
         except SiteUnavailable as e:
             if e.paused:
                 raise
+            number, sent, held = _batch_number.get(), _batch_sent.get(), _batch_held.get()
+            if held is not None and number is not None and sent is not None and number not in sent:
+                held(number, e)  # this number never went out: told now, not when the batch ends
             return e
         except _UNREADABLE as e:
             logger.exception("DigiKey answer not understood")
             return SiteFailed(f"answer not understood ({type(e).__name__})")
 
     async def _statuses(self, numbers: list[str]) -> dict[str, Any]:
-        candidates = await self._all(self._isolated(self._candidates(number)) for number in numbers)
+        candidates = await self._all(self._isolated(self._for_number(number, self._candidates(number)))
+                                     for number in numbers)
         every_id = list(dict.fromkeys(i for found in candidates if not isinstance(found, Exception) for i in found[0]))
         chunks = [every_id[i:i + COMPARE_CHUNK] for i in range(0, len(every_id), COMPARE_CHUNK)]
         bodies = await self._all(self._isolated(self._get("compare", "/compare-page?s=" + encode_state(
@@ -1007,12 +1141,15 @@ class DigiKeySite:
                     pass  # only the date is lost
         answer = {number: [(r.mpn, r.maker, r.status, dates.get(r.product_id)) for r in found]
                   if isinstance(found, list) else found for number, found in results.items()}
-        failures = [value for value in answer.values() if isinstance(value, SiteFailed)]
-        if failures and len(failures) == len(answer):  # nothing worked: the batch failed, counted once
+        # Numbers refused by their charge were never tried: they say nothing about the site
+        tried = [value for value in answer.values() if not isinstance(value, AddressCapReached)]
+        failures = [value for value in tried if isinstance(value, SiteFailed)]
+        if failures and len(failures) == len(tried):  # nothing tried worked: the batch failed, counted once
             raise failures[0]
         return answer
 
     async def close(self) -> None:
+        self._closed = True
         self._session = None
 
 

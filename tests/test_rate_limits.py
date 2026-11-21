@@ -310,14 +310,14 @@ class TestPlatformLimitFloor:
 
 
 class TestRealApp:
-    async def test_health_and_stats(self):
+    async def test_health_and_stats(self, stats_headers):
         async with client(server.create_app()) as c:
             limit = str(server.RATE_LIMIT_REQUESTS)
             health = await c.get("/health", headers={"X-Forwarded-For": A})
             assert (health.status_code, limits(health)) == (200, (limit, limit, "0"))
-            usage = await c.get("/mcp/stats", headers={"X-Forwarded-For": A})
+            usage = await c.get("/mcp/stats", headers={**stats_headers, "X-Forwarded-For": A})
             assert usage.status_code == 200
-            assert usage.headers["cache-control"] == "public, max-age=60"  # the route's own headers kept
+            assert usage.headers["cache-control"] == "private, no-store"  # the route's own headers kept
             assert limits(usage)[:2] == (limit, str(server.RATE_LIMIT_REQUESTS - 1))  # counted
 
     async def test_mcp_stream(self, clock):
