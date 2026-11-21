@@ -50,12 +50,13 @@ def enabled() -> bool:
 
 
 # Requests in flight and starts a second across all lookups, the longest a request waits for a
-# free slot, and the pause after a refusal: 5 minutes, doubling at each refusal in a row (10, 20,
-# 40 minutes...) up to 12 hours, so a block that lasts is tried again twice a day; a lookup that
-# works starts the doubling over
+# free slot (a 100-part BOM sent at once is about 230 requests, 46 s at 5 a second: callers wait
+# rather than get "busy"), and the pause after a refusal: 5 minutes, doubling at each refusal in a
+# row (10, 20, 40 minutes...) up to 12 hours, so a block that lasts is tried again twice a day; a
+# lookup that works starts the doubling over
 DIGIKEY_SITE_CONCURRENCY = number_setting("DIGIKEY_LOOKUP_CONCURRENCY", 4, 1)
 DIGIKEY_SITE_PER_SECOND = number_setting("DIGIKEY_LOOKUP_PER_SECOND", 5.0, 0.1)
-DIGIKEY_SITE_SLOT_WAIT = 30.0
+DIGIKEY_SITE_SLOT_WAIT = 90.0
 DIGIKEY_SITE_PAUSE = 300.0
 DIGIKEY_SITE_PAUSE_MAX = 12 * 3600.0
 DIGIKEY_SITE_TIMEOUT = 20.0  # wafer's total budget per request...
@@ -323,10 +324,20 @@ def _same_mpn(listed: str, asked: str, maker: str) -> bool:
 
 
 def _is_exact(asked: str, mpn: str, maker: str, digikey_numbers: Iterable[str]) -> bool:
-    """The product is the part asked for: its MPN (_same_mpn), or one of its DigiKey numbers."""
+    """The product is the part asked for: its MPN (_same_mpn, or the same but for separators, which
+    the API's exact matches accepted too: MR06X223 JTL for MR06X223JTL, EEU-FS1H221L for
+    EEUFS1H221L; mpn_key, so a "+" or "." still counts), or one of its DigiKey numbers."""
     wanted = asked.strip().casefold()
-    return _same_mpn(mpn or "", asked, maker or "") or any(
+    key = mpn_key(asked.strip())
+    return _same_mpn(mpn or "", asked, maker or "") or (bool(key) and mpn_key((mpn or "").strip()) == key) or any(
         (number or "").strip().casefold() == wanted for number in digikey_numbers)
+
+
+def _digikeys_pick(asked: str, mpn: str) -> bool:
+    """For a product DigiKey's own search chose for the number: its MPN is the number with leading
+    zeros (Molex's 0039012045 for 39012045). A near match stays out (MA2C700A0F for MA2C700A)."""
+    asked_key, listed_key = mpn_key(asked.strip()).lstrip("0"), mpn_key((mpn or "").strip()).lstrip("0")
+    return bool(asked_key) and asked_key == listed_key
 
 
 @dataclass
@@ -834,10 +845,11 @@ class DigiKeySite:
                 ids.append(int(item["productId"]))
         return ids, len(items)
 
-    async def _searched(self, number: str) -> list[int]:
-        """The products the keyword search gives for the number: its product page, a listing's
-        exact rows, or its exact matches; [] for none. A product page may be a near match (MA2C700A
-        is answered with MA2C700A0F): the caller checks it."""
+    async def _searched(self, number: str) -> tuple[list[int], set[int]]:
+        """The products the keyword search gives for the number (its product page, a listing's
+        exact rows, or its exact matches), and those DigiKey chose itself (the page, the exact
+        matches); ([], set()) for none. A product page may be a near match (MA2C700A is answered
+        with MA2C700A0F): the caller checks it."""
         body = await self._get("search", f"/result-page?s={encode_state({'2': [number]})}")
         seen: set[str] = set()
         for hop in range(MAX_HOPS + 1):
@@ -847,36 +859,40 @@ class DigiKeySite:
             if isinstance(redirect, dict):
                 url = str(redirect.get("url") or "")
                 if match := _DETAIL_URL.search(url):
-                    return [int(match.group(2))]
+                    return [int(match.group(2))], {int(match.group(2))}
                 match = _LISTING_URL.search(url)
                 state = decode_state(match.group(2)) if match else None
                 if state is None:
                     raise SiteFailed("search: a redirect it doesn't know")
                 if url in seen or hop == MAX_HOPS:  # a category that redirects to itself, or a long chain
-                    return []
+                    return [], set()
                 seen.add(url)
                 state["5"] = {"p": 1, "pp": 100}
                 state["6"] = {"id": "-100", "pt": "", "type": "asc"}  # by MPN: exact ones first, stable pages
                 body = await self._get("listing", f"/filter-page/{match.group(1)}?s={encode_state(state)}")
                 continue
             if (ids := _listing_matches(body, number)) is not None:
-                return ids
+                return ids, set()
             data = body.get("data")
             if not isinstance(data, dict):
                 raise SiteFailed("search: no data")
             if isinstance(data.get("exactMatch"), list) and data["exactMatch"]:
-                return [int(entry["id"]) for entry in data["exactMatch"]]
+                ids = [int(entry["id"]) for entry in data["exactMatch"]]
+                return ids, set(ids)
             if "productCount" in data:
-                return []
+                return [], set()
             raise SiteFailed("search: an answer it doesn't know")
-        return []
+        return [], set()
 
-    async def _candidates(self, number: str) -> list[int]:
-        """The ids of the products that may be the part asked, in order (exact ones found so far)."""
+    async def _candidates(self, number: str) -> tuple[list[int], set[int]]:
+        """The ids of the products that may be the part asked, in order (exact ones found so far),
+        and those DigiKey's search chose itself (_digikeys_pick applies to them)."""
         ids, _ = await self._suggested(number)
+        picked: set[int] = set()
         if not ids or len(ids) >= SEARCH_WHEN_EXACT:
-            ids += await self._searched(number)
-        return list(dict.fromkeys(ids))
+            found, picked = await self._searched(number)
+            ids += found
+        return list(dict.fromkeys(ids)), picked
 
     async def _compare(self, ids: list[int]) -> list[_Row]:
         chunks = [ids[i:i + COMPARE_CHUNK] for i in range(0, len(ids), COMPARE_CHUNK)]
@@ -895,12 +911,16 @@ class DigiKeySite:
         return await self._guarded(lambda: self._lookup(number.strip()), number.strip().casefold())
 
     async def _lookup(self, number: str) -> SiteAnswer:
-        ids = await self._candidates(number)
+        ids, picked = await self._candidates(number)
+
+        def is_part(product_id: int, mpn: str, maker: str, numbers: list[str]) -> bool:
+            return _is_exact(number, mpn, maker, numbers) or (product_id in picked and _digikeys_pick(number, mpn))
+
         statuses: dict[tuple[str, str], tuple[str, str, str | None, str | None]] = {}
         if len(ids) > DIGIKEY_MAX_RESULTS:
             # Every maker's status and stock in one request; pages for the makers with most stock,
             # every listing of each (a reseller's beside the maker's own, merged as for fewer)
-            rows = [r for r in await self._compare(ids) if _is_exact(number, r.mpn, r.maker, r.digikey_numbers)]
+            rows = [r for r in await self._compare(ids) if is_part(r.product_id, r.mpn, r.maker, r.digikey_numbers)]
             groups: dict[tuple[str, str], list[_Row]] = {}
             for row in _dealer_last(rows):
                 groups.setdefault((maker_key(row.maker), mpn_key(row.mpn)), []).append(row)
@@ -909,7 +929,7 @@ class DigiKeySite:
                 statuses[key] = (row.mpn, row.maker, row.status, None)
             top = sorted(groups.values(), key=lambda g: -sum(r.stock for r in g))[:DIGIKEY_MAX_RESULTS]
             ids = [row.product_id for group in top for row in group]
-        products = [p for p in await self._details(ids) if _is_exact(number, p.mpn, p.maker, p.digikey_numbers)]
+        products = [p for p in await self._details(ids) if is_part(p.product_id, p.mpn, p.maker, p.digikey_numbers)]
         products = sorted(_merge(products), key=lambda p: -p.stock)[:DIGIKEY_MAX_RESULTS]
         for product in products:
             statuses[(maker_key(product.maker), mpn_key(product.mpn))] = (
@@ -945,7 +965,7 @@ class DigiKeySite:
 
     async def _statuses(self, numbers: list[str]) -> dict[str, Any]:
         candidates = await self._all(self._isolated(self._candidates(number)) for number in numbers)
-        every_id = list(dict.fromkeys(i for ids in candidates if isinstance(ids, list) for i in ids))
+        every_id = list(dict.fromkeys(i for found in candidates if not isinstance(found, Exception) for i in found[0]))
         chunks = [every_id[i:i + COMPARE_CHUNK] for i in range(0, len(every_id), COMPARE_CHUNK)]
         bodies = await self._all(self._isolated(self._get("compare", "/compare-page?s=" + encode_state(
             {"9": [{"id": i, "productId": i} for i in chunk]}))) for chunk in chunks)
@@ -960,15 +980,18 @@ class DigiKeySite:
                     body = e if isinstance(e, SiteFailed) else SiteFailed(f"compare: {type(e).__name__}")
             lost.update(dict.fromkeys(chunk, body))
         results: dict[str, Any] = {}
-        for number, ids in zip(numbers, candidates):
-            if isinstance(ids, Exception):
-                results[number] = ids
-            elif failed := next((lost[i] for i in ids if i in lost), None):
+        for number, found in zip(numbers, candidates):
+            if isinstance(found, Exception):
+                results[number] = found
+                continue
+            ids, picked = found
+            if failed := next((lost[i] for i in ids if i in lost), None):
                 results[number] = failed  # some of its makers unknown: no partial answer
             else:
                 kept: dict[tuple[str, str], _Row] = {}
-                for row in _dealer_last([rows[i] for i in ids if i in rows and _is_exact(
-                        number, rows[i].mpn, rows[i].maker, rows[i].digikey_numbers)]):
+                for row in _dealer_last([rows[i] for i in ids if i in rows and (_is_exact(
+                        number, rows[i].mpn, rows[i].maker, rows[i].digikey_numbers)
+                        or (i in picked and _digikeys_pick(number, rows[i].mpn)))]):
                     kept[(maker_key(row.maker), mpn_key(row.mpn))] = row
                 results[number] = list(kept.values())
         last_time_buy = list(dict.fromkeys(row.product_id for found in results.values() if isinstance(found, list)

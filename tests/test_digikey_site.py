@@ -767,7 +767,7 @@ async def test_many_makers_keep_the_makers_own_status_over_a_resellers(clock, mo
     asked = []
 
     async def candidates(number):
-        return [row.product_id for row in rows]
+        return [row.product_id for row in rows], set()
 
     async def compare(ids):
         return rows
@@ -876,3 +876,71 @@ async def test_a_refusal_through_wafer_is_one_request_and_a_pause(clock, status,
         await site.lookup("LM358DR")
     assert raised.value.paused and raised.value.refused
     assert transport.sent == 1
+
+
+# --- spellings the API's exact matches accepted (found on prod, 2026-11-20) ---
+
+def _detail_as(product_id, mpn, maker):
+    """A recorded product page (TI's LM358DR) standing in for another part: its id, MPN and maker."""
+    import copy
+    body = copy.deepcopy(ANSWERS["/detail-page/276658"]["body"])
+    body["data"]["productOverview"].update({"manufacturerProductNumber": mpn, "manufacturer": maker})
+    return Reply(200, body)
+
+
+def _suggestions(*items):
+    return Reply(200, {"data": {"suggestedProductNumbers": [
+        {"digiKeyProductNumber": f"{pid}-ND", "manufacturerProductNumber": mpn, "productId": pid,
+         "navigationUrl": f"/en/products/detail/{slug}/{mpn.replace(' ', '-')}/{pid}"} for mpn, slug, pid in items]}})
+
+
+@pytest.mark.parametrize("asked, listed, maker", [
+    ("MR06X223JTL", "MR06X223 JTL", "Walsin Technology Corporation"),  # a space
+    ("EEUFS1H221L", "EEU-FS1H221L", "Panasonic Industry"),  # a dash
+], ids=["space", "dash"])
+async def test_the_same_part_but_for_separators_is_found(clock, asked, listed, maker):
+    """DigiKey lists the part with separators the number asked lacks: the API counted it as an exact
+    match (matched_by separators), and so does this."""
+    site, session = make_site(clock, Session({
+        "/suggestions": [_suggestions((listed, "maker", 501), (listed + "B", "maker", 502))],
+        "/detail-page/501": [_detail_as(501, listed, maker)]}))
+    (part,) = (await site.lookup(asked)).results
+    assert (part["mfr_part_number"], part["manufacturer"]) == (listed, maker)
+    assert session.kinds() == ["suggestions", "detail-page"]  # the "B" variant is another part
+
+
+async def test_digikeys_own_pick_with_leading_zeros_is_found(clock):
+    """Molex's 39012045 is listed as 0039012045: DigiKey's search sends the number straight to it,
+    so its leading zeros don't make it another part. From the product list alone they would."""
+    site, session = make_site(clock, Session({
+        "/suggestions": [_suggestions(("0039012046", "molex", 601))],
+        "/result-page": [Reply(200, {"redirect": {"url": "/en/products/detail/molex/0039012045/602"}})],
+        "/detail-page/602": [_detail_as(602, "0039012045", "Molex")]}))
+    (part,) = (await site.lookup("39012045")).results
+    assert part["mfr_part_number"] == "0039012045"
+
+
+@pytest.mark.parametrize("asked, listed", [
+    ("DS89C450-MNL+", "DS89C450-MNL"),  # "+" is Maxim's lead-free part, not a separator
+    ("MA2C700A", "MA2C700A0F"),  # a near match DigiKey's search lands on
+    ("IKW15N120T2", "IKW15N120T2FKSA1"),  # an ordering code beyond the number
+], ids=["plus", "near_match", "ordering_code"])
+async def test_other_parts_stay_out(clock, asked, listed):
+    site, _ = make_site(clock, Session({
+        "/suggestions": [_suggestions((listed, "maker", 701))],
+        "/result-page": [Reply(200, {"redirect": {"url": f"/en/products/detail/maker/{listed}/701"}})],
+        "/detail-page/701": [_detail_as(701, listed, "Maker")] * 2}))
+    assert (await site.lookup(asked)).results == []
+
+
+async def test_separators_in_a_lifecycle_batch(clock):
+    """part_lifecycle's batch path takes the same spellings."""
+    compare = Reply(200, {"data": {"compareIds": [801], "compareHeaderRows": [
+        {"name": "Mfr Part #", "data": [{"label": "MR06X223 JTL"}]}, {"name": "Mfr", "data": [{"value": "Walsin"}]},
+        {"name": "Supplier", "data": [{"label": "Walsin"}]}], "compareDataRows": [
+        {"name": "Product Status", "data": [{"value": "Active"}]}, {"name": "Stock", "data": [[{"value": "100"}]]},
+        {"name": "DK Part #", "data": [[{"value": "801-ND"}]]}]}})
+    site, _ = make_site(clock, Session({"/suggestions": [_suggestions(("MR06X223 JTL", "walsin", 801))],
+                                        "/compare-page": [compare]}))
+    found = await site.statuses(["MR06X223JTL"])
+    assert found == {"MR06X223JTL": [("MR06X223 JTL", "Walsin", "Active", None)]}
