@@ -14,6 +14,37 @@ load = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(load)
 
 
+async def test_stats_token_from_environment_is_only_in_header(monkeypatch):
+    monkeypatch.setenv("STATS_TOKEN", "test-stats-token")
+    headers = {"X-Forwarded-For": "203.0.113.1"}
+
+    def handle(request):
+        assert request.url.path == "/mcp/stats"
+        assert request.headers["Authorization"] == "Bearer test-stats-token"
+        assert request.headers["X-Forwarded-For"] == headers["X-Forwarded-For"]
+        assert "test-stats-token" not in str(request.url)
+        return httpx.Response(200, json={"totals": {"upstream": {"jlcpcb": {"sent": 2}}}})
+
+    async with httpx.AsyncClient(base_url="http://localhost", transport=httpx.MockTransport(handle)) as client:
+        assert await load.upstream_sent(client, headers) == {"upstream.jlcpcb": 2}
+    assert "Authorization" not in headers
+
+
+@pytest.mark.parametrize("token", [None, ""], ids=["unset", "blank"])
+async def test_stats_token_required_before_any_request(monkeypatch, token):
+    if token is None:
+        monkeypatch.delenv("STATS_TOKEN", raising=False)
+    else:
+        monkeypatch.setenv("STATS_TOKEN", token)
+
+    def no_requests(request):
+        pytest.fail("sent a request without STATS_TOKEN")
+
+    async with httpx.AsyncClient(base_url="http://localhost", transport=httpx.MockTransport(no_requests)) as client:
+        with pytest.raises(SystemExit, match="STATS_TOKEN is required"):
+            await load.upstream_sent(client, {})
+
+
 async def test_429_is_a_failure(monkeypatch):
     """Any 429 is a failed call: the per-address limits must be raised for a load test."""
     now = [0.0]

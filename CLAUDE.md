@@ -15,7 +15,8 @@ Rules and gotchas only. History goes in `CHANGELOG.md`; how things work goes in 
 - Never commit without explicit permission. Never push, merge or deploy without the user.
 - No Claude attribution in commits or PRs.
 - One version for all unreleased work; bump only after that version has been released. Bump in `pyproject.toml` and `uv.lock`. Patch is the default; ask before a minor or major bump.
-- `CHANGELOG.md`: head the entry `## X.Y.Z (YYYY-MM-DD)` (the `release` job publishes that section as the GitHub release; without it the job fails). Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
+- `CHANGELOG.md`: release notes require unique `## X.Y.Z (YYYY-MM-DD)` headings, valid dates, a matching previous-release boundary and nonempty entries. Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
+- After deploy, `release` tags every version; minor/major versions publish every entry since the last GitHub release (excluded). Reruns restore missing releases on existing tags; API/notes errors fail only this job.
 - Don't create releases or tags by hand.
 - The project is in beta with real external users and contributors: breaking changes must be deliberate (semver bump, changelog note), and dependency pins stay exact.
 
@@ -48,17 +49,17 @@ Python runs through `uv`, never pip.
 ## Rules for limits and refusals
 
 - A refusal at normal load is a bug. Prefer making a caller wait to refusing it.
-- Never add or tune a limit, cap or queue threshold from the synthetic load test alone: its traffic has neither prod's slow searches nor its bursts. Check prod's `/mcp/stats` (`per_ip_refusals`, `refused_hours`) after any limiter change.
+- Never add or tune a limit, cap or queue threshold from the synthetic load test alone: its traffic has neither prod's slow searches nor its bursts. Check prod's `/mcp/stats` (`per_ip_refusals`, `refused_hours`) with `Authorization: Bearer <STATS_TOKEN>` after any limiter change.
 - 429 bodies keep the JSON `retry_after` field: clients read it.
 - Keep uvicorn's `proxy_headers=False`: otherwise callers' IPs could land on every access-log line.
 - Keep `BodySizeLimitMiddleware`'s size guard (declared and streamed bodies) and its streamed replies.
-- Refused IPs appear only in the hourly log lines; stats stay anonymous (counts only, no IPs, queries or part numbers).
+- Refused IPs appear only in hourly log lines. Stats hold counts and fixed labels plus popular search words meeting the 10-caller threshold, never IPs. Failed-search text lives only in the 7-day failed-query files; call-log rows never hold IPs, search text, part numbers or caller IDs.
 
 ## Data rules
 
 - `data/catalog/price_tiers.tsv.gz` stays out of git: never `git add -f` it. A missing or bad tier file must never fail a build.
 - The server never downloads the AI platforms' address lists at runtime; the image build refreshes the committed copy.
-- Don't hand-edit `data/catalog/sold_out/*.jsonl` (a malformed row fails the scrape and the image build); `scripts/backfill_sold_out.py` rebuilds them. Nothing that reads `components` (search, counts, alternatives) may see the `sold_out` table.
+- Don't hand-edit `data/catalog/sold_out/*.jsonl` (a malformed row fails the scrape and the image build); `scripts/backfill_sold_out.py` rebuilds them. Nothing that reads `components` (search, counts, alternatives) may see the `sold_out` table, except jlc_search's 0.10.5 label-only lookup on an empty part-number search: it changes usage counts only, never the reply.
 - Sensor corrections go in `data/sensors/curated.json`, per field with evidence, and always win over scraped data: fix a general cause in the scraper or build rule instead. `scripts/build_sensor_db.py` runs alone in the Docker image, so it must not import other `scripts/` modules.
 - Edits to design-rule files follow `data/design-rules/rules/DESIGN-STYLE-GUIDE.md`.
 - The daily scrape is started by a cron job on the server; GitHub's schedule is only a backup. See `docs/ref-scrape-schedule.md`.
@@ -76,7 +77,7 @@ Python runs through `uv`, never pip.
 
 - The JLCPCB API's field names are backwards: `firstSortName` is the **subcategory**, `secondSortName` the **category**. The client maps them.
 - `basic` and `preferred` parts have no extended-type loading fee for Economic assembly; `extended` parts are charged per unique type. The alternatives calculator's $3 figure is a rounded estimate, not a quote.
-- Prod's container logs (`docker logs`) are lost at every deploy; `/mcp/stats` and the application log file (`LOG_PATH`, 7 days, no per-request lines) survive.
+- Prod's container logs (`docker logs`) are lost at every deploy; `/mcp/stats`, the application log (`LOG_PATH`, 7 days after its UTC day ends, no per-request lines), and `CALL_LOG_DIR` (call log 30 days, failed queries 7 days) survive.
 
 ## Docs
 

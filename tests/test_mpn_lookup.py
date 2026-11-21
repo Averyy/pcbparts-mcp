@@ -314,7 +314,8 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
     ("api", False),  # API credentials: the shared daily limit
     ("keyless", True),  # no credentials: no daily limit to spend
     ("keyless_paused", False),  # ... but paused after a refusal
-], ids=["none", "api", "keyless", "keyless_paused"])
+    ("keyless_capped", False),  # ... or the caller's address has used its day (0.10.5)
+], ids=["none", "api", "keyless", "keyless_paused", "keyless_capped"])
 async def test_miss_hint_suggests_digikey_only_without_a_daily_limit(monkeypatch, digikey, suggested):
     """The hint used to end "or mouser_get_part / digikey_get_part for other distributors": on
     2026-11-19 digikey_get_part was 17% of traffic and 87% of it refused (the shared limit was
@@ -329,9 +330,14 @@ async def test_miss_hint_suggests_digikey_only_without_a_daily_limit(monkeypatch
         client = DigiKeyClient("id", "secret", store=store)
     elif digikey:
         from pcbparts_mcp.digikey_site import DigiKeySite
-        client = DigiKeyClient(store=store, site=DigiKeySite())
+        from pcbparts_mcp.cache import AddressDailyQuota
+        day = AddressDailyQuota(1, key=lambda ip: ip, clock=lambda: 1_795_003_200.0)  # fixed: no midnight
+        client = DigiKeyClient(store=store, site=DigiKeySite(), address_daily=day)
         if digikey == "keyless_paused":
             client._site._refused("HTTP 403")
+        if digikey == "keyless_capped":
+            day.record("203.0.113.9")
+    monkeypatch.setattr(server, "_caller_ip", lambda: "203.0.113.9")
     monkeypatch.setattr(server, "_digikey_client", client)
     try:
         reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")

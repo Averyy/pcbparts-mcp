@@ -162,9 +162,12 @@ jobs:
             git checkout origin/main -- docker-compose.yml
             git checkout origin/main -- landing/
 
-            # Deploy landing page to web root
+            # Deploy the landing page and its optional .well-known directory.
             mkdir -p /var/www/pcbparts
             cp -r landing/* /var/www/pcbparts/
+            if [ -d landing/.well-known ]; then
+              cp -r landing/.well-known /var/www/pcbparts/
+            fi
 
             # Pull the new image while the old container still serves, then swap containers. Stopping
             # first (down, then pull) left the site down for the whole download: calls during deploys
@@ -186,9 +189,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "MCP endpoint: \`https://pcbparts.dev/mcp\`" >> $GITHUB_STEP_SUMMARY
 
-  # After a deploy from main, publish a GitHub release for pyproject.toml's version if it has none
-  # yet, with that version's CHANGELOG.md section as the notes. Daily data commits keep the version,
-  # so they skip this. A version with no "## X.Y.Z (date)" section fails here: add the entry.
+  # Run after deployment so release failures cannot block it. Tag every version; publish minor
+  # and major versions with validated entries since the last release. Reruns restore missing releases.
   release:
     needs: build-and-push
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
@@ -199,21 +201,58 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Publish release for this version
+      - name: Tag this version (and release minor or major versions)
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml | head -n 1)
+          set -euo pipefail
+          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml)
           if [ -z "$version" ]; then echo "::error::no version in pyproject.toml"; exit 1; fi
           tag="v$version"
-          if gh release view "$tag" > /dev/null 2>&1; then
-            echo "Release $tag already exists"
-            exit 0
-          fi
-          awk -v head="## $version " 'index($0, head) == 1 {found = 1; next} found && /^## / {exit} found' CHANGELOG.md > notes.md
-          if ! grep -q '[^[:space:]]' notes.md; then
-            echo "::error::CHANGELOG.md has no '## $version (date)' section"
+
+          # Only an explicit HTTP 404 means absent; auth, transport and API errors are fatal.
+          api_exists() {
+            if gh api --include "$1" > "$RUNNER_TEMP/release-response" 2> "$RUNNER_TEMP/release-error"; then
+              return 0
+            fi
+            if grep -Eq '^HTTP/[0-9.]+ 404([[:space:]]|$)' "$RUNNER_TEMP/release-response"; then
+              return 1
+            fi
+            cat "$RUNNER_TEMP/release-error" >&2
+            echo "::error::could not check $1"
             exit 1
+          }
+
+          last=""
+          case "$version" in
+            *.0)
+              if api_exists "repos/$GITHUB_REPOSITORY/releases/tags/$tag"; then
+                if ! gh release view "$tag" > /dev/null; then
+                  echo "::error::could not read release $tag"
+                  exit 1
+                fi
+                echo "Release $tag already exists"
+                exit 0
+              fi
+              if ! last=$(gh release list --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName // ""'); then
+                echo "::error::could not list published releases"
+                exit 1
+              fi
+              ;;
+          esac
+          python3 scripts/release_notes.py "$version" --last-release "${last#v}" > "$RUNNER_TEMP/notes.md"
+
+          if api_exists "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag"; then
+            echo "Tag $tag already exists"
+          else
+            gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$GITHUB_SHA" > /dev/null
+            echo "Tagged $tag" >> "$GITHUB_STEP_SUMMARY"
           fi
-          gh release create "$tag" --target "$GITHUB_SHA" --title "$version" --notes-file notes.md
-          echo "Published release [$tag](https://github.com/${{ github.repository }}/releases/tag/$tag)" >> "$GITHUB_STEP_SUMMARY"
+          case "$version" in
+            *.0)
+              gh release create "$tag" --verify-tag --title "$version" --notes-file "$RUNNER_TEMP/notes.md"
+              echo "Published release [$tag](https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag)" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            *) echo "$tag is a patch: its notes go out with the next minor or major release" ;;
+          esac

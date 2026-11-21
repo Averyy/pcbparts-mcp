@@ -21,7 +21,7 @@
 - A BOM (up to 50 codes or MPNs) from the snapshot: `jlc_get_parts`; check live with `jlc_get_part(lcsc=..., live=true)` only for a part missing or with stock near the quantity needed.
 - Recorded low-stock events: `jlc_stock_history`.
 - A replacement: `jlc_find_alternatives(lcsc=...)`.
-- Mouser or DigiKey: `mouser_get_part`, `digikey_get_part`, only when JLCPCB can't answer or the user asks for that distributor (shared daily limits).
+- Mouser or DigiKey: `mouser_get_part`, `digikey_get_part` share small daily limits across all users: use them for parts JLCPCB doesn't carry or when the user asks for that distributor.
 - Lifecycle (NRND, last time buy, obsolete) of up to 50 parts: `part_lifecycle`.
 - Pins and footprint pads: `jlc_get_pinout`. KiCad files: `cse_get_kicad` (slow).
 - How real boards wire an IC: `board_search(component=...)`, then `board_get(slug, focus=IC)`.
@@ -162,7 +162,7 @@ Up to 50 parts from the snapshot in one tool call, database only; no specs, data
 
 ### part_lifecycle
 
-Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas). Others are asked of Mouser (10 per request), and of DigiKey only when Mouser doesn't list them for the maker given or its daily limit is spent. Shared limits and the per-address daily cap apply.
+Lifecycle of up to 50 parts, from kept Mouser and DigiKey readings (see Quotas); parts not already known are looked up at Mouser and DigiKey. Shared limits and the per-address daily cap apply.
 
 - `parts` (required): `jlc_get_parts`' forms. An LCSC code fills in a missing or unusable MPN or maker from the snapshot (gone parts included); a usable `mpn` wins. `manufacturer` picks among makers sharing a number (loosely). MPNs match ignoring case, `-`, space, `_`, `/` and JST endings; "not listed" holds only for the spelling asked ("LM358P" is still asked after "LM358-P").
 - Reply: `results` (input order), `total`, `status_counts`, `retry_after` (the smallest, when any part waited). Result: `input` (as in `jlc_get_parts`), `lcsc`, `mpn`, `status`, and with a reading `manufacturer`, `raw` (the distributor's wording), `source` (`mouser`/`digikey`), `observed_at`, `last_buy_date`.
@@ -224,6 +224,6 @@ Sensor ICs and modules by measurement, protocol and platform; not for buying (`j
 ## Quotas
 
 - Mouser and DigiKey daily limits are shared by everyone (DigiKey's resets at 00:00 UTC); at most 25 requests a minute for Mouser, 100 for DigiKey.
-- Each address (IPv6: /64) gets 200 Mouser and DigiKey lookups combined per UTC day; stored answers are free and the AI platforms' addresses are exempt. Past it: `error` "This address has used its 200 Mouser and DigiKey lookups for today..."; `part_lifecycle` gives `unknown` with `retry_after`.
+- Each address (IPv6: /64) gets 1,000 Mouser and DigiKey lookups combined per UTC day; stored answers are free and the AI platforms' addresses are exempt. Past it: `error` "This address has used its 1000 Mouser and DigiKey lookups for today..."; `part_lifecycle` gives `unknown` with `retry_after`.
 - Kept answers are shared and cost no request: Mouser 3 days; DigiKey 1 day (misses 3); lifecycle readings 60 days when active, 30 when `nrnd`/`last_time_buy`, a year when obsolete, 90 otherwise. `observed_at` dates them.
 - Batch Mouser lookups, one DigiKey part at a time, `part_lifecycle` for lifecycle; don't retry a quota error. Self-hosting with your own keys gives your own limits.

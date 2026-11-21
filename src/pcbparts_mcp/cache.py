@@ -183,17 +183,27 @@ class AddressDailyQuota:
         self.reset_if_due()
         return self._key(caller) if self.limit and caller is not None else None
 
-    def capped(self, caller: str | None) -> bool:
+    def remaining(self, caller: str | None) -> int | None:
+        """Lookups caller may still cause today; None when it isn't limited (exempt, or no cap)."""
         key = self._caller_key(caller)
-        return key is not None and self._counts.get(key, 0) >= self.limit
+        return None if key is None else max(0, self.limit - self._counts.get(key, 0))
 
-    def record(self, caller: str | None) -> None:
+    def capped(self, caller: str | None) -> bool:
+        return self.remaining(caller) == 0
+
+    def record(self, caller: str | None, lookups: int = 1) -> None:
         key = self._caller_key(caller)
-        if key is None:
+        if key is None or lookups <= 0:
             return
         if key not in self._counts and len(self._counts) >= self._max_addresses:
             del self._counts[next(iter(self._counts))]
-        self._counts[key] = self._counts.get(key, 0) + 1
+        self._counts[key] = self._counts.get(key, 0) + lookups
+
+    def error(self, advice: str) -> dict:
+        """The reply once an address has used its day (advice: the distributor's own-key advice)."""
+        return {"error": f"This address has used its {self.limit} Mouser and DigiKey lookups "
+                         "for today on this shared server; the count resets at 00:00 UTC. "
+                         f"Answers pcbparts already has stored still work.{advice}"}
 
 
 class QuotaStore:
@@ -577,9 +587,7 @@ class QuotaPool:
 
     def address_error(self, caller: str | None) -> dict | None:
         if self.address_daily is not None and self.address_daily.capped(caller):
-            return {"error": f"This address has used its {self.address_daily.limit} Mouser and DigiKey lookups "
-                             "for today on this shared server; the count resets at 00:00 UTC. "
-                             f"Answers pcbparts already has stored still work.{self._first._advice()}"}
+            return self.address_daily.error(self._first._advice())
         return None
 
     def pause_cause(self) -> str | None:

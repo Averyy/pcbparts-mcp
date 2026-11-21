@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 import logging
 import sqlite3
+import threading
 import time
 import weakref
 from pathlib import Path
@@ -108,6 +109,11 @@ class DistributorStore:
         self.path = Path(path) if path else None
         self._clock = clock
         self.persistent = False  # kept across restarts
+        # Every use of the connection holds this: the event loop and the component pool's workers
+        # (jlc_get_parts reads lifecycle inside its job) share it, and Python's sqlite3 shares one
+        # prepared statement between cursors running the same SQL, so two readers at once could get
+        # each other's rows, none, or a row of NULLs
+        self._lock = threading.Lock()
         self._conn = self._open()
         if self._conn is not None:
             # Closed when the store is dropped, so a store no one closes doesn't leak its connection
@@ -130,10 +136,7 @@ class DistributorStore:
 
     @staticmethod
     def _connect(target: str, wal: bool) -> sqlite3.Connection:
-        # One connection for the event loop and the database workers (jlc_get_parts reads lifecycle
-        # inside its job): safe because Python's SQLite is serialized (sqlite3.threadsafety 3, in the
-        # python:3.12-slim image too). A read landing between a write's statements can miss that
-        # write's rows; jlc_get_parts' lifecycle field is optional, so that call just goes without
+        # One connection for the event loop and the database workers, used under self._lock
         conn = sqlite3.connect(target, check_same_thread=False)
         try:
             if wal:
@@ -155,12 +158,13 @@ class DistributorStore:
     def get_answer(self, source: str, key: str) -> tuple[Any, float] | None:
         """A stored answer for this source and key that hasn't outlived its lifetime, and when it
         was fetched; else None."""
-        if self._conn is None:
-            return None
         try:
-            row = self._conn.execute(
-                "SELECT answer, found, fetched_at FROM answers WHERE source = ? AND key = ?", (source, key)
-            ).fetchone()
+            with self._lock:
+                if self._conn is None:
+                    return None
+                row = self._conn.execute(
+                    "SELECT answer, found, fetched_at FROM answers WHERE source = ? AND key = ?", (source, key)
+                ).fetchone()
         except sqlite3.Error as e:
             logger.warning(f"Distributor store read failed for {source} {key!r}: {e}")
             return None
@@ -176,15 +180,15 @@ class DistributorStore:
             return None
 
     def put_answer(self, source: str, key: str, answer: Any, found: bool, fetched_at: float | None = None) -> bool:
-        if self._conn is None:
-            return False
         try:
-            self._conn.execute(
-                "INSERT OR REPLACE INTO answers (source, key, found, fetched_at, answer) VALUES (?, ?, ?, ?, ?)",
-                (source, key, int(found), self._clock() if fetched_at is None else fetched_at,
-                 json.dumps(answer, separators=(",", ":"))),
-            )
-            self._conn.commit()
+            row = (source, key, int(found), self._clock() if fetched_at is None else fetched_at,
+                   json.dumps(answer, separators=(",", ":")))
+            with self._lock:
+                if self._conn is None:
+                    return False
+                self._conn.execute(
+                    "INSERT OR REPLACE INTO answers (source, key, found, fetched_at, answer) VALUES (?, ?, ?, ?, ?)", row)
+                self._conn.commit()
             return True
         except (sqlite3.Error, TypeError, ValueError) as e:
             logger.warning(f"Distributor store write failed for {source} {key!r}: {e}")
@@ -197,13 +201,16 @@ class DistributorStore:
         "LM358-P" finds LM358P), and the sources' "not listed" for this spelling of it (ignoring
         case and outer spaces), that haven't expired."""
         key = mpn_key(mpn or "")
-        if self._conn is None or not key:
+        if not key:
             return []
         try:
-            rows = self._conn.execute(
-                "SELECT mpn, maker, source, status, raw, observed_at, found, last_buy_date "
-                "FROM lifecycle WHERE mpn_key = ? AND (found OR maker_key = ?)", (key, not_listed_key(mpn))
-            ).fetchall()
+            with self._lock:
+                if self._conn is None:
+                    return []
+                rows = self._conn.execute(
+                    "SELECT mpn, maker, source, status, raw, observed_at, found, last_buy_date "
+                    "FROM lifecycle WHERE mpn_key = ? AND (found OR maker_key = ?)", (key, not_listed_key(mpn))
+                ).fetchall()
         except (sqlite3.Error, ValueError) as e:
             logger.warning(f"Lifecycle store read failed for {mpn!r}: {e}")
             return []
@@ -219,7 +226,7 @@ class DistributorStore:
         too (DigiKey matched it to these parts by its own rules), except where one of the readings
         is that number's own for the same maker and source: a JST part listed both as B2B-PH-K-S and
         B2B-PH-K-S(LF)(SN) keeps the second's reading under the second."""
-        if self._conn is None or not readings:
+        if not readings:
             return False
         rows, own = [], set()
         for reading in readings:
@@ -233,17 +240,20 @@ class DistributorStore:
                 if mpn_key(reading.mpn) != extra and (extra, maker, reading.source) not in own:
                     rows.append((extra, maker, reading))
         try:
-            for key, maker, reading in rows:
-                if reading.found:  # the source's "not listed" row for the number
-                    self._conn.execute("DELETE FROM lifecycle WHERE mpn_key = ? AND source = ? AND NOT found",
-                                       (key, reading.source))
-                self._conn.execute(
-                    "INSERT OR REPLACE INTO lifecycle (mpn_key, maker_key, source, found, observed_at, status, mpn, "
-                    "maker, raw, last_buy_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (key, maker, reading.source, int(reading.found), reading.observed_at, reading.status,
-                     reading.mpn, reading.maker, reading.raw, reading.last_buy_date),
-                )
-            self._conn.commit()
+            with self._lock:
+                if self._conn is None:
+                    return False
+                for key, maker, reading in rows:
+                    if reading.found:  # the source's "not listed" row for the number
+                        self._conn.execute("DELETE FROM lifecycle WHERE mpn_key = ? AND source = ? AND NOT found",
+                                           (key, reading.source))
+                    self._conn.execute(
+                        "INSERT OR REPLACE INTO lifecycle (mpn_key, maker_key, source, found, observed_at, status, "
+                        "mpn, maker, raw, last_buy_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (key, maker, reading.source, int(reading.found), reading.observed_at, reading.status,
+                         reading.mpn, reading.maker, reading.raw, reading.last_buy_date),
+                    )
+                self._conn.commit()
             return True
         except (sqlite3.Error, ValueError) as e:
             logger.warning(f"Lifecycle store write failed: {e}")
@@ -260,32 +270,35 @@ class DistributorStore:
     def prune(self) -> None:
         """Delete rows past their lifetime (they'd be fetched again anyway), so the file doesn't keep
         them. Each delete is a range on an index (answers_age, lifecycle_age)."""
-        if self._conn is None:
-            return
         now = self._clock()
         try:
-            for source, (found_ttl, not_found_ttl) in ANSWER_TTLS.items():
-                for found, ttl in ((1, found_ttl), (0, not_found_ttl)):
-                    self._conn.execute("DELETE FROM answers WHERE source = ? AND found = ? AND fetched_at <= ?",
-                                       (source, found, now - ttl))
-            self._conn.execute(_PRUNE_LIFECYCLE, (now - min(_LIFECYCLE_TTLS), now, *_LIFECYCLE_TTLS))
-            self._conn.commit()
+            with self._lock:
+                if self._conn is None:
+                    return
+                for source, (found_ttl, not_found_ttl) in ANSWER_TTLS.items():
+                    for found, ttl in ((1, found_ttl), (0, not_found_ttl)):
+                        self._conn.execute("DELETE FROM answers WHERE source = ? AND found = ? AND fetched_at <= ?",
+                                           (source, found, now - ttl))
+                self._conn.execute(_PRUNE_LIFECYCLE, (now - min(_LIFECYCLE_TTLS), now, *_LIFECYCLE_TTLS))
+                self._conn.commit()
         except sqlite3.Error as e:
             logger.warning(f"Distributor store prune failed: {e}")
 
     def counts(self) -> dict[str, Any]:
         """Stored answers and lifecycle readings, and whether they survive a restart (for /health)."""
         counts: dict[str, Any] = {"answers": 0, "lifecycle": 0, "kept_across_restarts": self.persistent}
-        if self._conn is None:
-            return counts
         try:
-            counts["answers"] = self._conn.execute("SELECT COUNT(*) FROM answers").fetchone()[0]
-            counts["lifecycle"] = self._conn.execute("SELECT COUNT(*) FROM lifecycle WHERE found").fetchone()[0]
+            with self._lock:
+                if self._conn is None:
+                    return counts
+                counts["answers"] = self._conn.execute("SELECT COUNT(*) FROM answers").fetchone()[0]
+                counts["lifecycle"] = self._conn.execute("SELECT COUNT(*) FROM lifecycle WHERE found").fetchone()[0]
         except sqlite3.Error:
             pass
         return counts
 
     def close(self) -> None:
-        if self._conn is not None:
-            self._conn.close()
-            self._conn = None
+        with self._lock:
+            if self._conn is not None:
+                self._conn.close()
+                self._conn = None

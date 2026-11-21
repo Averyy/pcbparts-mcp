@@ -346,6 +346,7 @@ class MouserClient:
                  extra_keys: Sequence[str] = ()):
         self._keys = [api_key, *extra_keys]
         self._client: httpx.AsyncClient | None = None
+        self._closed = False  # close(): nothing goes out afterwards
         self._quota = MouserKeyPool([quota]) if isinstance(quota, DailyQuota) else quota
         # Without a quota there's nothing to choose a key by: one key only
         if len(self._quota.quotas if self._quota is not None else [None]) != len(self._keys):
@@ -355,6 +356,8 @@ class MouserClient:
         self._tasks: set[asyncio.Task] = set()  # requests in flight (_shielded; kept so they aren't collected)
 
     def _get_client(self) -> httpx.AsyncClient:
+        if self._closed:  # shutting down: nothing goes out after close()
+            raise httpx.ConnectError("Mouser client closed")
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=15.0)
         return self._client
@@ -794,9 +797,15 @@ class MouserClient:
 
     async def close(self) -> None:
         """Close the HTTP client (and the store, if this client made its own). Requests still in
-        flight are cancelled."""
-        for task in list(self._tasks):
-            task.cancel()
+        flight are cancelled, and waited for, so they're done before the server's last save of the
+        stats."""
+        self._closed = True
+        while self._tasks:  # one started while waiting is cancelled too
+            tasks = list(self._tasks)
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            self._tasks.difference_update(tasks)
         if self._client:
             await self._client.aclose()
             self._client = None

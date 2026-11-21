@@ -7,6 +7,7 @@ import os
 import runpy
 import subprocess
 import sys
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -18,6 +19,7 @@ NOW = datetime.datetime(2026, 11, 20, 13, 5, 1, tzinfo=UTC).timestamp()
 
 @pytest.fixture
 def logs(monkeypatch):
+    monkeypatch.setattr(file_logging, "_retention", {})
     loggers = [logging.getLogger(), logging.getLogger("pcbparts_mcp"),
                logging.getLogger("uvicorn"), logging.getLogger("uvicorn.error"),
                logging.getLogger("uvicorn.access"), logging.getLogger("fastmcp"),
@@ -105,6 +107,63 @@ def test_disabled_path_has_no_effect(logs):
     assert logging.getLogger().handlers == before
 
 
+@pytest.mark.parametrize("acquired", [True, False], ids=["acquired", "timeout"])
+@pytest.mark.parametrize("level", [logging.INFO, logging.WARNING, logging.ERROR], ids=["info", "warn", "error"])
+def test_file_lock_wait_is_bounded(logs, tmp_path, monkeypatch, acquired, level):
+    configure, _, _ = logs
+    path = tmp_path / "application.log"
+    handler = configure(path)
+    lock = MagicMock()
+    lock.acquire.return_value = acquired
+    record = logging.LogRecord("pcbparts_mcp.server", level, __file__, 0, "concurrent record", (), None)
+    with monkeypatch.context() as patch:
+        patch.setattr(handler, "lock", lock)
+        assert handler.handle(record) is acquired
+    args, kwargs = lock.acquire.call_args_list[0]
+    assert args == () and kwargs.keys() == {"timeout"}
+    assert 0 < kwargs["timeout"] <= 0.25
+    assert kwargs["timeout"] == file_logging.FILE_LOCK_TIMEOUT_SECONDS
+    assert ("concurrent record" in path.read_text(encoding="utf-8")) is acquired
+    assert not handler.failed
+    assert handler.lock_dropped_records == (0 if acquired else 1)
+    if acquired:
+        assert lock.release.called
+    else:
+        lock.release.assert_not_called()
+
+
+def test_lock_drops_reported_once_at_rollover(logs, tmp_path, monkeypatch):
+    configure, output, clock = logs
+    path = tmp_path / "application.log"
+    path.touch()
+    os.utime(path, (clock[0],) * 2)
+    handler = configure(path)
+    caller = logging.getLogger("pcbparts_mcp.server")
+    total = 0
+    for dropped in (3, 0, 2):
+        date = datetime.datetime.fromtimestamp(clock[0], UTC).date()
+        lock = MagicMock()
+        lock.acquire.return_value = False
+        with monkeypatch.context() as patch:
+            patch.setattr(handler, "lock", lock)
+            for _ in range(dropped):
+                caller.warning("held-lock record")
+        total += dropped
+        assert handler.lock_dropped_records == total
+        assert output.getvalue().count("held-lock record") == total
+        assert "held-lock record" not in path.read_text(encoding="utf-8")
+        clock[0] = handler.rolloverAt
+        file_logging.prune_file_logs()
+        caller.info("writer recovered")
+        file_logging.prune_file_logs()
+        text = path.read_text(encoding="utf-8")
+        assert text.count("records dropped waiting for the file lock") == (1 if dropped else 0)
+        if dropped:
+            assert f"{date}: {dropped} records dropped waiting for the file lock" in text
+        assert "writer recovered" in text
+        assert handler.lock_dropped_records == total
+
+
 def test_midnight_rotation_and_backup_limit(logs, tmp_path):
     configure, _, clock = logs
     path = tmp_path / "application.log"
@@ -114,6 +173,7 @@ def test_midnight_rotation_and_backup_limit(logs, tmp_path):
     for day in range(4):
         clock[0] = NOW + day * 86400
         logging.getLogger("pcbparts_mcp.server").info("day %s", day)
+        file_logging.prune_file_logs()
         midnight = datetime.datetime.fromtimestamp(handler.rolloverAt, UTC)
         assert (midnight.hour, midnight.minute, midnight.second) == (0, 0, 0)
     assert sorted(p.name for p in tmp_path.iterdir()) == [
@@ -224,7 +284,8 @@ uvicorn.run = run
 server.main()
 '''
     path = tmp_path / "application.log"
-    outputs = [subprocess.run([sys.executable, "-c", script, value], capture_output=True, text=True, check=True)
+    outputs = [subprocess.run([sys.executable, "-c", script, value], capture_output=True, text=True,
+                              encoding="utf-8", check=True)
                for value in ("", str(path))]
     assert outputs[0].stdout == outputs[1].stdout
     assert outputs[0].stderr == outputs[1].stderr
@@ -232,3 +293,90 @@ server.main()
     text = path.read_text(encoding="utf-8")
     assert "application info" in text and "uvicorn warning" in text and "framework warning" in text
     assert 'GET /mcp' not in text
+
+
+def test_scheduled_prune_expires_idle_backups_and_active_file(logs, tmp_path):
+    configure, _, clock = logs
+    path = tmp_path / "application.log"
+    path.touch()
+    os.utime(path, (NOW, NOW))
+    handler = configure(path)
+    logging.getLogger("pcbparts_mcp.server").info("last call before idle")
+    old = tmp_path / "application.log.2026-11-12"
+    old.write_text("old", encoding="utf-8")
+    clock[0] += 9 * 86400
+    file_logging.prune_file_logs()
+    assert not old.exists()
+    assert not list(tmp_path.glob("application.log.2026-*"))
+    assert path.read_text(encoding="utf-8") == ""
+    assert handler.stream is not None and not handler.stream.closed
+
+
+def test_message_truncation_is_file_only(logs, tmp_path):
+    configure, output, _ = logs
+    path = tmp_path / "application.log"
+    assert configure(path)
+    message = "Invalid arguments for tool: " + "Ω" * 6000 + "PRIVATE-TAIL"
+    logging.getLogger("fastmcp.server").warning("%s", message)
+    text = path.read_text(encoding="utf-8")
+    assert len(text) < 2200 and "PRIVATE-TAIL" not in text
+    assert message in output.getvalue()
+
+
+@pytest.mark.parametrize("raw,expected", [(None, 50_000_000), ("bad", 50_000_000), ("0", 1), ("1000", 1000)],
+                         ids=["default", "bad", "min", "set"])
+def test_log_byte_budget_setting(monkeypatch, raw, expected):
+    from pcbparts_mcp import config
+    monkeypatch.delenv("LOG_MAX_BYTES_PER_DAY", raising=False)
+    if raw is not None:
+        monkeypatch.setenv("LOG_MAX_BYTES_PER_DAY", raw)
+    assert runpy.run_path(config.__file__)["LOG_MAX_BYTES_PER_DAY"] == expected
+
+
+def test_file_budget_counts_bytes_restart_and_rollover(logs, tmp_path, monkeypatch):
+    configure, output, clock = logs
+    monkeypatch.setattr(file_logging, "LOG_MAX_BYTES_PER_DAY", 500, raising=False)
+    path = tmp_path / "application.log"
+    path.write_text("Ω" * 220, encoding="utf-8")
+    os.utime(path, (clock[0],) * 2)
+    handler = configure(path)
+    for _ in range(4):
+        logging.getLogger("fastmcp.server").warning("%s", "Ω" * 100)
+    assert path.stat().st_size <= 500
+    assert handler.dropped_lines == 4
+    assert output.getvalue().count("daily byte budget reached") == 1
+    clock[0] = handler.rolloverAt
+    file_logging.prune_file_logs()
+    text = path.read_text(encoding="utf-8")
+    assert "2026-11-20: 4 lines dropped" in text
+    logging.getLogger("pcbparts_mcp.server").info("new day")
+    assert "new day" in path.read_text(encoding="utf-8")
+    assert handler.dropped_lines == 0 and path.stat().st_size <= 500
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX permission bits")
+def test_log_modes_repaired_and_new_files_private(logs, tmp_path, monkeypatch):
+    from pathlib import Path
+    configure, _, clock = logs
+    directory = tmp_path / "logs"
+    directory.mkdir(mode=0o755)
+    path = directory / "application.log"
+    old = directory / "application.log.2026-11-19"
+    for source in (path, old):
+        source.write_text("old\n", encoding="utf-8")
+        source.chmod(0o644)
+        os.utime(source, (clock[0],) * 2)
+    handler = configure(path)
+    assert directory.stat().st_mode & 0o777 == 0o700
+    assert all(p.stat().st_mode & 0o777 == 0o600 for p in directory.iterdir())
+    original = os.open
+
+    def opened(name, flags, mode=0o777, **kwargs):
+        if Path(name).parent == directory:
+            assert mode == 0o600
+        return original(name, flags, mode, **kwargs)
+
+    monkeypatch.setattr(os, "open", opened)
+    clock[0] = handler.rolloverAt
+    logging.getLogger("pcbparts_mcp.server").info("after rollover")
+    assert all(p.stat().st_mode & 0o777 == 0o600 for p in directory.iterdir())

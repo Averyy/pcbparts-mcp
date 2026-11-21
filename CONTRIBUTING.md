@@ -177,8 +177,8 @@ don't check live API pagination or completeness; the daily scrape in GitHub Acti
    maintainer will adjust to minor/major if warranted) and add a `## X.Y.Z (YYYY-MM-DD)` entry
    to `CHANGELOG.md`.
    Reuse the current version and combine entries while changes remain unreleased.
-   Merging publishes a GitHub release with that entry as its notes. Docs-only changes
-   don't need a bump.
+   After deploy, every version is tagged; minor/major versions publish all entries since the last GitHub release (excluded), with unique headings, valid dates and nonempty notes.
+   Reruns restore missing releases on existing tags; API/notes errors fail only the release job. Docs-only changes don't need a bump.
 5. Match the existing code style; add comments only where the code can't speak for
    itself (constraints, gotchas — not narration).
 6. PR description: what, why, and for bug fixes a before/after repro.

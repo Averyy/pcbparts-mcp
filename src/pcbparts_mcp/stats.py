@@ -1,4 +1,4 @@
-"""Anonymous usage counts per UTC day, served at /mcp/stats.
+"""Private usage counts per UTC day, served with bearer auth at /mcp/stats.
 
 Per day: calls to each tool, split by outcome (see OUTCOMES), with the average time; calls in each UTC
 hour; the MCP apps that connected (by the name each app reports when it connects), the number of distinct
@@ -12,21 +12,41 @@ in each UTC hour. From 0.10.2 also how LCSC-code lookups were answered (snapshot
 fallback), and which apps called the Mouser and DigiKey tools (distributor_apps; server.py links a
 call to its app in memory). From 0.10.3 also why distributor lookups were held back, in each UTC
 hour, and the limits distributors themselves refused for (distributor_limits). From 0.10.4 also
-part_lifecycle input forms per entry (lifecycle_inputs). No IPs, queries or part
-numbers are kept: callers and distinct part
+part_lifecycle input forms per entry (lifecycle_inputs). From 0.10.5 also bad_request_reasons
+(separate from reasons), tool_apps (every outcome per app and tool), latency histograms and
+bucket-bound percentiles (excluding bad_request and rate_limited), versions (starts per version),
+upstream_status (one HTTP/transport class per sent request), and popular_terms (query tokens seen
+from at least 10 distinct callers that UTC day, top 200); all null on days saved before.
+tool_apps, latency and popular_terms keep only the last RECENT_DAYS days; older days are cleared on rollover, load,
+save and summary. Today's tool_apps keeps MAX_APPS names; past days keep the busiest MAX_TOOL_APPS - 1
+plus other, summing all outcomes from the remaining apps.
+Call-local notes carry label-only facts from tools, including offloaded ones, without altering replies.
+Cutovers in 0.10.5: Mouser misses become part_not_found; jlc_stock_check's otherwise-unlabelled
+no_results splits into no_results_filtered, no_results_part_number and no_results_words;
+jlc_search's historical part_number_not_in_stock becomes part_number_sold_out or part_number_unknown.
+Retired labels remain valid.
+Failed calls are also accumulated in memory and logged once per UTC minute, labels only.
+No IPs or whole queries are kept. Below-threshold tokens are never written; their caller hashes
+use a random daily/restart salt, capped at 10 per token and 20,000 tokens a day. Platform addresses
+all count as one caller. Already-retained tokens keep their count through a same-day restart;
+new tokens must reach the threshold again. Callers and distinct part
 numbers are counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
 twice; each day's `restarts` (from 0.10.0) says how many there were.
 
 The server writes the counts to USAGE_STATS_PATH (a JSON file on the cache volume) every minute and
-at shutdown; unset means memory only. The file keeps a year; /mcp/stats shows the last 30 days. Nothing
+at shutdown; unset means memory only. The file keeps a year; /mcp/stats defaults to 30 days, up to a year. Nothing
 here raises on a bad or unwritable file, like QuotaStore: a file that can't be read is moved aside
-(USAGE_STATS_PATH.corrupt, one kept) before counting starts from 0, so the next save can't overwrite
-it, and a day's fields this version doesn't know (a newer version's) are kept as they are.
+(USAGE_STATS_PATH.corrupt, one kept until its mtime is over 30 days old) before counting starts
+from 0, so the next save can't overwrite it. Stats and their temporary/backup files are 0600.
+A day's fields this version doesn't know (a newer version's) are kept as they are.
 """
 
+import asyncio
+import contextvars
 import datetime
 import hashlib
+import ipaddress
 import json
 import logging
 import math
@@ -37,16 +57,68 @@ import time
 from pathlib import Path
 from typing import Any, Callable
 
+from . import __version__
 from .config import DB_WAIT_COUNTED_SECONDS
+from .private_files import private_open
 
 logger = logging.getLogger(__name__)
 
-KEEP_DAYS = 365  # in the file (about 1 MB for a busy year, at most about 3 MB)
-PUBLIC_DAYS = 30  # the most /mcp/stats shows
+KEEP_DAYS = 365  # daily aggregates; tool_apps, latency and popular_terms keep only RECENT_DAYS
+RECENT_DAYS = 30  # retention for app-by-tool, latency and popular-term detail
+MAX_TOOL_APPS = 15  # compacted past days: includes the reserved overflow name "other"
+# From 0.10.5; daily, null before. Only calls that did work contribute to latency.
+LATENCY_BOUNDS_MS = (50, 100, 250, 500, 1000, 2500, 5000, 10000, 30000, 60000)
+LATENCY_OUTCOMES = ("ok", "similar_only", "not_found", "failed")
+# From 0.10.5: one fixed HTTP/transport class per sent request; null on earlier days.
+UPSTREAM_STATUS_CLASSES = ("2xx", "3xx", "4xx", "429", "5xx", "timeout", "connection", "challenge",
+                           "too_large", "cancelled", "other_error")
+# From 0.10.5: separate from REASONS; declared argument names plus these fixed types only.
+BAD_REQUEST_REASONS = frozenset({
+    "category_not_found", "too_long", "too_many", "invalid_value", "unsupported_exclusion", "strict_unmet",
+    "unsupported_value", "unsupported_sort", "missing_argument", "invalid_lcsc", "query_unsearchable",
+    "invalid_id", "all_inputs_invalid", "unknown_tool", "other",
+})
+ARG_ERROR_TYPES = ("missing", "extra_forbidden", "int_parsing", "int_type", "float_parsing", "string_type",
+                   "bool_parsing", "list_type", "literal_error", "enum", "greater_than_equal", "less_than_equal",
+                   "greater_than", "less_than", "string_too_long", "string_too_short", "too_long", "too_short",
+                   "value_error", "json_invalid", "missing_argument", "unexpected_keyword_argument",
+                   "unexpected_positional_argument", "multiple_argument_values", "missing_keyword_only_argument",
+                   "missing_positional_only_argument")
+_ARG_REASON = re.compile(r"arg:([A-Za-z_][A-Za-z0-9_]{0,63}):(" + "|".join((*ARG_ERROR_TYPES, "other")) + r")\Z")
+# From 0.10.5: server starts by short version-like tag; null on earlier days.
+_VERSION = re.compile(r"(?=.{1,32}\Z)[0-9]+(?:\.[0-9]+){1,3}(?:[A-Za-z0-9.+_-]*)\Z")
+SINCE_0_10_5 = ("bad_request_reasons", "tool_apps", "latency", "versions", "upstream_status", "popular_terms")
+QUERY_TOOLS = frozenset({"jlc_search", "jlc_stock_check", "cse_search", "board_search", "sensor_recommend"})
+POPULAR_CALLERS = 10
+MAX_POPULAR_TOKENS = 20_000
+MAX_POPULAR_TERMS = 200
+_TERM_SPLIT = re.compile(r"[\s,;|()\[\]{}\"'<>]+")
+_TERM_EDGES = ".-_/ :+*#!?=&"
+_STOP_WORDS = frozenset("a an the and or for with of to in on at by from".split())
+
+
+def query_tokens(query: Any) -> list[str]:
+    """At most 20 distinct normalized tokens; phrases and the English stop list are omitted."""
+    if not isinstance(query, str):
+        return []
+    text = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm").casefold()
+    tokens = {}
+    for part in _TERM_SPLIT.split(text):
+        token = part.strip(_TERM_EDGES)
+        if 2 <= len(token) <= 40 and token not in _STOP_WORDS:
+            tokens[token] = None
+            if len(tokens) == 20:
+                break
+    return list(tokens)
+
+
+def _top_terms(counts: dict[str, int]) -> dict[str, int]:
+    return dict(sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:MAX_POPULAR_TERMS])
+
 MAX_CALLERS = 100_000  # distinct callers counted a day (bounds memory); later ones aren't counted
 MAX_APPS = 50  # distinct app names a day; later ones count as "other"
 APP_NAME_LENGTH = 40
-_NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-reported and shown publicly
+_NOT_IN_APP_NAME = re.compile(r"[^A-Za-z0-9 ._()/+-]")  # app names are self-reported
 # Each tool call counts under exactly one outcome, so a tool's outcomes add up to its calls:
 # ok (found something), similar_only (manual comparison candidates, no verified alternatives),
 # not_found (worked, found nothing), bad_request (the request was invalid),
@@ -69,6 +141,8 @@ REASONS = frozenset({
     "part_number_not_in_stock", "part_number_filtered_out", "words_unmatched", "no_part_type", "no_catalog_subcategory",
     "value_not_listed", "filter_ignored_or_sparse", "spec_filters_no_match", "stock_below_minimum",
     "part_number_fragment", "no_results",
+    # From 0.10.5; keep no_results and part_number_not_in_stock for historical days.
+    "no_results_filtered", "no_results_part_number", "no_results_words", "part_number_sold_out", "part_number_unknown",
     # lookups that found nothing
     "mpn_not_in_snapshot", "placeholder_mpn", "lcsc_code_as_mpn", "part_not_found", "lcsc_not_found", "board_not_found",
     "no_parts_for_query", "no_ecad_model", "no_kicad_in_archive", "no_easyeda_symbol", "no_alternatives",
@@ -135,6 +209,24 @@ DATASHEET_LINK_EVENTS = ("visits", "reused", "signed", "waited", "refused", "fai
 LIFECYCLE_INPUT_FORMS = ("bare_number", "with_manufacturer", "lcsc_code")
 
 
+# A fresh shared dict per call: copy_context() in db_worker carries it into offloaded tools.
+call_notes: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar("usage_call_notes", default=None)
+
+
+def note(**facts: Any) -> None:
+    """Hand counting facts to the middleware without changing a tool's reply."""
+    try:
+        notes = call_notes.get()
+        if notes is not None:
+            notes.update(facts)
+    except Exception:
+        logger.exception("Usage stats: couldn't note call facts")
+
+
+def _valid_bad_request_reason(label: str) -> bool:
+    return label in BAD_REQUEST_REASONS or bool(_ARG_REASON.fullmatch(label))
+
+
 def _new_distributor_limits() -> dict[str, Any]:
     return {"held_back": dict.fromkeys(DISTRIBUTOR_LIMIT_CAUSES, 0), "held_back_hours": [0] * 24,
             "refusals": dict.fromkeys(DISTRIBUTOR_LIMIT_REFUSALS, 0)}
@@ -172,7 +264,8 @@ def _new_day() -> dict[str, Any]:
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
             **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {},
             "distributor_limits": {}, "datasheet_links": dict.fromkeys(DATASHEET_LINK_EVENTS, 0),
-            "db_waits": _new_db_waits(), "lifecycle_inputs": dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)}
+            "db_waits": _new_db_waits(), "lifecycle_inputs": dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0),
+            **{field: {} for field in SINCE_0_10_5}}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -208,6 +301,37 @@ def _clean_day(day: dict) -> dict[str, Any]:
     Fields this version doesn't know are carried through untouched, so going back to an older
     version and forward again doesn't lose them."""
     clean = _new_day()
+    # From 0.10.5: additive-null, independently validated before tool parameters are known.
+    for field in SINCE_0_10_5:
+        clean[field] = {} if isinstance(day.get(field), dict) else None
+    for tool, labels in _dict(day.get("bad_request_reasons")).items():
+        if isinstance(labels, dict):
+            clean["bad_request_reasons"][str(tool)] = {
+                label: max(0, _int(count)) for label, count in labels.items() if _valid_bad_request_reason(label)}
+    for tool, apps in _dict(day.get("tool_apps")).items():
+        if isinstance(apps, dict):
+            target = clean["tool_apps"][str(tool)] = {}
+            for app, counts in apps.items():
+                if isinstance(counts, dict):
+                    name = _tool_app_name(target, app)
+                    dest = target.setdefault(name, {"calls": 0})
+                    for key in ("calls", *OUTCOMES):
+                        count = max(0, _int(counts.get(key)))
+                        if count:
+                            dest[key] = dest.get(key, 0) + count
+    for tool, counts in _dict(day.get("latency")).items():
+        if isinstance(counts, list) and len(counts) == len(LATENCY_BOUNDS_MS) + 1:
+            clean["latency"][str(tool)] = [max(0, _int(count)) for count in counts]
+    for version, count in _dict(day.get("versions")).items():
+        if _VERSION.fullmatch(version):
+            clean["versions"][version] = max(0, _int(count))
+    for source, counts in _dict(day.get("upstream_status")).items():
+        if source in UPSTREAM_SOURCES and isinstance(counts, dict):
+            clean["upstream_status"][source] = {label: max(0, _int(count)) for label, count in counts.items()
+                                                 if label in UPSTREAM_STATUS_CLASSES}
+    if clean["popular_terms"] is not None:
+        clean["popular_terms"] = _top_terms({token: _int(count) for token, count in day["popular_terms"].items()
+                                             if query_tokens(token) == [token] and _int(count) > 0})
     for name, counts in _dict(day.get("tools")).items():
         if isinstance(counts, dict):
             clean["tools"][str(name)] = _clean_tool_counts(counts)
@@ -276,14 +400,43 @@ def _clean_day(day: dict) -> dict[str, Any]:
 
 
 def clean_app_name(name: Any) -> str:
-    """An app's self-reported name (its clientInfo name) as counted and shown publicly: only plain
+    """An app's self-reported name (its clientInfo name) as kept in private counts: only plain
     characters, at most APP_NAME_LENGTH; "unknown" for none."""
     return _NOT_IN_APP_NAME.sub("", str(name or "")).strip()[:APP_NAME_LENGTH] or "unknown"
+
+
+def popularity_caller(caller: str | None, *, platform: bool = False) -> str | None:
+    """Popularity heuristic, not an anonymity guarantee: one platform or IPv6 /48 per caller."""
+    if platform:
+        return "platform"
+    if caller and ":" in caller:
+        try:
+            return str(ipaddress.ip_network(caller.split("/", 1)[0] + "/48", strict=False))
+        except ValueError:
+            pass
+    return caller
 
 
 def _capped(apps: dict, name: str) -> str:
     """name, or "other" once apps has MAX_APPS names and name isn't one of them."""
     return "other" if name not in apps and len(apps) >= MAX_APPS else name
+
+
+def _tool_app_name(apps: dict, app: Any) -> str:
+    name = clean_app_name(app)
+    return "other" if name not in apps and len(apps) - ("other" in apps) >= MAX_APPS else name
+
+
+def _compact_tool_apps(apps: dict) -> bool:
+    """Keep a past day's busiest named apps, folding every count from the rest into other."""
+    if len(apps) - ("other" in apps) <= MAX_TOOL_APPS - 1:
+        return False
+    names = sorted((name for name in apps if name != "other"), key=lambda name: (-apps[name]["calls"], name))
+    other = apps.setdefault("other", {"calls": 0})
+    for name in names[MAX_TOOL_APPS - 1:]:
+        for key, count in apps.pop(name).items():
+            other[key] = other.get(key, 0) + count
+    return True
 
 
 def _clean_tool_counts(counts: dict) -> dict[str, int]:
@@ -331,18 +484,39 @@ class UsageStats:
     def __init__(self, clock: Callable[[], float] = time.time):
         self._clock = clock
         self.path: Path | None = None
+        # Retention must survive disabling writes to protect an unreadable original.
+        self._retention_path: Path | None = None
+        self._aside_problem: str | None = None
         self.ok = True  # False while writes are failing
         self.tools: set[str] | None = None  # the server's tool names; other names count as "unknown"
+        self.tool_params: dict[str, set[str]] = {}  # declared names only, from list_tools at startup
+        self._failed_minutes: dict[str, dict[tuple[str, str], int]] = {}
         self._days: dict[str, dict[str, Any]] = {}
         self._dirty = False
+        self._closed_json: dict[str, str] = {}
         self._callers = _SeenToday(MAX_CALLERS)
         self._parts = {name: _SeenToday(MAX_DISTINCT_PARTS) for name in PARTS_ASKED}
+        self._term_date = ""
+        self._term_salt = b""
+        self._term_base: dict[str, int] = {}
+        self._terms: dict[str, tuple[int, set[bytes]]] = {}
 
     def open(self, path: str | Path) -> None:
         """Load the counts kept in path and write them there from now on. A file that can't be
         read, or has no days, is moved aside to <path>.corrupt (replacing an older one) first, so
-        the next save can't overwrite it; if it can't be moved either, nothing is written to path."""
-        self.path = Path(path)
+        the next save can't overwrite it; if it can't be moved either, nothing is written to path
+        until hourly maintenance can move it safely."""
+        self.path = self._retention_path = Path(path)
+        self._aside_problem = None
+        self._closed_json.clear()
+        self.prune()
+        try:
+            for source in (self.path, self.path.with_name(self.path.name + ".tmp"),
+                           self.path.with_name(self.path.name + ".corrupt")):
+                if source.is_file():
+                    source.chmod(0o600)
+        except OSError as exc:
+            self._save_failed(exc)
         try:
             data = json.loads(self.path.read_text(encoding="utf-8"))
         except FileNotFoundError:
@@ -359,29 +533,74 @@ class UsageStats:
             return
         try:  # malformed values are dropped (_clean_day); anything that still fails here is corruption too
             self._days = {str(date): _clean_day(day) for date, day in days.items() if isinstance(day, dict)}
+            self._maintain_recent(self._now())
         except (ValueError, TypeError, OverflowError, RecursionError) as e:
             self._days = {}
             self._set_aside(f"unreadable ({type(e).__name__}: {e})")
 
     def _set_aside(self, problem: str) -> None:
-        aside = self.path.with_name(self.path.name + ".corrupt")
-        try:
-            os.replace(self.path, aside)
-        except OSError as e:
-            logger.warning(f"Usage stats file {self.path} {problem}, and it can't be moved aside ({e}); counting "
-                           "starts from 0, kept in memory only, so the file isn't overwritten")
-            self.path = None
+        self._aside_problem = problem
+        self.path = None  # never overwrite the original before it has been moved safely
+        self.prune()
+
+    def prune(self) -> None:
+        """Retry a blocked set-aside; expire unreadable backups after 30 days by mtime."""
+        path = self._retention_path
+        if path is None:
             return
-        logger.warning(f"Usage stats file {self.path} {problem}; moved to {aside} and counting starts from 0")
+        aside = path.with_name(path.name + ".corrupt")
+        if self._aside_problem is not None:
+            try:
+                path.chmod(0o600)
+                os.replace(path, aside)
+            except OSError as exc:
+                logger.warning(f"Usage stats file {path} {self._aside_problem}, and it can't be moved aside ({exc}); "
+                               "counts stay in memory so the file isn't overwritten; will retry")
+                self.ok = False
+                self._dirty = True
+            else:
+                logger.warning(f"Usage stats file {path} {self._aside_problem}; moved to {aside}")
+                self._aside_problem = None
+                self.path = path
+        try:
+            if aside.stat().st_mtime < self._clock() - RECENT_DAYS * 86400:
+                aside.unlink()
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            logger.warning("Usage stats: couldn't prune corrupt backup (%s)", type(exc).__name__)
 
     def record_start(self) -> None:
         """The server started: one more restart today (a restart resets the hashes behind callers
         and parts_asked.distinct, so those can count a caller or part twice on such a day)."""
         day = self._day()
         day["restarts"] = (day["restarts"] or 0) + 1
+        day["versions"][__version__] = day["versions"].get(__version__, 0) + 1
 
     def _now(self) -> datetime.datetime:
         return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
+
+    def _maintain_recent(self, now: datetime.datetime) -> None:
+        """Expire days and recent detail even when no calls arrive or today was loaded from disk."""
+        today = now.date().isoformat()
+        keep_cutoff = (now.date() - datetime.timedelta(days=KEEP_DAYS)).isoformat()
+        for old in [date for date in self._days if date <= keep_cutoff]:
+            del self._days[old]
+            self._closed_json.pop(old, None)
+            self._dirty = True
+        cutoff = (now.date() - datetime.timedelta(days=RECENT_DAYS)).isoformat()
+        for date, day in self._days.items():
+            if date <= cutoff:
+                for field in ("tool_apps", "latency", "popular_terms"):
+                    if day[field] is not None:
+                        day[field] = None
+                        self._dirty = True
+                        self._closed_json.pop(date, None)
+            elif date < today:
+                for apps in (day["tool_apps"] or {}).values():
+                    if _compact_tool_apps(apps):
+                        self._dirty = True
+                        self._closed_json.pop(date, None)
 
     def _day(self, now: datetime.datetime | None = None) -> dict[str, Any]:
         """The counts for now's UTC day (default: the clock's now), marked as changed. Callers that
@@ -392,9 +611,10 @@ class UsageStats:
         day = self._days.get(date)
         if day is None:
             day = self._days[date] = _new_day()
-            cutoff = (datetime.date.fromisoformat(date) - datetime.timedelta(days=KEEP_DAYS)).isoformat()
-            for old in [d for d in self._days if d <= cutoff]:
-                del self._days[old]
+            self._maintain_recent(now)
+        for field in SINCE_0_10_5:
+            if day[field] is None:
+                day[field] = {}
         if day["per_ip_refusals"] is None:  # a day saved before 0.10.0: refusals count from now on
             day["per_ip_refusals"] = {}
         if day["lcsc_lookups"] is None:  # a day saved before 0.10.2: lookups count from now on
@@ -413,14 +633,16 @@ class UsageStats:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
         self._dirty = True
+        self._closed_json.pop(date, None)
         return day
 
     def record_call(self, tool: str, outcome: str, ms: float, caller: str | None = None,
-                    reason: str | None = None, app: str | None = None) -> None:
+                    reason: str | None = None, app: str | None = None,
+                    bad_request_reason: str | None = None) -> None:
         """One tool call. outcome is one of OUTCOMES (anything else counts as "failed"). caller is
         an IP, counted but not kept. reason says why it found nothing or failed: one of REASONS
         (anything else counts as "other"), on the same day as the call so the two add up. app: the
-        app behind the call (None: not known), counted for DISTRIBUTOR_TOOLS only."""
+        app behind the call (None: not known). bad_request_reason is separate from reasons."""
         if self.tools is not None and tool not in self.tools:
             tool = "unknown"
         now = self._now()  # one reading for date and hour
@@ -433,6 +655,28 @@ class UsageStats:
         counts["ms"] += round(ms)
         if outcome == "failed":
             day["failed_hours"][hour] = (day["failed_hours"][hour] or 0) + 1
+            minute = now.strftime("%Y-%m-%d %H:%M")
+            failures = self._failed_minutes.setdefault(minute, {})
+            key = (tool, reason if reason in REASONS else "other")
+            failures[key] = failures.get(key, 0) + 1
+        if outcome == "bad_request":
+            label = bad_request_reason or "other"
+            if not _valid_bad_request_reason(label):
+                label = "other"
+            elif label.startswith("arg:"):
+                _, name, kind = label.split(":")
+                if name not in self.tool_params.get(tool, set()):
+                    label = f"arg:unknown_argument:{kind}"
+            labels = day["bad_request_reasons"].setdefault(tool, {})
+            labels[label] = labels.get(label, 0) + 1
+        apps = day["tool_apps"].setdefault(tool, {})
+        app_counts = apps.setdefault(_tool_app_name(apps, app), {"calls": 0})
+        app_counts["calls"] += 1
+        app_counts[outcome] = app_counts.get(outcome, 0) + 1
+        if outcome in LATENCY_OUTCOMES:
+            buckets = day["latency"].setdefault(tool, [0] * (len(LATENCY_BOUNDS_MS) + 1))
+            bucket = next((i for i, bound in enumerate(LATENCY_BOUNDS_MS) if ms <= bound), len(LATENCY_BOUNDS_MS))
+            buckets[bucket] += 1
         if reason is not None:
             reasons = day["reasons"].setdefault(tool, {})
             reason = reason if reason in REASONS else "other"
@@ -453,6 +697,51 @@ class UsageStats:
         if self._callers.add(date, caller):
             day["callers"] += 1
 
+    def record_terms(self, tool: str, outcome: str, query: Any, caller: str | None,
+                     *, platform: bool = False) -> None:
+        """One query's tokens. IPv6 callers share a /48, hashed only in memory.
+        Every platform address shares one key; unknown callers cannot help reach the threshold.
+        """
+        if tool not in QUERY_TOOLS or outcome == "bad_request":
+            return
+        tokens = query_tokens(query)
+        if not tokens:
+            return
+        now = self._now()
+        date = now.date().isoformat()
+        if date != self._term_date:
+            self._refresh_terms(now)
+            self._term_date, self._term_salt, self._terms = date, secrets.token_bytes(16), {}
+            self._term_base = dict(self._day(now)["popular_terms"])
+            self._terms = {token: (0, set()) for token in self._term_base}
+        key = popularity_caller(caller, platform=platform)
+        digest = (hashlib.blake2b(key.encode("utf-8", "surrogatepass"), key=self._term_salt, digest_size=8).digest()
+                  if key else None)
+        for token in tokens:
+            if token not in self._terms and len(self._terms) >= MAX_POPULAR_TOKENS:
+                continue
+            count, seen = self._terms.setdefault(token, (0, set()))
+            if digest is not None and len(seen) < POPULAR_CALLERS:
+                seen.add(digest)
+            self._terms[token] = count + 1, seen
+
+    def _refresh_terms(self, now: datetime.datetime) -> None:
+        day = self._days.get(self._term_date)
+        today = now.date()
+        cutoff = (today - datetime.timedelta(days=RECENT_DAYS)).isoformat()
+        if day is not None and self._term_date > cutoff:
+            published = dict(self._term_base)
+            for token, (count, seen) in self._terms.items():
+                if token in self._term_base or len(seen) >= POPULAR_CALLERS:
+                    published[token] = self._term_base.get(token, 0) + count
+            published = _top_terms(published)
+            if day["popular_terms"] != published:
+                day["popular_terms"] = published
+                self._dirty = True
+                self._closed_json.pop(self._term_date, None)
+        if self._term_date and self._term_date != today.isoformat():
+            self._term_date, self._term_salt, self._term_base, self._terms = "", b"", {}, {}
+
     def record_app(self, name: str | None) -> None:
         """An MCP app connected (the clientInfo name it sent with initialize)."""
         apps = self._day()["apps"]
@@ -472,6 +761,21 @@ class UsageStats:
         if source in UPSTREAM_SOURCES and event in UPSTREAM_EVENTS and count > 0:
             counts = self._day()["upstream"].setdefault(source, dict.fromkeys(UPSTREAM_EVENTS, 0))
             counts[event] += count
+
+    def record_upstream_status(self, source: str, label: str) -> None:
+        """One class for each sent request, including errors; fixed labels only (from 0.10.5)."""
+        if source in UPSTREAM_SOURCES and label in UPSTREAM_STATUS_CLASSES:
+            counts = self._day()["upstream_status"].setdefault(source, {})
+            counts[label] = counts.get(label, 0) + 1
+
+    def flush_failed_calls(self, *, shutdown: bool = False) -> None:
+        """One WARNING per finished UTC minute with failures; shutdown also flushes this minute."""
+        current = self._now().strftime("%Y-%m-%d %H:%M")
+        for minute in sorted(self._failed_minutes):
+            if shutdown or minute < current:
+                counts = self._failed_minutes.pop(minute)
+                labels = ", ".join(f"{tool} {reason} {count}" for (tool, reason), count in sorted(counts.items()))
+                logger.warning("Failed tool calls %s UTC: %s", minute, labels)
 
     def record_distributor_limit(self, name: str, kind: str, label: str | None) -> None:
         """One unsent lookup (held_back) or sent request refused by the distributor (refusals).
@@ -554,29 +858,66 @@ class UsageStats:
             counts = self._day()["why_empty"]
             counts[result] = counts.get(result, 0) + 1
 
-    def save(self) -> None:
-        """Write the counts if anything changed since the last save (atomic replace)."""
+    def _save_snapshot(self) -> tuple[Path, str] | None:
+        """Detached serialization on the event loop; workers never read live counting maps."""
+        now = self._now()
+        self._refresh_terms(now)
+        self._maintain_recent(now)
         if self.path is None or not self._dirty:
-            return
-        tmp = self.path.with_name(self.path.name + ".tmp")
-        try:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            with open(tmp, "w", encoding="utf-8") as out:
-                out.write(json.dumps({"days": self._days}, sort_keys=True))
-                out.flush()
-                os.fsync(out.fileno())  # on disk before it replaces the old file, so a crash can't leave it empty
-            os.replace(tmp, self.path)
-        except OSError as e:
-            if self.ok:  # once per failure streak
-                logger.warning(f"Usage stats file {self.path} not writable ({e}); counts are kept in memory only")
-            self.ok = False
-            return
-        self.ok = True
+            return None
+        today = now.date().isoformat()
+        entries = []
+        for date in sorted(self._days):
+            text = self._closed_json.get(date)
+            if text is None:
+                text = json.dumps(date) + ": " + json.dumps(self._days[date], sort_keys=True)
+                if date < today:
+                    self._closed_json[date] = text
+            entries.append(text)
+        # Exactly json.dumps({"days": self._days}, sort_keys=True), including spaces/escaping.
+        snapshot = self.path, '{"days": {' + ", ".join(entries) + "}}"
         self._dirty = False
+        return snapshot
+
+    def _save_failed(self, error: Exception) -> None:
+        if self.ok:
+            logger.warning("Usage stats file %s not writable (%s); counts are kept in memory only",
+                           self.path, type(error).__name__)
+        self.ok = False
+        self._dirty = True
+
+    def save(self) -> None:
+        """Synchronous atomic save for scripts/tests. The server uses save_async()."""
+        try:
+            if snapshot := self._save_snapshot():
+                _write_usage(*snapshot)
+                self.ok = True
+        except Exception as exc:
+            self._save_failed(exc)
+
+    async def save_async(self) -> None:
+        """Minute/shutdown save: file I/O off the loop, finishing even during cancellation."""
+        task = asyncio.create_task(self._save_async())
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError:
+            await task
+            raise
+
+    async def _save_async(self) -> None:
+        try:
+            if snapshot := self._save_snapshot():
+                await asyncio.to_thread(_write_usage, *snapshot)
+                self.ok = True
+        except Exception as exc:
+            self._save_failed(exc)
 
     def summary(self, days: int = 30) -> dict[str, Any]:
         """For /mcp/stats: totals over the newest `days` days that had any use, then each of those
         days, newest first."""
+        now = self._now()
+        self._refresh_terms(now)
+        self._maintain_recent(now)
         dates = sorted(self._days, reverse=True)[:days]
         out = []
         total_tools: dict[str, dict[str, int]] = {}
@@ -594,8 +935,14 @@ class UsageStats:
         total_db_waits = _new_db_waits()
         total_lifecycle_inputs = dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)
         total_hours = [0] * 24
+        new_totals: dict[str, Any] = dict.fromkeys(SINCE_0_10_5)
         for date in dates:
             day = self._days[date]
+            for field in SINCE_0_10_5:
+                if day[field] is not None:
+                    if new_totals[field] is None:
+                        new_totals[field] = {}
+                    _sum_counts(new_totals[field], day[field])
             for form, count in (day["lifecycle_inputs"] or {}).items():
                 total_lifecycle_inputs[form] += count
             if day["db_waits"] is not None:
@@ -669,10 +1016,12 @@ class UsageStats:
                 "datasheet_links": day["datasheet_links"],
                 "db_waits": day["db_waits"],
                 "lifecycle_inputs": day["lifecycle_inputs"],
+                **{field: _recent_view(field, day[field])
+                   for field in SINCE_0_10_5},
             })
         totals_tools = _tools_view(total_tools)
         return {
-            "about": ("Anonymous counts per UTC day, the last 30 days at most, newest first; totals adds up "
+            "about": (f"Private counts per UTC day, default 30 days, up to {KEEP_DAYS}, newest first; totals adds up "
                       "the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, "
                       "00 to 23 (null: not recorded); in totals, each hour added up across the days. failed_hours (from "
                       "0.10.1): the calls whose outcome was failed, in each UTC hour; refused_hours (from 0.10.1): "
@@ -685,7 +1034,8 @@ class UsageStats:
                       "sorted). callers counts distinct IPs, which isn't the number of people: hosted apps such "
                       "as claude.ai call from their own servers' IPs, and a caller seen before and after a restart "
                       "counts twice. apps are the names MCP apps send when they connect. The stats keep no IPs, "
-                      "queries or part numbers. Cutover 2026-10-26: alternatives replies before that date counted "
+                      "whole queries or individual lookup numbers; popular_terms can include part-number tokens "
+                      "once they reach its caller threshold. Cutover 2026-10-26: alternatives replies before that date counted "
                       "similar-parts-only replies as not found; historical counts have not been reclassified. reasons (from 0.9.0; "
                       "earlier days have none): for each tool, why calls came back not_found or failed, one fixed label a "
                       "call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, "
@@ -742,7 +1092,37 @@ class UsageStats:
                       "catalog alone. In totals the longest is the maximum. "
                       "lifecycle_inputs (from 0.10.4; null before): part_lifecycle entries by input form, "
                       "before catalog resolution: bare_number, with_manufacturer or lcsc_code; invalid inputs "
-                      "aren't counted. Counts only, no part numbers or maker names."),
+                      "aren't counted. Counts only, no part numbers or maker names. "
+                      "bad_request_reasons (from 0.10.5; null before): one fixed label per bad_request, "
+                      "separate from reasons; arg:<declared parameter or unknown_argument>:<fixed error type> "
+                      "for argument validation, all_inputs_invalid for invalid batches, unknown_tool for unknown tools. "
+                      "tool_apps (from 0.10.5; null before): each tool's calls and every outcome by app, "
+                      f"up to {MAX_APPS} named apps per tool today, later new names count as other; "
+                      f"past UTC days keep the {MAX_TOOL_APPS - 1} busiest apps by calls plus other, "
+                      "which sums every outcome from the rest (compacted on rollover, load, save and summary); "
+                      "same app attribution as distributor_apps. latency (from 0.10.5; null before): each tool's "
+                      "bucket counts and p50_ms, p95_ms, p99_ms, counting ok, similar_only, not_found and failed only; "
+                      "latency_bounds_ms gives inclusive upper bounds, with one final open bucket; percentiles "
+                      "are bucket upper bounds (null for an empty histogram or the open bucket). tool_apps, "
+                      "latency and popular_terms are kept for the last 30 days only, cleared from older days on rollover, load, "
+                      "save and summary, even with no new calls. "
+                      "popular_terms (from 0.10.5; null before): top 200 query tokens by occurrences, each counted "
+                      "once per call, up to 20 tokens per query, for jlc_search, jlc_stock_check, cse_search, "
+                      "board_search and sensor_recommend except bad_request. Only tokens from at least 10 distinct "
+                      "callers that UTC day are retained; all platform addresses count as one caller, other IPv6 "
+                      "addresses by /48. This is a popularity heuristic, not an anonymity guarantee against "
+                      "someone controlling many addresses. Below-threshold tokens and salted caller hashes stay in memory only "
+                      "(20,000 tokens, 10 hashes each). No phrases. A restart keeps retained counts but resets "
+                      "the threshold for new tokens; totals sums retained daily counts, keeping the top 200. "
+                      "versions (from 0.10.5; null before): server starts by running version. upstream_status "
+                      "(from 0.10.5; null before): one class per sent request per source: 2xx, 3xx, 4xx, 429 "
+                      "(separate from 4xx), 5xx, timeout, connection, challenge, too_large, cancelled or other_error. "
+                      "Cutovers from 0.10.5: mouser_get_part misses count part_not_found instead of no_results; "
+                      "jlc_stock_check's no_results splits into no_results_filtered, no_results_part_number and "
+                      "no_results_words; jlc_search's part_number_not_in_stock becomes part_number_sold_out or "
+                      "part_number_unknown, using a label-only lookup of previously listed parts. Historical "
+                      "labels and counts are kept. Failed calls also produce one labels-only WARNING per UTC minute."),
+            "latency_bounds_ms": list(LATENCY_BOUNDS_MS),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -764,9 +1144,66 @@ class UsageStats:
                 "datasheet_links": total_datasheet_links,
                 "db_waits": total_db_waits,
                 "lifecycle_inputs": total_lifecycle_inputs,
+                **{field: _recent_view(field, value)
+                   for field, value in new_totals.items()},
             },
             "days": out,
         }
+
+
+def _write_usage(path: Path, text: str) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with private_open(tmp, "w", encoding="utf-8") as out:
+        out.write(text)
+        out.flush()
+        os.fsync(out.fileno())
+    os.replace(tmp, path)
+
+
+def _recent_view(field: str, value: dict | None) -> dict | None:
+    if value is None:
+        return None
+    if field == "latency":
+        return _latency_view(value)
+    if field == "popular_terms":
+        return _top_terms(value)
+    if field == "tool_apps":
+        return {tool: {app: {key: counts.get(key, 0) for key in ("calls", *OUTCOMES)}
+                       for app, counts in names.items()} for tool, names in value.items()}
+    return value
+
+
+def _sum_counts(total: dict, counts: dict) -> None:
+    """Add the bounded 0.10.5 maps/histograms without mutating the stored days."""
+    for key, value in counts.items():
+        if isinstance(value, dict):
+            _sum_counts(total.setdefault(key, {}), value)
+        elif isinstance(value, list):
+            dest = total.setdefault(key, [0] * len(value))
+            for i, count in enumerate(value):
+                dest[i] += count
+        else:
+            total[key] = total.get(key, 0) + value
+
+
+def _latency_view(latency: dict | None) -> dict | None:
+    if latency is None:
+        return None
+    result = {}
+    for tool, counts in sorted(latency.items()):
+        percentiles = {}
+        for percentile in (50, 95, 99):
+            rank, cumulative, bound = (sum(counts) * percentile + 99) // 100, 0, None
+            if rank:
+                for upper, count in zip((*LATENCY_BOUNDS_MS, None), counts):
+                    cumulative += count
+                    if cumulative >= rank:
+                        bound = upper
+                        break
+            percentiles[f"p{percentile}_ms"] = bound
+        result[tool] = {"counts": list(counts), **percentiles}
+    return result
 
 
 def _tools_view(tools: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
@@ -857,6 +1294,46 @@ def count_upstream(source: str, event: str, count: int = 1) -> None:
         usage.record_upstream(source, event, count)
     except Exception:
         logger.exception("Usage stats: couldn't count an upstream request")
+
+
+def count_upstream_status(source: str, result: Any) -> None:
+    """Count a response or exception, never propagating a counting failure to the request."""
+    try:
+        usage.record_upstream_status(source, _upstream_status(result))
+    except Exception:
+        logger.exception("Usage stats: couldn't count an upstream status")
+
+
+def _upstream_status(result: Any) -> str:
+    # wafer returns ordinary HTTP errors as responses; raise_for_status() makes WaferHTTPError.
+    # Classify typed transport failures first, even when they carry an HTTP status/response.
+    import httpx
+    from wafer import ChallengeDetected, ConnectionFailed, EmptyResponse, RateLimited, ResponseTooLarge
+
+    if isinstance(result, asyncio.CancelledError):
+        return "cancelled"
+    if isinstance(result, (TimeoutError, httpx.TimeoutException)):
+        return "timeout"
+    if isinstance(result, (ConnectionFailed, EmptyResponse, httpx.TransportError)):
+        return "connection"
+    if isinstance(result, ChallengeDetected):
+        return "challenge"
+    if isinstance(result, ResponseTooLarge):
+        return "too_large"
+    if isinstance(result, RateLimited):
+        return "429"
+    # With max_rotations=0 wafer can return the challenge page instead of raising.
+    if getattr(result, "challenge_type", None) is not None:
+        return "challenge"
+    code = getattr(result, "status_code", None)
+    if code is None:
+        code = getattr(getattr(result, "response", None), "status_code", None)
+    if isinstance(code, int):
+        if code == 429:
+            return "429"
+        if 200 <= code < 600:
+            return f"{code // 100}xx"
+    return "other_error"
 
 
 def count_lcsc_lookup(tool: str, event: str) -> None:

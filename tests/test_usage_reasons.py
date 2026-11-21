@@ -235,7 +235,7 @@ async def local_client():
 
 
 @pytest.mark.parametrize("args,reason", [
-    ({"query": "ZZQ9981XK"}, "part_number_not_in_stock"),
+    ({"query": "ZZQ9981XK"}, "part_number_unknown"),
     ({"subcategory_name": "Ferrite Beads", "min_stock": 99_999_999}, "blocked_by_min_stock"),
     ({"query": "quantum sparkle", "subcategory_name": "Ferrite Beads"}, "words_unmatched"),
     ({"query": "wobbler gizmoflux"}, "no_part_type"),

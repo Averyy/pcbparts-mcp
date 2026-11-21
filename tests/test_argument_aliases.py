@@ -88,3 +88,18 @@ async def test_batch_tools_accept_each_others_list_name():
         assert history_alias.structured_content == history_name.structured_content
         both = await client.call_tool("jlc_stock_history", {"parts": "C1", "lcsc": "C2"}, raise_on_error=False)
         assert both.is_error
+
+
+async def test_jlc_get_parts_takes_the_list_names_prod_saw_on_2026_11_21():
+    """lcsc_codes (4 calls, three as a JSON string) and identifiers (1, a JSON string), refused before 0.10.5."""
+    tools = {tool.name: tool for tool in await server.mcp.list_tools()}
+    assert set(tools["jlc_get_parts"].parameters["properties"]) == {"parts"}
+    async with Client(server.mcp) as client:
+        by_name = await client.call_tool("jlc_get_parts", {"parts": ["C999999999999"]}, raise_on_error=False)
+        for alias, value in (("lcsc_codes", ["C999999999999"]), ("lcsc_codes", '["C999999999999"]'),
+                             ("identifiers", '["C999999999999"]')):
+            reply = await client.call_tool("jlc_get_parts", {alias: value}, raise_on_error=False)
+            assert not reply.is_error and reply.structured_content == by_name.structured_content, alias
+        two = await client.call_tool("jlc_get_parts", {"lcsc_codes": ["C1"], "identifiers": ["C2"]},
+                                     raise_on_error=False)
+        assert two.is_error  # two aliases at once: left for validation to refuse

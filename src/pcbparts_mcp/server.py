@@ -4,6 +4,7 @@ import asyncio
 import contextlib
 import datetime
 import functools
+import hmac
 import inspect
 import ipaddress
 import json
@@ -12,6 +13,7 @@ import math
 import os
 import re
 import sqlite3
+import threading
 import time
 import unicodedata
 from contextlib import asynccontextmanager
@@ -23,13 +25,21 @@ from fastmcp.exceptions import NotFoundError, ValidationError
 from fastmcp.server.dependencies import get_http_request
 from fastmcp.server.middleware import Middleware as FastMCPMiddleware
 from mcp.types import ToolAnnotations
-from pydantic import BeforeValidator, Field, WithJsonSchema
+from pydantic import BeforeValidator, Field, WithJsonSchema, ValidationError as PydanticValidationError
 from starlette.middleware import Middleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.routing import Route
 
-from . import __version__, platform_ranges, stats
+from . import __version__, call_log, file_logging, platform_ranges, stats
+# Re-export the classifiers for existing imports and tests.
+from .tool_outcomes import (
+    _NOT_FOUND_ERRORS, _BAD_REQUEST_ERRORS, _ERROR_KINDS, _NOT_FOUND_REASONS,
+    _FAILED_REASONS, _EMPTY_HINT_REASONS, _LCSC_CODE_HINT, _error_kind,
+    _call_outcome, _lifecycle_errors, _lifecycle_outcome, _is_parts_reply,
+    _parts_outcome, _parts_empty_reason, _first_reason, _empty_reason,
+    _why_empty_result, _call_reason,
+)
 from .cache import SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
@@ -41,6 +51,7 @@ from .config import (
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
+    CALL_LOG_DIR, STATS_TOKEN,
 )
 from .client import (DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient,
                      JLCPCBUnavailable)
@@ -81,6 +92,16 @@ _distributor_store: DistributorStore | None = None
 _distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
 _distributor_quotas: dict[str, QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
+
+
+def _caller_tallies() -> list:
+    """The hourly per-IP lines of Mouser/DigiKey requests sent and held back: the quota pools', and
+    the DigiKey client's own when it runs without credentials (no pool)."""
+    tallies = [tally for quota in _distributor_quotas.values() for tally in (quota.callers, quota.held_back)]
+    if "digikey" not in _distributor_quotas and _digikey_client is not None:
+        tallies += [tally for tally in (getattr(_digikey_client, "callers", None),
+                                        getattr(_digikey_client, "held_back", None)) if tally is not None]
+    return tallies
 _easyeda_seeded = 0  # rows in the seed table, counted at startup (components.db doesn't change)
 _easyeda_stored: tuple[float, int | None] = (float("-inf"), None)  # (time.monotonic(), store size)
 _cse_stored: tuple[float, dict[str, int] | None] = (float("-inf"), None)  # (time.monotonic(), store counts)
@@ -116,6 +137,8 @@ async def lifespan(app):
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
     for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
         logger.warning(warning)
+    if not STATS_TOKEN:
+        logger.warning("STATS_TOKEN unset: /mcp/stats refuses every request")
 
     # Build/load DB on startup (not on first request)
     db = get_db()
@@ -240,17 +263,22 @@ async def lifespan(app):
         if DIGIKEY_CLIENT_ID or DIGIKEY_CLIENT_SECRET:
             missing = "DIGIKEY_CLIENT_SECRET" if DIGIKEY_CLIENT_ID else "DIGIKEY_CLIENT_ID"
             logger.error(f"{missing} is missing; DigiKey lookups go without API credentials")
-        _digikey_client = DigiKeyClient(store=_distributor_store, site=digikey_site.DigiKeySite())
+        _digikey_client = DigiKeyClient(store=_distributor_store, site=digikey_site.DigiKeySite(),
+                                        address_daily=address_daily)
         logger.info("DigiKey client initialized without API credentials")
 
     if _distributor_quotas:
         logger.info(f"Distributor request counts: {f'kept in {quota_store.path}' if quota_store else 'memory only'}")
 
-    # Anonymous daily usage counts for /mcp/stats
+    # Private daily usage counts for /mcp/stats
     if USAGE_STATS_PATH:
         stats.usage.open(USAGE_STATS_PATH)
     stats.usage.record_start()  # this day's restarts, beside its callers and distinct part numbers
-    stats.usage.tools = {tool.name for tool in await mcp.list_tools(run_middleware=False)}
+    tools = await mcp.list_tools(run_middleware=False)
+    stats.usage.tools = {tool.name for tool in tools}
+    stats.usage.tool_params = {tool.name: set(tool.parameters.get("properties", {})) for tool in tools}
+    await call_log.recorder.open(CALL_LOG_DIR)
+    catalog_task = asyncio.create_task(_load_call_catalog(call_log.recorder, db)) if CALL_LOG_DIR else None
     logger.info(f"Usage stats: {f'kept in {USAGE_STATS_PATH}' if USAGE_STATS_PATH else 'memory only'}")
     minute_task = asyncio.create_task(_every_minute())
 
@@ -266,17 +294,25 @@ async def lifespan(app):
     minute_task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
         await minute_task
-    for quota in _distributor_quotas.values():
-        quota.callers.flush()  # the hour so far, so a deploy doesn't lose it
-        quota.held_back.flush()
-    _refused_callers.flush()
-    stats.usage.save()
-    if _cse_client:
-        await _cse_client.close()
+    if catalog_task is not None:
+        await catalog_task
+    # Distributor lookups still in flight are cancelled first, so what they sent is in the hourly
+    # lines and the stats saved below
     if _mouser_client:
         await _mouser_client.close()
     if _digikey_client:
         await _digikey_client.close()
+    for tally in _caller_tallies():
+        tally.flush()  # the hour so far, so a deploy doesn't lose it
+    _refused_callers.flush()
+    try:
+        stats.usage.flush_failed_calls(shutdown=True)
+    except Exception:
+        logger.exception("Usage stats: couldn't flush failed calls")
+    await stats.usage.save_async()
+    await call_log.recorder.flush(shutdown=True)
+    if _cse_client:
+        await _cse_client.close()
     if _distributor_store:
         _distributor_store.close()
         _distributor_store = None
@@ -295,6 +331,37 @@ async def lifespan(app):
 # sys.exit: a normal exit would wait for the stuck worker thread and hang. Replaced in tests.
 STUCK_CHECKS_BEFORE_EXIT = 2
 _exit_process = os._exit
+EXIT_FLUSH_SECONDS = 2
+
+
+async def _load_call_catalog(recorder, db) -> None:
+    """Catalog attribute names have no prebuilt metadata; populate shapes after readiness."""
+    try:
+        recorder.catalog = await run_db(COMPONENT_POOL, call_log.load_catalog, db)
+    except Exception as exc:
+        recorder._error("catalog", exc)
+
+
+def _flush_before_exit(message: str) -> None:
+    """Synchronous best effort with a deadline: a stuck disk must not prevent the restart."""
+    def flush():
+        with contextlib.suppress(Exception):
+            os.write(2, (message + "\n").encode("utf-8"))
+        for operation in (lambda: logger.error(message),
+                          lambda: stats.usage.flush_failed_calls(shutdown=True), stats.usage.save,
+                          lambda: asyncio.run(call_log.recorder.flush(shutdown=True))):
+            try:
+                operation()
+            except Exception:
+                logger.exception("Couldn't flush usage logging before exiting")
+        for handler in logging.getLogger().handlers:
+            with contextlib.suppress(Exception):
+                handler.flush()
+
+    writer = threading.Thread(target=flush, daemon=True, name="exit-logging")
+    writer.start()
+    writer.join(timeout=EXIT_FLUSH_SECONDS)
+    # No logging here: a stalled writer may hold a logging-handler lock as well.
 
 
 def _exit_if_stuck(stuck_checks: int) -> int:
@@ -305,54 +372,79 @@ def _exit_if_stuck(stuck_checks: int) -> int:
     stalled = database_pressure.stalled_seconds()
     stuck_checks = stuck_checks + 1 if stalled >= DB_STUCK_WAIT_SECONDS else 0
     if stuck_checks >= STUCK_CHECKS_BEFORE_EXIT:
-        logger.error(f"Database calls have waited {stalled:.0f} s with none starting (over "
-                     f"{DB_STUCK_WAIT_SECONDS:g} s at {stuck_checks} minute checks in a row): a worker "
-                     "is stuck; exiting so Docker restarts the server")
-        try:
-            stats.usage.save()
-        except Exception:
-            logger.exception("Couldn't save the usage counts before exiting")
-        for handler in logging.getLogger().handlers:
-            with contextlib.suppress(Exception):
-                handler.flush()
+        message = (f"Database calls have waited {stalled:.0f} s with none starting (over "
+                   f"{DB_STUCK_WAIT_SECONDS:g} s at {stuck_checks} minute checks in a row): a worker "
+                   "is stuck; exiting so Docker restarts the server")
+        with contextlib.suppress(Exception):
+            _flush_before_exit(message)
         _exit_process(1)
     return stuck_checks
 
 
 async def _every_minute() -> None:
-    """Every minute, log the finished hour's sent and held-back Mouser/DigiKey counts and per-IP
-    rate limit refusals (one line each, for hours that had any), save the usage counts and drop expired
+    """Every minute, log failed tool calls by label for finished minutes, the finished hour's sent
+    and held-back Mouser/DigiKey counts and per-IP rate limit refusals (one line each, for hours
+    that had any), save the usage counts and drop expired
     address-to-app links (AppsByAddress); every hour,
     drop expired Mouser/DigiKey answers from the store; exit if a database worker is stuck
     (_exit_if_stuck)."""
     minutes = 0
     stuck_checks = 0
-    while True:
-        await asyncio.sleep(60)
-        minutes += 1
-        try:
-            for quota in _distributor_quotas.values():
-                quota.callers.flush_if_due()
-                quota.held_back.flush_if_due()
-                if quota.address_daily is not None:
-                    quota.address_daily.reset_if_due()
-            _refused_callers.flush_if_due()
-            stats.usage.save()
-            _apps_by_address.expire()  # none outlives its lifetime by more than a minute when quiet
-            if minutes % 60 == 0 and _distributor_store is not None:
+    persistence = None
+    next_prune = 60
+    try:
+        while True:
+            await asyncio.sleep(60)
+            minutes += 1
+            try:
+                stuck_checks = _exit_if_stuck(stuck_checks)
+            except Exception:
+                logger.exception("Stuck-worker check failed; trying again in a minute")
+            try:
+                for tally in _caller_tallies():
+                    tally.flush_if_due()
+                address_days = {id(q.address_daily): q.address_daily for q in _distributor_quotas.values()
+                                if q.address_daily is not None}
+                if (keyless_day := getattr(_digikey_client, "_address_daily", None)) is not None:
+                    address_days[id(keyless_day)] = keyless_day  # DigiKey without credentials, no pool
+                for address_day in address_days.values():
+                    address_day.reset_if_due()
+                _refused_callers.flush_if_due()
+                stats.usage.flush_failed_calls()
+                _apps_by_address.expire()  # expire quiet links even while persistence is stalled
+                # Bound outstanding persistence to one task. Cancellation cannot stop an OS
+                # write; timing it out and launching another would accumulate stuck workers.
+                if persistence is None or persistence.done():
+                    prune = minutes >= next_prune
+                    persistence = asyncio.create_task(_persist_usage(prune=prune))
+                    if prune:
+                        next_prune = minutes + 60
+            except Exception:
+                logger.exception("Minute task failed; trying again in a minute")
+    finally:
+        if persistence is not None:
+            # Finish the detached append before lifespan performs its final flush.
+            await persistence
+
+
+async def _persist_usage(*, prune: bool) -> None:
+    try:
+        await stats.usage.save_async()
+        await call_log.recorder.flush()
+        if prune:
+            await asyncio.to_thread(stats.usage.prune)
+            await asyncio.to_thread(file_logging.prune_file_logs)
+            if _distributor_store is not None:
                 _distributor_store.prune()
-        except Exception:
-            logger.exception("Minute task failed; trying again in a minute")
-        try:
-            stuck_checks = _exit_if_stuck(stuck_checks)
-        except Exception:
-            logger.exception("Stuck-worker check failed; trying again in a minute")
+    except Exception:
+        logger.exception("Usage persistence failed; trying again in a minute")
 
 
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    version=__version__,  # serverInfo.version: this server's, not fastmcp's
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part share small daily limits across all users: use them for parts JLCPCB doesn't carry or when the user asks for that distributor's stock or price, and batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -360,245 +452,35 @@ mcp = FastMCP(
 )
 
 
-# Error replies meaning it worked and found nothing, with the reason shown in the usage counts
-_NOT_FOUND_ERRORS = (
-    ("mpn_not_in_snapshot", r"No part found in the local snapshot for MPN "),
-    ("part_not_found", r"Part not found: "),
-    ("lcsc_not_found", r"Part .* not found$"),
-    ("board_not_found", r"Board '.*' not found$"),
-    ("no_parts_for_query", r"No (JLCPCB parts|parts) found for "),
-    ("no_ecad_model", r"No ECAD model available for "),
-    ("no_kicad_in_archive", r"No KiCad files found in model archive "),
-    ("no_easyeda_symbol", r"No EasyEDA symbol (available|UUID) for "),
-    ("no_easyeda_symbol", r"EasyEDA has no symbol "),
-)
-
-# Our error replies, sorted for the usage counts by the start of their text (stats.OUTCOMES). Anchored
-# at the start because many messages end with what the user typed. A message that matches none of
-# these counts as "failed", so an unexpected failure shows up. tests/test_usage_stats.py checks every
-# error message in the code against this list.
-# re.S: messages echo caller input, which can hold a newline ("Board 'a\nb' not found")
-_ERROR_KINDS = [(kind, re.compile(pattern, re.S)) for kind, pattern in (
-    # a limit turned the request away: ours, Mouser's, DigiKey's, JLCPCB's or EasyEDA's
-    ("rate_limited", r"\w+ daily quota exceeded "),
-    ("rate_limited", r"This address has used its \d+ Mouser and DigiKey lookups for today on this shared server;"),
-    ("rate_limited", r"\w+ lookups are limited to "),
-    ("rate_limited", r"\w+ is limiting requests"),
-    ("rate_limited", r"\w+ refused this server's requests"),
-    ("rate_limited", r"DigiKey lookups are (paused|busy) on this shared server"),
-    ("rate_limited", r"JLCPCB rate limited"),
-    ("rate_limited", r"SamacSys's daily model download limit for this shared server is used up;"),
-    ("rate_limited", r"Couldn't check EasyEDA for .* right now"),
-    ("failed", r"Stock history is not available on this server"),
-    # the request was invalid
-    ("bad_request", r"(Subcategory|Category) not found: "),
-    ("bad_request", r"Subcategory ID \S+ not found$"),
-    ("bad_request", r"[\w ]+ too long \(max \d+ characters\)$"),
-    ("bad_request", r"Too many "),
-    ("bad_request", r"Invalid [\w ]+: "),
-    ("bad_request", r"Part-number exclusions are not supported: "),
-    ("bad_request", r"Strict search cannot apply every constraint; "),
-    ("bad_request", r"Unsupported (library_type|pcba_type|sort_spec|tag|value for \w+): "),
-    ("bad_request", r"Can't sort "),
-    ("bad_request", r"Must provide "),
-    ("bad_request", r"lcsc must be "),
-    ("bad_request", r"board_quantity and placements_per_board must be "),
-    ("bad_request", r"Give (a|at least one) "),
-    ("bad_request", r"Mouser takes up to "),
-    ("bad_request", r"Each Mouser part number must be "),
-    ("bad_request", r"Query contains (invalid characters|no searchable terms)$"),
-    ("bad_request", r"(Invalid slug|Invalid UUID format|UUID is required)$"),
-    # it worked and found nothing
-    *(("not_found", pattern) for _, pattern in _NOT_FOUND_ERRORS),
-)]
-
-_NOT_FOUND_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in _NOT_FOUND_ERRORS]
-
-# Why a call failed, for the usage counts. Anchored, like _ERROR_KINDS; no match is "unexpected_error".
-_FAILED_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in (
-    ("service_not_ready", r"(Boards database|Sensor database|Database) not available|Design rules are not available"
-                          r"|Categories not loaded|CSE client not initialized|Stock history is not available on this server"),
-    ("not_configured", r"(CSE credentials|Mouser API key|DigiKey API credentials) not configured"),
-    ("no_pcba_types", r"This catalog doesn't have PCBA types yet"),
-    ("query_too_complex", r"Search failed: query too complex"),
-    ("board_db_failed", r"Board (search|retrieval) failed"),
-    ("jlcpcb_waf", r"JLCPCB blocked request"),
-    ("jlcpcb_unavailable", r"JLCPCB (returned|connection|request|API)"),
-    ("easyeda_failed", r"Failed to fetch (EasyEDA data|component data from EasyEDA)|Invalid EasyEDA response"),
-    ("mouser_failed", r"Mouser part lookup failed"),
-    ("digikey_failed", r"DigiKey part lookup failed"),
-    ("cse_auth_failed", r"CSE authentication failed"),
-    ("cse_lookup_failed", r"CSE (search|get_kicad) failed"),
-    ("cse_download_http_4xx", r"CSE model download failed \(HTTP 4"),
-    ("cse_download_http_5xx", r"CSE model download failed \(HTTP 5"),
-    ("cse_download_http", r"CSE model download failed \(HTTP"),
-    ("cse_download_network", r"CSE model download failed \(network"),
-    ("cse_download_too_large", r"CSE model download too large"),
-    ("cse_invalid_zip", r"CSE returned invalid zip file"),
-    ("cse_download_refused", r"CSE refused the model download for part "),
-)]
-
-# What an empty reply's hint opens with: its most specific cause comes first
-_EMPTY_HINT_REASONS = [(reason, re.compile(pattern, re.S)) for reason, pattern in (
-    ("part_number_filtered_out", r"\d+ in-stock parts? match "),
-    ("part_number_not_in_stock", r"No in-stock part matches "),
-    ("words_unmatched", r"No part's description has all of the words "),
-    ("no_part_type", r"No part type matched "),
-    ("blocked_by_library_type", r"No (basic|preferred|no-fee) part matches"),
-    ("no_catalog_subcategory", r"JLCPCB has no "),
-    ("stock_below_minimum", r"No part \S+ with stock >= "),
-    ("part_number_fragment", r"JLCPCB's search matches whole part numbers"),
-)]
-_LCSC_CODE_HINT = re.compile(r"'.*' looks like an LCSC code")
-
-
-def _error_kind(message: str) -> str:
-    return next((kind for kind, pattern in _ERROR_KINDS if pattern.match(message)), "failed")
-
-
-def _call_outcome(result: Any) -> str:
-    """For the usage counts, how a tool call that returned went (stats.OUTCOMES)."""
-    content = getattr(result, "structured_content", None)
-    if not isinstance(content, dict):
-        return "ok"
-    if content.get("error"):
-        return _error_kind(str(content["error"]))
-    if "status_counts" in content:
-        return _lifecycle_outcome(content)
-    if _is_parts_reply(content):
-        return _parts_outcome(content)
-    if "parts" in content and "what_is_recorded" in content:
-        # Single history replies count as ok even with no events or snapshot stock. A batch
-        # follows that rule if any valid code was answered; all-invalid codes are bad_request.
-        return "ok" if any(not part.get("error") for part in content["parts"]) else "bad_request"
-    if "alternatives" in content:
-        if content["alternatives"]:
-            return "ok"
-        return "similar_only" if (content.get("similar_parts") or content.get("unverified_alternatives")) else "not_found"
-    if content.get("not_checked") and not content.get("results"):  # Mouser: a limit held the rest back
-        return "rate_limited"
-    if any(key in content and not content[key] for key in ("results", "matched_files")):
-        return "not_found"
-    return "ok"
-
-
-def _lifecycle_errors(content: dict) -> list[str]:
-    """part_lifecycle's per-part errors (inputs that couldn't be looked up)."""
-    return [str(row["error"]) for row in content.get("results") or [] if isinstance(row, dict) and row.get("error")]
-
-
-def _lifecycle_outcome(content: dict) -> str:
-    """part_lifecycle answers every part, unknown when it can't: ok when any has a reading; else
-    what kept the rest unknown (a limit, a failed lookup, or neither distributor lists them). When
-    no part could be looked up, the parts' own errors decide (a catalog outage fails, LCSC codes
-    not in the catalog are not found, the rest were invalid)."""
-    rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
-    if not rows:
-        kinds = {_error_kind(error) for error in _lifecycle_errors(content)}
-        return "failed" if "failed" in kinds else "not_found" if "not_found" in kinds else "bad_request"
-    if any(row.get("status") != "unknown" or "source" in row or row.get("makers") for row in rows):
-        return "ok"
-    if any("retry_after" in row for row in rows):
-        return "rate_limited"
-    if any(row.get("lookup_failed") for row in rows):
-        return "failed"
-    return "not_found"
-
-
-def _is_parts_reply(content: dict) -> bool:
-    """A jlc_get_parts reply (counts of found, not_found and error rows)."""
-    return isinstance(content.get("counts"), dict) and "results" in content
-
-
-def _parts_outcome(content: dict) -> str:
-    """jlc_get_parts: ok when any part was found, in the snapshot or gone from it; not_found when
-    parts were looked up and none was; with neither, failed when the database failed on a part
-    number (that row's "Database not available"), else bad_request (every input was unusable)."""
-    counts = content["counts"]
-    if counts.get("found") or counts.get("gone"):  # a gone part's answer is an answer, from our data
-        return "ok"
-    if counts.get("not_found"):
-        return "not_found"
-    return "failed" if "failed" in {_error_kind(error) for error in _lifecycle_errors(content)} else "bad_request"
-
-
-def _parts_empty_reason(content: dict) -> str:
-    """Why no jlc_get_parts part was found: its LCSC codes or its MPNs aren't in the snapshot, or both."""
-    missed = {"results" in row for row in content.get("results") or [] if isinstance(row, dict) and row.get("not_found")}
-    return "lcsc_not_found" if missed == {False} else "mpn_not_in_snapshot" if missed == {True} else "part_not_found"
-
-
-def _first_reason(table: list[tuple[str, re.Pattern]], text: str) -> str | None:
-    return next((reason for reason, pattern in table if pattern.match(text)), None)
-
-
-def _empty_reason(content: dict) -> str:
-    """Why a reply counted as not_found (stats.REASONS): one reason, the most specific it shows."""
-    not_sent = content.get("not_sent")  # Mouser: by number; DigiKey: the one number's reason
-    if not_sent and not content.get("results") and (
-            isinstance(not_sent, str) or set(content.get("not_found") or ()) <= set(not_sent)):
-        return "not_sent"  # nothing that was worth a request
-    if content.get("error"):
-        reason = _first_reason(_NOT_FOUND_REASONS, str(content["error"])) or "no_results"
-        if reason == "mpn_not_in_snapshot":
-            if content.get("next_call") is None:
-                return "placeholder_mpn"
-            if _LCSC_CODE_HINT.match(str(content.get("hint") or "")):
-                return "lcsc_code_as_mpn"
-        return reason
-    if "alternatives" in content:
-        return "no_alternatives"
-    if "status_counts" in content:  # part_lifecycle: neither distributor lists the parts
-        for error in _lifecycle_errors(content):  # or, with nothing looked up, LCSC codes not in the catalog
-            if reason := _first_reason(_NOT_FOUND_REASONS, error):
-                return reason
-        rows = [row for row in content.get("results") or [] if isinstance(row, dict) and not row.get("error")]
-        if rows and all(row.get("not_sent") for row in rows):  # none worth a request
-            return "not_sent"
-        return "part_not_found"
-    if _is_parts_reply(content):
-        return _parts_empty_reason(content)
-    if content.get("total") and not content.get("results"):
-        return "offset_past_end"
-    blocking = {item.get("constraint") for item in (content.get("why_empty") or {}).get("blocking") or []}
-    if blocking:
-        return "blocked_by_several" if len(blocking) > 1 else f"blocked_by_{blocking.pop()}"
-    if reason := _first_reason(_EMPTY_HINT_REASONS, str(content.get("hint") or "")):
-        return reason
-    if content.get("unlisted"):
-        return "value_not_listed"
-    if content.get("ignored_filters"):
-        return "filter_ignored_or_sparse"
-    if (content.get("filters_applied") or {}).get("spec_filters"):
-        return "spec_filters_no_match"
-    return "no_results"
-
-
-def _why_empty_result(why_empty: dict) -> str:
-    """How the checks behind a why_empty reply went (stats.WHY_EMPTY_RESULTS)."""
-    if why_empty.get("status"):
-        return str(why_empty["status"])
-    if not why_empty.get("extra_queries"):
-        return "no_counterfactual"
-    return "complete" if why_empty.get("diagnostics_complete") else "incomplete"
-
-
-def _call_reason(outcome: str, content: dict, error: Exception | None) -> str:
-    """Why a call counted as not_found or failed (stats.REASONS)."""
-    if error is not None:
-        return "exception"
-    if outcome == "not_found":
-        return _empty_reason(content)
-    if ("status_counts" in content or _is_parts_reply(content)) and not content.get("error"):
-        reasons = (_first_reason(_FAILED_REASONS, error) for error in _lifecycle_errors(content))
-        return next(filter(None, reasons), "lifecycle_lookup_failed" if "status_counts" in content else "unexpected_error")
-    return _first_reason(_FAILED_REASONS, str(content.get("error") or "")) or "unexpected_error"
-
-
 def _exception_outcome(error: Exception) -> str:
     """For the usage counts, how a tool call that raised went: bad arguments or an unknown tool are
     the caller's mistake; anything else broke here."""
     return "bad_request" if isinstance(error, (ValidationError, NotFoundError)) else "failed"
+
+
+def _bad_request_reason(tool: str, content: dict, error: Exception | None) -> str:
+    """One bounded label, never parsed from text that can contain caller arguments."""
+    if isinstance(error, NotFoundError):
+        return "unknown_tool"
+    if isinstance(error, ValidationError):
+        # FastMCP 3.4 wraps argument validation; body errors stay bare Pydantic errors.
+        cause = error.__cause__
+        if isinstance(cause, PydanticValidationError):
+            errors = cause.errors(include_url=False, include_input=False)
+            if errors:
+                first = errors[0]
+                location = first.get("loc") or ()
+                name = location[0] if location else None
+                name = name if name in stats.usage.tool_params.get(tool, set()) else "unknown_argument"
+                kind = first["type"] if first["type"] in stats.ARG_ERROR_TYPES else "other"
+                return f"arg:{name}:{kind}"
+        return "other"
+    if content.get("error"):
+        return _first_reason(_BAD_REQUEST_ERRORS, str(content["error"])) or "other"
+    if "status_counts" in content or _is_parts_reply(content) or (
+            "parts" in content and "what_is_recorded" in content):
+        return "all_inputs_invalid"
+    return "other"
 
 
 class AppsByAddress:
@@ -677,6 +559,30 @@ def _call_app(context, caller: str | None) -> str | None:
         return None
 
 
+# Call-local notes may only split these otherwise-unspecific labels.
+_NOTE_REASON_PREDECESSORS = {
+    "part_number_sold_out": "part_number_not_in_stock",
+    "part_number_unknown": "part_number_not_in_stock",
+    "no_results_filtered": "no_results",
+    "no_results_part_number": "no_results",
+    "no_results_words": "no_results",
+}
+
+_observation_errors: set[str] = set()
+
+
+def _observe(operation: str, fn: Callable, *args, **kwargs):
+    """Independent best-effort recording; one content-free warning per failure streak."""
+    try:
+        value = fn(*args, **kwargs)
+        _observation_errors.discard(operation)
+        return value
+    except Exception as exc:
+        if operation not in _observation_errors:
+            logger.warning("Usage recording: %s failed (%s)", operation, type(exc).__name__)
+        _observation_errors.add(operation)
+
+
 class UsageStatsMiddleware(FastMCPMiddleware):
     """Counts tool calls and connecting apps for /mcp/stats (stats.py). Counting never breaks a call."""
 
@@ -692,13 +598,18 @@ class UsageStatsMiddleware(FastMCPMiddleware):
 
     async def on_call_tool(self, context, call_next):
         start = time.monotonic()
+        token = _observe("start notes", stats.call_notes.set, {})
         try:
-            result = await call_next(context)
-        except Exception as e:
-            self._record(context, start, error=e)
-            raise
-        self._record(context, start, result=result)
-        return result
+            try:
+                result = await call_next(context)
+            except Exception as e:
+                self._record(context, start, error=e)
+                raise
+            self._record(context, start, result=result)
+            return result
+        finally:
+            if token is not None:
+                _observe("reset notes", stats.call_notes.reset, token)
 
     @staticmethod
     def _record(context, start: float, result: Any = None, error: Exception | None = None) -> None:
@@ -707,23 +618,51 @@ class UsageStatsMiddleware(FastMCPMiddleware):
             content = getattr(result, "structured_content", None)
             content = content if isinstance(content, dict) else {}
             reason = _call_reason(outcome, content, error) if outcome in ("not_found", "failed") else None
+            notes = stats.call_notes.get() or {}
+            if (outcome == "not_found" and error is None and isinstance(notes.get("reason"), str)
+                    and _NOTE_REASON_PREDECESSORS.get(notes["reason"]) == reason):
+                reason = notes["reason"]
+            bad_reason = (_bad_request_reason(context.message.name, content, error)
+                          if outcome == "bad_request" else None)
             caller = _caller_ip()
-            stats.usage.record_call(context.message.name, outcome, (time.monotonic() - start) * 1000, caller,
-                                    reason=reason, app=_call_app(context, caller))
+            app = _call_app(context, caller)
+            ms = (time.monotonic() - start) * 1000
+            tool = context.message.name
+            if stats.usage.tools is not None and tool not in stats.usage.tools:
+                tool = "unknown"
+            if reason is not None and reason not in stats.REASONS:
+                reason = "other"
+            args = getattr(context.message, "arguments", None) or {}
+            platform = False
+            try:
+                addresses = get_http_request().scope.get("pcbparts.platform_ranges")
+                platform = addresses is not None and caller in addresses
+            except RuntimeError:  # stdio / in-process calls have no caller address
+                pass
+            _observe("call counts", stats.usage.record_call, tool, outcome, ms, caller,
+                     reason=reason, app=app, bad_request_reason=bad_reason)
+            _observe("call log", call_log.recorder.record, tool, outcome, reason, bad_reason, ms, app, platform,
+                     args, content, notes, stats.usage.tool_params.get(tool, set()), caller=caller)
+            _observe("popular terms", stats.usage.record_terms, tool, outcome, args.get("query"),
+                     caller, platform=platform)
             if isinstance(content.get("why_empty"), dict):
-                stats.usage.record_why_empty(_why_empty_result(content["why_empty"]))
-        except Exception:
-            logger.exception("Usage stats: couldn't count a tool call")
+                _observe("empty diagnostics", stats.usage.record_why_empty, _why_empty_result(content["why_empty"]))
+            _observation_errors.discard("classify call")
+        except Exception as exc:
+            if "classify call" not in _observation_errors:
+                logger.warning("Usage recording: classify call failed (%s)", type(exc).__name__)
+            _observation_errors.add("classify call")
 
 
 # Other names callers send for a tool's argument, each seen in prod's rejected calls: the two
 # distributor tools take the same thing, and digikey_get_part's was product_number until 0.10.3
-# (clients with that name built in keep working); the two batch tools name their list differently.
+# (clients with that name built in keep working); the two batch tools name their list differently,
+# and jlc_get_parts was also sent lcsc_codes and identifiers (2026-11-21, 5 calls in a morning).
 # Renamed before the arguments are validated, so the tool list shows one name.
 ARGUMENT_ALIASES: dict[str, dict[str, tuple[str, ...]]] = {
     "mouser_get_part": {"part_number": ("product_number", "mpn")},
     "digikey_get_part": {"part_number": ("product_number", "mpn")},
-    "jlc_get_parts": {"parts": ("lcsc",)},
+    "jlc_get_parts": {"parts": ("lcsc", "lcsc_codes", "identifiers")},
     "jlc_stock_history": {"lcsc": ("parts",)},
 }
 
@@ -982,10 +921,8 @@ class RateLimitMiddleware:
         """Count a refusal for /mcp/stats (no IP) and for the hourly most-refused log line, or for
         too_many_clients, the once-a-minute warning (those addresses are new, so a tally of them
         says nothing). Counting never breaks the reply."""
-        try:
-            stats.usage.record_refusal(self._refusal_group(client_ip, reason))
-        except Exception:
-            logger.exception("Usage stats: couldn't count a rate-limit refusal")
+        _observe("refusal counts", stats.usage.record_refusal, self._refusal_group(client_ip, reason))
+        _observe("refusal log", call_log.recorder.refusal, reason or "per_ip_rate_limit", self._is_platform(client_ip))
         try:
             if reason == "too_many_clients":
                 self._warn_too_many_clients()
@@ -1008,6 +945,8 @@ class RateLimitMiddleware:
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
+        # The tool recorder must use this instance's exact ranges, including configured overrides.
+        scope["pcbparts.platform_ranges"] = self.platform_addresses
         request = Request(scope)
         client_ip = self._get_client_ip(request)
         if request.url.path == "/health":  # not limited or counted
@@ -1204,7 +1143,7 @@ StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_norm
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_stock_check(
@@ -1252,6 +1191,10 @@ async def jlc_stock_check(
     """
     if not _client:
         raise RuntimeError("Client not initialized")
+
+    stock_filters_given = any(value is not None for value in (
+        category_id, subcategory_id, category_name, subcategory_name, package, packages,
+        manufacturer, manufacturers, library_type))
 
     # Validate parameters
     if query and len(query) > 500:
@@ -1304,6 +1247,10 @@ async def jlc_stock_check(
         resolved_subcategory_id = _client.get_subcategory_id_by_name(subcategory_name)
         if resolved_subcategory_id is None:
             return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use jlc_search_help(category='Connectors') to see available subcategories"}
+
+    if call_log.recorder.path is not None:
+        stats.note(stock_shape={"category_id": resolved_category_id, "subcategory_id": resolved_subcategory_id,
+                                "library_type": library_type})
 
     # Replies give packages in English ("Plugin,12.6x4.4mm"), but JLCPCB filters on its own spelling
     # ("插件,12.6x4.4mm"): send both, so a package copied from any reply finds its parts
@@ -1388,6 +1335,12 @@ async def jlc_stock_check(
             result["hint"] = (f"JLCPCB's search matches whole part numbers and their starts, not text inside "
                               f"them. In-stock parts with {fragment!r} inside their part number include "
                               f"{', '.join(found)}: search one of those (jlc_stock_check(query={json.dumps(found[0])})).")
+    try:
+        if not result.get("error") and not result.get("results") and _empty_reason(result) == "no_results":
+            stats.note(reason=("no_results_filtered" if stock_filters_given else "no_results_part_number"
+                               if looks_like_mpn(fragment) else "no_results_words"))
+    except Exception:
+        logger.exception("Usage stats: couldn't classify an empty live search")
     return result
 
 
@@ -2229,6 +2182,12 @@ def jlc_search(
                                 f"{part_number_text}, but none with the {', '.join(narrowed)} given or read from "
                                 "the query (see filters_applied); drop them, or check its specs with jlc_get_part.")
             else:
+                try:
+                    # The only place search reads the sold_out table, for the usage label only, never the reply.
+                    sold_out = db.get_sold_out_by_mpn(part_number_text)
+                    stats.note(reason="part_number_sold_out" if sold_out else "part_number_unknown")
+                except Exception:
+                    logger.exception("Usage stats: couldn't classify an empty part-number search")
                 hints.insert(0, f"No in-stock part matches {part_number_text}; try "
                                 f"jlc_stock_check(query={json.dumps(part_number_text)}) for low or zero stock, "
                                 "or search by part type and specs without the part number.")
@@ -2577,7 +2536,7 @@ def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> 
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bool = False) -> dict:
@@ -2973,6 +2932,7 @@ def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
                                    ["LCSC code", "MPN", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
         items = [items]
+    stats.note(batch_items=items[:50], batch_count=len(items))
     if not items:
         return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
     if error := _check_list_cap("parts", items, GET_PARTS_MAX_ITEMS):
@@ -3131,7 +3091,7 @@ def _subcategory_note(parts: list[dict[str, Any]] | None) -> str | None:
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_find_alternatives(
@@ -3257,7 +3217,7 @@ def _is_polarized_pair(pins: list[dict[str, Any]]) -> bool:
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footprint: bool = False) -> dict:
@@ -3417,10 +3377,10 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out: use
-    it only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
-    Mouser; for lifecycle use part_lifecycle. Batch up to 10 parts per call. Don't retry a quota
-    error.
+    """Mouser price, stock and datasheet for specific parts: for parts JLCPCB doesn't carry
+    (jlc_search / jlc_get_part found nothing) or when the user asks for Mouser. Lookups share a small
+    daily limit across all users: batch up to 10 parts per call and don't retry a quota error; for
+    lifecycle use part_lifecycle.
     Reply: answers are kept up to 3 days; observed_at is the oldest used.
     lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
     including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
@@ -3464,10 +3424,10 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(part_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out: use it
-    only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
-    DigiKey; one part per call, not whole BOMs; for lifecycle use part_lifecycle. Don't retry a
-    quota error.
+    """DigiKey price, stock and datasheet for one part: for parts JLCPCB doesn't carry (jlc_search /
+    jlc_get_part found nothing) or when the user asks for DigiKey. Lookups share a small daily limit
+    across all users: one part per call, not whole BOMs, and don't retry a quota error; for lifecycle
+    use part_lifecycle.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
@@ -3597,8 +3557,8 @@ async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
     digikey_get_part for lifecycle. Readings are shared and kept: active 60 days, nrnd and
-    last_time_buy 30, obsolete a year, others 90; other parts are asked of Mouser, and of DigiKey only
-    when Mouser doesn't list them or its daily limit is spent.
+    last_time_buy 30, obsolete a year, others 90; parts not already known are looked up at Mouser and
+    DigiKey (shared daily limits).
     Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
     "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
     last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
@@ -3624,6 +3584,7 @@ async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
                                    ["MPN", "LCSC code", '{"mpn", "manufacturer"}', "list or JSON array of these"])
     if not isinstance(items, list):
         items = [items]
+    stats.note(batch_items=items[:50], batch_count=len(items))
     if not items:
         return {"error": 'Give at least one part: an MPN, an LCSC code or {"mpn": ..., "manufacturer": ...}'}
     if error := _check_list_cap("parts", items, LIFECYCLE_MAX_PARTS):
@@ -3698,8 +3659,6 @@ async def cse_search(
     without confirming individual ECAD formats. Use cse_get_kicad for actual KiCad files.
     Slow (a search takes about 15 s, longer when busy; answers are kept): only when you need ECAD
     models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part (live=true if unknown).
-    Search requests use CSE_REQUEST_TIMEOUT (default 45s per request phase); a non-Success API
-    status is retried once after 3 s. No overall tool deadline; search requires no credentials.
 
     Args:
         query: MPN or keyword (e.g., "LM358P", "STM32F103"), max 500 characters
@@ -3738,13 +3697,12 @@ async def cse_get_kicad(
     part_id: int | None = None,
 ) -> dict:
     """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
-    ComponentSearchEngine; works for any manufacturer. Slow (a search of about 15 s, then a
+    ComponentSearchEngine, for parts SamacSys has models for. Slow (a search of about 15 s, then a
     download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
-    jlc_get_part (live=true if unknown).
-    Requires CSEARCH_USER and CSEARCH_PASS. Reply: part_id, search metadata when resolved by query,
-    kicad_symbol and kicad_footprint (either file may be null). No overall tool deadline; search
-    requests use CSE_REQUEST_TIMEOUT (default 45s per request phase), model downloads 30s per phase.
-    A non-Success search status is retried once after 3 s; shared daily download limits may apply.
+    jlc_get_part (live=true if unknown). Downloads use the server's own SamacSys account; shared daily
+    download limits may apply.
+    Reply: part_id, search metadata when resolved by query, kicad_symbol and kicad_footprint (either
+    file may be null).
 
     Args:
         query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"), max 500 characters; picks the first search
@@ -4114,10 +4072,11 @@ def _distributor_quota_health() -> dict[str, Any]:
 
 def _other_distributors_clause() -> str:
     """", or digikey_get_part for other distributors" when a DigiKey lookup spends no shared daily
-    limit and could go out now; empty otherwise (a spent limit would only earn the caller its error:
-    14,000 refused digikey_get_part calls on 2026-11-19)."""
+    limit and could go out now for this caller; empty otherwise (a spent limit, or the caller's
+    address having used its day, would only earn the caller its error: 14,000 refused
+    digikey_get_part calls on 2026-11-19)."""
     try:
-        if _digikey_client is not None and _digikey_client.can_answer_now():
+        if _digikey_client is not None and _digikey_client.can_answer_now(_caller_ip()):
             return ", or digikey_get_part for other distributors"
     except Exception:  # a hint must never fail a lookup
         logger.exception("Couldn't read DigiKey's state for a hint")
@@ -4187,15 +4146,17 @@ async def datasheet_redirect(request):
 
 
 async def usage_stats(request):
-    """Anonymous usage counts per UTC day (stats.py), newest first. ?days=N (1-30, default 30); the
-    file at USAGE_STATS_PATH keeps a year."""
+    """Private usage counts per UTC day, newest first; bearer auth, ?days=1..KEEP_DAYS (default 30)."""
+    headers = {"Cache-Control": "private, no-store"}
+    if not STATS_TOKEN or not hmac.compare_digest(
+            request.headers.get("Authorization", "").encode("utf-8"), f"Bearer {STATS_TOKEN}".encode("utf-8")):
+        return JSONResponse({"error": "Unauthorized"}, status_code=401,
+                            headers={**headers, "WWW-Authenticate": "Bearer"})
     try:
         days = int(request.query_params.get("days", "30"))
     except ValueError:
         days = 30
-    # The counts change all the time, but a minute old is fine for a page that graphs them
-    return JSONResponse(stats.usage.summary(max(1, min(days, stats.PUBLIC_DAYS))),
-                        headers={"Cache-Control": "public, max-age=60"})
+    return JSONResponse(stats.usage.summary(max(1, min(days, stats.KEEP_DAYS))), headers=headers)
 
 
 class BodySizeLimitMiddleware:
@@ -4329,6 +4290,9 @@ def main():
 
     # Suppress /health access log spam (Docker healthchecks every 10-30s)
     logging.getLogger("uvicorn.access").addFilter(_HealthFilterLog())
+    # One line instead of a traceback for the SDK's client-disconnect and unknown-method records
+    from . import sdk_logs
+    sdk_logs.install()
 
     uvicorn.run(
         "pcbparts_mcp.server:app",

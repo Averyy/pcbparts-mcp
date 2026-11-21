@@ -15,9 +15,10 @@ are read before the test and after every step, and the test stops if any rose.
 
 Run the container with prod's limits and the per-address limits raised so they don't cap the test:
 
+    export STATS_TOKEN=$(openssl rand -hex 32)
     docker build -t pcbparts-mcp:loadtest .
     docker run -d --name pcbparts-loadtest --cpus 3 --memory 4g -p 127.0.0.1:18080:8080 \\
-        -e RATE_LIMIT_REQUESTS=1000000 -e PLATFORM_RATE_LIMIT=1000000 pcbparts-mcp:loadtest
+        -e STATS_TOKEN -e RATE_LIMIT_REQUESTS=1000000 -e PLATFORM_RATE_LIMIT=1000000 pcbparts-mcp:loadtest
     uv run python scripts/load_test.py --url http://127.0.0.1:18080 --container pcbparts-loadtest \\
         --rates 60,120,240,480 --step-seconds 60 --out /tmp/load.jsonl
 
@@ -31,6 +32,7 @@ import asyncio
 import ipaddress
 import json
 import math
+import os
 import random
 import re
 import statistics
@@ -212,7 +214,11 @@ async def mcp_call(client: httpx.AsyncClient, headers: dict, tool: str, argument
 
 async def upstream_sent(client: httpx.AsyncClient, headers: dict) -> dict[str, int]:
     """Every upstream and distributor `sent` count in /mcp/stats, since the container started."""
-    reply = await client.get("/mcp/stats", params={"days": 30}, headers=headers)
+    token = os.getenv("STATS_TOKEN", "")
+    if not token:
+        raise SystemExit("STATS_TOKEN is required for /mcp/stats; set it in this shell and pass -e STATS_TOKEN to docker run")
+    reply = await client.get("/mcp/stats", params={"days": 30},
+                             headers={**headers, "Authorization": f"Bearer {token}"})
     reply.raise_for_status()
     totals = reply.json()["totals"]
     sent = {f"upstream.{name}": counts.get("sent", 0) for name, counts in (totals.get("upstream") or {}).items()}

@@ -2,7 +2,48 @@
 
 Notable changes to PCB Parts MCP, newest first.
 
-Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. From 0.8.21 each version is also a GitHub release, tagged `vX.Y.Z`, with its entry as the notes.
+Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
+
+## 0.10.5 (2026-11-21)
+
+### Breaking
+
+- **`/mcp/stats`**: requires `Authorization: Bearer <STATS_TOKEN>`; refuses every request when `STATS_TOKEN` is blank or unset.
+- Tool descriptions clarify the shared Mouser and DigiKey daily limits while keeping JLCPCB-first guidance and requested-distributor lookups; `cse_search` and `cse_get_kicad` leave out internals.
+- `jlc_stock_check`, `jlc_get_part`, `jlc_find_alternatives` and `jlc_get_pinout` are marked open-world (they can call JLCPCB or EasyEDA); the server reports its own version.
+- **Mouser and DigiKey lookups**: each address gets 1,000 a day, both counted together (was 200); the limit reply says 1000.
+- **`jlc_get_parts`**: also takes its list as `lcsc_codes` or `identifiers`, names clients sent that were refused.
+
+### Added
+
+- **Usage stats**: `bad_request_reasons`, `tool_apps`, `latency`, `versions`, `upstream_status` and thresholded `popular_terms`.
+- **Private diagnostics**: per-call records kept 30 days and deduplicated failed-search text kept 7 days, capped at 5,000 distinct entries a day.
+- **`scripts/usage_report.py`**: local text reports from the private call and failed-search files.
+- **Website**: Terms of Service at [pcbparts.dev/terms.html](https://pcbparts.dev/terms.html), linked from the site footer, the privacy page and the sitemap; the setup section notes that connecting means accepting the terms and privacy policy.
+
+### Changed
+
+- **Application log**: `LOG_MAX_BYTES_PER_DAY` defaults to 50 MB; messages are limited to 2,000 characters in the persistent file.
+- **Stats labels**: `jlc_search` splits `part_number_not_in_stock` into `part_number_sold_out` and `part_number_unknown`.
+- **Stats labels**: `jlc_stock_check` splits `no_results` into `no_results_filtered`, `no_results_part_number` and `no_results_words`.
+- Patch versions are tagged only; GitHub releases go out for minor and major versions, with every entry since the last one.
+- **Privacy policy**: names the operator, says calls through ChatGPT or claude.ai arrive from the platform's address rather than the user's, and lists ChatGPT among clients.
+- **Privacy policy**: tool arguments can include text the assistant takes from the conversation; removing PCB Parts from the AI app stops further calls.
+- **MCP SDK**: mcp 1.30.0 (from 1.25.0). Replies are unchanged; a reply to a client that already left is dropped quietly.
+- **Application log**: a client disconnecting mid-request and a method the SDK doesn't support (such as `server/discover`) log short warning lines instead of tracebacks.
+
+### Fixed
+
+- **Private diagnostics**: startup retries recover recording, incomplete call-log tails are repaired, and reports skip malformed rows.
+- **Private files**: restrictive permissions, abandoned temporary-file cleanup and 30-day expiry for unreadable stats backups.
+- **Watchdog**: a stalled diagnostics write no longer prevents stuck-worker checks.
+- **`mouser_get_part` stats**: fixed misses incorrectly counted as `no_results` instead of `part_not_found`.
+- **`digikey_get_part`, `part_lifecycle`**: parts DigiKey lists with other separators or leading zeros are found (`MR06X223 JTL` for `MR06X223JTL`, Molex `0039012045` for `39012045`).
+- **Privacy policy**: the log file is deleted 7 days after the day it covers (it said kept 7 days).
+- **Website**: the homepage's Claude Code permissions list was missing `jlc_get_parts` and `part_lifecycle`.
+- **Deploy**: `landing/.well-known/` is copied to the web root when present.
+- **`jlc_get_part`, `jlc_get_parts`**: lookups running at the same time could get another part's stored `lifecycle`, none, or fail with a `TypeError` (0.10.4).
+- **Releases**: API errors or invalid changelog sections stop publication; reruns restore a missing minor or major release on its existing tag.
 
 ## 0.10.4 (2026-11-20)
 

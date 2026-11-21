@@ -233,7 +233,7 @@ class TestServerWiring:
         monkeypatch.setattr(stats, "usage", UsageStats(clock=Clock()))
         monkeypatch.setattr(server, "_apps_by_address", AppsByAddress(clock=Clock()))
 
-    async def test_stateless_http_links_calls_to_apps(self, monkeypatch):
+    async def test_stateless_http_links_calls_to_apps(self, monkeypatch, stats_headers):
         """The real ASGI app, stateless as on prod: a tools/call carries no clientInfo (its session
         has none), so the app comes from the initialize its address sent before. Two addresses
         with different apps don't mix; an address with no initialize counts under unknown."""
@@ -273,7 +273,7 @@ class TestServerWiring:
                 await call(c, "digikey_get_part", {"part_number": "LM358P"}, "198.51.100.7")  # cached
                 await call(c, "digikey_get_part", {"part_number": "LM358P"}, "192.0.2.1")  # no initialize
                 await call(c, "get_design_rules", {"topic": "usb"}, "203.0.113.9")  # not a distributor tool
-                response = await c.get("/mcp/stats")
+                response = await c.get("/mcp/stats", headers=stats_headers)
         assert sessions and all(params is None for params in sessions)  # FastMCP gives no app at call time
         body = response.json()
         day = body["days"][0]

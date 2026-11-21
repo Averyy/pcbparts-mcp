@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 # Pinned exact so a rebuild (this layer is GHA-cached; a cache miss re-resolves) can't pull a new
 # fastmcp/wafer/starlette that silently changes behavior. Keep in sync with pyproject.toml.
 RUN pip install --no-cache-dir \
-    "mcp==1.25.0" \
+    "mcp==1.30.0" \
     "fastmcp==3.4.3" \
     "wafer-py==0.7.15" \
     "wreq==0.13.0" \
@@ -42,6 +42,7 @@ COPY --chown=appuser:appuser data/subcategories.json /app/data/
 
 # Copy database build script and parsers module
 COPY --chown=appuser:appuser scripts/build_database.py /app/scripts/
+COPY --chown=appuser:appuser scripts/usage_report.py /app/scripts/
 
 # Build the SQLite databases at image build time. The catalog (data/catalog/, ~350 MB uncompressed,
 # plus price_tiers.tsv.gz when docker-build.yml could download it: it isn't in git, and without it
@@ -98,6 +99,7 @@ ENV DISTRIBUTOR_STORE_PATH=/app/cache/distributor.db
 ENV DISTRIBUTOR_QUOTA_PATH=/app/cache/distributor_quota.json
 ENV USAGE_STATS_PATH=/app/cache/usage_stats.json
 ENV LOG_PATH=/app/cache/logs/application.log
+ENV CALL_LOG_DIR=/app/cache/call-log
 
 # Run as non-root user
 USER appuser

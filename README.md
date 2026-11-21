@@ -124,7 +124,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 - `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list, or on a server without price tiers), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 200 Mouser and DigiKey lookups combined a day; stored answers are free. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 1,000 Mouser and DigiKey lookups combined a day; stored answers are free. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -175,31 +175,38 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily requests to each of Mouser and DigiKey (`0`: kept answers only) |
-| `DISTRIBUTOR_DAILY_PER_ADDRESS` | `200` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
+| `DISTRIBUTOR_DAILY_PER_ADDRESS` | `1000` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts and pauses |
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
+| `STATS_TOKEN` | empty | Bearer token for `/mcp/stats`; blank or unset refuses every stats request |
 | `LOG_PATH` | set in Docker; else empty | Application log file, kept across deploys (empty: none) |
-| `LOG_KEEP_DAYS` | `7` | Days of log files to keep |
+| `LOG_KEEP_DAYS` | `7` | Full days after a log file’s UTC day ends before deletion is due |
+| `LOG_MAX_BYTES_PER_DAY` | `50000000` | Persistent application-log byte budget per UTC day; excess lines are dropped and counted (messages limited to 2,000 characters) |
+| `CALL_LOG_DIR` | `/app/cache/call-log` in Docker; else empty | Private call records and failed-search text; empty disables both |
+| `CALL_LOG_DAYS` | `30` | UTC days of call records to keep, including today (minimum 1) |
+| `FAILED_QUERY_DAYS` | `7` | UTC days of failed-search text to keep, including today (minimum 1) |
+| `FAILED_QUERY_CAP` | `5000` | Distinct failed-search entries per UTC day (minimum 1) |
+| `CALL_LOG_MAX_ROWS` | `1000000` | Call-log rows admitted per UTC day, including refusal summaries (minimum 1) |
 | `EASYEDA_STORE_PATH` | `/app/cache/easyeda.db` in Docker | EasyEDA footprint answers |
 | `CSE_STORE_PATH` | `/app/cache/cse.db` in Docker | SamacSys searches and KiCad files |
 | `DISTRIBUTOR_STORE_PATH` | `/app/cache/distributor.db` in Docker | Mouser/DigiKey answers and lifecycle readings |
 
-The `_PATH` settings keep that data across restarts; outside Docker they're unset, data stays in memory and logs go only to the console. The compose files mount a named volume at `/app/cache`. An unusable or out-of-range number falls back to its default or nearest allowed value, with a warning at startup.
+The `_PATH` settings keep that data across restarts; outside Docker they're unset, data stays in memory and logs go only to the console. `CALL_LOG_DIR` enables the separate private files and is also unset outside Docker. The compose files mount a named volume at `/app/cache`. An unusable or out-of-range number falls back to its default or nearest allowed value, with a warning at startup.
 
 ## API
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 300 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
 - **Health:** `https://pcbparts.dev/health`: version, caches, distributor quotas and database status as JSON; HTTP 503 when a database call is stuck
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`: anonymous daily counts of tool calls, outcomes, upstream requests and refusals (the endpoint lists every field). No IPs, queries or part numbers are kept.
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`: private daily counts and qualifying popular search words, with no IPs. Requires `Authorization: Bearer <STATS_TOKEN>`; refuses every request when `STATS_TOKEN` is blank or unset. `?days=1..365` (default 30); the endpoint describes every field.
 
 ## Privacy
 
-The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments only to answer each call, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. Links in its answers, such as datasheet links, go straight to those providers' sites. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
+The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments to answer calls, reuse cached answers, measure usage and fix search problems, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. Private call records last 30 days, failed-search text 7 days, and popular search words are kept only after enough different callers use them. Links in its answers, such as datasheet links, go straight to those providers' sites. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
 
 ## More
 
 - [llms.txt](https://pcbparts.dev/llms.txt): this service described for LLMs, with the defaults and limits they need
-- [CHANGELOG.md](CHANGELOG.md): every release, also published as [GitHub releases](https://github.com/Averyy/pcbparts-mcp/releases) from 0.8.21. Minor releases in 0.x can change replies, and each lists what to check under **Breaking**.
+- [CHANGELOG.md](CHANGELOG.md): every version; minor and major versions are also published as [GitHub releases](https://github.com/Averyy/pcbparts-mcp/releases). Minor releases in 0.x can change replies, and each lists what to check under **Breaking**.
 - [CONTRIBUTING.md](CONTRIBUTING.md): development setup, tests and project conventions. Issues and PRs welcome.
 - License: MIT

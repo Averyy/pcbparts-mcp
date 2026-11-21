@@ -15,7 +15,7 @@ from pcbparts_mcp.cache import DailyQuota, Pacer, TTLCache
 from pcbparts_mcp.config import DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.mouser import MouserClient
-from pcbparts_mcp.stats import KEEP_DAYS, MAX_APPS, PUBLIC_DAYS, UsageStats
+from pcbparts_mcp.stats import KEEP_DAYS, MAX_APPS, UsageStats
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 10, 17, 21, 15, tzinfo=UTC).timestamp()
@@ -255,6 +255,7 @@ class TestUsageStats:
         assert totals["hours"][21] == 12 and sum(totals["hours"]) == 12  # all at 21:xx UTC
         assert UsageStats(clock=clock).summary()["totals"] == {
             "from": None, "to": None, "days": 0, "calls": 0, "hours": [0] * 24, "tools": {}, "apps": {},
+            **dict.fromkeys(stats.SINCE_0_10_5),
             "distributors": {}, "reasons": {}, "why_empty": {},
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0},
             "lcsc_lookups": {}, "distributor_apps": {}, "distributor_limits": {},
@@ -552,8 +553,8 @@ class TestUsageStats:
         clock = Clock()
         usage = UsageStats(clock=clock)
         for _ in range(KEEP_DAYS + 5):
-            usage.record_call("jlc_search", "ok", 1)
             clock.advance(86400)
+            usage.record_call("jlc_search", "ok", 1)
         dates = [d["date"] for d in usage.summary(days=1000)["days"]]
         assert len(dates) == KEEP_DAYS and dates == sorted(dates, reverse=True)
         assert len(usage.summary(days=7)["days"]) == 7
@@ -655,7 +656,7 @@ class TestServerWiring:
         assert "2026-10-26" in again.summary()["about"]
         assert "similar-parts-only replies as not found" in again.summary()["about"]
 
-    async def test_over_http(self):
+    async def test_over_http(self, stats_headers):
         """The real ASGI app: callers come from the rightmost X-Forwarded-For, apps from initialize,
         and the counts are served at /mcp/stats (the proxy forwards only /mcp* and /health)."""
         from pcbparts_mcp import server
@@ -673,11 +674,11 @@ class TestServerWiring:
                 call = {"name": "get_design_rules", "arguments": {"topic": "usb"}}
                 for ip in ("203.0.113.9", "198.51.100.1, 203.0.113.9", "198.51.100.1"):
                     assert (await rpc(c, "tools/call", call, ip)).status_code == 200
-                response = await c.get("/mcp/stats?days=abc")
-                assert response.headers["cache-control"] == "public, max-age=60"
+                response = await c.get("/mcp/stats?days=abc", headers=stats_headers)
+                assert response.headers["cache-control"] == "private, no-store"
                 body = response.json()
-                assert len((await c.get("/mcp/stats?days=0")).json()["days"]) == 1
-                assert (await c.get("/mcp/stats?days=1000")).status_code == 200
+                assert len((await c.get("/mcp/stats?days=0", headers=stats_headers)).json()["days"]) == 1
+                assert (await c.get("/mcp/stats?days=1000", headers=stats_headers)).status_code == 200
         day = body["days"][0]
         assert day["tools"]["get_design_rules"]["calls"] == 3
         assert day["callers"] == 2
@@ -686,7 +687,7 @@ class TestServerWiring:
         assert "similar_only" in body["about"]
         assert "Cutover 2026-10-26" in body["about"]
 
-    async def test_failed_and_refused_hours_over_http(self, monkeypatch):
+    async def test_failed_and_refused_hours_over_http(self, monkeypatch, stats_headers):
         """0.10.1: each day in /mcp/stats has failed_hours and refused_hours beside hours (24 counts,
         or null on days before 0.10.1); totals don't."""
         from pcbparts_mcp import server
@@ -699,7 +700,7 @@ class TestServerWiring:
         usage.record_refusal("too_many_clients")
         app = server.create_app()
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:
-            body = (await c.get("/mcp/stats")).json()
+            body = (await c.get("/mcp/stats", headers=stats_headers)).json()
         today, yesterday = body["days"]
         assert list(today)[:5] == ["date", "calls", "hours", "failed_hours", "refused_hours"]
         assert today["failed_hours"] == [0] * 21 + [1, 0, 0] == today["refused_hours"]
@@ -708,20 +709,25 @@ class TestServerWiring:
         assert set(body["totals"]) & {"failed_hours", "refused_hours"} == set()
         assert "failed_hours" in body["about"] and "refused_hours" in body["about"]
 
-    async def test_public_page_shows_30_days_of_the_year_kept(self, tmp_path, monkeypatch):
+    async def test_private_stats_defaults_to_30_days_and_can_show_the_year(self, tmp_path, monkeypatch, stats_headers):
         from starlette.requests import Request
         from pcbparts_mcp import server
         clock = Clock()
         usage = UsageStats(clock=clock)
         usage.open(tmp_path / "usage.json")
         monkeypatch.setattr(stats, "usage", usage)
-        for _ in range(40):
-            usage.record_call("jlc_search", "ok", 1)
+        for _ in range(400):
             clock.advance(86400)
+            usage.record_call("jlc_search", "ok", 1)
         usage.save()
-        request = Request({"type": "http", "query_string": b"days=1000", "headers": []})
-        assert len(json.loads((await server.usage_stats(request)).body)["days"]) == PUBLIC_DAYS == 30
-        assert len(json.loads((tmp_path / "usage.json").read_text(encoding="utf-8"))["days"]) == 40
+        headers = [(key.lower().encode(), value.encode()) for key, value in stats_headers.items()]
+        for query, expected in [(b"", 30), (b"days=abc", 30), (b"days=0", 1), (b"days=1", 1),
+                                (b"days=365", 365), (b"days=1000", 365)]:
+            request = Request({"type": "http", "query_string": query, "headers": headers})
+            response = await server.usage_stats(request)
+            assert response.status_code == 200
+            assert len(json.loads(response.body)["days"]) == expected
+        assert len(json.loads((tmp_path / "usage.json").read_text(encoding="utf-8"))["days"]) == KEEP_DAYS
         assert KEEP_DAYS == 365
 
     async def test_shutdown_saves_the_counts(self, tmp_path, monkeypatch):
@@ -734,6 +740,96 @@ class TestServerWiring:
         saved = json.loads(path.read_text(encoding="utf-8"))["days"]
         assert next(iter(saved.values()))["tools"]["get_design_rules"]["calls"] == 1
         assert saved[max(saved)]["restarts"] >= 1  # the lifespan counts its start
+
+
+class TestStatsAuth:
+    @pytest.mark.parametrize("authorization", [None, "Bearer wrong-token", "Basic test-stats-token",
+                                               "test-stats-token", "Bearer", "Bearer ",
+                                               "Bearer  test-stats-token", "Bearer test-stats-token ",
+                                               b"Bearer \xff"],
+                             ids=["missing", "wrong", "basic", "bare", "scheme", "empty", "space", "trailing", "bytes"])
+    async def test_rejects_missing_or_wrong_header(self, stats_headers, authorization, caplog):
+        from pcbparts_mcp import server
+        headers = {} if authorization is None else {"Authorization": authorization}
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.get("/mcp/stats", headers=headers)
+        assert response.status_code == 401
+        assert response.json() == {"error": "Unauthorized"}
+        assert response.headers["www-authenticate"] == "Bearer"
+        assert response.headers["cache-control"] == "private, no-store"
+        assert "test-stats-token" not in caplog.text and "Authorization" not in caplog.text
+
+    async def test_accepts_only_the_header_with_a_byte_comparison(self, stats_headers, monkeypatch, caplog):
+        from types import SimpleNamespace
+        from pcbparts_mcp import server
+        compared = []
+        original = server.hmac.compare_digest
+
+        def compare(left, right):
+            assert isinstance(left, bytes) and isinstance(right, bytes)
+            compared.append((left, right))
+            return original(left, right)
+
+        monkeypatch.setattr(server, "hmac", SimpleNamespace(compare_digest=compare))
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.get("/mcp/stats?token=wrong", headers=stats_headers)
+        assert response.status_code == 200 and "totals" in response.json()
+        assert response.headers["cache-control"] == "private, no-store"
+        assert "www-authenticate" not in response.headers
+        assert len(compared) == 1
+        assert "test-stats-token" not in response.text + caplog.text
+
+    async def test_unset_token_refuses_even_a_bearer_header(self):
+        from pcbparts_mcp import server
+        assert server.STATS_TOKEN == ""  # the shared fixture isolates any shell secret
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            for authorization in ("Bearer test-stats-token", "Bearer "):
+                response = await client.get("/mcp/stats", headers={"Authorization": authorization})
+                assert response.status_code == 401 and response.json() == {"error": "Unauthorized"}
+                assert response.headers["www-authenticate"] == "Bearer"
+                assert response.headers["cache-control"] == "private, no-store"
+
+    @pytest.mark.parametrize("parameter", ["token", "STATS_TOKEN", "access_token"])
+    async def test_query_string_token_is_ignored(self, stats_headers, parameter):
+        from pcbparts_mcp import server
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.get("/mcp/stats", params={parameter: "test-stats-token"})
+        assert response.status_code == 401 and response.json() == {"error": "Unauthorized"}
+
+    @pytest.mark.parametrize("authorized", [False, True], ids=["refused", "accepted"])
+    async def test_head_requires_auth_and_is_not_cached(self, stats_headers, authorized):
+        from pcbparts_mcp import server
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.head("/mcp/stats", headers=stats_headers if authorized else {})
+        assert response.status_code == (200 if authorized else 401)
+        assert response.content == b""
+        assert response.headers["cache-control"] == "private, no-store"
+        assert response.headers.get("www-authenticate") == (None if authorized else "Bearer")
+
+    @pytest.mark.parametrize("token", ["", "test-stats-token"], ids=["unset", "set"])
+    async def test_startup_warns_once_when_unset(self, monkeypatch, caplog, token):
+        from fastmcp import Client
+        from pcbparts_mcp import server
+        monkeypatch.setattr(server, "STATS_TOKEN", token)
+        async with Client(server.mcp):
+            pass
+        warnings = [record for record in caplog.records if "/mcp/stats refuses every request" in record.message]
+        assert len(warnings) == (0 if token else 1)
+        assert all(record.levelname == "WARNING" for record in warnings)
+        assert "test-stats-token" not in caplog.text
+
+    def test_config_reads_token_as_a_string_secret(self, monkeypatch):
+        import runpy
+        from pcbparts_mcp import config
+        monkeypatch.delenv("STATS_TOKEN", raising=False)
+        assert runpy.run_path(config.__file__)["STATS_TOKEN"] == ""
+        monkeypatch.setenv("STATS_TOKEN", "test-stats-token")
+        assert runpy.run_path(config.__file__)["STATS_TOKEN"] == "test-stats-token"
 
 
 # --- Error sorting: every error message in the code, and the kind it counts as ---
@@ -844,7 +940,7 @@ ERROR_REPLIES = {
     "No EasyEDA symbol available for {}": "not_found",
     "No EasyEDA symbol UUID for {}": "not_found",
 }
-NOT_TOOL_REPLIES = {"Rate limit exceeded", "Request body too large",  # HTTP middleware answers
+NOT_TOOL_REPLIES = {"Unauthorized", "Rate limit exceeded", "Request body too large",  # HTTP answers
                     "Server is starting; try again in a moment", "No datasheet PDF found for {}",  # /mcp/datasheet
                     "The datasheet source didn't answer; try again later"}
 
