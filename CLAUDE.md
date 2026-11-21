@@ -15,7 +15,7 @@ Rules and gotchas only. History goes in `CHANGELOG.md`; how things work goes in 
 - Never commit without explicit permission. Never push, merge or deploy without the user.
 - No Claude attribution in commits or PRs.
 - One version for all unreleased work; bump only after that version has been released. Bump in `pyproject.toml` and `uv.lock`. Patch is the default; ask before a minor or major bump.
-- `CHANGELOG.md`: head the entry `## X.Y.Z (YYYY-MM-DD)` (the `release` job publishes that section as the GitHub release; without it the job fails). Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
+- `CHANGELOG.md`: head the entry `## X.Y.Z (YYYY-MM-DD)` (the `release` job tags every version and publishes a GitHub release only for a minor or major one, with every section since the last release; without the section the job fails). Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
 - Don't create releases or tags by hand.
 - The project is in beta with real external users and contributors: breaking changes must be deliberate (semver bump, changelog note), and dependency pins stay exact.
 

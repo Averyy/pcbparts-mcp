@@ -186,9 +186,11 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "MCP endpoint: \`https://pcbparts.dev/mcp\`" >> $GITHUB_STEP_SUMMARY
 
-  # After a deploy from main, publish a GitHub release for pyproject.toml's version if it has none
-  # yet, with that version's CHANGELOG.md section as the notes. Daily data commits keep the version,
-  # so they skip this. A version with no "## X.Y.Z (date)" section fails here: add the entry.
+  # After a deploy from main, tag pyproject.toml's version if it has no tag yet. A patch version
+  # (0.10.5) gets the tag only, which notifies nobody; a minor or major version (0.11.0, 1.0.0) is
+  # also a GitHub release, which notifies the repository's release watchers, with every CHANGELOG.md
+  # section since the last release as its notes. Daily data commits keep the version, so they skip
+  # this. A version with no "## X.Y.Z (date)" section fails here: add the entry.
   release:
     needs: build-and-push
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
@@ -199,21 +201,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Publish release for this version
+      - name: Tag this version (and release it if it's a minor version)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml | head -n 1)
           if [ -z "$version" ]; then echo "::error::no version in pyproject.toml"; exit 1; fi
           tag="v$version"
-          if gh release view "$tag" > /dev/null 2>&1; then
-            echo "Release $tag already exists"
-            exit 0
-          fi
-          awk -v head="## $version " 'index($0, head) == 1 {found = 1; next} found && /^## / {exit} found' CHANGELOG.md > notes.md
-          if ! grep -q '[^[:space:]]' notes.md; then
+          awk -v head="## $version " 'index($0, head) == 1 {found = 1; next} found && /^## / {exit} found' CHANGELOG.md > section.md
+          if ! grep -q '[^[:space:]]' section.md; then
             echo "::error::CHANGELOG.md has no '## $version (date)' section"
             exit 1
           fi
-          gh release create "$tag" --target "$GITHUB_SHA" --title "$version" --notes-file notes.md
-          echo "Published release [$tag](https://github.com/${{ github.repository }}/releases/tag/$tag)" >> "$GITHUB_STEP_SUMMARY"
+          if gh api "repos/${{ github.repository }}/git/ref/tags/$tag" > /dev/null 2>&1; then
+            echo "Tag $tag already exists"
+            exit 0
+          fi
+          case "$version" in
+            *.0)
+              # Every section from this version's down to the last release's (left out)
+              last=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // ""' | sed 's/^v//')
+              awk -v head="## $version " -v stop="## $last " \
+                'index($0, head) == 1 {on = 1} on && stop != "## " && index($0, stop) == 1 {exit} on' CHANGELOG.md > notes.md
+              gh release create "$tag" --target "$GITHUB_SHA" --title "$version" --notes-file notes.md
+              echo "Published release [$tag](https://github.com/${{ github.repository }}/releases/tag/$tag)" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            *)
+              gh api "repos/${{ github.repository }}/git/refs" -f ref="refs/tags/$tag" -f sha="$GITHUB_SHA" > /dev/null
+              echo "Tagged $tag (a patch: no release; its notes go out with the next minor version)" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+          esac
