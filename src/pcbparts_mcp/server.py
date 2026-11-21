@@ -352,7 +352,8 @@ async def _every_minute() -> None:
 # Create MCP server
 mcp = FastMCP(
     name="pcbparts",
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part only when JLCPCB can't answer (the part isn't at JLCPCB, or the user asked for that distributor's stock or price): their shared daily limits often run out; batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    version=__version__,  # serverInfo.version: this server's, not fastmcp's
+    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part share small daily limits across all users: use them for parts JLCPCB doesn't carry or when the user asks for that distributor's stock or price, and batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -1204,7 +1205,7 @@ StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_norm
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_stock_check(
@@ -2577,7 +2578,7 @@ def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> 
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bool = False) -> dict:
@@ -3131,7 +3132,7 @@ def _subcategory_note(parts: list[dict[str, Any]] | None) -> str | None:
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_find_alternatives(
@@ -3257,7 +3258,7 @@ def _is_polarized_pair(pins: list[dict[str, Any]]) -> bool:
         readOnlyHint=True,
         destructiveHint=False,
         idempotentHint=True,
-        openWorldHint=False,
+        openWorldHint=True,
     )
 )
 async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footprint: bool = False) -> dict:
@@ -3417,10 +3418,10 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts. Its shared daily limit often runs out: use
-    it only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
-    Mouser; for lifecycle use part_lifecycle. Batch up to 10 parts per call. Don't retry a quota
-    error.
+    """Mouser price, stock and datasheet for specific parts: for parts JLCPCB doesn't carry
+    (jlc_search / jlc_get_part found nothing) or when the user asks for Mouser. Lookups share a small
+    daily limit across all users: batch up to 10 parts per call and don't retry a quota error; for
+    lifecycle use part_lifecycle.
     Reply: answers are kept up to 3 days; observed_at is the oldest used.
     lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
     including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
@@ -3464,10 +3465,10 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(part_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part. Its shared daily limit often runs out: use it
-    only when JLCPCB can't answer (jlc_search / jlc_get_part found nothing) or the user asks for
-    DigiKey; one part per call, not whole BOMs; for lifecycle use part_lifecycle. Don't retry a
-    quota error.
+    """DigiKey price, stock and datasheet for one part: for parts JLCPCB doesn't carry (jlc_search /
+    jlc_get_part found nothing) or when the user asks for DigiKey. Lookups share a small daily limit
+    across all users: one part per call, not whole BOMs, and don't retry a quota error; for lifecycle
+    use part_lifecycle.
     Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
     else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
     (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
@@ -3597,8 +3598,8 @@ async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
     """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
     last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
     digikey_get_part for lifecycle. Readings are shared and kept: active 60 days, nrnd and
-    last_time_buy 30, obsolete a year, others 90; other parts are asked of Mouser, and of DigiKey only
-    when Mouser doesn't list them or its daily limit is spent.
+    last_time_buy 30, obsolete a year, others 90; parts not already known are looked up at Mouser and
+    DigiKey (shared daily limits).
     Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
     "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
     last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
@@ -3698,8 +3699,6 @@ async def cse_search(
     without confirming individual ECAD formats. Use cse_get_kicad for actual KiCad files.
     Slow (a search takes about 15 s, longer when busy; answers are kept): only when you need ECAD
     models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part (live=true if unknown).
-    Search requests use CSE_REQUEST_TIMEOUT (default 45s per request phase); a non-Success API
-    status is retried once after 3 s. No overall tool deadline; search requires no credentials.
 
     Args:
         query: MPN or keyword (e.g., "LM358P", "STM32F103"), max 500 characters
@@ -3738,13 +3737,12 @@ async def cse_get_kicad(
     part_id: int | None = None,
 ) -> dict:
     """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
-    ComponentSearchEngine; works for any manufacturer. Slow (a search of about 15 s, then a
+    ComponentSearchEngine, for parts SamacSys has models for. Slow (a search of about 15 s, then a
     download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
-    jlc_get_part (live=true if unknown).
-    Requires CSEARCH_USER and CSEARCH_PASS. Reply: part_id, search metadata when resolved by query,
-    kicad_symbol and kicad_footprint (either file may be null). No overall tool deadline; search
-    requests use CSE_REQUEST_TIMEOUT (default 45s per request phase), model downloads 30s per phase.
-    A non-Success search status is retried once after 3 s; shared daily download limits may apply.
+    jlc_get_part (live=true if unknown). Downloads use the server's own SamacSys account; shared daily
+    download limits may apply.
+    Reply: part_id, search metadata when resolved by query, kicad_symbol and kicad_footprint (either
+    file may be null).
 
     Args:
         query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"), max 500 characters; picks the first search
