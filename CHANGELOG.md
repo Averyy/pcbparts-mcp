@@ -4,6 +4,18 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.5 (2026-11-20)
+
+### Changed
+
+- Tool descriptions describe the shared Mouser and DigiKey daily limits instead of saying to use them only when JLCPCB can't answer; `cse_search` and `cse_get_kicad` leave out internals.
+- `jlc_stock_check`, `jlc_get_part`, `jlc_find_alternatives` and `jlc_get_pinout` are marked open-world (they can call JLCPCB or EasyEDA); the server reports its own version.
+- Patch versions are tagged only; GitHub releases go out for minor versions, with every entry since the last one.
+
+### Fixed
+
+- **`digikey_get_part`, `part_lifecycle`**: parts DigiKey lists with other separators or leading zeros are found (`MR06X223 JTL` for `MR06X223JTL`, Molex `0039012045` for `39012045`).
+
 ## 0.10.4 (2026-11-20)
 
 ### Breaking
