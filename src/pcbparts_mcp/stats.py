@@ -11,7 +11,8 @@ rate limit turned away (and, in 0.10.0 only, the busy cap). From 0.10.1 also the
 in each UTC hour. From 0.10.2 also how LCSC-code lookups were answered (snapshot, live or a
 fallback), and which apps called the Mouser and DigiKey tools (distributor_apps; server.py links a
 call to its app in memory). From 0.10.3 also why distributor lookups were held back, in each UTC
-hour, and the limits distributors themselves refused for (distributor_limits). No IPs, queries or part
+hour, and the limits distributors themselves refused for (distributor_limits). From 0.10.4 also
+part_lifecycle input forms per entry (lifecycle_inputs). No IPs, queries or part
 numbers are kept: callers and distinct part
 numbers are counted through salted hashes held in memory for the current day only, with a new random salt each
 day. A restart starts a new set, so a caller or part seen before and after one on the same day counts
@@ -81,17 +82,19 @@ REASONS = frozenset({
 })
 # How the checks behind jlc_search's why_empty went
 WHY_EMPTY_RESULTS = ("complete", "incomplete", "budget_exhausted_or_busy", "diagnostic_failed", "no_counterfactual")
-# The services this server sends requests to, besides Mouser and DigiKey (DISTRIBUTOR_EVENTS counts
-# those): JLCPCB's parts search, LCSC's product data, EasyEDA's /api/products (footprint checks),
-# /api/components (symbols and footprints for pinouts) and /api/components again for land checks'
-# footprint pads (its own budget), and SamacSys ComponentSearchEngine (searches and model downloads)
-UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", "easyeda_pads", "cse")
+# The services this server sends requests to: JLCPCB's parts search, LCSC's product data, EasyEDA's
+# /api/products (footprint checks), /api/components (symbols and footprints for pinouts) and
+# /api/components again for land checks' footprint pads (its own budget), SamacSys
+# ComponentSearchEngine (searches and model downloads), and from 0.10.4 the HTTP requests behind
+# DigiKey lookups (DISTRIBUTOR_EVENTS counts Mouser and DigiKey per lookup)
+UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", "easyeda_pads", "cse", "digikey")
 # sent: HTTP requests our code sent, one each (a request it repeats, such as CSE's second try, counts
 # again); retries: further attempts the HTTP client (wafer) made on its own for those, as it reports
 # them on the reply (a request that ends in a timeout or a connection failure reports none);
 # cached: answered without a request (a memory cache, the on-disk store or the seed); rate_limited: not
-# sent because this server's own budget or pause for that source said no
-UPSTREAM_EVENTS = ("sent", "retries", "cached", "rate_limited")
+# sent because this server's own budget or pause for that source said no; waited (from 0.10.4): sent
+# after waiting for a free slot under this server's cap on requests in flight
+UPSTREAM_EVENTS = ("sent", "retries", "cached", "rate_limited", "waited")
 # Part numbers looked up with each distributor (from its stored answers or with a request): all of
 # them, and the different ones (by mpn_key), counted through salted hashes kept in memory for the day
 PARTS_ASKED = ("mouser", "digikey")
@@ -129,6 +132,7 @@ DISTRIBUTOR_LIMIT_CAUSES = ("minute_cap", "daily_count", "address_daily", "distr
                             "distributor_refused", "other")
 DISTRIBUTOR_LIMIT_REFUSALS = ("daily", "minute", "refused")
 DATASHEET_LINK_EVENTS = ("visits", "reused", "signed", "waited", "refused", "failed", "not_found")
+LIFECYCLE_INPUT_FORMS = ("bare_number", "with_manufacturer", "lcsc_code")
 
 
 def _new_distributor_limits() -> dict[str, Any]:
@@ -168,7 +172,7 @@ def _new_day() -> dict[str, Any]:
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {}, "restarts": 0,
             **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {},
             "distributor_limits": {}, "datasheet_links": dict.fromkeys(DATASHEET_LINK_EVENTS, 0),
-            "db_waits": _new_db_waits()}
+            "db_waits": _new_db_waits(), "lifecycle_inputs": dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -264,6 +268,9 @@ def _clean_day(day: dict) -> dict[str, Any]:
     clean["datasheet_links"] = ({event: _int(links.get(event)) for event in DATASHEET_LINK_EVENTS}
                                 if isinstance(links, dict) else None)
     clean["db_waits"] = _clean_db_waits(day.get("db_waits"))
+    forms = day.get("lifecycle_inputs")
+    clean["lifecycle_inputs"] = ({form: max(0, _int(forms.get(form))) for form in LIFECYCLE_INPUT_FORMS}
+                                  if isinstance(forms, dict) else None)
     clean.update({str(key): value for key, value in day.items() if key not in _DAY_FIELDS})
     return clean
 
@@ -400,6 +407,8 @@ class UsageStats:
             day["datasheet_links"] = dict.fromkeys(DATASHEET_LINK_EVENTS, 0)
         if day["db_waits"] is None:
             day["db_waits"] = _new_db_waits()
+        if day["lifecycle_inputs"] is None:
+            day["lifecycle_inputs"] = dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)
         for field in HOURLY_SINCE_0_10_1:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
@@ -520,6 +529,11 @@ class UsageStats:
         if event in DATASHEET_LINK_EVENTS:
             self._day()["datasheet_links"][event] += 1
 
+    def record_lifecycle_input(self, form: str) -> None:
+        """One usable part_lifecycle input, before resolving its catalog identity. Fixed labels only."""
+        if form in LIFECYCLE_INPUT_FORMS:
+            self._day()["lifecycle_inputs"][form] += 1
+
     def record_db_wait(self, seconds: float, components: bool = False,
                        started_at: datetime.datetime | None = None) -> None:
         """One started database job; queue delay only, no query time or identifying data."""
@@ -578,9 +592,12 @@ class UsageStats:
         total_distributor_limits: dict[str, dict[str, Any]] = {}
         total_datasheet_links = dict.fromkeys(DATASHEET_LINK_EVENTS, 0)
         total_db_waits = _new_db_waits()
+        total_lifecycle_inputs = dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)
         total_hours = [0] * 24
         for date in dates:
             day = self._days[date]
+            for form, count in (day["lifecycle_inputs"] or {}).items():
+                total_lifecycle_inputs[form] += count
             if day["db_waits"] is not None:
                 _add_db_waits(total_db_waits, day["db_waits"])
             for event, count in (day["datasheet_links"] or {}).items():
@@ -651,6 +668,7 @@ class UsageStats:
                 "distributor_limits": day["distributor_limits"],
                 "datasheet_links": day["datasheet_links"],
                 "db_waits": day["db_waits"],
+                "lifecycle_inputs": day["lifecycle_inputs"],
             })
         totals_tools = _tools_view(total_tools)
         return {
@@ -676,15 +694,17 @@ class UsageStats:
                       "distributors skipped (from 0.10.0, on days with any): part numbers not sent because no "
                       "distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII "
                       "text, not 3-40 characters); one a number. "
-                      "From 0.10.0 (earlier days have none): upstream, for each service this server calls other than "
-                      "Mouser and DigiKey (those are in distributors): jlcpcb (parts search), lcsc (product data), "
-                      "easyeda_products (footprint checks), easyeda_components (symbols and footprints for pinouts), "
-                      "easyeda_pads (footprint pads for land checks) and cse (SamacSys searches and model downloads); "
+                      "From 0.10.0 (earlier days have none): upstream, for each service this server calls: jlcpcb "
+                      "(parts search), lcsc (product data), easyeda_products (footprint checks), easyeda_components "
+                      "(symbols and footprints for pinouts), easyeda_pads (footprint pads for land checks), cse "
+                      "(SamacSys searches and model downloads) and, from 0.10.4, digikey (DigiKey's HTTP requests; "
+                      "distributors counts lookups); "
                       "sent is HTTP requests sent, one each, not tool calls; retries the further attempts the HTTP "
                       "client made on its own for them, where it reports them (a timeout reports none); cached "
                       "answers given without a request (memory cache, on-disk store or seed); rate_limited requests "
                       "this server's own budget or pause for that service kept back (for cse, also sent "
-                      "model downloads SamacSys refused for quota). parts_asked: part numbers "
+                      "model downloads SamacSys refused for quota); waited (from 0.10.4) requests sent after waiting "
+                      "for a free request slot. parts_asked: part numbers "
                       "asked for with Mouser and DigiKey, whether stored answers gave them, a request did or the "
                       "limits turned them away (total; skipped ones aren't counted), and how many "
                       "were different that day (distinct, ignoring case and - _ /; counted through salted hashes "
@@ -719,7 +739,10 @@ class UsageStats:
                       "db_waits (from 0.10.3; null before): database jobs (jobs), those that waited at least "
                       f"{DB_WAIT_COUNTED_SECONDS:g} s for a worker (waited), the longest wait (longest_ms), and "
                       "waited_hours and longest_ms_hours by UTC hour; components: the same for the component "
-                      "catalog alone. In totals the longest is the maximum."),
+                      "catalog alone. In totals the longest is the maximum. "
+                      "lifecycle_inputs (from 0.10.4; null before): part_lifecycle entries by input form, "
+                      "before catalog resolution: bare_number, with_manufacturer or lcsc_code; invalid inputs "
+                      "aren't counted. Counts only, no part numbers or maker names."),
             "kept_across_restarts": self.path is not None and self.ok,
             "totals": {
                 "from": dates[-1] if dates else None,
@@ -740,6 +763,7 @@ class UsageStats:
                 "distributor_limits": total_distributor_limits,
                 "datasheet_links": total_datasheet_links,
                 "db_waits": total_db_waits,
+                "lifecycle_inputs": total_lifecycle_inputs,
             },
             "days": out,
         }
@@ -847,3 +871,10 @@ def count_datasheet_link(event: str) -> None:
         usage.record_datasheet_link(event)
     except Exception:
         logger.exception("Usage stats: couldn't count a datasheet link")
+
+
+def count_lifecycle_input(form: str) -> None:
+    try:
+        usage.record_lifecycle_input(form)
+    except Exception:
+        logger.exception("Usage stats: couldn't count a lifecycle input")

@@ -19,6 +19,45 @@ def write_catalog_category(data_dir, slug, parts):
     write_catalog(catalog_dir, categories, prices)
 
 
+@pytest.fixture
+def stored_lifecycle(monkeypatch):
+    """A store with a fixed clock; catalog enrichment must never ask either distributor."""
+    from types import SimpleNamespace
+    from pcbparts_mcp.distributor_store import DistributorStore
+
+    attempted = []
+
+    async def refuse(*args, **kwargs):
+        attempted.append((args, kwargs))
+        raise AssertionError("catalog lifecycle made a distributor request")
+
+    store = DistributorStore(clock=lambda: 1_800_000_000)
+    monkeypatch.setattr(server, "_distributor_store", store)
+    monkeypatch.setattr(server, "_mouser_client", SimpleNamespace(lookup=refuse))
+    monkeypatch.setattr(server, "_digikey_client", SimpleNamespace(lookup=refuse))
+    yield store
+    store.close()
+    assert attempted == []
+
+
+class _OfflineDigiKeySession:
+    """Stands in for every DigiKeySite session a test doesn't give its own: a test never reaches
+    DigiKey. Each request fails as a connection failure would."""
+
+    async def get(self, url, **kwargs):
+        import wafer
+        raise wafer.ConnectionFailed(url, "no network in tests")
+
+
+@pytest.fixture(autouse=True)
+def _no_digikey_requests(monkeypatch):
+    """A server without DigiKey credentials looks parts up without them (digikey_site.py): in
+    tests those lookups fail offline instead of reaching DigiKey (tests never call DigiKey)."""
+    from pcbparts_mcp import digikey_site
+    monkeypatch.setattr(digikey_site, "_new_session", _OfflineDigiKeySession)
+    monkeypatch.delenv("DIGIKEY_LOOKUP", raising=False)  # off unless a test turns it on
+
+
 @pytest.fixture(autouse=True)
 def _no_real_footprint_store(monkeypatch):
     """Tests that start the real server (its lifespan) must not open the stores that

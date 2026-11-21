@@ -6,9 +6,24 @@ Versions follow semver. While the project is in beta (0.x), a minor release such
 
 ## 0.10.4 (2026-11-20)
 
+### Breaking
+
+- **`jlc_get_part`, `jlc_get_parts`**: part rows add optional `lifecycle` (`status`, `raw`, `source`, `observed_at`) from stored Mouser/DigiKey readings, without a request.
+
+### Added
+
+- **`/mcp/stats`**: `lifecycle_inputs` counts `part_lifecycle` entries by form: bare number, manufacturer given or LCSC code.
+- **`/mcp/stats`**: `upstream` adds `digikey` (the HTTP requests behind DigiKey lookups) and a `waited` count.
+
 ### Changed
 
+- **`digikey_get_part`**: found parts are kept a day (were 3 days), so stock and prices stay recent; a miss is still kept 3 days.
+- **Lifecycle readings** are checked again sooner: active after 60 days, NRND and last-time-buy after 30 (were 90); obsolete still a year.
 - wafer-py 0.7.15 and wreq 0.13.0 (from 0.4.6 and 0.12.3), in the image and both scrape workflows.
+
+### Fixed
+
+- **Lifecycle** matches Amphenol FCI to Amphenol ICC and Stewart Connector to Bel Fuse as one maker.
 
 ## 0.10.3 (2026-11-20)
 

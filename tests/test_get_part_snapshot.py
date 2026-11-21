@@ -23,6 +23,8 @@ from pcbparts_mcp.catalog_files import PRICE_TIERS_FILE, write_price_tiers, writ
 from pcbparts_mcp.client import JLCPCBClient, JLCPCBUnavailable
 from pcbparts_mcp.db import ComponentDatabase
 from pcbparts_mcp.easyeda_store import FootprintAnswer
+from pcbparts_mcp.config import LIFECYCLE_TTL
+from pcbparts_mcp.lifecycle import MOUSER_NOT_STATED, Reading, utc_text
 from pcbparts_mcp.stats import LCSC_LOOKUP_EVENTS, UsageStats
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
@@ -207,6 +209,53 @@ def upstream():
 
 def outcome(reply):
     return server._call_outcome(types.SimpleNamespace(structured_content=reply))
+
+
+class TestStoredLifecycle:
+    @pytest.mark.parametrize("source,raw", [("mouser", MOUSER_NOT_STATED), ("digikey", "Active")])
+    async def test_lcsc_and_mpn_parts_include_lifecycle_without_requests(self, env, stored_lifecycle, source, raw):
+        now = stored_lifecycle.now()
+        stored_lifecycle.put_readings([Reading("LM358DR2G", "ON Semiconductor", source, "active", raw, now)])
+        # raw tells Mouser's unstated active from a stated status
+        expected = {"status": "active", "raw": raw, "source": source, "observed_at": utc_text(now)}
+        single = await server.jlc_get_part(lcsc="C7950")
+        by_mpn = await server.jlc_get_part(mpn="LM358DR2G")
+        assert single["lifecycle"] == by_mpn["results"][0]["lifecycle"] == expected
+        assert upstream() == {} and stats.usage.summary()["days"][0]["distributors"] == {}
+
+    async def test_older_stated_mouser_beats_unstated(self, env, stored_lifecycle):
+        now = stored_lifecycle.now()
+        stored_lifecycle.put_readings([Reading("LM358DR2G", "onsemi", "mouser", "nrnd", "Not Recommended", now - 86400),
+                                       Reading("LM358DR2G", "onsemi / Fairchild", "mouser", "active", MOUSER_NOT_STATED, now)])
+        assert (await server.jlc_get_part(lcsc="C7950"))["lifecycle"] == {
+            "status": "nrnd", "raw": "Not Recommended", "source": "mouser", "observed_at": utc_text(now - 86400)}
+
+    @pytest.mark.parametrize("kind", ["missing", "other_maker", "unknown", "expired"])
+    async def test_no_usable_reading_is_omitted(self, env, stored_lifecycle, kind):
+        if kind != "missing":
+            stored_lifecycle.put_readings([Reading("LM358DR2G", "Other Maker" if kind == "other_maker" else "onsemi",
+                                                   "digikey", "unknown" if kind == "unknown" else "active", "Active",
+                                                   stored_lifecycle.now() - (LIFECYCLE_TTL if kind == "expired" else 0))])
+        assert "lifecycle" not in await server.jlc_get_part(lcsc="C7950")
+        assert "lifecycle" not in (await server.jlc_get_part(mpn="LM358DR2G"))["results"][0]
+        assert upstream() == {}
+
+    @pytest.mark.parametrize("fallback", [False, True])
+    async def test_live_or_fallback_reply_also_has_store_reading(self, env, stored_lifecycle, fallback):
+        now = stored_lifecycle.now()
+        stored_lifecycle.put_readings([Reading("LM358DR2G", "onsemi", "digikey", "nrnd", "Not Recommended", now)])
+        session = env.answer((lambda body: RateLimited("https://jlcpcb.com")) if fallback else (lambda body: found("C7950")))
+        reply = await server.jlc_get_part(lcsc="C7950", live=True)
+        assert reply["lifecycle"]["source"] == "digikey" and session.sent == 1
+        assert reply.get("live_failed", False) == fallback
+
+    async def test_gone_and_error_rows(self, env, stored_lifecycle):
+        stored_lifecycle.put_readings([Reading("RP2040", "Raspberry Pi", "digikey", "active", "Active",
+                                               stored_lifecycle.now())])
+        by_mpn = await server.jlc_get_part(mpn="RP2040")
+        assert by_mpn["results"][0]["gone"] and by_mpn["results"][0]["lifecycle"]["source"] == "digikey"
+        assert "lifecycle" not in await server.jlc_get_part(mpn="NOPE123")
+        assert "lifecycle" not in server._with_stored_lifecycle([{"lcsc": "C1", "gone": True}])[0]
 
 
 class TestSnapshotByDefault:

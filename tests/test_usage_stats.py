@@ -259,6 +259,7 @@ class TestUsageStats:
             "upstream": {}, "parts_asked": {}, "per_ip_refusals": {"total": 0, "everyone_else": 0, "platform_ranges": 0, "server_busy": 0, "too_many_clients": 0},
             "lcsc_lookups": {}, "distributor_apps": {}, "distributor_limits": {},
             "datasheet_links": dict.fromkeys(stats.DATASHEET_LINK_EVENTS, 0),
+            "lifecycle_inputs": dict.fromkeys(stats.LIFECYCLE_INPUT_FORMS, 0),
             "db_waits": {"jobs": 0, "waited": 0, "longest_ms": 0, "waited_hours": [0] * 24,
                          "longest_ms_hours": [0] * 24,
                          "components": {"jobs": 0, "waited": 0, "longest_ms": 0,
@@ -795,6 +796,9 @@ ERROR_REPLIES = {
     "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
     "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",
     "{} refused this server's requests (HTTP 403). Try again in {} s.{}": "rate_limited",
+    "DigiKey lookups are paused on this shared server. Try again in {} s. To skip the shared limits, run "
+    "pcbparts-mcp with your own {}: {}. Meanwhile use jlc_search.": "rate_limited",
+    "DigiKey lookups are busy on this shared server. Try again in {} s.": "rate_limited",
     "Couldn't check EasyEDA for {}'s symbol right now (lookup failed or EasyEDA is rate-limiting). Try again in a few minutes.": "rate_limited",
     "Subcategory not found: '{}'": "bad_request",
     "Category not found: '{}'": "bad_request",

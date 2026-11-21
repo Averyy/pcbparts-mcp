@@ -3,8 +3,9 @@ names compared across catalogs, and part_lifecycle's lookups.
 
 Statuses: active, nrnd (not recommended for new designs), last_time_buy, obsolete and unknown. Each
 reading keeps the distributor's own wording (raw) beside it. Readings live in the lifecycle table of
-distributor_store.py for LIFECYCLE_TTL (90 days); obsolete ones a year (LIFECYCLE_OBSOLETE_TTL),
-unknown and "not listed" ones 90 days.
+distributor_store.py for LIFECYCLE_TTL (60 days) when active, 30 days when nrnd or last_time_buy
+(LIFECYCLE_WINDING_DOWN_TTL), a year when obsolete (LIFECYCLE_OBSOLETE_TTL); unknown and "not
+listed" ones 90 days.
 """
 
 from __future__ import annotations
@@ -47,6 +48,7 @@ _DIGIKEY_STATUSES = {
     "last time buy": "last_time_buy",
     "obsolete": "obsolete",
     "discontinued at digi-key": "unknown",
+    "discontinued at digikey": "unknown",
 }
 
 
@@ -131,6 +133,8 @@ _MAKER_FAMILIES: tuple[tuple[str, ...], ...] = (
     ("Nippon Chemi-Con", "United Chemi-Con"),  # United Chemi-Con is its US arm; JLCPCB: "NCC(Nippon Chemi-Con)"
     ("Epson", "Seiko Epson"),  # "EPSON", "Epson Timing"
     ("Infineon", "Cypress Semiconductor"),  # Infineon bought Cypress; JLCPCB: "Infineon/Cypress Semicon"
+    ("Amphenol ICC", "Amphenol FCI"),  # FCI is Amphenol ICC since Amphenol bought it (2016)
+    ("Bel Fuse", "Stewart Connector"),  # Stewart Connector is a Bel Fuse brand
 )
 
 
@@ -363,9 +367,13 @@ class LifecycleLookup:
     without asking DigiKey: a minute's wait or a fault isn't a reason to spend DigiKey's smaller day.
     Mouser listing the part with a status it can't name (unknown) doesn't send it to DigiKey either.
 
+    When DigiKey's lookups spend no daily quota (DigiKeyClient.unmetered: no API credentials) the
+    order turns round: DigiKey first, for every part at once (DigiKeyClient.lifecycle), then Mouser
+    for the parts DigiKey doesn't list for the maker, couldn't be asked about or failed on.
+
     Nothing goes out for a number neither distributor can list (Entry.not_sent: a value such as
     "10k", a BOM placeholder, an LCSC code, non-ASCII, not 3-40 characters). Both clients write
-    what they fetch into the store and their 3-day answer cache, as for mouser_get_part and
+    what they fetch into the store and their answer cache, as for mouser_get_part and
     digikey_get_part. Each spelling of a number is asked about until a distributor lists the part
     (spelling_key)."""
 
@@ -379,15 +387,20 @@ class LifecycleLookup:
         from . import stats
 
         pairs = list(zip(entries, self._states(entries)))
+        digikey_first = self._digikey is not None and getattr(self._digikey, "unmetered", False) is True
         for state in dict.fromkeys(state for _, state in pairs if state is not None):
             if not state.sendable and not state.readings and not state.not_listed:
                 # No request: counted under the distributor it would have gone to first
-                stats.count_distributor("mouser" if self._mouser is not None else "digikey", "skipped")
+                stats.count_distributor("mouser" if self._mouser is not None and not digikey_first else "digikey",
+                                        "skipped")
 
-        # Mouser first, then DigiKey for what it doesn't list or can't answer today; a part with a
-        # reading is never asked
-        await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
-        await self._ask_digikey(self._unanswered(pairs, "digikey", self._digikey_may_ask), caller)
+        # A part with a reading is never asked
+        if digikey_first:
+            await self._ask_digikey_batch(self._unanswered(pairs, "digikey"))
+            await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
+        else:  # Mouser first, then DigiKey for what it doesn't list or can't answer today
+            await self._ask_mouser(self._unanswered(pairs, "mouser"), caller)
+            await self._ask_digikey(self._unanswered(pairs, "digikey", self._digikey_may_ask), caller)
         return [self._result(entry, state) for entry, state in pairs]
 
     def _states(self, entries: list[Entry]) -> list[_KeyState | None]:
@@ -524,6 +537,27 @@ class LifecycleLookup:
                 state.failed.add("digikey")
 
         await asyncio.gather(*(ask(state) for state in wanted))
+
+    async def _ask_digikey_batch(self, wanted: list[_KeyState]) -> None:
+        """DigiKey without a daily quota: every wanted spelling in one DigiKeyClient.lifecycle call."""
+        if self._digikey is None or not wanted:
+            return
+        try:
+            answers = await self._digikey.lifecycle([state.spelling for state in wanted])
+        except Exception as e:  # those parts' lookups failed; Mouser is asked instead
+            logger.error(f"part_lifecycle: DigiKey lookup failed: {type(e).__name__}")
+            answers = {}
+        for state in wanted:
+            answer = answers.get(state.spelling.strip())
+            if answer is None or answer.kind == "failed":
+                state.failed.add("digikey")
+            elif answer.kind == "limited":
+                state.limited["digikey"] = answer.retry_after or 60
+            elif answer.kind == "not_found":
+                state.add(Reading(state.spelling, "", "digikey", "unknown", None, answer.fetched_at, found=False))
+            else:
+                for reading in answer.readings:
+                    state.add(reading)
 
     @staticmethod
     def _result(entry: Entry, state: _KeyState | None) -> dict[str, Any]:

@@ -3,14 +3,15 @@ Docker volume next to the EasyEDA and CSE stores).
 
 Two tables in one SQLite file:
 - answers: each part number's full answer (stock, prices, lifecycle), so asking again within
-  MOUSER_CACHE_TTL / DIGIKEY_CACHE_TTL (3 days) costs no request; a "not found" is kept
-  MOUSER_NOT_FOUND_TTL / DIGIKEY_NOT_FOUND_TTL (3 days too). mouser_get_part, digikey_get_part and
+  MOUSER_CACHE_TTL / DIGIKEY_CACHE_TTL (3 days / a day) costs no request; a "not found" is kept
+  MOUSER_NOT_FOUND_TTL / DIGIKEY_NOT_FOUND_TTL (3 days). mouser_get_part, digikey_get_part and
   part_lifecycle share these rows, so a part one of them fetched is free for the others.
 - lifecycle: each part's lifecycle as Mouser or DigiKey stated it, by maker and MPN (lifecycle.py),
-  kept LIFECYCLE_TTL (90 days); an obsolete one LIFECYCLE_OBSOLETE_TTL (a year), an unknown status
-  LIFECYCLE_UNKNOWN_TTL and "this distributor doesn't list the number" LIFECYCLE_NOT_LISTED_TTL (90
-  days each; _ttl). Every Mouser/DigiKey answer writes here; part_lifecycle reads it, and a reply's
-  observed_at is when the reading was fetched. A part's reading is found by mpn_key ("LM358-P" finds
+  kept LIFECYCLE_TTL (60 days) when active; nrnd and last_time_buy LIFECYCLE_WINDING_DOWN_TTL (30
+  days), an obsolete one LIFECYCLE_OBSOLETE_TTL (a year), an unknown status LIFECYCLE_UNKNOWN_TTL
+  and "this distributor doesn't list the number" LIFECYCLE_NOT_LISTED_TTL (90 days each; _ttl).
+  Every Mouser/DigiKey answer writes here; part_lifecycle and catalog lookups read it. A reply's
+  observed_at is when the reading was fetched. A reading is found by mpn_key ("LM358-P" finds
   LM358P), a "not listed" only by the spelling asked, ignoring case (DigiKey matches that spelling,
   so its miss for LM358-P says nothing about LM358P).
 
@@ -32,7 +33,7 @@ from typing import Any, Callable
 
 from .config import (
     DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_TTL,
-    LIFECYCLE_UNKNOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_WINDING_DOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
 from .lifecycle import Reading, maker_key, not_listed_key
 from .search.mpn import mpn_key
@@ -83,17 +84,21 @@ def _ttl(found: bool, status: str) -> float:
         return LIFECYCLE_NOT_LISTED_TTL
     if status == "obsolete":
         return LIFECYCLE_OBSOLETE_TTL
+    if status in ("nrnd", "last_time_buy"):
+        return LIFECYCLE_WINDING_DOWN_TTL
     return LIFECYCLE_UNKNOWN_TTL if status == "unknown" else LIFECYCLE_TTL
 
 
 # Deletes the lifecycle rows _ttl has expired. The first bound (now minus the shortest lifetime) is
 # the range on lifecycle_age; the rows it leaves to the CASE are those with a longer lifetime (an
-# obsolete reading between 90 days and a year old), which stay.
+# obsolete reading between 30 days and a year old), which stay.
 _PRUNE_LIFECYCLE = (
     "DELETE FROM lifecycle WHERE observed_at <= ? AND observed_at <= ? - CASE WHEN NOT found THEN ? "
-    "WHEN status = 'obsolete' THEN ? WHEN status = 'unknown' THEN ? ELSE ? END"
+    "WHEN status = 'obsolete' THEN ? WHEN status IN ('nrnd', 'last_time_buy') THEN ? "
+    "WHEN status = 'unknown' THEN ? ELSE ? END"
 )
-_LIFECYCLE_TTLS = (LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_TTL)
+_LIFECYCLE_TTLS = (LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_WINDING_DOWN_TTL,
+                   LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_TTL)
 
 
 class DistributorStore:
@@ -125,6 +130,10 @@ class DistributorStore:
 
     @staticmethod
     def _connect(target: str, wal: bool) -> sqlite3.Connection:
+        # One connection for the event loop and the database workers (jlc_get_parts reads lifecycle
+        # inside its job): safe because Python's SQLite is serialized (sqlite3.threadsafety 3, in the
+        # python:3.12-slim image too). A read landing between a write's statements can miss that
+        # write's rows; jlc_get_parts' lifecycle field is optional, so that call just goes without
         conn = sqlite3.connect(target, check_same_thread=False)
         try:
             if wal:

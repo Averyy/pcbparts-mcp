@@ -85,7 +85,7 @@ async def test_products_only_exact_mpn_is_normalized_and_cached(digikey):
     stored = client._store.get_answer("digikey", "209")[0]
     assert stored == {**result, "results": [
         {k: v for k, v in p.items() if k not in ("requested", "matched_by")} for p in result["results"]]}
-    assert DIGIKEY_CACHE_TTL == 3 * 86400
+    assert DIGIKEY_CACHE_TTL == 86400
 
 
 @pytest.mark.parametrize("pn", ["AO3400A", "LM358DR", "NE555DR", "BSS138", "USBLC6-2SC6", "AMS1117-3.3", "SS34", "209"])
