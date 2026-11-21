@@ -287,8 +287,10 @@ class TestMouserLifecycle:
     def test_descriptions(self):
         mouser = _sent(server.mouser_get_part)
         assert "else null: Mouser states none for most parts" in mouser and "digikey_get_part's lifecycle" in mouser
-        # 0.10.0: jlc_get_part points to part_lifecycle for lifecycle instead
-        assert "part_lifecycle gives it from Mouser and DigiKey" in _sent(server.jlc_get_part)
+        # 0.10.4: catalog lookups add stored lifecycle; part_lifecycle can look it up
+        part = _sent(server.jlc_get_part)
+        assert "Optional lifecycle {status, raw, source, observed_at}: a stored Mouser/DigiKey reading" in part
+        assert 'raw "not stated by Mouser": listed without a status' in part and "use part_lifecycle" in part
         digikey = _sent(server.digikey_get_part)
         assert "other_packaging lists the rest" in digikey and "lifecycle is DigiKey's product status" in digikey
 

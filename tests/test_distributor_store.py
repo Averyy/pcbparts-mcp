@@ -1,5 +1,6 @@
-"""0.10.0: Mouser/DigiKey answers (3 days) and lifecycle readings (90 days; obsolete a year, 0.10.2) in
-one SQLite store on the cache volume, and the lifecycle wording normalised. No network; fake clocks."""
+"""0.10.0: Mouser/DigiKey answers (3 days; DigiKey's found ones a day from 0.10.4) and lifecycle readings
+(60 days from 0.10.4, nrnd and last-time-buy 30, obsolete a year) in one SQLite store on the cache volume,
+and the lifecycle wording normalised. No network; fake clocks."""
 
 import datetime
 
@@ -7,7 +8,7 @@ import pytest
 
 from pcbparts_mcp.config import (
     DIGIKEY_CACHE_TTL, DIGIKEY_NOT_FOUND_TTL, LIFECYCLE_NOT_LISTED_TTL, LIFECYCLE_OBSOLETE_TTL, LIFECYCLE_TTL,
-    LIFECYCLE_UNKNOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
+    LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_WINDING_DOWN_TTL, MOUSER_CACHE_TTL, MOUSER_NOT_FOUND_TTL,
 )
 from pcbparts_mcp.distributor_store import _PRUNE_LIFECYCLE, DistributorStore
 from pcbparts_mcp.lifecycle import (
@@ -52,18 +53,21 @@ ANSWER_KINDS = [("mouser", True, MOUSER_CACHE_TTL), ("mouser", False, MOUSER_NOT
                 ("digikey", True, DIGIKEY_CACHE_TTL), ("digikey", False, DIGIKEY_NOT_FOUND_TTL)]
 ANSWER_IDS = ["m_found", "m_miss", "dk_found", "dk_miss"]
 # Every kind of lifecycle reading and its lifetime: (status, found, seconds); found=False is "not listed"
-READING_KINDS = [("active", True, LIFECYCLE_TTL), ("nrnd", True, LIFECYCLE_TTL), ("last_time_buy", True, LIFECYCLE_TTL),
+READING_KINDS = [("active", True, LIFECYCLE_TTL), ("nrnd", True, LIFECYCLE_WINDING_DOWN_TTL),
+                 ("last_time_buy", True, LIFECYCLE_WINDING_DOWN_TTL),
                  ("obsolete", True, LIFECYCLE_OBSOLETE_TTL), ("unknown", True, LIFECYCLE_UNKNOWN_TTL),
                  ("unknown", False, LIFECYCLE_NOT_LISTED_TTL)]
 READING_IDS = ["active", "nrnd", "ltb", "obsolete", "unknown", "not_listed"]
 
 
 def test_lifetimes_as_decided():
-    """Decided 2026-11-19: a miss is kept as long as a found answer; every lifecycle reading 90 days,
-    an obsolete one a year (a part doesn't come back from obsolete)."""
-    assert (MOUSER_CACHE_TTL, DIGIKEY_CACHE_TTL) == (3 * DAY, 3 * DAY)
+    """Decided 2026-11-20: a found answer 3 days at Mouser (its day is the scarcer one) and a day at
+    DigiKey, a miss 3 days; an active reading 60 days, nrnd and last-time-buy 30 (the ones that move
+    on), an obsolete one a year (a part doesn't come back from obsolete); unknown and not listed 90
+    days as decided 2026-11-19."""
+    assert (MOUSER_CACHE_TTL, DIGIKEY_CACHE_TTL) == (3 * DAY, DAY)
     assert (MOUSER_NOT_FOUND_TTL, DIGIKEY_NOT_FOUND_TTL) == (3 * DAY, 3 * DAY)
-    assert (LIFECYCLE_TTL, LIFECYCLE_OBSOLETE_TTL) == (90 * DAY, 365 * DAY)
+    assert (LIFECYCLE_TTL, LIFECYCLE_WINDING_DOWN_TTL, LIFECYCLE_OBSOLETE_TTL) == (60 * DAY, 30 * DAY, 365 * DAY)
     assert (LIFECYCLE_UNKNOWN_TTL, LIFECYCLE_NOT_LISTED_TTL) == (90 * DAY, 90 * DAY)
 
 
@@ -81,12 +85,12 @@ class TestSchema:
             "EXPLAIN QUERY PLAN DELETE FROM answers WHERE source = 'mouser' AND found = 1 AND fetched_at <= 5"))
         assert "answers_age" in plan
         plan = " ".join(str(row) for row in store._conn.execute("EXPLAIN QUERY PLAN " + _PRUNE_LIFECYCLE,
-                                                                 (5, 10, 1, 2, 3, 4)))
+                                                                 (5, 10, 1, 2, 3, 4, 5)))
         assert "lifecycle_age" in plan
 
     def test_prune_keeps_each_kind_for_its_lifetime(self, store, clock):
         """Each kind of row stays through prune() until its lifetime ends and goes then, as
-        get_answer() and readings() stop using it: an obsolete reading outlives the others' 90 days."""
+        get_answer() and readings() stop using it: an obsolete reading outlives the others."""
         lifetimes = {}
         for source, found, ttl in ANSWER_KINDS:
             store.put_answer(source, f"A{int(found)}", {}, found)
@@ -113,7 +117,7 @@ class TestSchema:
 class TestAnswers:
     @pytest.mark.parametrize("source, found, ttl", ANSWER_KINDS, ids=ANSWER_IDS)
     def test_kept_for_its_lifetime(self, store, clock, source, found, ttl):
-        """A found answer and a "not found" are each used until their lifetime ends (3 days both),
+        """A found answer and a "not found" are each used until their lifetime ends (ANSWER_KINDS),
         with the time they were fetched."""
         answer = {"results": [1]} if found else {"not_found": True}
         store.put_answer(source, "LM358P", answer, found)
@@ -166,8 +170,8 @@ class TestAnswers:
 class TestReadings:
     @pytest.mark.parametrize("status, found, ttl", READING_KINDS, ids=READING_IDS)
     def test_kept_for_its_lifetime(self, store, clock, status, found, ttl):
-        """Each reading is used, and kept by prune(), until its lifetime ends: 90 days, an obsolete
-        one a year. observed_at stays when it was fetched, however old."""
+        """Each reading is used, and kept by prune(), until its lifetime ends (READING_KINDS).
+        observed_at stays when it was fetched, however old."""
         store.put_readings([reading(maker="TI" if found else "", status=status, raw=None, found=found)])
         clock.advance(ttl - 1)
         assert [(r.status, r.found, r.observed_at) for r in store.readings("LM358P")] == [(status, found, NOW)]

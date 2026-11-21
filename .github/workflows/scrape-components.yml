@@ -86,7 +86,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "wafer-py==0.4.6" "wreq==0.12.3"
+          pip install "wafer-py==0.7.15" "wreq==0.13.0"
 
       - name: Run scraper
         env:

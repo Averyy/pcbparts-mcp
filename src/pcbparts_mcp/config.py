@@ -242,9 +242,9 @@ MOUSER_BASE_URL = "https://api.mouser.com/api/v2"
 # (on the cache volume when DISTRIBUTOR_STORE_PATH is set), and one fetched answer serves every
 # caller. Replies carry observed_at, so callers see the age.
 # A found part: 3 days, so clients that re-read a BOM about daily get about 2 in 3 answers without
-# a request, while stock and prices stay recent.
+# a request, while stock and prices stay recent (Mouser's day is the scarcer one).
 MOUSER_CACHE_TTL = 3 * 86400
-# "Part not found": 3 days too. A number the distributor doesn't list seldom gets listed within
+# "Part not found": 3 days. A number the distributor doesn't list seldom gets listed within
 # days, and asking again sooner spends the shared daily limit for the same miss.
 MOUSER_NOT_FOUND_TTL = 3 * 86400
 
@@ -255,14 +255,17 @@ DIGIKEY_CLIENT_ID_2 = os.getenv("DIGIKEY_CLIENT_ID_2", "")
 DIGIKEY_CLIENT_SECRET_2 = os.getenv("DIGIKEY_CLIENT_SECRET_2", "")
 DIGIKEY_BASE_URL = "https://api.digikey.com/products/v4"
 DIGIKEY_TOKEN_URL = "https://api.digikey.com/v1/oauth2/token"
-DIGIKEY_CACHE_TTL = 3 * 86400  # as MOUSER_CACHE_TTL
+DIGIKEY_CACHE_TTL = 86400  # a found part: a day, so stock and prices stay recent
 DIGIKEY_NOT_FOUND_TTL = 3 * 86400  # as MOUSER_NOT_FOUND_TTL
 
 # Lifecycle store (distributor_store.py, part_lifecycle): every lifecycle status Mouser or DigiKey
 # states, by maker and MPN. Each kind of reading has its own lifetime (distributor_store._ttl).
-# active, nrnd, last_time_buy: 90 days. A status changes rarely and with notice (JEDEC JESD48: at
-# least 6 months from a discontinuation notice to the last order).
-LIFECYCLE_TTL = 90 * 86400
+# active: 60 days. A status changes rarely and with notice (JEDEC JESD48: at least 6 months from a
+# discontinuation notice to the last order).
+LIFECYCLE_TTL = 60 * 86400
+# nrnd and last_time_buy: 30 days, the ones most likely to move on (to last-time-buy, obsolete) and
+# where a last-buy date matters.
+LIFECYCLE_WINDING_DOWN_TTL = 30 * 86400
 # obsolete: a year. A part doesn't come back from obsolete.
 LIFECYCLE_OBSOLETE_TTL = 365 * 86400
 # Listed with no usable status (unknown): 90 days. A distributor that names no status for a part
@@ -276,6 +279,8 @@ LIFECYCLE_MAX_PARTS = 50
 DIGIKEY_LOCALE_SITE = os.getenv("DIGIKEY_LOCALE_SITE", "US")
 DIGIKEY_LOCALE_LANGUAGE = os.getenv("DIGIKEY_LOCALE_LANGUAGE", "en")
 DIGIKEY_LOCALE_CURRENCY = os.getenv("DIGIKEY_LOCALE_CURRENCY", "USD")
+# Results a DigiKey reply lists, most stock first (the API's keyword search asks for this many)
+DIGIKEY_MAX_RESULTS = 10
 
 # ComponentSearchEngine (SamacSys)
 # Search: rs.componentsearchengine.com alligator JSON API (no auth required)

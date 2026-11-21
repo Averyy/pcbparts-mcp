@@ -22,7 +22,7 @@ from pcbparts_mcp.config import (
 )
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.distributor_store import DistributorStore
-from pcbparts_mcp.lifecycle import Reading, mouser_status, utc_text
+from pcbparts_mcp.lifecycle import Reading, makers_match, mouser_status, utc_text
 from pcbparts_mcp.mouser import MouserClient, MouserError, _normalize_part
 
 UTC = datetime.timezone.utc
@@ -141,7 +141,8 @@ async def lifecycle(parts):
 
 # A Mouser "not found" lifetime: the configured one, and one shorter than a found answer's, so the
 # rules that keep a miss for less time than a find stay tested while the two are configured equal
-NOT_FOUND_TTLS = pytest.mark.parametrize("not_found_ttl", [MOUSER_NOT_FOUND_TTL, DAY], ids=["configured", "shorter"])
+NOT_FOUND_TTLS = pytest.mark.parametrize("not_found_ttl", [MOUSER_NOT_FOUND_TTL, MOUSER_CACHE_TTL / 2],
+                                         ids=["configured", "shorter"])
 
 
 def use_not_found_ttl(monkeypatch, ttl: float) -> None:
@@ -190,10 +191,12 @@ class TestMouserPerPart:
         fake = FakeMouser(mouser_part("LM358P"))
         m, _, _, _, _ = setup(mouser=fake)
         assert (await m.get_part("LM358|LM358P|NOPE1"))["not_found"] == ["NOPE1"]
-        clock.advance(not_found_ttl - 1)
+        # The batch lives as long as a found answer, a part it didn't find as long as a miss
+        first = min(not_found_ttl, MOUSER_CACHE_TTL)
+        clock.advance(first - 1)
         await m.get_part("LM358|LM358P|NOPE1")
         assert len(fake.sent) == 1
-        clock.advance(1)
+        clock.advance(not_found_ttl - first + 1)  # NOPE1's own miss is over too
         fake.parts.append(mouser_part("NOPE1"))  # listed since
         assert "not_found" not in await m.get_part("LM358|LM358P|NOPE1")
         # LM358P is kept on its own while a found answer lives
@@ -276,7 +279,7 @@ class TestMouserPerPart:
         store.put_answer("mouser", "batch:LM358P|OLDNAME1", {"answers": {
             "LM358P": {"results": [found], "matched": True}, "OLDNAME1": {"results": [odd], "matched": False}},
             "extras": []}, True, clock())
-        clock.advance(not_found_ttl - 1)
+        clock.advance(min(not_found_ttl, MOUSER_CACHE_TTL) - 1)
         await m.get_part("LM358P|OLDNAME1")
         assert fake.sent == []
         clock.advance(1)
@@ -428,7 +431,7 @@ class TestOneSharedCache:
         fake = FakeMouser(mouser_part("LM358P"))
         setup(mouser=fake)
         await lifecycle(["LM358P"])
-        clock.advance(89 * DAY)
+        clock.advance(LIFECYCLE_TTL - DAY)
         assert (await lifecycle(["LM358P"]))["results"][0]["status"] == "active"
         assert len(fake.sent) == 1
         clock.advance(DAY)
@@ -1358,3 +1361,9 @@ class TestObsoleteKeptAYear:
         row = (await lifecycle(["LM358P"]))["results"][0]
         assert (row["status"], row["source"], row["observed_at"]) == ("active", "mouser", utc_text(NOW - 10 * DAY))
         assert mouser.sent == [] and digikey.asked == []
+
+
+class TestMakerFamilies:
+    @pytest.mark.parametrize("a,b", [("Amphenol ICC", "Amphenol FCI"), ("Bel Fuse", "Stewart Connector")])
+    def test_maker_families(self, a, b):
+        assert makers_match(a, b) and makers_match(b, a)

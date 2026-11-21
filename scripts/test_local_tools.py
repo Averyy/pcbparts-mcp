@@ -14,6 +14,16 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp import ClientSession
 
 BASE_URL = "http://localhost:18080/mcp"
+HEALTH_URL = "http://localhost:18080/health"
+
+
+async def _digikey_has_credentials() -> bool:
+    """Whether the container answers DigiKey from API credentials: /health lists DigiKey's daily
+    quota (a limit) only then."""
+    import httpx
+    async with httpx.AsyncClient(timeout=10) as http:
+        health = (await http.get(HEALTH_URL)).json()
+    return "limit" in ((health.get("distributor_quota") or {}).get("digikey") or {})
 PASS = 0
 FAIL = 0
 
@@ -377,11 +387,16 @@ async def main():
             # ============================================================
             print("\n--- digikey_get_part ---")
 
-            await test_tool(session, "digikey get part", "digikey_get_part", {
-                "part_number": "LM358P",
-            }, [
-                lambda r: None if r.get("results") is not None or "credentials" in r.get("error", "").lower() or r.get("digikey_pn") else f"unexpected: {list(r.keys())}",
-            ])
+            # Only when the container answers DigiKey with API credentials (/health then shows its
+            # daily quota): this script sends no DigiKey lookup any other way
+            if await _digikey_has_credentials():
+                await test_tool(session, "digikey get part", "digikey_get_part", {
+                    "part_number": "LM358P",
+                }, [
+                    lambda r: None if r.get("results") is not None or r.get("digikey_pn") else f"unexpected: {list(r.keys())}",
+                ])
+            else:
+                print("  skipped: the container has no DigiKey API credentials")
 
             # ============================================================
             # 9. cse_search (ComponentSearchEngine)

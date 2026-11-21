@@ -238,8 +238,6 @@ class TestServerWiring:
         has none), so the app comes from the initialize its address sent before. Two addresses
         with different apps don't mix; an address with no initialize counts under unknown."""
         headers = {"Accept": "application/json, text/event-stream", "MCP-Protocol-Version": "2025-06-18"}
-        monkeypatch.setattr(server, "_digikey_client",
-                            digikey(FakeDigiKey(httpx.Response(200, json=PRODUCT)), DailyQuota("DigiKey", 1)))
         sessions = []
         real_call_app = server._call_app
 
@@ -263,6 +261,9 @@ class TestServerWiring:
 
         app = server.create_app()
         async with app.router.lifespan_context(app):
+            # After startup, which builds its own DigiKey client (without credentials in tests)
+            monkeypatch.setattr(server, "_digikey_client",
+                                digikey(FakeDigiKey(httpx.Response(200, json=PRODUCT)), DailyQuota("DigiKey", 1)))
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:
                 await initialize(c, "backplane-check", "203.0.113.9")
                 await initialize(c, "cursor", "198.51.100.7")

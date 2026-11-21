@@ -29,7 +29,8 @@ from pcbparts_mcp.config import DEFAULT_MIN_STOCK
 
 JLCPCB_SEARCH_URL = "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList"
 
-REQUEST_TIMEOUT = 15.0
+REQUEST_TIMEOUT = 15.0  # wafer's total budget per request, retries and rotations included...
+ATTEMPT_TIMEOUT = 5.0  # ...so each attempt is capped and the retries can fire inside it
 MAX_RETRIES = 3
 
 
@@ -37,6 +38,7 @@ def create_session() -> wafer.AsyncSession:
     """Create a wafer session configured for JLCPCB verification."""
     return wafer.AsyncSession(
         timeout=REQUEST_TIMEOUT,
+        attempt_timeout=ATTEMPT_TIMEOUT,
         max_retries=MAX_RETRIES,
         max_rotations=10,
         max_failures=None,  # Disable session retirement — 403s during rotation are expected

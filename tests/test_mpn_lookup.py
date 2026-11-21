@@ -309,11 +309,35 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
 
 
 
-async def test_miss_hint_never_suggests_the_distributor_tools():
+@pytest.mark.parametrize("digikey, suggested", [
+    (None, False),  # no DigiKey client at all
+    ("api", False),  # API credentials: the shared daily limit
+    ("keyless", True),  # no credentials: no daily limit to spend
+    ("keyless_paused", False),  # ... but paused after a refusal
+], ids=["none", "api", "keyless", "keyless_paused"])
+async def test_miss_hint_suggests_digikey_only_without_a_daily_limit(monkeypatch, digikey, suggested):
     """The hint used to end "or mouser_get_part / digikey_get_part for other distributors": on
     2026-11-19 digikey_get_part was 17% of traffic and 87% of it refused (the shared limit was
-    spent). A caller who wants a distributor asks for it."""
-    reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")
+    spent), so 0.10.2 dropped it. From 0.10.4 it names digikey_get_part again when DigiKey lookups
+    spend no daily limit and aren't paused. Mouser, always limited, is never suggested."""
+    from pcbparts_mcp.digikey import DigiKeyClient
+    from pcbparts_mcp.distributor_store import DistributorStore
+
+    store = DistributorStore()
+    client = None
+    if digikey == "api":
+        client = DigiKeyClient("id", "secret", store=store)
+    elif digikey:
+        from pcbparts_mcp.digikey_site import DigiKeySite
+        client = DigiKeyClient(store=store, site=DigiKeySite())
+        if digikey == "keyless_paused":
+            client._site._refused("HTTP 403")
+    monkeypatch.setattr(server, "_digikey_client", client)
+    try:
+        reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")
+    finally:
+        store.close()
     assert reply["error"].startswith("No part found in the local snapshot")
-    assert reply["hint"].endswith("for low or zero stock.")
-    assert "mouser" not in reply["hint"].lower() and "digikey" not in reply["hint"].lower()
+    clause = ", or digikey_get_part for other distributors."
+    assert reply["hint"].endswith(clause if suggested else "for low or zero stock."), reply["hint"]
+    assert "mouser" not in reply["hint"].lower()

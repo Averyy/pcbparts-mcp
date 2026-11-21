@@ -20,6 +20,7 @@ import pcbparts_mcp.server as server
 from pcbparts_mcp import stats
 from pcbparts_mcp.client import JLCPCBClient
 from pcbparts_mcp.db import ComponentDatabase
+from pcbparts_mcp.lifecycle import Reading, utc_text
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 from build_database import build_database  # noqa: E402
@@ -88,6 +89,38 @@ async def db(catalog, monkeypatch):
 
 async def get_parts(parts):
     return await server.jlc_get_parts(parts)
+
+
+class TestStoredLifecycle:
+    async def test_batch_codes_and_mpn_results_share_store_reads(self, db, stored_lifecycle, monkeypatch):
+        now = stored_lifecycle.now()
+        stored_lifecycle.put_readings([
+            Reading("LM358DR2G", "onsemi", "mouser", "nrnd", "Not Recommended", now),
+            Reading("LM358", "MSKSEMI", "digikey", "active", "Active", now),
+            Reading("LM358", "JSMSEMI", "mouser", "obsolete", "Obsolete", now)])
+        reads = []
+        original = stored_lifecycle.readings
+
+        def read(mpn):
+            reads.append(mpn)
+            return original(mpn)
+
+        monkeypatch.setattr(stored_lifecycle, "readings", read)
+        reply = await get_parts(["C7950", "LM358"] * 25)
+        assert reads == ["LM358DR2G", "LM358"]
+        assert reply["total"] == 50 and reply["counts"]["found"] == 50
+        for code, mpn in zip(reply["results"][::2], reply["results"][1::2]):
+            assert code["lifecycle"] == {"status": "nrnd", "raw": "Not Recommended", "source": "mouser",
+                                         "observed_at": utc_text(now)}
+            assert [p["lifecycle"]["source"] for p in mpn["results"]] == ["digikey", "mouser"]
+        day = stats.usage.summary()["days"][0]
+        assert day["db_waits"]["jobs"] == day["db_waits"]["components"]["jobs"] == 1
+        assert day["distributors"] == {} and day["upstream"] == {}
+
+    async def test_missing_readings_and_errors_omit_field(self, db, stored_lifecycle):
+        reply = await get_parts(["C7950", "LM358", "C99999999", "DNP"])
+        assert all("lifecycle" not in row for row in reply["results"])
+        assert all("lifecycle" not in p for p in reply["results"][1]["results"])
 
 
 def outcome(reply):

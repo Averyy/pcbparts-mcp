@@ -1,4 +1,4 @@
-"""DigiKey Product Information API v4 client."""
+"""DigiKey lookups: the Product Information API v4 when credentials are set, else digikey_site.py."""
 
 from __future__ import annotations
 
@@ -11,7 +11,8 @@ from typing import Any, Callable, NamedTuple
 import httpx
 
 from . import stats
-from .cache import DailyQuota, Pacer, QuotaPool, _header_int
+from .cache import SELF_HOSTING_URL, DailyQuota, Pacer, QuotaPool, _header_int
+from .client import _sent
 from .config import (
     DIGIKEY_CLIENT_ID,
     DIGIKEY_CLIENT_SECRET,
@@ -22,11 +23,15 @@ from .config import (
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
+from .digikey_site import DigiKeySite, SiteFailed, SiteUnavailable
 from .distributor_store import DistributorStore
 from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
 from .search.mpn import NOT_SENT_HINTS, distributor_match, not_sent_reason, same_jst_part
 
 logger = logging.getLogger(__name__)
+
+# What a user needs to run the server with DigiKey's own limits, named in the limit errors
+OWN_CREDENTIALS = "DigiKey API credentials (free at https://developer.digikey.com)"
 
 
 class DigiKeyError(ValueError):
@@ -77,6 +82,15 @@ class Lookup(NamedTuple):
     fetched_at: float
 
 
+class LifecycleAnswer(NamedTuple):
+    """DigiKeyClient.lifecycle's answer for one number. kind: "found" (readings: its parts'),
+    "not_found", "limited" (retry_after: seconds until it may be asked) or "failed"."""
+    kind: str
+    readings: list[Reading]
+    fetched_at: float
+    retry_after: int | None = None
+
+
 def _same_mpn(listed: str, asked: str, maker: str) -> bool:
     """Whether DigiKey's ManufacturerProductNumber is the number asked for: equal ignoring case
     and outer spaces, or for a JST part, equal once the (LF)/(SN) endings are set aside
@@ -88,7 +102,7 @@ def _answering(reply: dict[str, Any], number: str) -> dict[str, Any]:
     """A found reply whose results say which number they answer (requested: the number asked) and
     how they match it (matched_by: search/mpn.py's distributor_match; part_number is DigiKey's
     number for the packaging described, the one asked when it's one of the product's). Added to
-    each reply, not kept: the 3-day answer is shared by every spelling of the number."""
+    each reply, not kept: the stored answer is shared by every spelling of the number."""
     return {**reply, "results": [
         {**result, "requested": number,
          "matched_by": distributor_match(number, result.get("mfr_part_number") or "", result.get("manufacturer") or "",
@@ -209,9 +223,13 @@ class DigiKeyClient:
         second_app: tuple[str, str] | None = None,
         store: DistributorStore | None = None,
         clock: Callable[[], float] = time.time,
+        site: DigiKeySite | None = None,
     ):
         """store: the answer and lifecycle store shared with MouserClient and part_lifecycle (the
-        server passes one); without one the client keeps its own in memory."""
+        server passes one); without one the client keeps its own in memory. site: the server passes
+        one only without credentials, where digikey_site.enabled(); lookups then go through it."""
+        self._site = site
+        self._inflight: dict[str, asyncio.Task] = {}  # cache key -> its running site lookup
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:
             self._apps.append(DigiKeyApp(*second_app))
@@ -270,7 +288,7 @@ class DigiKeyClient:
             try:
                 http = self._get_http()  # built first: a slow first build mustn't eat the gap
                 self._pacer.mark()
-                response = await http.post(
+                response = await _sent("digikey", http.post(
                     DIGIKEY_TOKEN_URL,
                     data={
                         "client_id": app.client_id,
@@ -278,7 +296,7 @@ class DigiKeyClient:
                         "grant_type": "client_credentials",
                     },
                     headers={"Content-Type": "application/x-www-form-urlencoded"},
-                )
+                ))
             except httpx.HTTPError:
                 raise DigiKeyError("DigiKey token request failed (network/connection error)")
             if response.status_code in (403, 429) and self._quota is not None:
@@ -379,7 +397,7 @@ class DigiKeyClient:
             self._pacer.mark()  # the gap to the next request counts from this send
             if self._quota:
                 self._quota.mark_sent()  # and so does the rolling minute
-            response = await http.request(method, url, headers=headers, **kwargs)
+            response = await _sent("digikey", http.request(method, url, headers=headers, **kwargs))
         except httpx.HTTPError:
             raise DigiKeyError("DigiKey API request failed (network/connection error)")
         self._note_limits(response, app_index)
@@ -418,7 +436,22 @@ class DigiKeyClient:
 
     def retry_after(self, caller: str | None = None) -> int:
         """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
+        if self._site is not None:
+            return self._site.retry_after()
         return (self._quota.retry_after(caller) if self._quota else None) or 60
+
+    @property
+    def unmetered(self) -> bool:
+        """Lookups spend no daily quota (no API credentials): part_lifecycle asks DigiKey first."""
+        return self._site is not None
+
+    def site_status(self) -> dict[str, Any] | None:
+        """For /health without credentials: when a pause ends (None when not paused); else None."""
+        return self._site.status() if self._site is not None else None
+
+    def can_answer_now(self) -> bool:
+        """A lookup could go out now without credentials (not paused): for the miss hint."""
+        return self._site is not None and not self._site.status().get("paused_until")
 
     async def lookup(self, product_number: str, caller: str | None = None) -> Lookup:
         """get_part's reply, what it was and when DigiKey answered (Lookup). A number DigiKey can't
@@ -441,6 +474,8 @@ class DigiKeyClient:
             if answer.get("not_found"):
                 return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
             return Lookup(_answering(answer, product_number), "found", fetched_at)
+        if self._site is not None:
+            return await self._lookup_site(product_number, cache_key)
         # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
         task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
         self._tasks.add(task)
@@ -540,16 +575,156 @@ class DigiKeyClient:
         self._store.put_readings(readings, also_as=product_number)
         return Lookup(_answering(result, product_number), "found", fetched_at)
 
+    async def _lookup_site(self, product_number: str, cache_key: str) -> Lookup:
+        """lookup() without credentials, for a number the store doesn't have. One lookup a number
+        at a time: a second caller for it waits for the first's answer (counted as cached)."""
+        task = self._inflight.get(cache_key)
+        if task is None:
+            task = asyncio.create_task(self._fetch_site(product_number, cache_key))
+            self._inflight[cache_key] = task
+            self._tasks.add(task)
+            task.add_done_callback(self._tasks.discard)
+            task.add_done_callback(lambda done: self._inflight.get(cache_key) is done and self._inflight.pop(cache_key))
+            task.add_done_callback(lambda done: done.cancelled() or done.exception())
+        else:
+            stats.count_distributor("digikey", "cached")
+        result = await asyncio.shield(task)
+        if result.kind == "found":
+            return Lookup(_answering(result.reply, product_number), "found", result.fetched_at)
+        if result.kind == "not_found":
+            return Lookup(_not_found_reply(product_number), "not_found", result.fetched_at)
+        return result
+
+    async def _fetch_site(self, product_number: str, cache_key: str) -> Lookup:
+        """One lookup through the site, kept in the store as an API answer is (found: the stored
+        answer, without requested and matched_by)."""
+        assert self._site is not None
+        try:
+            answer = await self._site.lookup(product_number)
+        except SiteUnavailable as e:
+            self._count_site_limited(e)
+            return Lookup(_site_limited(e), "limited", self._store.now())
+        except SiteFailed:
+            stats.count_distributor("digikey", "sent")
+            raise DigiKeyError("DigiKey request failed (network/connection or server error)") from None
+        stats.count_distributor("digikey", "sent")
+        fetched_at = self._store.now()
+        if not answer.results:
+            self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
+            self._store.put_not_listed(product_number, "digikey", fetched_at)
+            return Lookup({}, "not_found", fetched_at)
+        result = {"results": answer.results, "total": len(answer.results), "observed_at": utc_text(fetched_at)}
+        # As the API's answer; each result's product_url ends in DigiKey's product id
+        self._store.put_answer("digikey", cache_key, result, True, fetched_at)
+        self._store.put_readings(self._site_readings(answer.statuses, fetched_at), also_as=product_number)
+        return Lookup(result, "found", fetched_at)
+
+    @staticmethod
+    def _site_readings(statuses: list[tuple[str, str, str | None, str | None]], fetched_at: float) -> list[Reading]:
+        """Each part's lifecycle reading: DigiKey's Part Status as it words it (no Discontinued or
+        EndOfLife flags on the site), and the last-buy date where it gives one."""
+        readings = []
+        for mpn, maker, status_text, buy_by in statuses:
+            if mpn:
+                status, raw = digikey_status(status_text)
+                readings.append(Reading(mpn, maker, "digikey", status, raw, fetched_at, last_buy_date=buy_by))
+        return readings
+
+    @staticmethod
+    def _count_site_limited(error: SiteUnavailable, lookups: int = 1) -> None:
+        """Counts for lookups a SiteUnavailable stopped: sent ones (and the refusal, once, when one
+        of their requests got it), or held back when none of their requests went out."""
+        if error.refused:
+            stats.count_distributor_limit("digikey", "refusals", "refused")
+        for _ in range(lookups):
+            if error.sent:
+                stats.count_distributor("digikey", "sent")
+            else:
+                stats.count_distributor("digikey", "rate_limited")
+                stats.count_distributor_limit("digikey", "held_back",
+                                              "distributor_refused" if error.paused else "other")
+
+    async def lifecycle(self, numbers: list[str]) -> dict[str, LifecycleAnswer]:
+        """part_lifecycle's DigiKey readings without credentials, for numbers that may be sent
+        (search/mpn.py's not_sent_reason): stored answers first, then one batch for the rest
+        (statuses only, no prices; DigiKeySite.statuses). With credentials part_lifecycle uses
+        lookup() for each instead."""
+        assert self._site is not None
+        numbers = list(dict.fromkeys(n.strip() for n in numbers if n.strip()))
+        stats.count_parts_asked("digikey", numbers)
+        answers: dict[str, LifecycleAnswer] = {}
+        wanted = []
+        for number in numbers:
+            stored = self._store.get_answer("digikey", number.upper())
+            if stored is None:
+                wanted.append(number)
+                continue
+            stats.count_distributor("digikey", "cached")
+            answer, fetched_at = stored
+            if answer.get("not_found"):
+                answers[number] = LifecycleAnswer("not_found", [], fetched_at)
+                continue
+            readings = [r for r in self._store.readings(number) if r.source == "digikey" and r.found] or [
+                Reading(result.get("mfr_part_number") or number, result.get("manufacturer") or "", "digikey",
+                        result.get("lifecycle_status") or "unknown", result.get("lifecycle"), fetched_at,
+                        last_buy_date=result.get("last_buy_date"))
+                for result in answer.get("results") or []]
+            answers[number] = LifecycleAnswer("found", readings, fetched_at)
+        if not wanted:
+            return answers
+        try:
+            found = await self._site.statuses(wanted)
+        except SiteUnavailable as e:
+            self._count_site_limited(e, len(wanted))
+            now = self._store.now()
+            return {**answers, **{n: LifecycleAnswer("limited", [], now, e.retry_after) for n in wanted}}
+        except SiteFailed:
+            for _ in wanted:
+                stats.count_distributor("digikey", "sent")
+            now = self._store.now()
+            return {**answers, **{n: LifecycleAnswer("failed", [], now) for n in wanted}}
+        fetched_at = self._store.now()
+        for number in wanted:
+            value = found.get(number)
+            if isinstance(value, SiteUnavailable):  # no request slot in time for this one
+                self._count_site_limited(value)
+                answers[number] = LifecycleAnswer("limited", [], fetched_at, value.retry_after)
+                continue
+            stats.count_distributor("digikey", "sent")
+            if not isinstance(value, list):  # its own lookup failed (SiteFailed)
+                answers[number] = LifecycleAnswer("failed", [], fetched_at)
+                continue
+            readings = self._site_readings(value, fetched_at)
+            if readings:
+                self._store.put_readings(readings, also_as=number)
+                answers[number] = LifecycleAnswer("found", readings, fetched_at)
+            else:
+                self._store.put_answer("digikey", number.upper(), {"not_found": True}, False, fetched_at)
+                self._store.put_not_listed(number, "digikey", fetched_at)
+                answers[number] = LifecycleAnswer("not_found", [], fetched_at)
+        return answers
+
     async def close(self) -> None:
         """Close the HTTP client (and the store, if this client made its own). Lookups still in
         flight are cancelled."""
         for task in list(self._tasks):
             task.cancel()
+        if self._site is not None:
+            await self._site.close()
         if self._http:
             await self._http.aclose()
             self._http = None
         if self._owns_store:
             self._store.close()
+
+
+def _site_limited(error: SiteUnavailable) -> dict[str, Any]:
+    """The limit reply when a lookup without credentials can't be made now."""
+    if error.paused:
+        return {"error": f"DigiKey lookups are paused on this shared server. Try again in {error.retry_after} s. "
+                         f"To skip the shared limits, run pcbparts-mcp with your own {OWN_CREDENTIALS}: "
+                         f"{SELF_HOSTING_URL}. Meanwhile use jlc_search."}
+    return {"error": f"DigiKey lookups are busy on this shared server. Try again in {error.retry_after} s."}
 
 
 def _not_sent_reply(product_number: str, reason: str) -> dict[str, Any]:
