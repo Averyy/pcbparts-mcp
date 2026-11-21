@@ -180,6 +180,7 @@
 {"l":"C22405219","m":"QPC1022TR7","f":"Qorvo","p":"LGA-9(1.1x1.5)","t":"e","c":3242,"d":"-40℃~+105℃ 0.46dB 2.4V~5.8V 29dB 5MHz~6GHz SPDT LGA-9(1.1x1.5) RF Switches ROHS","a":[["Frequency range","5MHz~6GHz"],["Voltage - Supply","2.4V~5.8V"],["Insertion loss","0.46dB"],["Features","-"],["Circuit","SPDT"],["P1dB","-"],["isolation","29dB"],["operating temperature","-40℃~+105℃"]],"x":0,"n":1}
 {"l":"C22408517","m":"BGSA149M2N10E6327XTSA1","f":"Infineon Technologies","p":"TSNP-10","t":"e","c":3242,"d":"SP4T TSNP-10 RF Switches ROHS","a":[["Frequency range","-"],["Voltage - Supply","-"],["Insertion loss","-"],["Features","-"],["Circuit","SP4T"],["P1dB","-"],["isolation","-"],["operating temperature","-"]],"x":0,"n":1}
 {"l":"C22419301","m":"PE42462A-X","f":"pSemi","p":"QFN-24(4x4)","t":"e","c":3242,"d":"-40℃~+105℃ 1.9dB 10MHz~8GHz 2.3V~5.5V 33dBm 35dB Integrated control logic、Hot-switch capability Single pole six throw QFN-24(4x4) RF Switches ROHS","a":[["Frequency range","10MHz~8GHz"],["Voltage - Supply","2.3V~5.5V"],["Insertion loss","1.9dB"],["Features","Integrated control logic、Hot-switch capability"],["Circuit","Single pole six throw"],["P1dB","33dBm"],["isolation","35dB"],["operating temperature","-40℃~+105℃"]],"x":0}
+{"l":"C22438870","m":"BGS14PN10E6327","f":"Infineon Technologies","p":"LGA-10(1.5x1.1)","t":"e","c":3242,"d":"-40℃~+85℃ 1.8V~3.6V 2.35dB 500MHz~6GHz 50dB LGA-10(1.5x1.1) RF Switches ROHS","a":[["Frequency range","500MHz~6GHz"],["Voltage - Supply","1.8V~3.6V"],["Insertion loss","2.35dB"],["Features","Integrated control logic"],["Circuit","SP4T"],["P1dB","-"],["isolation","50dB"],["operating temperature","-40℃~+85℃"]],"x":2}
 {"l":"C24387454","m":"BGSA14M3N10E6327XTSA1","f":"Infineon Technologies","p":"TSNP-10","t":"e","c":3242,"d":"1.2V、1.8V SP4T TSNP-10 RF Switches ROHS","a":[["Frequency range","-"],["Voltage - Supply","1.2V、1.8V"],["Insertion loss","-"],["Features","-"],["Circuit","SP4T"],["P1dB","-"],["isolation","-"],["operating temperature","-"]],"x":0,"n":1}
 {"l":"C32862704","m":"KMS-560A(800)","f":"HRS(Hirose)","p":"-","t":"e","c":3242,"d":"- RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C39826980","m":"TS63410K","f":"Tagore Technology","p":"QFN-16(3x3)","t":"e","c":3242,"d":"QFN-16(3x3) RF Switches ROHS","a":[],"x":0,"n":1}
@@ -292,7 +293,12 @@
 {"l":"C55209247","m":"GSR1315S","f":"GSRMICRO","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0}
 {"l":"C55535533","m":"XLSKY13351-378LF","f":"XINLUDA","p":"DFN-6(1x1)","t":"e","c":3242,"d":"SPDT DFN-6(1x1) RF Switches ROHS","a":[["Circuit","SPDT"]],"x":0}
 {"l":"C55863036","m":"MPSW0060TC","f":"MEGSINE","p":"QFN-20(4x4)","t":"e","c":3242,"d":"QFN-20(4x4) RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56132494","m":"AS179-92LF-MS","f":"MSKSEMI","p":"SC-70-6","t":"e","c":3242,"d":"SC-70-6 RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56132495","m":"MS6603","f":"MSKSEMI","p":"SC-70-6","t":"e","c":3242,"d":"SC-70-6 RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56132496","m":"MSPE4259-63","f":"MSKSEMI","p":"SC-70-6","t":"e","c":3242,"d":"SC-70-6 RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147527","m":"FM1630S","f":"Shenzhen Fuman Elec","p":"DFN-6(0.7x1.1)","t":"e","c":3242,"d":"DFN-6(0.7x1.1) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147528","m":"FM3418S","f":"Shenzhen Fuman Elec","p":"QFN-14(2x2)","t":"e","c":3242,"d":"QFN-14(2x2) RF Switches ROHS","a":[],"x":0,"n":1}
 {"l":"C56147529","m":"FM8586","f":"Shenzhen Fuman Elec","p":"QFN-14(2x2)","t":"e","c":3242,"d":"QFN-14(2x2) RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56462685","m":"XA17-G4KB","f":"XINLUDA","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56462686","m":"XA2179-S13B","f":"XINLUDA","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0,"n":1}
+{"l":"C56462687","m":"XA2214-S14B","f":"XINLUDA","p":"SOT-363","t":"e","c":3242,"d":"SOT-363 RF Switches ROHS","a":[],"x":0,"n":1}

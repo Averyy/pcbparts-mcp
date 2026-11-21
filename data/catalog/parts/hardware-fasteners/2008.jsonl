@@ -306,7 +306,6 @@
 {"l":"C56124424","m":"HoT-1.5-8-18-I-W-D","f":"Milliohm","p":"SMD,18x8mm","t":"e","c":2008,"d":"SMD,18x8mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
 {"l":"C56124799","m":"HoT-1.5-8-31-I-W-D","f":"Milliohm","p":"SMD,31x8mm","t":"e","c":2008,"d":"SMD,31x8mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
 {"l":"C56124800","m":"HoT-1.8-3.5-10-I-H-W-D","f":"Milliohm","p":"SMD,10x3.5mm","t":"e","c":2008,"d":"SMD,10x3.5mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
-{"l":"C56124801","m":"HoT-1.8-3-20-I-W-D","f":"Milliohm","p":"SMD,20x3mm","t":"e","c":2008,"d":"SMD,20x3mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
 {"l":"C56124802","m":"HoT-1.8-3-40-I-W-D","f":"Milliohm","p":"SMD,40x3mm","t":"e","c":2008,"d":"SMD,40x3mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
 {"l":"C56124803","m":"HoT-1.8-4-25-I-W-D","f":"Milliohm","p":"SMD,25x4mm","t":"e","c":2008,"d":"SMD,25x4mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
 {"l":"C56124804","m":"HoT-1-1.5-4-I-H-N-D","f":"Milliohm","p":"SMD,4x1.5mm","t":"e","c":2008,"d":"SMD,4x1.5mm Metal Products SMT Copper Sheet ROHS","a":[],"x":0,"n":1}
@@ -421,3 +420,4 @@
 {"l":"C56404311","m":"10*3*3","f":"QNSTH","p":"编带","t":"e","c":2008,"d":"编带 Metal Products SMT Copper Sheet","a":[],"x":0}
 {"l":"C56404314","m":"13*3*2","f":"QNSTH","p":"-","t":"e","c":2008,"d":"- Metal Products SMT Copper Sheet","a":[],"x":0}
 {"l":"C56404324","m":"20*3*2","f":"QNSTH","p":"-","t":"e","c":2008,"d":"- Metal Products SMT Copper Sheet","a":[],"x":0}
+{"l":"C56597250","m":"BTC-391708-BG02","f":"BZXC","p":"3.9x1.7x0.8","t":"e","c":2008,"d":"3.9x1.7x0.8 Metal Products SMT Copper Sheet","a":[],"x":0,"n":1}
