@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir \
     "mcp==1.25.0" \
     "fastmcp==3.4.3" \
-    "wafer-py==0.4.6" \
-    "wreq==0.12.3" \
+    "wafer-py==0.7.15" \
+    "wreq==0.13.0" \
     "httpx==0.28.1" \
     "uvicorn[standard]==0.40.0" \
     "starlette==1.3.1" \
