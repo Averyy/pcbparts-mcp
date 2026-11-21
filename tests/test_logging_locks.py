@@ -202,7 +202,7 @@ async def test_minute_logging_cannot_wait_indefinitely_for_the_file_handler(logs
 async def test_failed_append_and_rollback_repair_before_retry(tmp_path, monkeypatch, next_day):
     clock = Clock()
     source = tmp_path / f"calls-{DATE}.jsonl"
-    source.write_text('{"kept":true}\n', encoding="utf-8")
+    source.write_bytes(b'{"kept":true}\n')  # bytes: the asserts count it, and text mode adds \r on Windows
     log = call_log.CallLog(clock=clock)
     await log.open(tmp_path)
     rows = [{"t": DATE + "T00:00:00Z", "ms": i, "shape": {"args": ["x" * 1000]}} for i in range(200)]
