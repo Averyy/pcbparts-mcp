@@ -42,9 +42,9 @@ def test_poller_collects_immediately_recovers_and_does_not_drift(settings, store
     assert calls == [
         datetime(2026, 11, 21, 19, 20, tzinfo=UTC),
         datetime(2026, 11, 21, 20, 0, 30, tzinfo=UTC),
-        datetime(2026, 11, 21, 21, 0, 30, tzinfo=UTC),
+        datetime(2026, 11, 21, 20, 5, 41, tzinfo=UTC),  # one retry 5 minutes after the failure
     ]
-    assert waits == [2419, 3589, 3589]
+    assert waits == [2419, 300, 3278]
     assert "RuntimeError" in caplog.text
     assert "do-not-log-secret" not in caplog.text
     assert not runner.lock.locked()
@@ -74,3 +74,23 @@ def test_stopped_poller_does_not_collect(settings, store, clock):
     poller = Poller(CollectionRunner(settings, store, clock=clock, collector=forbidden))
     poller.stop()
     poller.run()
+
+
+def test_a_failed_fetch_is_retried_once_after_five_minutes(settings, store, clock):
+    """At a deploy the server can still be starting when the dashboard's first fetch runs."""
+    calls, waits = [], []
+    results = iter([{"ok": False}, {"ok": False}, {"ok": False}, {"ok": True}])
+
+    def sleep(seconds):
+        waits.append(seconds)
+        clock.advance(seconds)
+        if len(waits) == 4:
+            poller.stop()
+
+    runner = CollectionRunner(settings, store, clock=clock,
+                              collector=lambda *_args, **kw: calls.append(kw["now"]) or next(results))
+    poller = Poller(runner, clock=clock, sleep=sleep)
+    poller.run()
+    # fail at 19:20 -> retry 19:25 fails -> wait for 20:00:30, fails -> one retry 20:05:30 succeeds
+    assert waits == [300, 2130, 300, 3300]
+    assert calls[1] == datetime(2026, 11, 21, 19, 25, tzinfo=UTC)

@@ -90,6 +90,9 @@ def next_poll_at(now: datetime, minutes: int) -> datetime:
     return datetime.fromtimestamp(slot, UTC)
 
 
+RETRY_SECONDS = 300
+
+
 class Poller(threading.Thread):
     def __init__(self, runner: CollectionRunner, *, clock=None, sleep=None):
         super().__init__(name="pcbparts-poller", daemon=True)
@@ -102,16 +105,27 @@ class Poller(threading.Thread):
         self.stopped.set()
 
     def run(self) -> None:
+        retry_left = True
         while not self.stopped.is_set():
+            failed = False
             try:
-                self.runner.run()
+                status, result = self.runner.run()
+                # A 429 here only means a collection just ran (a refresh): its data is fresh
+                failed = status == 200 and not result.get("ok")
             except Exception as exc:
                 # Exception text can contain request details; log only its type.
                 logger.error("Background collection failed (%s)", type(exc).__name__)
+                failed = True
             if self.stopped.is_set():
                 break
             now = utc_datetime(self.clock())
             delay = (next_poll_at(now, self.runner.settings.poll_minutes) - now).total_seconds()
+            # One retry RETRY_SECONDS after a failed fetch (at a deploy the server can still be starting),
+            # then the regular slots again
+            if failed and retry_left:
+                delay, retry_left = min(delay, RETRY_SECONDS), False
+            else:
+                retry_left = True
             self.sleep(delay)
 
 

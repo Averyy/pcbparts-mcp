@@ -243,17 +243,24 @@ class FootprintAnswer(NamedTuple):
 
 
 def pick_answer(
-    candidates: Iterable[FootprintAnswer | None], now: float, not_found_ttl: float
+    candidates: Iterable[FootprintAnswer | None], now: float, not_found_ttl: float,
+    seed: FootprintAnswer | None = None, seed_not_found_ttl: float | None = None,
 ) -> FootprintAnswer | None:
     """The newest answer if it can still be served, else None (ask EasyEDA).
 
-    "Has a footprint" never expires. "No footprint" expires after not_found_ttl. A re-check
-    marker means the stored IDs stopped working, so nothing older counts.
+    "Has a footprint" never expires. "No footprint" expires after not_found_ttl, or after
+    seed_not_found_ttl when the newest is the seed's row (seed=). A re-check marker means the
+    stored IDs stopped working, so nothing older counts.
     """
-    newest = max((c for c in candidates if c is not None), key=lambda c: c.checked_at, default=None)
-    if newest is None or newest.has_footprint is None:
+    pool = [(c, not_found_ttl) for c in candidates if c is not None]
+    if seed is not None:  # last, so an equally new live answer wins as before
+        pool.append((seed, not_found_ttl if seed_not_found_ttl is None else seed_not_found_ttl))
+    if not pool:
         return None
-    if newest.has_footprint is False and now - newest.checked_at >= not_found_ttl:
+    newest, ttl = max(pool, key=lambda pair: pair[0].checked_at)
+    if newest.has_footprint is None:
+        return None
+    if newest.has_footprint is False and now - newest.checked_at >= ttl:
         return None
     return newest
 

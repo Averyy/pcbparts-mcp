@@ -15,7 +15,7 @@ Rules and gotchas only. History goes in `CHANGELOG.md`; how things work goes in 
 - Never commit without explicit permission. Never push, merge or deploy without the user.
 - No Claude attribution in commits or PRs.
 - One version for all unreleased work; bump only after that version has been released. Bump in `pyproject.toml` and `uv.lock`. Patch is the default; ask before a minor or major bump.
-- `CHANGELOG.md`: release notes require unique `## X.Y.Z (YYYY-MM-DD)` headings, valid dates, a matching previous-release boundary and nonempty entries. Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Client-visible changes go under Breaking.
+- `CHANGELOG.md`: release notes require unique `## X.Y.Z (YYYY-MM-DD)` headings, valid dates, a matching previous-release boundary and nonempty entries. Short bullets of one or two lines under `### Breaking`/`Added`/`Changed`/`Fixed`: no paragraphs, rationale or measurements. Changes that can break an existing client (a removed or renamed argument or field, a changed reply shape, an error for a call that used to work) go under Breaking; new arguments and newly accepted names go under Added.
 - After deploy, `release` tags every version; minor/major versions publish every entry since the last GitHub release (excluded). Reruns restore missing releases on existing tags; API/notes errors fail only this job.
 - Don't create releases or tags by hand.
 - The project is in beta with real external users and contributors: breaking changes must be deliberate (semver bump, changelog note), and dependency pins stay exact.

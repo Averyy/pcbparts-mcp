@@ -4,6 +4,22 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.7 (2026-11-22)
+
+### Added
+
+- **Argument names clients send**: `jlc_get_part` takes `part_id`, `model` and an LCSC code as `query`; `jlc_get_parts` takes `codes`; `cse_get_kicad` takes `cse_part_id` (the field `cse_search` returns); `jlc_stock_check` takes one `lcsc` code as `query`.
+- **Argument names clients send**: `mouser_get_part` and `digikey_get_part` take `query`, and `mouser_get_part` a `parts` list (joined with `|`); `jlc_search` takes `mounting_type` (SMD or through hole) by adding it to `query`.
+
+### Changed
+
+- **Unknown-argument errors**: advice for `jlc_get_part(query=...)` with search text, `jlc_search` `mounting_type` values the query can't read, and `jlc_stock_check` lists sent as JSON text.
+- **EasyEDA footprint checks**: a "no footprint" answer from the committed seed is kept 90 days (was 7), so prod asks EasyEDA less; answers from its own live checks still expire after 7 days.
+
+### Fixed
+
+- **Usage dashboard**: a failed scheduled fetch is retried once 5 minutes later; at a deploy the first fetch could find the server still starting, and the page stayed empty until the next hour.
+
 ## 0.10.6 (2026-11-22)
 
 ### Breaking

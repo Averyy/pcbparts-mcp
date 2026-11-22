@@ -145,6 +145,10 @@ EASYEDA_PADS_CACHE_MAX_SIZE = 20000  # In-memory pad lists (a few hundred bytes 
 # UUIDs); "no footprint" answers are re-checked after EASYEDA_NOT_FOUND_TTL.
 EASYEDA_STORE_PATH = os.getenv("EASYEDA_STORE_PATH", "")
 EASYEDA_NOT_FOUND_TTL = 7 * 86400  # EasyEDA draws footprints for parts after they go on sale
+# A seed row's "no footprint" (data/easyeda/footprints.csv, checked in bulk on the user's own
+# machine): a run takes weeks, so at 7 days most of its answers would be stale on arrival and prod
+# would ask EasyEDA again; the seed's own monthly refresh re-checks them instead
+EASYEDA_SEED_NOT_FOUND_TTL = 90 * 86400
 # jlc_get_pinout re-checks a part whose symbol UUID stopped working, unless /api/products named that
 # same UUID this recently (asking again would get the same answer)
 EASYEDA_RECHECK_INTERVAL = 3600
