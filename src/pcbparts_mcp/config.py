@@ -5,8 +5,9 @@ import os
 import re
 from collections.abc import Mapping
 from pathlib import Path
+from urllib.parse import urlsplit
 
-# Problems with numeric settings (a value that isn't a number, or is out of range), each naming the
+# Problems with settings (an invalid value, or a number out of range), each naming the
 # variable and the value used instead; the server logs them at startup. A bad value no longer stops
 # the server from importing this module.
 CONFIG_WARNINGS: list[str] = []
@@ -44,6 +45,25 @@ def number_setting(name: str, default: int | float, minimum: int | float,
         return maximum
     return value
 
+
+def datasheet_link_base_setting(environ: Mapping[str, str] = os.environ,
+                                warnings: list[str] = CONFIG_WARNINGS) -> str:
+    """An optional public URL or 'direct'; invalid settings use request-derived links."""
+    raw = (environ.get("DATASHEET_LINK_BASE") or "").strip()
+    if not raw or raw == "direct":
+        return raw
+    try:
+        url = urlsplit(raw)
+        if (url.scheme in ("http", "https") and url.hostname and url.port != 0
+                and url.username is None and url.password is None and not any(c in raw for c in "?#\\")
+                and not re.search(r"[\s\x00-\x1f\x7f]", raw) and "://" not in raw.split("://", 1)[-1]):
+            return raw.rstrip("/")
+    except ValueError:
+        pass
+    warnings.append("DATASHEET_LINK_BASE must be an http(s) base URL or 'direct'; using the request host")
+    return ""
+
+
 # Recorded stock events, built offline from the gzipped JSONL files in data/history/.
 STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
     Path(os.getenv("JLCPCB_DATA_DIR", str(Path(__file__).resolve().parents[2] / "data")))
@@ -56,6 +76,7 @@ STOCK_HISTORY_DB_PATH = Path(os.getenv("JLCPCB_HISTORY_DB_PATH", str(
 # IPv4 and IPv6 interface), like MCP_ALLOWED_HOSTS below.
 HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
+DATASHEET_LINK_BASE = datasheet_link_base_setting()
 # Optional application log, separate from stdout's per-request log. Docker keeps it on the cache volume.
 LOG_PATH = os.getenv("LOG_PATH", "")
 LOG_KEEP_DAYS = number_setting("LOG_KEEP_DAYS", 30, 1)
@@ -121,8 +142,11 @@ EASYEDA_ATTEMPT_TIMEOUT = 5.0  # Per-attempt cap for /api/components so retries 
 EASYEDA_CACHE_MAX_SIZE = 10000  # Max cached entries to prevent unbounded memory growth
 # /api/products is rate-limited per IP: measured at 24 requests, then a bare CloudFront 403 that clears
 # in about 2 minutes (docs/ref-easyeda-api.md). Stay under it process-wide and back off on the first 403.
-EASYEDA_PRODUCTS_BUDGET = 20  # Max /api/products requests...
-EASYEDA_PRODUCTS_WINDOW = 120.0  # ...per rolling window (seconds)
+# EasyEDA allows about one /api/products request per 14.3s per IP, with a reserve of about 7
+# (measured 2026-11-22; docs/ref-easyeda-api.md). N per rolling W never sends more than N + t*N/W
+# in t seconds, so 5 per 75s (one per 15s, bursts of 5) stays under both.
+EASYEDA_PRODUCTS_BUDGET = 5  # Max /api/products requests...
+EASYEDA_PRODUCTS_WINDOW = 75.0  # ...per rolling window (seconds)
 EASYEDA_COOLDOWN_BASE = 120.0  # Pause after a 403; doubles on each repeat block
 EASYEDA_COOLDOWN_MAX = 1800.0  # Cap for the doubling pause (30 minutes)
 EASYEDA_MAX_FOOTPRINT_CHECKS = 15  # Footprint checks per find_alternatives(has_easyeda_footprint=...) call

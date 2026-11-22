@@ -559,6 +559,8 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     "resettable fuse": "resettable fuses",
     "ptc fuse": "resettable fuses",
     "polyfuse": "resettable fuses",
+    "pptc": "resettable fuses",
+    "polyswitch": "resettable fuses",
     # ==========================================================================
     # OPTOCOUPLERS (actual DB: "Transistor, Photovoltaic Output Optoisolators")
     # ==========================================================================
@@ -570,6 +572,7 @@ SUBCATEGORY_ALIASES: dict[str, str] = {
     # ==========================================================================
     "dc motor driver h-bridge": "brushed dc motor drivers",
     "dc motor driver": "brushed dc motor drivers",
+    "brushed dc motor driver": "brushed dc motor drivers",
     "bldc driver": "brushless dc (bldc) motor driver",
     "esc": "brushless dc (bldc) motor driver",
     "motor driver": "motor driver ics",

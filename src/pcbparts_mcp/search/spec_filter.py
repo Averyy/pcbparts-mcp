@@ -49,6 +49,7 @@ SPEC_TO_COLUMN: dict[str, tuple[str, Any]] = {
 
     # Current
     "Current Rating": ("current_max_a", parse_current),
+    "Hold Current": ("hold_current_a", parse_current),
 
     # Tolerance
     "Tolerance": ("tolerance_pct", parse_tolerance),
@@ -129,7 +130,7 @@ _VALID_OPERATORS = frozenset({"=", ">=", "<=", ">", "<"})
 # Specs whose values are often ranges or lists ("2.7V~5.5V", "1.71V~1.89V、2.25V~5.5V", an
 # adjustable regulator's "0.8V~5V"). Filters on them are compared in Python against each range
 # (= : inside one; >= : one reaches it; <= : one goes down to it), never on a column, which holds
-# only the first number.
+# only one bound or nominal value and cannot represent inclusion or gaps.
 RANGE_SPECS: frozenset[str] = frozenset({
     "Voltage - Supply", "Voltage - Supply(VCCA)", "Voltage - Supply(VCCB)", "Output Voltage",
     "Single supply", "Single Supply",
@@ -564,7 +565,34 @@ def generate_value_patterns(spec_name: str, value: str, parsed_value: float | No
         if _is_integer(pct):
             patterns.append(f'%"{name_escaped}", "\\\\u00b1{int(round(pct))}\\%%')
 
-    return patterns[:3]  # Limit to 3 patterns max
+    patterns = patterns[:3]  # Limit to 3 patterns max
+    # The same value in the catalog's other unit spellings ("0.5A" is listed as "500mA"): only the
+    # numeric post-filter can tell them apart, and it never sees rows this prefilter drops
+    for spelling in unit_spellings(value, parsed_value):
+        pattern = f'%"{name_escaped}", "{like_text(spelling)}%'
+        if pattern not in patterns:
+            patterns.append(pattern)
+    return patterns
+
+
+_UNIT_VALUE = re.compile(r"^\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*[pnuµμmkKMG]?(A|V|W|Hz|F|H)\s*$")
+_UNIT_PREFIXES = (("G", 1e9), ("M", 1e6), ("k", 1e3), ("", 1.0), ("m", 1e-3), ("u", 1e-6), ("µ", 1e-6),
+                  ("n", 1e-9), ("p", 1e-12))
+
+
+def unit_spellings(value: str, parsed_value: float | None) -> list[str]:
+    """A value with an SI unit written with each prefix that gives a plain number from 0.001 to
+    9999: 0.5A -> 0.5A, 500mA. Other values (ranges, ratios, codes) give none."""
+    match = _UNIT_VALUE.match(value or "")
+    if not match or not parsed_value:
+        return []
+    spellings = []
+    for prefix, scale in _UNIT_PREFIXES:
+        number = parsed_value / scale
+        text = f"{number:.6g}"
+        if 1e-3 <= abs(number) < 1e4 and "e" not in text:
+            spellings.append(f"{text}{prefix}{match[1]}")
+    return spellings
 
 
 def get_attribute_names(name: str) -> list[str]:

@@ -199,6 +199,8 @@ jobs:
             # Pull the new image while the old container still serves, then swap containers. Stopping
             # first (down, then pull) left the site down for the whole download: calls during deploys
             # got an empty 502 ("Error POSTing to endpoint:" in MCP clients). The app starts in ~1s.
+            # the usage dashboard is the compose profile "dashboard" (self-hosters' `up -d` skips it)
+            export COMPOSE_PROFILES=dashboard
             docker compose pull pcbparts-mcp
             docker compose up -d --remove-orphans pcbparts-mcp
 

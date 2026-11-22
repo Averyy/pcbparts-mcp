@@ -89,7 +89,26 @@ EasyEDA doesn't publish a limit and sends no rate-limit headers. Measured from a
 | Fingerprint | Doesn't matter. While blocked, wafer's Chrome emulation, its Firefox rotation and plain curl all got 403. |
 | Recovery | **About 2 minutes.** Blocked at 23:48:22Z; a check 70s later still got 403, one at 131s got 200. On 2026-10-10 a request 123s after the last one of a run that crossed the limit was still blocked. Behaves like a ~2-minute rolling window (or a fixed ~2-minute ban). Three requests sent during that block didn't extend it. |
 
-**Practical budget: stay under 20 requests per rolling 2 minutes** (about one every 6s sustained).
+**Practical budget (2026-10): stay under 20 requests per rolling 2 minutes.** Superseded by the
+2026-11-22 measurement below: one request per 15s, bursts of 5 (the server's budget since 0.10.8).
+
+### Measured again 2026-11-22 (same residential IP)
+
+Sent through the client's products session (one attempt, no rotations; a check request showed
+no redirect, so one call is one HTTP request). Each pace ran straight after the previous one:
+
+| Pace | Result |
+| --- | --- |
+| one per 8s, from a quiet IP | 403 on the 16th request, 2:00 in (15 in the 2 minutes before it) |
+| one per 15s | 160 requests over about 40 minutes, no block |
+| one per 13s, right after 36 min at 15s | 48 requests in 10 minutes, no block |
+| one per 12s, right after that | 403 on its 13th request, 2:36 in (61 since 13s started, 10 in the last 2 minutes) |
+
+A refill of about one request per 14.3s with a reserve of about 7 fits all four (8s: 7 + 120/14.3
+≈ 15 allowed; 13s then 12s: 7 + 763/14.3 ≈ 60). So one per 15s is the fastest sustainable pace, and
+a pace a little too fast fails only once the reserve is gone (14s would last about 80 minutes). The
+October burst of 24 at 1/s doesn't fit, so the limit has tightened since. The block cleared within
+6 minutes.
 
 Earlier the same day, a block lasted **38–89 minutes**. It started during an integration run,
 which turned out to send about 26 requests by itself (the count above was found later). The tests
@@ -109,16 +128,38 @@ Other people's measurements of the same endpoint:
 
 ## What that means for this project
 
-- One `pytest -m integration` run sends about 20 `/api/products` requests in under a minute: 6 pinout
-  tests, 4 footprint-filter checks, and about 10 `get_part`/find-alternatives originals (each test
-  class has its own client and cache, so some parts get looked up twice). That's close to the limit
-  on its own. Before 0.5.6 the filter test checked 10 parts and a run sent about 26. On 2026-10-10
-  that crossed the limit at the very end of a run, and a request 2:03 later was still blocked.
-  A smoke test of the tools sends 1–2.
+- `pytest -m integration` shares one waiting budget of **4 `/api/products` sends per rolling 75s**
+  across all clients (`tests/conftest.py`, `tests/easyeda_integration.py`). The transport counts
+  wafer resends too; the first EasyEDA 403 skips the current and later EasyEDA calls with
+  "EasyEDA blocked this IP; stop and wait", before any retry. Successful footprint answers are
+  shared across classes. No pacing patches or sleeps apply to the default unit run.
+  Previously a full run attempted about 20 checks in under a minute; separate client budgets
+  either exceeded the IP limit or returned unknown. A cold successful full run now needs at most
+  **16 ordinary product requests** (12 distinct originals plus up to 4 filter candidates), fewer
+  with overlapping candidates; resends and failures also spend the shared budget.
 - Before 0.5.6, one `jlc_find_alternatives(has_easyeda_footprint=..., limit=50)` call could fire
   100 checks at 10/s, and wafer retried and rotated every 403 (3 requests each), which kept a block
   alive. A block on prod's IP turns `has_easyeda_footprint` into `null` for every user until it
   clears. The guard below exists to stop that.
+
+Integration request inventory (cold successful test in isolation; full runs reuse answers):
+
+| Test class / tests | `/api/products` requests |
+|---|---|
+| `TestFindAlternativesIntegration`: `test_resistor_alternatives`, `test_capacitor_alternatives`, `test_led_alternatives`, `test_unsupported_category_returns_similar_parts` | 1 each: C25804, C1525, C2286, C7466 |
+| Same class: `test_library_type_filter`, `test_scoring_prefers_basic_library` | 1 each in isolation; reuse C25804 in a full run |
+| `TestClientIntegration`: `test_get_part`, `test_get_part_lowercase_works` | 1 each in isolation; share C82899 |
+| Same class: `test_find_alternatives`, `test_find_alternatives_same_package` | 1 each: C25531, C14663 |
+| Same class: `test_check_easyeda_footprint_valid_part`, `test_check_easyeda_footprint_caching` | 1 each in isolation, including the caching test's two checks; share C1525 |
+| Same class: `test_find_alternatives_with_library_type_filter`, `test_find_alternatives_with_no_fee_filter`, `test_find_alternatives_includes_library_type_in_original`, `test_get_part_includes_easyeda_info` | 1 each in isolation; reuse C1525 |
+| Same class: `test_find_alternatives_with_easyeda_filter` | At most 5 in isolation: C25531 + 4 candidates; original cached in a full run |
+| `TestPinoutIntegration`: `test_get_easyeda_component_{stm32,mosfet,capacitor,lm358,rp2040,esp32_s3}` | 1 each: C8304, C20917, C14663, C328566, C2040, C2913194; C14663 reused in a full run |
+
+Other integration tests send zero product requests: searches, invalid/missing parts, invalid UUIDs,
+the nonexistent-symbol test (`/api/components` only), and sensor database queries. No integration
+test currently calls server `jlc_get_pinout`, live `jlc_get_part`, or `land_compatible` directly;
+their client requests use the same pacer. Land comparisons fetch pads via `/api/components` only
+(a live alternatives original can still cost one product lookup).
 
 ## Rules
 
@@ -128,10 +169,11 @@ Other people's measurements of the same endpoint:
   call with `live=true` on pcbparts.dev (`has_easyeda_footprint` should be `true`), then wait.
 - Give integration runs the endpoint to themselves: no other EasyEDA traffic (smoke tests, other
   runs, manual calls) for 3 minutes before a full `-m integration` run, and none for 3 minutes after.
-  It sends about 20 requests, and a block lasts a bit over 2 minutes.
+  Run in one process (pytest-xdist is refused); the test pacer cannot coordinate other processes
+  sharing the IP. Allow several minutes for a full run's paced requests.
 - Never route around the block (proxies, other IPs). It's EasyEDA's limit; we stay under it.
 - When adding a code path that calls `/api/products`, go through `_check_easyeda_footprint()` so the
-  budget and cooldown apply. Count how many requests one tool call can make and keep it well under 20.
+  budget and cooldown apply. Count how many requests one tool call can make and keep it at 5 or fewer.
 
 ## How the client stays under it (0.5.6)
 
@@ -147,8 +189,8 @@ All of this lives in `_check_easyeda_footprint()`. The budget and cooldown belon
    - Checks already in flight when the block lands count as one block.
    - A request from before the block that comes back 200 can't reset the escalation.
    - Blocked answers aren't cached per part; the cooldown covers them.
-3. **Budget** (`SlidingWindowBudget` in `cache.py`). At most `EASYEDA_PRODUCTS_BUDGET` (20) requests
-   per rolling `EASYEDA_PRODUCTS_WINDOW` (120s). Cached answers don't count. Over budget, the
+3. **Budget** (`SlidingWindowBudget` in `cache.py`). At most `EASYEDA_PRODUCTS_BUDGET` (5) requests
+   per rolling `EASYEDA_PRODUCTS_WINDOW` (75s), one per 15s on average (20 per 120s before 0.10.8). Cached answers don't count. Over budget, the
    check returns unknown immediately. A tool call never waits for budget. Running out logs one
    warning per window ("request budget spent"), so prod logs show if real traffic outgrows it.
 4. **Footprint filter cap.** `find_alternatives(has_easyeda_footprint=...)` checks at most
@@ -269,7 +311,7 @@ missing file builds an empty table); a malformed row fails the build.
 
 Run it on your own machine: never on prod or in CI, and never alongside integration tests (both
 count against your IP). It is driven by `components.db`, so each part ends up "has a footprint",
-"none" or unanswered. Every step is resumable and stops on the first 403.
+"none" or unanswered. Every step is resumable; the search and validate steps stop on the first 403.
 
 ```bash
 uv run python scripts/build_easyeda_seed.py manufacturers   # search each manufacturer, 5,000 per request, one per 10s
@@ -293,7 +335,13 @@ uv run python scripts/build_easyeda_seed.py report          # coverage and weak 
   are tried again under the purity rule.
 - `parts` asks `/api/products` about unanswered parts (basic, then preferred; `--types bpe` adds
   extended by stock) and re-checks "none" answers older than `--refresh-days` (30). It and
-  `validate` refuse to start within 10 minutes of a search request (`--force` overrides).
+  `validate` refuse to start within 10 minutes of a search request (`--force` overrides), and
+  refuse a `--delay` under 15s.
+- `parts` runs unattended for weeks: a 403/429 saves, sends nothing for 30 minutes (60 after a
+  second block in a row) and resumes 1s slower; the third block in a row exits with code 2. Six
+  hours without a block takes 0.5s off, never below `--delay`. A failed lookup gets one more try
+  at the end; 10 failures in a row pause 5 minutes. The client's own budget refusing a request
+  (nothing sent) is waited out, not treated as a block. SIGTERM saves like Ctrl-C (exit 143).
 - Progress lives in `data/easyeda/seed_state.json` (not committed), including `crawl_seen`: the
   parts this crawl's searches returned, so a crawl resumed in a later run still spots a part with
   two different components. `--fresh` redoes every manufacturer, for a refresh; a crawl with no

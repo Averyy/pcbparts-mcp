@@ -97,7 +97,7 @@ Add to the Extensions config:
 | `mouser_get_part` | Mouser price, stock and datasheet, up to 10 parts per call |
 | `digikey_get_part` | DigiKey price, stock and datasheet for one part |
 | `part_lifecycle` | Lifecycle status (active, NRND, last time buy, obsolete) for up to 50 parts, from Mouser and DigiKey |
-| `cse_search` | SamacSys search for ECAD models and datasheets |
+| `cse_search` | SamacSys search for ECAD models; datasheets: `jlc_get_part`'s `datasheet_pdf` |
 | `cse_get_kicad` | KiCad symbol and footprint download |
 | `board_search` | Find reference boards by IC, tag, org or text; consensus shows how boards use an IC |
 | `board_get` | A board's BOM, design rules and dimensions; `focus` gives one part's pin-by-pin neighborhood |
@@ -147,6 +147,8 @@ docker compose -f docker-compose.local.yml up --build   # built from source
 
 `docker-compose.yml` publishes the server on `127.0.0.1:8080` for a reverse proxy on the same host. Change the mapping to `"8080:8080"` to reach it from other machines.
 
+Optional: a private usage dashboard for your server's `/mcp/stats` (`dashboard/`). Set `STATS_TOKEN`, `DASHBOARD_PASSWORD`, `DASHBOARD_STATS_URL` and `DASHBOARD_HEALTH_URL` (your server's `/mcp/stats` and `/health`), then `docker compose --profile dashboard up -d`. See `dashboard/README.md`.
+
 The server builds `data/components.db` on first run. After upgrading, it logs a warning if the database is too old for the new version; rebuild it with `uv run python scripts/build_database.py`.
 
 Quantity price tiers (`data/catalog/price_tiers.tsv.gz`) aren't in git. The GHCR image has them; a build from a clone has 1-piece prices only unless you first download the daily scrape's `price-tiers` artifact (kept 7 days; needs `gh auth login`). This tries the newest runs until one has it:
@@ -168,6 +170,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
 | `HTTP_HOST` | `0.0.0.0` | Bind address (`127.0.0.1` or `::1`: localhost only; `::`: all IPv6); keep `0.0.0.0` in Docker, whose compose file already publishes on 127.0.0.1 |
 | `HTTP_PORT` | `8080` | Server port |
+| `DATASHEET_LINK_BASE` | unset | Public http(s) base URL for `/mcp/datasheet/<lcsc>` links; unset uses a valid request host. `direct` omits snapshot `datasheet_pdf`; live replies keep provider links (signed links expire at `datasheet_pdf_expires`). Invalid settings warn at startup and act as unset. |
 | `RATE_LIMIT_REQUESTS` | `300` | Requests per minute per IP or IPv6 /64 |
 | `PLATFORM_RATE_LIMIT` | `1000` | Per-IP limit for the AI platforms' published ranges (at least `RATE_LIMIT_REQUESTS`) |
 | `DB_STUCK_WAIT_SECONDS` | `60` | A database queue that starts no call for this many seconds makes `/health` 503, then the server exits for Docker to restart |
@@ -202,7 +205,7 @@ The `_PATH` settings keep that data across restarts; outside Docker they're unse
 
 ## Privacy
 
-The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments to answer calls, reuse cached answers, measure usage and fix search problems, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. Private call records last 30 days, failed-search text 7 days, and popular search words are kept only after enough different callers use them. Links in its answers, such as datasheet links, go straight to those providers' sites. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
+The hosted server at pcbparts.dev needs no account and sets no cookies. It uses tool arguments to answer calls, reuse cached answers, measure usage and fix search problems, and uses IP addresses for rate limiting and in server logs; part numbers and search text, never your IP, go to the parts providers it queries. Private call records last 30 days, failed-search text 7 days, and popular search words are kept only after enough different callers use them. Links in its answers open providers' sites; short datasheet links pass through this server and redirect there. The [privacy policy](https://pcbparts.dev/privacy.html) covers what is kept, for how long, and who it is shared with. A self-hosted copy is covered by whoever runs it.
 
 ## More
 

@@ -93,7 +93,7 @@ def extract_component_type(
         return "logic gates", re.sub(r'\s+', ' ', remaining).strip(), "logic gate"
 
     # Resettable modifiers can be separated from "fuse" by ratings or packages.
-    resettable = re.compile(r'\b(?:ptc|poly\s*fuse|polyswitch|resettable)\b', re.IGNORECASE)
+    resettable = re.compile(r'\b(?:pptc|ptc|poly\s*fuse|polyswitch|resettable)\b', re.IGNORECASE)
     if re.search(r'\bfuses?\b', query_lower) and resettable.search(query_lower):
         remaining = resettable.sub(' ', query)
         remaining = re.sub(r'\bfuses?\b', ' ', remaining, flags=re.IGNORECASE)

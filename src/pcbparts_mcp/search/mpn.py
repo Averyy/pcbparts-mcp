@@ -124,18 +124,21 @@ def not_sent_reason(number: str) -> str | None:
     return None
 
 
-_MAKER_SUFFIX = re.compile(r".+\(([A-Za-z]{2,})\)")
+_MAKER_SUFFIX = re.compile(r".+(?:\(([A-Za-z]{2,})\)|[-/_\s]([A-Za-z]{2,}))")
 # Lead-free, tin plating and reel codes, which could otherwise spell a maker's initials.
 _PACKING_TAGS = frozenset({"lf", "sn", "tr", "pbf", "rl"})
 
 
 def is_maker_suffixed(part: dict) -> bool:
     """True when the MPN ends in its maker's name or initials, in order from the first letter:
-    ICM-42688-P(TOKMAS) is Tokmas's, SP3485EEN(UMW) UMW's and TP4054(LX) lingxingic's part
-    numbered after another maker's original."""
+    ICM-42688-P(TOKMAS) is Tokmas's, MCP73831T-2ACI/OT-HXY is HXY's, and TP4054(LX)
+    lingxingic's part numbered after another maker's original."""
     suffix = _MAKER_SUFFIX.fullmatch(part.get("model") or "")
     maker = re.sub(r"[^a-z]", "", (part.get("manufacturer") or "").casefold())
-    if not suffix or (tag := suffix[1].casefold()) in _PACKING_TAGS or not maker.startswith(tag[0]):
+    if not suffix:
+        return False
+    tag = (suffix[1] or suffix[2]).casefold()
+    if tag in _PACKING_TAGS or not maker.startswith(tag[0]):
         return False
     letters = iter(maker)
     return all(letter in letters for letter in tag)
@@ -211,14 +214,18 @@ def _match_parts(part_number: str) -> tuple[str, tuple[str, ...]]:
     return mpn_key(part_number), tuple(re.split(r"[-/_\s]+", part_number.upper()))
 
 
-def mpn_match_rank(mpn: str, part_number: str) -> int:
+def mpn_match_rank(mpn: str, part_number: str, manufacturer: str = "") -> int:
     """Rank a full ordering-code prefix, a preserved base/suffix, then family hits.
 
     Only a digit-ending base permits inserted letters (LM1117IMPX); later
     requested segments must occur whole, preserving voltage/package variants.
+    A maker's added suffix is not a full match unless it was requested too;
+    it can still preserve the requested base/suffix (same_suffix).
     """
     key, requested = _match_parts(part_number)
-    if mpn_key(mpn or "").startswith(key):
+    listed_key = mpn_key(mpn or "")
+    if listed_key == key or (listed_key.startswith(key) and not is_maker_suffixed(
+            {"model": mpn, "manufacturer": manufacturer})):
         return 0
     segments = re.split(r"[-/_\s]+", (mpn or "").upper())
     base = requested[0]

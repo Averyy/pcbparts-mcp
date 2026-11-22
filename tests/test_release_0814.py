@@ -2,12 +2,11 @@
 TPS62130RGTR (prod, 2026-11-04) came back as the 3000-piece reel 296-37682-2-ND with breaks from
 3000 at $1.00, next to price $1.99, the cut tape's single-unit price."""
 
-import inspect
 import time
+from pathlib import Path
 
 import pytest
 
-import pcbparts_mcp.server as server
 from pcbparts_mcp.digikey import DigiKeyClient, _normalize_product
 
 
@@ -96,6 +95,6 @@ class TestClientPassesTheNumber:
         result = (await client.get_part("296-37682-2-ND"))["results"][0]
         assert result["part_number"] == "296-37682-2-ND" and result["min_qty"] == 3000
 
-    def test_docstring(self):
-        doc = inspect.getdoc(server.digikey_get_part)
+    def test_reference(self):
+        doc = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
         assert "other_packaging" in doc and "smallest order" in doc

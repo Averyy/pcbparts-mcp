@@ -937,6 +937,7 @@ ERROR_REPLIES = {
     "No part found in the local snapshot for MPN '{}'": "not_found",
     "No parts found for '{}'": "not_found",
     "No ECAD model available for '{}'": "not_found",
+    "No ECAD model available for '{}'{} matching that part number. Pass a candidate's cse_part_id as part_id to choose it explicitly.": "not_found",
     "No ECAD model available for part {}": "not_found",
     "No KiCad files found in model archive for part {}": "not_found",
     "No EasyEDA symbol available for {}": "not_found",

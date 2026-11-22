@@ -7,6 +7,21 @@ from pcbparts_mcp import call_log, stats
 from pcbparts_mcp.catalog_files import read_catalog, write_catalog
 
 
+@pytest.fixture(scope="session")
+def easyeda_integration_pacer(request):
+    """All integration clients share one IP budget and a permanent stop on the first 403."""
+    if hasattr(request.config, "workerinput"):
+        pytest.fail("EasyEDA integration tests must run in one process (no pytest-xdist)")
+    from easyeda_integration import EasyEDAIntegrationPacer
+    return EasyEDAIntegrationPacer()
+
+
+@pytest.fixture(autouse=True)
+def _pace_easyeda_integration(request, monkeypatch):
+    if request.node.get_closest_marker("integration") is not None:
+        request.getfixturevalue("easyeda_integration_pacer").install(monkeypatch)
+
+
 def write_catalog_category(data_dir, slug, parts):
     """Add or replace a category in a temporary catalog using the production writer."""
     catalog_dir = data_dir / "catalog"

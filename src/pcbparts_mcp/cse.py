@@ -24,6 +24,8 @@ from .cache import TTLCache
 from .client import _sent
 from .cse_archive import MAX_ZIP_SIZE as _MAX_ZIP_SIZE, extract_kicad
 from .cse_store import CSEStore, query_key
+from .lifecycle import makers_match
+from .search.mpn import mpn_key
 from .config import (
     CSE_CONCURRENT_LIMIT,
     CSE_RATE_LIMIT,
@@ -113,6 +115,42 @@ def _normalize_part(part: dict) -> dict:
         "pin_count": part.get("PinCount", 0),
         "image_url": image_url,
     }
+
+
+_MPN_SEPARATORS = frozenset("- _/")
+_PACKING_SUFFIX_MAX = 5  # key characters a query may add to a listed number: TR, -13, /OT, #PBF, -REEL7
+
+
+def _clean_break(number: str, length: int) -> bool:
+    """Whether a part number cut after `length` key characters (mpn_key's) breaks cleanly: at a
+    separator, or anywhere but between two digits (ABS10 isn't ABS1 with a suffix)."""
+    kept = [(i, ch) for i, ch in enumerate(number) if ch not in _MPN_SEPARATORS]
+    if not 0 < length < len(kept):
+        return True
+    (before, last), (after, following) = kept[length - 1], kept[length]
+    return after - before > 1 or not (last.isdigit() and following.isdigit())
+
+
+def _match_tier(query: str, part: dict[str, Any]) -> int:
+    """Exact number, an extension (ABS10 → ABS10_HF), then the query with a packing suffix
+    (LM358PWR → LM358PW); 3 means unrelated, such as a row that names the query only in its
+    description."""
+    query_key = mpn_key(query.strip())
+    number = (part.get("mfr_part_number") or "").strip()
+    key = mpn_key(number)
+    if query_key and key:
+        if key == query_key:
+            return 0
+        if key.startswith(query_key) and _clean_break(number, len(query_key)):
+            return 1
+        if (query_key.startswith(key) and len(query_key) - len(key) <= _PACKING_SUFFIX_MAX
+                and _clean_break(query.strip(), len(key))):
+            return 2
+    return 3
+
+
+def _candidate(part: dict[str, Any]) -> dict[str, Any]:
+    return {key: part.get(key) for key in ("mfr_part_number", "manufacturer", "description", "cse_part_id")}
 
 
 class CSEClient:
@@ -225,12 +263,14 @@ class CSEClient:
             self._store.put_search(query, offset, result)
         return result
 
-    async def get_kicad(self, query: str | None = None, part_id: int | None = None) -> dict[str, Any]:
+    async def get_kicad(self, query: str | None = None, part_id: int | None = None,
+                        manufacturer: str | None = None) -> dict[str, Any]:
         """Download and extract KiCad symbol + footprint for a part.
 
         Args:
             query: MPN to search for (used to find part_id if not provided)
             part_id: CSE part ID (from a previous cse_search result)
+            manufacturer: Maker to match when resolving query
 
         Returns:
             Dict with kicad_symbol, kicad_footprint text content, plus part metadata
@@ -248,18 +288,32 @@ class CSEClient:
 
             search_result = await self.search(query)
             results = search_result.get("results", [])
+            manufacturer = (manufacturer or "").strip() or None
             if not results:
                 return {"error": f"No parts found for '{query}'"}
-
-            # Find first result with a model available
-            for r in results:
-                if r.get("has_model") and r.get("cse_part_id"):
-                    resolved_part_id = r["cse_part_id"]
-                    part_info = r
-                    break
-
-            if not resolved_part_id:
+            models = [r for r in results if r.get("has_model") and r.get("cse_part_id")]
+            if not models:
                 return {"error": f"No ECAD model available for '{query}'"}
+            # sorted is stable: SamacSys's order decides between matches in the same tier.
+            related = sorted((r for r in models if _match_tier(query, r) < 3),
+                             key=lambda r: _match_tier(query, r))
+            matches = [r for r in related if not manufacturer or makers_match(r.get("manufacturer"), manufacturer)]
+            if not matches:
+                maker = f" by '{manufacturer}'" if manufacturer else ""
+                return {"error": f"No ECAD model available for '{query}'{maker} matching that part number. "
+                                 "Pass a candidate's cse_part_id as part_id to choose it explicitly.",
+                        "candidates": [_candidate(r) for r in (related or models)[:5]]}
+
+            part_info = dict(matches[0])  # search rows are cached; never attach query-specific fields to them
+            resolved_part_id = part_info["cse_part_id"]
+            if not manufacturer:
+                others = [_candidate(r) for r in related[1:]
+                          if r.get("manufacturer") and part_info.get("manufacturer")
+                          and not makers_match(r["manufacturer"], part_info["manufacturer"])][:5]
+                if others:
+                    part_info["other_matches"] = others
+                    part_info["note"] = ("This part number is listed by several makers; pass another candidate's "
+                                         "cse_part_id as part_id, or give manufacturer, to choose another one.")
 
         # Check kicad cache
         cache_key = f"kicad:{resolved_part_id}"

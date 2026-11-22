@@ -14,7 +14,8 @@ from ..config import DEFAULT_MIN_STOCK
 from ..mosfet import rds_gate_min_json, rds_on_at_drive
 from ..alternatives import SPEC_PARSERS, DIMENSION_SPEC_FIELDS
 from ..parsers import (
-    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance, parse_voltage, parse_impedance_at_freq,
+    RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_numeric_range,
+    parse_resistance, parse_voltage, parse_impedance_at_freq,
 )
 from ..subcategory_aliases import (
     CATEGORY_NOT_FOUND_HINT, SUBCATEGORY_NOT_FOUND_HINT,
@@ -152,7 +153,7 @@ def _passes_post_filters(
     for names, checks in windows.items():
         if len(checks) > 1 and not any(
                 all(_range_passes(_signed_output(item, part_specs) if dual is not None else item, parser, op, target, dual) for op, parser, target, dual in checks)
-                for name, value in part_specs.items() if name in names for item in value.split("、")):
+                for name, value in part_specs.items() if name in names for item in re.split(r"[、;,]", value)):
             return False
 
     for spec_filter, attr_names_set, parser, target_value in post_filter_metadata:
@@ -233,12 +234,12 @@ def _range_passes(value: str, parser: Any, operator: str, target: float, dual: b
     1% slack, as other "=" filters have. With `dual` set (output voltages), only items of that kind
     count: a ±12V module doesn't meet "12V", nor a single 12V output "±12V"."""
     slack = abs(target) * 0.01 if target else 1e-9
-    for item in value.split("、"):
+    for item in re.split(r"[、;,]", value):
         if dual is not None and item.strip().startswith(_DUAL_RAIL_PREFIXES) != dual:
             continue
-        low_text, sep, high_text = item.partition("~")
-        low = _signed(parser, low_text)
-        high = _signed(parser, high_text) if sep else low
+        # Parse each interval as the index does, without spanning gaps between listed ranges.
+        # Keep runtime's signed scalar values (e.g. a -12V output) as well as signed endpoints.
+        low, high = parse_numeric_range(item, lambda text: _signed(parser, text))
         if low is None or high is None:
             continue
         low, high = min(low, high), max(low, high)
@@ -315,7 +316,7 @@ class CompiledSearch:
 # The SQL functions searches call. sqlite3 registers functions per connection, so every
 # connection a search can run on needs them (register_search_functions).
 SEARCH_FUNCTIONS: tuple[tuple[str, int, Callable[..., Any]], ...] = (
-    ("mpn_match_rank", 2, mpn_match_rank),
+    ("mpn_match_rank", 3, mpn_match_rank),
     ("connector_value", 2, connector_value),
     ("spec_preference_rank", 3, _spec_preference_rank),
     ("rds_gate_min", 1, rds_gate_min_json),
@@ -634,7 +635,7 @@ class SearchEngine:
         sort_clause = build_sort_clause(sort_by, prefer_no_fee, bool(query))
         ranks = []
         if part_number:
-            ranks.append("mpn_match_rank(mpn, ?)")
+            ranks.append("mpn_match_rank(mpn, ?, manufacturer)")
             params.append(part_number)
         words = [w for w in dict.fromkeys((query or "").lower().split()) if len(w) > 1] \
             if not match_all_terms and sort_by != "price" and spec_sort is None else []
@@ -689,7 +690,7 @@ class SearchEngine:
         mpn_counts = {"part_number": part_number, **dict.fromkeys(MPN_MATCH_NAMES, 0)} if part_number else None
         if part_number and not post_filter_metadata:
             lib_count_sql = count_sql.replace(
-                "SELECT COUNT(*)", "SELECT library_type, COUNT(*), mpn_match_rank(mpn, ?) AS mpn_rank"
+                "SELECT COUNT(*)", "SELECT library_type, COUNT(*), mpn_match_rank(mpn, ?, manufacturer) AS mpn_rank"
             ) + " GROUP BY library_type, mpn_rank"
             count_params.insert(0, part_number)
 
@@ -738,7 +739,7 @@ class SearchEngine:
 
         if part_number:
             for part in results:
-                part["mpn_match"] = MPN_MATCH_NAMES[mpn_match_rank(part["model"], part_number)]
+                part["mpn_match"] = MPN_MATCH_NAMES[mpn_match_rank(part["model"], part_number, part["manufacturer"])]
         if gate_drive_v is not None:
             for part in results:
                 part["rds_on_at_drive"] = rds_on_at_drive(part["specs"].get("RDS(on)", ""), gate_drive_v)
@@ -860,7 +861,7 @@ class SearchEngine:
         # SQL-only alternative (or a signed output's SQL guard) cannot pass another branch.
         predicate = PostFilterPredicate(post_filter_metadata)
         scan_sql = " ".join(sql_parts).replace(
-            "SELECT * FROM components", f"SELECT rowid, attributes, package, mpn, library_type, subcategory_id{predicate.sql} FROM components", 1
+            "SELECT * FROM components", f"SELECT rowid, attributes, package, mpn, library_type, subcategory_id, manufacturer{predicate.sql} FROM components", 1
         ) + " LIMIT ?"
         passed = 0
         library_counts = {"basic": 0, "preferred": 0, "extended": 0}
@@ -868,16 +869,16 @@ class SearchEngine:
         scanned = 0
         page_ids: list[int] = []
         for row in self._conn.execute(scan_sql, [*predicate.params, *params, POST_FILTER_SCAN_ROWS]):
-            rowid, attributes, package, mpn, library, subcategory = row[:6]
+            rowid, attributes, package, mpn, library, subcategory, manufacturer = row[:7]
             if hasattr(self, 'diagnostic_deadline'):
                 self.diagnostic_rows_remaining -= 1
                 if self.diagnostic_rows_remaining < 0 or time.monotonic() >= self.diagnostic_deadline:
                     raise sqlite3.OperationalError('interrupted')
             scanned += 1
-            if predicate.passes(attributes, package, mpn, subcategory, row[6:]):
+            if predicate.passes(attributes, package, mpn, subcategory, row[7:]):
                 passed += 1
                 if mpn_counts is not None:
-                    mpn_counts[MPN_MATCH_NAMES[mpn_match_rank(mpn, mpn_counts["part_number"])]] += 1
+                    mpn_counts[MPN_MATCH_NAMES[mpn_match_rank(mpn, mpn_counts["part_number"], manufacturer)]] += 1
                 name = library_names.get(library, library)
                 if name in library_counts:
                     library_counts[name] += 1

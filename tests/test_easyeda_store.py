@@ -821,16 +821,15 @@ class TestPinoutPolarizedPair:
         result = await server.jlc_get_pinout(lcsc="C1")
         assert "only by number" in result["note"]
 
-    async def test_unverified_is_the_string_the_description_names(self, monkeypatch):
+    async def test_unverified_is_the_string_the_reference_names(self, monkeypatch):
         """0.8.17's description said unverified=true; the reply has always held this string."""
-        from fastmcp.utilities.docstring_parsing import parse_docstring
         from pcbparts_mcp import server
         symbol = {**_two_pin_symbol("A", "K"), "verify": False}
         monkeypatch.setattr(server, "_client", FakePinoutClient({}, {SYM: symbol}))
         result = await server.jlc_get_pinout(lcsc="C1")
         assert result["unverified"] == "Symbol not verified by LCSC"
-        sent = " ".join(parse_docstring(server.jlc_get_pinout).description.split())
-        assert f'unverified ("{result["unverified"]}")' in sent and "unverified=true" not in sent
+        reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+        assert f'`unverified`: "{result["unverified"]}"' in reference and "unverified=true" not in reference
 
     def test_three_pins_get_no_note(self):
         """A dual diode (BAV99, SOT-23) has its own pin table; the note is for two-pin parts."""

@@ -39,11 +39,15 @@ async def test_distributor_wording_is_about_shared_limits():
         assert "Lookups share a small daily limit across all users" in flat(found[name].description)
         assert "for parts JLCPCB doesn't carry" in flat(found[name].description)
     assert "looked up at Mouser and DigiKey" in flat(found["part_lifecycle"].description)
+    assert "MPNs never match by full text" in flat(found["part_lifecycle"].description)
+    assert "API-based DigiKey" in flat(found["digikey_get_part"].description)
+    assert "https://pcbparts.dev/llms.txt" in server.mcp.instructions
 
 
 async def test_samacsys_descriptions_leave_out_internals():
     found = await tools()
     for name in ("cse_search", "cse_get_kicad"):
         assert "CSE_REQUEST_TIMEOUT" not in found[name].description and "retried" not in found[name].description
+        assert "Slow" in found[name].description and "datasheet_pdf" in found[name].description
     assert "CSEARCH_USER" not in found["cse_get_kicad"].description
     assert "the server's own SamacSys account" in flat(found["cse_get_kicad"].description)

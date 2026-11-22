@@ -3,6 +3,8 @@ pacing. Fake EasyEDA, tiny components.db, no network."""
 
 import asyncio
 import datetime
+import os
+import signal
 import sqlite3
 import sys
 from pathlib import Path
@@ -12,7 +14,12 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 import build_easyeda_seed as seedmod  # noqa: E402
 from build_easyeda_seed import (  # noqa: E402
+    BLOCK_PAUSES,
+    FAIL_PAUSE,
+    FAIL_STREAK,
+    FASTER_AFTER,
     Blocked,
+    EasyEDA,
     Pacer,
     SearchPage,
     Seed,
@@ -26,7 +33,9 @@ from build_easyeda_seed import (  # noqa: E402
     run_parts,
     run_validate,
     search_item_maker,
+    cancel_on_sigterm,
 )
+from pcbparts_mcp.config import EASYEDA_COOLDOWN_MAX  # noqa: E402
 from pcbparts_mcp.easyeda_store import SeedRow, read_seed_csv  # noqa: E402
 
 NOW = "2026-10-12T12:00:00Z"  # the seed script's clock in these tests
@@ -74,7 +83,8 @@ def seed(tmp_path) -> Seed:
 
 class FakeEasyEDA:
     """search: {keyword: [page1 items, page2 items, ...]} with a facet per keyword and EasyEDA
-    manufacturer names per part; products: {lcsc: SeedRow | None | Exception}."""
+    manufacturer names per part; products: {lcsc: SeedRow | None | Exception, or a list of those
+    answered in turn (the last one repeats)}."""
 
     def __init__(self, search=None, facets=None, products=None, fail=None, makers=None):
         self.search_data = search or {}
@@ -84,6 +94,9 @@ class FakeEasyEDA:
         self.fail = fail or {}
         self.calls: list[tuple] = []
         self.pacer = Pacer(7.0, clock=lambda: 0.0, sleep=lambda s: asyncio.sleep(0))
+
+    def forget_failure(self, lcsc):
+        self.calls.append(("forget", lcsc))
 
     async def search(self, keyword, page, page_size):
         self.calls.append(("search", keyword, page))
@@ -97,9 +110,20 @@ class FakeEasyEDA:
     async def products(self, lcsc):
         self.calls.append(("products", lcsc))
         answer = self.products_data.get(lcsc)
+        if isinstance(answer, list):
+            answer = answer.pop(0) if len(answer) > 1 else answer[0]
         if isinstance(answer, Exception):
             raise answer
         return answer
+
+
+def fake_sleep(slept: list, now: list | None = None):
+    """An asyncio.sleep stand-in that records the pause (and moves `now` on by it)."""
+    async def sleep(seconds):
+        slept.append(seconds)
+        if now is not None:
+            now[0] += seconds
+    return sleep
 
 
 # --- Pure helpers ------------------------------------------------------------------------
@@ -436,21 +460,158 @@ class TestParts:
         assert parts_todo(seed, db, "bp", 30) == ["C2"]  # C11 fresh, C3 has one, C2's "none" is stale
         assert parts_todo(seed, db, "bpe", 30) == ["C4", "C1", "C20", "C10", "C2"]
 
-    async def test_answers_saved_and_block_stops(self, seed, db):
+    async def test_third_block_in_a_row_stops(self, seed, db):
         fake = FakeEasyEDA(products={
             "C11": SeedRow("C11", True, uuid(1), uuid(2), NOW, "p"),
             "C2": None,  # lookup failed: stays unanswered
             "C3": Blocked("/api/products blocked"),
         })
+        slept = []
         with pytest.raises(Blocked):
-            await run_parts(seed, db, fake, "bp", None, 30)
-        assert [c for c in fake.calls] == [("products", "C11"), ("products", "C2"), ("products", "C3")]
-        assert set(seed.rows) == {"C11"}
+            await run_parts(seed, db, fake, "bp", None, 30, clock=lambda: 0.0, sleep=fake_sleep(slept))
+        assert fake.calls == [("products", "C11"), ("products", "C2")] + [("products", "C3")] * 3
+        assert slept == list(BLOCK_PAUSES)  # sends nothing during each pause
+        assert fake.pacer.delay == 9.0  # 1s slower after each pause
+        assert set(read_seed_csv(seed.csv_path)) == {"C11"}  # saved before stopping
+
+    async def test_block_pauses_then_resumes_slower(self, seed, db):
+        fake = FakeEasyEDA(products={
+            "C3": [Blocked("/api/products blocked"), SeedRow("C3", False, None, None, NOW, "p")],
+            "C4": [Blocked("/api/products blocked"), SeedRow("C4", True, uuid(1), uuid(2), NOW, "p")],
+        })
+        slept = []
+        await run_parts(seed, db, fake, "bpe", None, 30, clock=lambda: 0.0, sleep=fake_sleep(slept))
+        assert slept == [BLOCK_PAUSES[0]] * 2  # an answer in between: each is the first in a row
+        assert {"C3", "C4"} <= set(seed.rows)
+        assert fake.pacer.delay == 9.0
+
+    async def test_speeds_back_up_to_delay(self, seed, db):
+        now = [0.0]
+        delays = []
+
+        class Ticking(FakeEasyEDA):
+            async def products(self, lcsc):
+                delays.append(self.pacer.delay)
+                now[0] += FASTER_AFTER / 2
+                return await super().products(lcsc)
+
+        fake = Ticking(products={"C11": [Blocked("/api/products blocked"), None]})
+        await run_parts(seed, db, fake, "bpe", None, 30, clock=lambda: now[0], sleep=fake_sleep([], now))
+        # Blocked: 1s slower; then 0.5s faster per FASTER_AFTER without a block, never below --delay (7)
+        assert delays[:8] == [7.0, 8.0, 8.0, 7.5, 7.5, 7.0, 7.0, 7.0]
+
+    async def test_failed_lookups_get_one_more_try(self, seed, db):
+        fake = FakeEasyEDA(products={
+            "C11": SeedRow("C11", True, uuid(1), uuid(2), NOW, "p"),
+            "C2": None,
+            "C3": [None, SeedRow("C3", False, None, None, NOW, "p")],
+        })
+        await run_parts(seed, db, fake, "bp", None, 30, clock=lambda: 0.0, sleep=fake_sleep([]))
+        assert [c for c in fake.calls if c[0] == "products"] == [("products", c) for c in ["C11", "C2", "C3", "C2", "C3"]]
+        assert [c[1] for c in fake.calls if c[0] == "forget"] == ["C2", "C3"]  # before each second try
+        assert set(seed.rows) == {"C11", "C3"}
+
+    async def test_failures_in_a_row_pause(self, seed, db):
+        add_parts(db, "Big", 100, 12)
+        lookups = 2 * len(parts_todo(seed, db, "e", 30))  # every one fails twice
+        slept = []
+        await run_parts(seed, db, FakeEasyEDA(products={}), "e", None, 30, clock=lambda: 0.0,
+                        sleep=fake_sleep(slept))
+        assert slept == [FAIL_PAUSE] * (lookups // FAIL_STREAK)
 
     async def test_max_requests(self, seed, db):
         fake = FakeEasyEDA(products={})
-        await run_parts(seed, db, fake, "bpe", 2, 30)
-        assert len(fake.calls) == 2
+        await run_parts(seed, db, fake, "bpe", 2, 30, clock=lambda: 0.0, sleep=fake_sleep([]))
+        assert len(fake.calls) == 2  # no second tries past the cap
+
+    async def test_failed_lookups_dont_end_a_block_streak(self, seed, db):
+        fake = FakeEasyEDA(products={
+            "C11": [Blocked("/api/products blocked"), None],  # blocked, then failed: no answer between
+            "C2": [Blocked("/api/products blocked"), None],
+            "C3": Blocked("/api/products blocked"),
+        })
+        slept = []
+        with pytest.raises(Blocked):
+            await run_parts(seed, db, fake, "bp", None, 30, clock=lambda: 0.0, sleep=fake_sleep(slept))
+        assert slept == list(BLOCK_PAUSES)  # 30, then 60 min, then the third block stops it
+
+    async def test_block_retries_count_toward_max_requests(self, seed, db):
+        fake = FakeEasyEDA(products={"C11": Blocked("/api/products blocked")})
+        fake.pacer.requests = 1  # products() counts each request through the pacer
+        with pytest.raises(Blocked):
+            await run_parts(seed, db, fake, "bp", 1, 30, clock=lambda: 0.0, sleep=fake_sleep([]))
+        assert [c for c in fake.calls if c[0] == "products"] == [("products", "C11")]
+
+    async def test_slowing_never_drops_below_delay(self, seed, db):
+        fake = FakeEasyEDA(products={"C11": [Blocked("/api/products blocked"), SeedRow("C11", True, uuid(1), uuid(2), NOW, "p")]})
+        fake.pacer.delay = 40.0  # above MAX_DELAY
+        await run_parts(seed, db, fake, "b", None, 30, clock=lambda: 0.0, sleep=fake_sleep([]))
+        assert fake.pacer.delay == 40.0  # the cap rises to --delay: never faster than it
+
+    def test_first_pause_outlasts_client_cooldown(self):
+        assert BLOCK_PAUSES[0] >= EASYEDA_COOLDOWN_MAX
+
+
+class FakeClient:
+    """_check_easyeda_footprint answers in turn."""
+
+    def __init__(self, *answers):
+        self.answers = list(answers)
+        self.calls = 0
+
+    async def _check_easyeda_footprint(self, lcsc):
+        self.calls += 1
+        return self.answers.pop(0)
+
+
+UNKNOWN = {"has_easyeda_footprint": None, "easyeda_symbol_uuid": None, "easyeda_footprint_uuid": None}
+
+
+class TestProducts:
+    async def test_own_budget_is_waited_out_not_a_block(self):
+        client = FakeClient((UNKNOWN, "budget"), ({"has_easyeda_footprint": True, "easyeda_symbol_uuid": uuid(1),
+                                                   "easyeda_footprint_uuid": uuid(2)}, "checked"))
+        pacer = Pacer(6.0, clock=lambda: 0.0, sleep=fake_sleep([]))
+        row = await EasyEDA(client, pacer).products("C1")
+        assert row == SeedRow("C1", True, uuid(1), uuid(2), NOW, "p")
+        assert client.calls == 2 and pacer.requests == 1  # the refused one sent nothing
+
+    def test_seed_budget_never_refuses_the_slowest_allowed_pace(self):
+        """At one per PRODUCTS_DELAY with jitter either way, the script's client budget never refuses
+        (the server's, exactly one per 15s, would now and then)."""
+        now = [0.0]
+        budget = seedmod.seed_budget(clock=lambda: now[0])
+        for n in range(200):
+            now[0] = n * seedmod.PRODUCTS_DELAY + (0.001 if n % 2 else -0.001)
+            assert budget.try_acquire(), n
+
+    def test_forget_failure_drops_only_cached_errors(self):
+        client = FakeClient()
+        client._easyeda_cache = {"C1": (0.0, UNKNOWN, True), "C2": (0.0, UNKNOWN, False)}
+        easyeda = EasyEDA(client, Pacer(15.0, clock=lambda: 0.0, sleep=fake_sleep([])))
+        for lcsc in ("C1", "C2", "C3"):
+            easyeda.forget_failure(lcsc)
+        assert set(client._easyeda_cache) == {"C2"}  # a cached answer stays
+
+    async def test_block_raises(self):
+        pacer = Pacer(6.0, clock=lambda: 0.0, sleep=fake_sleep([]))
+        with pytest.raises(Blocked):
+            await EasyEDA(FakeClient((UNKNOWN, "blocked")), pacer).products("C1")
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows event loops have no signal handlers")
+async def test_sigterm_cancels_the_run():
+    async def body():
+        cancel_on_sigterm(asyncio.current_task())
+        os.kill(os.getpid(), signal.SIGTERM)
+        await asyncio.sleep(5)  # cancelled as soon as the loop sees the signal
+
+    task = asyncio.create_task(body())
+    try:
+        with pytest.raises(asyncio.CancelledError):
+            await task
+    finally:
+        asyncio.get_running_loop().remove_signal_handler(signal.SIGTERM)
 
 
 class TestValidate:
@@ -485,6 +646,8 @@ class TestCli:
             seedmod.main(["manufacturers", "--redo", "--db", str(tmp_path / "x.db")])  # needs --only
         with pytest.raises(SystemExit):  # EasyEDA answers HTTP 500 to 10,000
             seedmod.main(["report", "--page-size", "10000", "--db", str(tmp_path / "x.db")])
+        with pytest.raises(SystemExit):  # /api/products: about one per 14.3s sustained (2026-11-22)
+            seedmod.main(["parts", "--delay", "8", "--db", str(tmp_path / "x.db")])
 
     def test_report(self, seed, db, tmp_path, capsys):
         add_parts(db, "Big", 100, 120)

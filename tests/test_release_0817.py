@@ -7,6 +7,7 @@ under Returns and never reached clients, and 14 tools had about 9,000 such chara
 
 import asyncio
 import inspect
+from pathlib import Path
 
 import pytest
 from fastmcp.utilities.docstring_parsing import parse_docstring
@@ -36,19 +37,45 @@ def test_every_section_is_sent(name):
 
 @pytest.mark.parametrize("name, phrase", [
     ("jlc_stock_check", "JLCPCB matches whole part numbers and their starts"),
-    ("jlc_search", 'pcba_type "standard_only" means one such part moves the whole order'),
-    ("jlc_search", "total counts every match before limit and offset"),
-    ("jlc_get_part", "MPN lookups search the daily catalog snapshot (stock >= 10)"),
-    ("jlc_find_alternatives", "Stock comes from the live search or the daily catalog snapshot"),
-    ("jlc_get_pinout", "matches the footprint pad"),
-    ("mouser_get_part", "not_found lists the given numbers no result matches"),
-    ("sensor_recommend", "sorted by how many platforms have drivers"),
-    ("get_design_rules", "found by their text, not their name or keywords"),
-    ("board_search", "matched_by says why each appeared"),
-    ("board_get", "look them up with jlc_get_part or mouser_get_part"),
-])
-def test_moved_guidance_is_sent(name, phrase):
-    assert phrase in " ".join(parse_docstring(getattr(server, name)).description.split())
+    ("jlc_search", "daily catalog snapshot (stock >= 10)"),
+    ("jlc_search", "one standard_only part moves the whole order to Standard assembly"),
+    ("jlc_search", "true keeps requirements, errors on unsupported constraints"),
+    ("jlc_search", "Repeated = on one spec is OR (Supply Voltage/Vin: all)"),
+    ("jlc_search", "= on a range means it includes the value"),
+    ("jlc_search", "Unitless uses V, A, ohms, F, H, Hz, W, mm, bytes"),
+    ("jlc_search", "Operating Temperature: <= -40 reaches down to -40°C; >= 85 up to 85°C"),
+    ("jlc_search", "Dropout at a load: 0.3V@500mA"),
+    ("jlc_get_part", "MPN lookup always uses the daily snapshot"),
+    ("jlc_get_parts", "MPNs never match by full text"),
+    ("jlc_find_alternatives", "Stock is live or snapshot"),
+    ("jlc_get_pinout", "Numbers match footprint pads"),
+    ("jlc_get_pinout", "mm from origin, y down"),
+    ("jlc_get_pinout", "Absent electrical means unknown"),
+    ("mouser_get_part", "batch up to 10 full part numbers"),
+    ("sensor_recommend", "Calculated CO2 is eco2, not co2"),
+    ("sensor_recommend", "imu alone: acceleration OR gyroscope OR magnetic_field; with others: all three"),
+    ("sensor_recommend", "gpio includes analog/pwm/one_wire; digital includes gpio/pwm/one_wire"),
+    ("get_design_rules", "Empty topic lists files"),
+    ("board_search", "board_get(slug, focus=IC)"),
+    ("board_get", "part numbers with jlc_get_part or mouser_get_part"),
+], ids=["stock", "snapshot", "assembly", "strict", "repeat_eq", "range_eq", "units", "temperature",
+        "dropout", "mpn", "batch", "alternatives", "pads", "coordinates", "electrical",
+        "mouser", "co2", "imu", "protocol", "rules", "boards", "lookup"])
+def test_calling_guidance_is_sent(name, phrase):
+    sent = parse_docstring(getattr(server, name))
+    assert phrase in " ".join(" ".join([sent.description, *sent.parameters.values()]).split())
+
+
+@pytest.mark.parametrize("phrase", [
+    "`total` counts all matches before `limit`/`offset`",
+    "`not_found` (unmatched or not sent)",
+    "`platform_count` descending, name",
+    "otherwise the files discussing it most (`note`)",
+    "`matched_by`: key IC/component/text/tag",
+], ids=["pagination", "unmatched", "sensors", "rules", "boards"])
+def test_reply_guidance_is_in_reference(phrase):
+    reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+    assert phrase in reference
 
 
 def _untyped_arrays(schema, path="parameters"):
