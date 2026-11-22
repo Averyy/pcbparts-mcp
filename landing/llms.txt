@@ -31,7 +31,8 @@
 
 - Optional arguments default to null; integer limits are clamped to range.
 - `library_type`: `basic`, `preferred`, `no_fee` (basic or preferred), `extended`, `all`. Economic assembly charges extended parts a loading fee per unique type.
-- List arguments (`packages`, `manufacturers`, `tag`, `measure`, `lcsc`, `parts`): an array, a JSON-array string or one plain string; never comma-split; max 50 items unless stated.
+- List arguments (`packages`, `manufacturers`, `tag`, `measure`, `lcsc`, `parts`): an array, a JSON-array string or one plain string; never comma-split; max 50 items unless stated. `packages` replaces `package` and `manufacturers` replaces `manufacturer` when both are given.
+- Other names accepted (not in the tool schemas): `jlc_search` `page` (as `offset`) and `jlc_stock_check` `offset` (a page start); `subcategory`/`category` (ID or name) on both search tools, and `category_name`/`category_id`/`subcategory_name`/`subcategory_id` on `jlc_search_help`; `sort_by` `stock` or `quantity` on both; `jlc_get_part` `identifier`/`part_number` (an LCSC code is `lcsc`, else `mpn`); `jlc_get_parts` `lcsc`/`lcsc_codes`/`identifiers`; `cse_search`/`cse_get_kicad` `mpn`/`part_number`, and `cse_get_kicad` `lcsc` (a snapshot part, searched by its MPN); `mouser_get_part`/`digikey_get_part` `product_number`/`mpn`. Numbers may be sent as text.
 - An unpaired surrogate escape (`\ud800`) in a JSON-string argument is an `Invalid <argument>` error (a row `error` in `jlc_get_parts` and `part_lifecycle`).
 - LCSC code: C and 1-12 digits, case ignored.
 - Snapshot: JLCPCB parts with stock >= 10, scraped daily. `data_as_of`: its stock. `prices_as_of`: the 1-piece `price`, refreshed weekly (a newer part has its first scraped price). `price_tiers_as_of`: the daily scrape's quantity tiers (null when the server has none).
@@ -50,7 +51,7 @@
 
 Parametric search of the snapshot.
 
-- Arguments: `query` (max 500 characters, plain words: "100nF 25V X7R 0402"), `subcategory_name`/`subcategory_id`, `spec_filters`, `package`/`packages` (OR), `manufacturer`, `min_stock` (default 10), `library_type`, `prefer_no_fee` (default true: basic and preferred first), `pcba_type` ("economic" or "standard_only"), `sort_by` ("stock" default, "price", "spec"), `sort_spec`, `sort_order` ("asc" default, "desc"), `limit` (default 20, 1-100), `offset` (default 0, max 10000), `strict` (default false), `match_all_terms` (default true), `facets` (default false).
+- Arguments: `query` (max 500 characters, plain words: "100nF 25V X7R 0402"), `subcategory_name`/`subcategory_id`, `category_name`/`category_id` (all its subcategories; their spec names differ), `spec_filters`, `package`/`packages` (OR), `manufacturer`/`manufacturers` (OR), `min_stock` (default 10), `library_type`, `prefer_no_fee` (default true: basic and preferred first), `pcba_type` ("economic" or "standard_only"), `sort_by` ("stock" default, "price", "spec"), `sort_spec`, `sort_order` ("asc" default, "desc"), `limit` (default 20, 1-100), `offset` (default 0, max 10000), `strict` (default false), `match_all_terms` (default true), `facets` (default false).
 - `spec_filters`: up to 50 `{"name", "op", "value"}`: `[{"name": "Vgs(th)", "op": "<", "value": "2V"}]`. `op`: `=`, `>=`, `<=`, `>`, `<`; all but `=` need a numeric spec. Several `=` on one spec match any, except `Supply Voltage` and `Vin` (must cover all). Unitless values are base units (V, A, ohms, F, H, Hz, W, mm, bytes). On ranges (supply/output voltage, operating temperature) `=` means includes, `>=` reaches, `<=` goes down to. `jlc_search_help(subcategory=...)` lists names, which are numeric, which sort.
 - Short names: `Vgs(th)`, `Vds`, `Id`, `Rds(on)`, `Vr`, `If`, `Vf`, `Vceo`, `Ic`, `Vout`, `Iout`, `Iq`, `Supply Voltage`, `Isolation Voltage`, `Capacitance`, `Resistance`, `Inductance`, `Voltage`, `Tolerance`, `Power`, `DCR`, `Isat`, `Frequency`, `Load Capacitance`, `Junction Capacitance`, `Reverse Stand-Off Voltage (Vrwm)`, `Operating Temperature` (°C).
 - Dropout at a load: `{"name": "Dropout", "op": "<=", "value": "0.3V@500mA"}` uses the figure listed at or above that load, or scales a lower test current's up linearly; parts rated only below it are left out. Rows add `dropout_at_load`.
@@ -75,7 +76,7 @@ Parametric search of the snapshot.
 - Battery holders: naming a battery, cell, coin or button cell holder searches all holder subcategories; AA (No. 5, 14500), AAA (No. 7, 10440), C (No. 2), D (No. 1) and coin/button become `Battery Size` (two: either); others (18650) are plain words.
 - USB-PD: controller/sink/source/trigger words pick PD controllers over USB-C connectors, ranking the role (and a sink voltage's Output Voltage) first; others stay unless `strict=true`. Strict sink-and-source is unsupported.
 - `basic`, `preferred`, `no fee` set the library; `cheapest` sorts by price; `lowest Iq`, `highest Isat`, `most flash` by that spec. Arguments win.
-- Words matching nothing with the rest are left out (`relaxed`), but with `subcategory_name` or `spec_filters` the reply is empty and `hint` names them. `strict=true`: no relaxation; unsupported constraints are errors.
+- Words matching nothing with the rest are left out (`relaxed`), but with `subcategory_name` or `spec_filters` the reply is empty and `hint` names them. `strict=true`: no relaxation; unsupported constraints are errors. Query words naming a part type outside `category_name` are dropped and listed in `parsed.adjusted_filters` (with `strict=true`, an error).
 
 ### jlc_stock_check
 
@@ -138,9 +139,9 @@ Up to 50 parts from the snapshot in one tool call, database only; no specs, data
 ### jlc_search_help
 
 - No arguments: `categories` (`id`, `name`, `count`, `subcategory_count`).
-- `category` (name or ID): `category_id`, `category_name`, `subcategories` (`id`, `name`, `count`).
-- `subcategory` (name or ID; wins): `subcategory_id`, `subcategory_name`, `category_name`, `sample_size`, `attributes` (`name`, `alias`, `type`, `count`, `example_values`, `values` (max 50), `min`, `max`, `total_unique`, `sort_spec`), from up to 1,000 parts.
-- Unknown: `error`, `hint`.
+- `category` (name or ID, also as `category_name`/`category_id`; digits are an ID): `category_id`, `category_name`, `subcategories` (`id`, `name`, `count`). A category name, here and as `category_name` in both search tools: the exact name, its singular, `LED`, `ESD`, `ADC`, `BJT`, `FET`, or the name's first 4+ letters.
+- `subcategory` (name or ID, also as `subcategory_name`/`subcategory_id`; wins): `subcategory_id`, `subcategory_name`, `category_name`, `sample_size` (parts read, at most 1,000), `attributes` (`name`, `alias`, `type`, `count`, `example_values`, `values` (max 50), `min`, `max`, `total_unique`, `sort_spec`).
+- Unknown name (here, or as `subcategory_name`/`category_name` in `jlc_search` and `jlc_stock_check`): `error`, `hint`, and the closest names in `similar_subcategories` (`id`, `name`, `category`) or `similar_categories` (`id`, `name`). An unknown ID (here, or `category_id`/`subcategory_id` in `jlc_search` and `jlc_stock_check`): `error` (`Category ID … not found`), `hint`. A subcategory outside the category given: `error` (`Invalid subcategory: …`).
 
 ### mouser_get_part
 

@@ -77,7 +77,7 @@ Python runs through `uv`, never pip.
 
 - The JLCPCB API's field names are backwards: `firstSortName` is the **subcategory**, `secondSortName` the **category**. The client maps them.
 - `basic` and `preferred` parts have no extended-type loading fee for Economic assembly; `extended` parts are charged per unique type. The alternatives calculator's $3 figure is a rounded estimate, not a quote.
-- Prod's container logs (`docker logs`) are lost at every deploy; `/mcp/stats`, the application log (`LOG_PATH`, 7 days after its UTC day ends, no per-request lines), and `CALL_LOG_DIR` (call log 30 days, failed queries 7 days) survive.
+- Prod's container logs (`docker logs`) are lost at every deploy; `/mcp/stats`, the application log (`LOG_PATH`, 30 days after its UTC day ends, no per-request lines), and `CALL_LOG_DIR` (call log 30 days, failed queries 7 days) survive.
 
 ## Docs
 

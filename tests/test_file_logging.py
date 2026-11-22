@@ -53,9 +53,15 @@ def logs(monkeypatch):
     handlers = []
 
     def configure(path, days=7):
+        fresh = not os.path.exists(path)
         handler = file_logging.configure_file_logging(str(path), days)
         if handler:
             handlers.append(handler)
+            if fresh:
+                # The handler dates the file it opens by its mtime, which the filesystem sets from the
+                # real time: give a new file the injected clock's (tests failed from 2026-11-22 on)
+                os.utime(path, (clock[0], clock[0]))
+                handler.rolloverAt = handler.computeRollover(int(clock[0]))
         return handler
 
     yield configure, output, clock
@@ -246,7 +252,7 @@ def test_write_failure_disables_file_once(logs, tmp_path, monkeypatch, failure):
     assert "first warning" in output.getvalue() and "second warning" in output.getvalue()
 
 
-@pytest.mark.parametrize(("raw", "expected"), [(None, 7), ("0", 1), ("2", 2), ("bad", 7)])
+@pytest.mark.parametrize(("raw", "expected"), [(None, 30), ("0", 1), ("2", 2), ("bad", 30)])
 def test_log_settings(monkeypatch, raw, expected):
     from pcbparts_mcp import config
 

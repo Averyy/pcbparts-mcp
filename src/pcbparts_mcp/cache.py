@@ -3,18 +3,25 @@
 import asyncio
 import collections
 import datetime
+import hmac
 import json
 import logging
 import math
 import os
+import secrets
 import time
 from pathlib import Path
 from typing import Any, Callable
+
+from . import private_files
 
 logger = logging.getLogger(__name__)
 
 # Named in the distributor limit errors: running your own copy avoids this server's shared limits
 SELF_HOSTING_URL = "https://github.com/Averyy/pcbparts-mcp#self-hosting"
+
+# Normal callers rarely reach this, so their addresses are never written.
+CARRY_MIN = 100
 
 
 class TTLCache:
@@ -100,16 +107,36 @@ def _daily_reset(headers: Any, now: float) -> float:
     return _next_utc_midnight(now)
 
 
+# Room for one hourly line's IP list under file_logging.MAX_MESSAGE_CHARS (2,000) after its heading
+LINE_LIST_CHARS = 1500
+
+
+def _line_parts(items: list[str]) -> list[str]:
+    """items joined with ", " into as few strings as fit LINE_LIST_CHARS each (one item per string
+    at least)."""
+    parts, current = [], ""
+    for item in items:
+        if current and len(current) + 2 + len(item) > LINE_LIST_CHARS:
+            parts.append(current)
+            current = item
+        else:
+            current = f"{current}, {item}" if current else item
+    if current:
+        parts.append(current)
+    return parts
+
+
 class CallerTally:
     """Requests per caller IP in the current UTC hour, logged as one summary line once the hour is
     over (flush_if_due(), which the server calls every minute) or at shutdown (flush()). Hours
     without requests log nothing. At most max_callers IPs are tracked an hour; the rest count as
     "other". Requests sent with a later app or key (a QuotaPool's) are also counted by its number;
     unit names them in the line ("app" for DigiKey, "key" for Mouser). what says what was counted
-    ("requests sent" for Mouser/DigiKey, "refusals" for the per-IP rate limit's)."""
+    ("requests sent" for Mouser/DigiKey, "refusals" for the per-IP rate limit's). top=None names
+    every IP (held-back calls), over as many lines as the file log's message limit needs."""
 
-    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000, top: int = 5,
-                 what: str = "requests sent"):
+    def __init__(self, name: str, clock: Callable[[], float] = time.time, max_callers: int = 1000,
+                 top: int | None = 5, what: str = "requests sent"):
         self._name = name
         self._what = what
         self._clock = clock
@@ -143,20 +170,28 @@ class CallerTally:
             start = datetime.datetime.fromtimestamp(self._hour, datetime.timezone.utc)
             end = datetime.datetime.fromtimestamp(min(now, self._hour + 3600), datetime.timezone.utc)
             end_text = "24:00" if end.date() > start.date() else end.strftime("%H:%M")
-            top = ", ".join(f"{caller} {count}" for caller, count in self._counts.most_common(self._top))
             later = ", ".join(f"{self.unit} {index + 1}: {count}" for index, count in sorted(self._apps.items())
                               if index and count)
-            logger.info(f"{self._name} {self._what} {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
-                        f"{sum(self._counts.values())} from {len(self._counts)} IPs; top: {top}"
-                        + (f" ({later})" if later else ""))
+            head = (f"{self._name} {self._what} {start:%Y-%m-%d %H:%M}-{end_text} UTC: "
+                    f"{sum(self._counts.values())} from {len(self._counts)} IPs")
+            tail = f" ({later})" if later else ""
+            if self._top is not None:
+                top = ", ".join(f"{caller} {count}" for caller, count in self._counts.most_common(self._top))
+                logger.info(f"{head}; top: {top}{tail}")
+            else:
+                parts = _line_parts([f"{caller} {count}" for caller, count in self._counts.most_common()])
+                for number, part in enumerate(parts, 1):
+                    label = head if number == 1 else f"{head} (continued, {number} of {len(parts)})"
+                    logger.info(f"{label}; all: {part}" + (tail if number == 1 else ""))
         self._counts.clear()
         self._apps.clear()
         self._hour = self._hour_of(now)
 
 
 class AddressDailyQuota:
-    """Sent lookups per address and UTC day, memory only: one count for every pool it is given to
+    """Sent lookups per address and UTC day: one count for every pool it is given to
     (Mouser and DigiKey together on the server). key returns None for exempt callers.
+    save/load carry busy addresses across a restart as hashes keyed with a per-day secret.
     Oldest addresses are dropped first when the bounded table fills. Check and record without
     awaiting between them, only recording after the shared quota lets the request through."""
 
@@ -167,7 +202,9 @@ class AddressDailyQuota:
         self._clock = clock
         self._max_addresses = max_addresses
         self._date = self._today()
+        self._secret = secrets.token_bytes(32)
         self._counts: dict[str, int] = {}
+        self._carried: dict[str, int] = {}
 
     def _today(self) -> datetime.date:
         return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date()
@@ -177,11 +214,81 @@ class AddressDailyQuota:
         today = self._today()
         if today != self._date:
             self._counts.clear()
+            self._carried.clear()
+            self._secret = secrets.token_bytes(32)
             self._date = today
+
+    def _digest(self, key: str) -> str:
+        return hmac.new(self._secret, key.encode("utf-8"), "sha256").hexdigest()
 
     def _caller_key(self, caller: str | None) -> str | None:
         self.reset_if_due()
-        return self._key(caller) if self.limit and caller is not None else None
+        key = self._key(caller) if self.limit and caller is not None else None
+        if key is not None and key not in self._counts and self._carried:
+            if (count := self._carried.pop(self._digest(key), None)) is not None:
+                self._counts[key] = count
+        return key
+
+    def save(self, path: str | Path) -> None:
+        """Privately carry today's busy addresses over a restart; failures only warn."""
+        try:
+            path = Path(path)
+            tmp = path.with_name(path.name + ".tmp")
+            try:
+                self.reset_if_due()
+                counts = dict(self._carried) if self.limit else {}
+                if self.limit:
+                    counts.update((self._digest(key), count) for key, count in self._counts.items()
+                                  if count >= CARRY_MIN)
+                if not counts:
+                    path.unlink(missing_ok=True)
+                    return
+                path.parent.mkdir(parents=True, exist_ok=True)
+                with private_files.private_open(tmp, "w", encoding="utf-8") as out:
+                    json.dump({"date": self._date.isoformat(), "secret": self._secret.hex(),
+                               "counts": counts}, out)
+                os.replace(tmp, path)
+            finally:
+                tmp.unlink(missing_ok=True)
+        except Exception as exc:
+            logger.warning("Per-address counts: could not save %s (%s)", path, type(exc).__name__)
+
+    def load(self, path: str | Path) -> int:
+        """Consume a restart file, keeping only today's valid hashes, bounded like live counts."""
+        carried = 0
+        try:
+            path = Path(path)
+            self.reset_if_due()
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if not isinstance(data, dict) or set(data) != {"date", "secret", "counts"}:
+                    raise ValueError("invalid shape")
+                if (not isinstance(data["date"], str)
+                        or datetime.date.fromisoformat(data["date"]).isoformat() != data["date"]):
+                    raise ValueError("invalid date")
+                secret, counts = data["secret"], data["counts"]
+                if not isinstance(secret, str) or len(secret) != 64 or len(bytes.fromhex(secret)) != 32:
+                    raise ValueError("invalid secret")
+                if not isinstance(counts, dict) or any(
+                    len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest)
+                    or type(count) is not int or count < CARRY_MIN
+                    for digest, count in counts.items()
+                ):
+                    raise ValueError("invalid counts")
+                if self.limit and data["date"] == self._date.isoformat():
+                    self._secret = bytes.fromhex(secret)
+                    self._carried = dict(list(counts.items())[:self._max_addresses])
+                    carried = len(self._carried)
+            finally:
+                try:
+                    path.unlink(missing_ok=True)
+                finally:
+                    path.with_name(path.name + ".tmp").unlink(missing_ok=True)
+        except FileNotFoundError:
+            pass
+        except Exception as exc:
+            logger.warning("Per-address counts: could not load or remove %s (%s)", path, type(exc).__name__)
+        return carried
 
     def remaining(self, caller: str | None) -> int | None:
         """Lookups caller may still cause today; None when it isn't limited (exempt, or no cap)."""
@@ -195,9 +302,21 @@ class AddressDailyQuota:
         key = self._caller_key(caller)
         if key is None or lookups <= 0:
             return
-        if key not in self._counts and len(self._counts) >= self._max_addresses:
-            del self._counts[next(iter(self._counts))]
-        self._counts[key] = self._counts.get(key, 0) + lookups
+        if key not in self._counts and len(self._counts) + len(self._carried) >= self._max_addresses:
+            # The oldest carried (unclaimed) or oldest live entry, whichever has fewer lookups: a carried
+            # count is 100 or more, so it isn't dropped for a live address with a handful
+            carried = next(iter(self._carried), None)
+            live = next(iter(self._counts), None)
+            if carried is not None and (live is None or self._carried[carried] <= self._counts[live]):
+                del self._carried[carried]
+            elif live is not None:
+                del self._counts[live]
+        before = self._counts.get(key, 0)
+        self._counts[key] = before + lookups
+        if before < self.limit <= before + lookups:  # once a day per address: the moment it's capped
+            moment = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
+            logger.info(f"Mouser and DigiKey per-address limit: {key} reached its {self.limit} lookups "
+                        f"for {self._date.isoformat()} at {moment:%H:%M} UTC")
 
     def error(self, advice: str) -> dict:
         """The reply once an address has used its day (advice: the distributor's own-key advice)."""
@@ -529,7 +648,7 @@ class QuotaPool:
         self._per_minute = per_minute if per_minute is not None else self._first._per_minute
         self._minute = SlidingWindowBudget(self._per_minute, 60, self._first.now) if self._per_minute else None
         self.callers = self._first.callers
-        self.held_back = CallerTally(self._first._name, self._first.now, what="calls held back")
+        self.held_back = CallerTally(self._first._name, self._first.now, top=None, what="calls held back")
         self.address_daily = address_daily
         self.callers.unit = self._unit = unit
         # The day each later app was first used, so "requests moved to" is logged once a day (a

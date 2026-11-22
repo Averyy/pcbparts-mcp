@@ -14,7 +14,7 @@ services:
     volumes:
       # EasyEDA footprint answers, CSE searches/KiCad files and Mouser/DigiKey answers and lifecycle
       # (EASYEDA_STORE_PATH, CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH), request counts, usage stats,
-      # and application logs (Dockerfile's LOG_PATH=/app/cache/logs/application.log, kept 7 days);
+      # and application logs (Dockerfile's LOG_PATH=/app/cache/logs/application.log, kept 30 days);
       # `docker compose down` keeps named volumes
       - pcbparts-cache:/app/cache
     env_file:
@@ -41,9 +41,41 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # Private usage dashboard (dashboard/): reads /mcp/stats hourly with STATS_TOKEN, keeps every day
+  # in SQLite and serves one page behind HTTP Basic auth; Caddy on the VPS routes its subdomain here
+  # (pcbparts-dashboard:8050 on the web network, no published port). It refuses to start without
+  # DASHBOARD_PASSWORD in the VPS's .env, which never affects pcbparts-mcp.
+  pcbparts-dashboard:
+    image: ghcr.io/averyy/pcbparts-mcp-dashboard:latest
+    build:
+      context: ./dashboard
+    container_name: pcbparts-dashboard
+    restart: unless-stopped
+    networks:
+      - web
+    volumes:
+      - pcbparts-dashboard-data:/app/data
+    environment:
+      - STATS_TOKEN=${STATS_TOKEN:-}
+      - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD:-}
+      # optional: count problems from a fixed moment instead of the latest deploy it saw
+      - PROBLEMS_SINCE=${DASHBOARD_PROBLEMS_SINCE:-}
+      - PROBLEMS_VERSION=${DASHBOARD_PROBLEMS_VERSION:-}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
 networks:
   web:
     external: true
 
 volumes:
   pcbparts-cache:
+  pcbparts-dashboard-data:

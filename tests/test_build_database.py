@@ -172,6 +172,16 @@ class TestBuildDatabase:
             indexes = {row[1] for row in conn.execute("PRAGMA index_list(components)")}
             assert "idx_mpn_lower" in indexes
             assert "idx_mpn_key" in indexes
+            from pcbparts_mcp.search.query_builder import build_manufacturers_clause
+            for makers in (["TI"], ["TI", "onsemi"]):
+                # INDEXED BY: a table this small is otherwise scanned. A search on the index's expression,
+                # not a scan of the whole index, shows the filter matches it.
+                clause, params = build_manufacturers_clause(makers)
+                plan = [row[3] for row in conn.execute(
+                    "EXPLAIN QUERY PLAN SELECT lcsc FROM components INDEXED BY idx_manufacturer_lower WHERE 1 "
+                    + clause, params)]
+                assert any(row.startswith("SEARCH components USING INDEX idx_manufacturer_lower (<expr>=?)")
+                           for row in plan), plan
             queries = []
             conn.set_trace_callback(queries.append)
             assert [p["lcsc"] for p in get_by_mpn(conn, "lM358", {})] == ["C2", "C1"]

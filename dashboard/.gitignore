@@ -1,0 +1,12 @@
+# Private: the stats token and everything fetched from /mcp/stats
+secrets.local
+data/
+*.db
+*.db-wal
+*.db-shm
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.codex-dobby/

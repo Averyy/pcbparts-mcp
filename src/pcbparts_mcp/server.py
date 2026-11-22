@@ -11,6 +11,7 @@ import json
 import logging
 import math
 import os
+import difflib
 import re
 import sqlite3
 import threading
@@ -18,6 +19,7 @@ import time
 import unicodedata
 from contextlib import asynccontextmanager
 from difflib import get_close_matches
+from pathlib import Path
 from typing import Annotated, Any, Callable, Literal, NamedTuple
 
 from fastmcp import FastMCP
@@ -70,6 +72,9 @@ from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
 from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key, not_sent_reason
+from .subcategory_aliases import (
+    CATEGORY_ID_NOT_FOUND_HINT, CATEGORY_NOT_FOUND_HINT, SUBCATEGORY_ID_NOT_FOUND_HINT, SUBCATEGORY_NOT_FOUND_HINT,
+)
 from .search.query_builder import package_family_adjustments
 from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
@@ -92,6 +97,12 @@ _distributor_store: DistributorStore | None = None
 _distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
 _distributor_quotas: dict[str, QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
+_address_daily: AddressDailyQuota | None = None
+
+
+def _save_address_counts() -> None:
+    if _address_daily is not None and DISTRIBUTOR_QUOTA_PATH:
+        _address_daily.save(Path(DISTRIBUTOR_QUOTA_PATH).with_name("distributor_address_counts.json"))
 
 
 def _caller_tallies() -> list:
@@ -133,7 +144,7 @@ _health_clock: Callable[[], float] = time.time  # epoch seconds; replaced in tes
 async def lifespan(app):
     """Manage client lifecycle, build DB, and load categories on startup."""
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
-    global _distributor_store, _distributor_stored, _price_tiers_info, _snapshot_as_of
+    global _distributor_store, _distributor_stored, _price_tiers_info, _snapshot_as_of, _address_daily
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
     for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
         logger.warning(warning)
@@ -150,6 +161,7 @@ async def lifespan(app):
     # Load categories from DB (updated daily by scraper, no API call needed)
     _categories = db.get_categories_for_client()
     _client.set_categories(_categories)
+    _client.add_catalog_ids(*db.catalog_ids(), db.subcategory_name_map())
     logger.info(f"Loaded {len(_categories)} categories from database")
 
     # Seeded EasyEDA footprint answers (data/easyeda/footprints.csv, built into the DB)
@@ -204,8 +216,12 @@ async def lifespan(app):
     address_ranges = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE).ranges
 
     # One count for both distributors: an address's Mouser and DigiKey lookups share the day's cap
-    address_daily = AddressDailyQuota(DISTRIBUTOR_DAILY_PER_ADDRESS,
-                                      key=lambda ip: None if ip in address_ranges else _address_key(ip))
+    address_daily = _address_daily = AddressDailyQuota(
+        DISTRIBUTOR_DAILY_PER_ADDRESS, key=lambda ip: None if ip in address_ranges else _address_key(ip))
+    if DISTRIBUTOR_QUOTA_PATH:
+        carried = address_daily.load(Path(DISTRIBUTOR_QUOTA_PATH).with_name("distributor_address_counts.json"))
+        if carried:
+            logger.info("Per-address counts: %s addresses carried over from before the restart", carried)
     # Their answers (Mouser 3 days; DigiKey a day, not found 3 days) and lifecycle readings (60 days; nrnd and last-time-buy
     # 30, obsolete a year), kept across restarts when DISTRIBUTOR_STORE_PATH is set
     _distributor_store = DistributorStore(DISTRIBUTOR_STORE_PATH or None)
@@ -302,6 +318,7 @@ async def lifespan(app):
         await _mouser_client.close()
     if _digikey_client:
         await _digikey_client.close()
+    _save_address_counts()
     for tally in _caller_tallies():
         tally.flush()  # the hour so far, so a deploy doesn't lose it
     _refused_callers.flush()
@@ -347,7 +364,7 @@ def _flush_before_exit(message: str) -> None:
     def flush():
         with contextlib.suppress(Exception):
             os.write(2, (message + "\n").encode("utf-8"))
-        for operation in (lambda: logger.error(message),
+        for operation in (_save_address_counts, lambda: logger.error(message),
                           lambda: stats.usage.flush_failed_calls(shutdown=True), stats.usage.save,
                           lambda: asyncio.run(call_log.recorder.flush(shutdown=True))):
             try:
@@ -658,26 +675,205 @@ class UsageStatsMiddleware(FastMCPMiddleware):
 # distributor tools take the same thing, and digikey_get_part's was product_number until 0.10.3
 # (clients with that name built in keep working); the two batch tools name their list differently,
 # and jlc_get_parts was also sent lcsc_codes and identifiers (2026-11-21, 5 calls in a morning).
-# Renamed before the arguments are validated, so the tool list shows one name.
+# Renamed before the arguments are validated, so the tool list shows one name. 0.10.6: the CSE
+# tools take the part number as query, which callers send as the other tools' names.
 ARGUMENT_ALIASES: dict[str, dict[str, tuple[str, ...]]] = {
     "mouser_get_part": {"part_number": ("product_number", "mpn")},
     "digikey_get_part": {"part_number": ("product_number", "mpn")},
     "jlc_get_parts": {"parts": ("lcsc", "lcsc_codes", "identifiers")},
     "jlc_stock_history": {"lcsc": ("parts",)},
+    "cse_search": {"query": ("mpn", "part_number")},
+    "cse_get_kicad": {"query": ("mpn", "part_number")},
+    # the search tools' names, the other way round from VALUE_ALIASES' category/subcategory
+    "jlc_search_help": {"category": ("category_name", "category_id"),
+                        "subcategory": ("subcategory_name", "subcategory_id")},
+}
+
+_LCSC_CODE_ARG = re.compile(r"[Cc][0-9]{1,12}")
+
+
+def _lcsc_or_mpn(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """jlc_get_part's identifier/part_number: an LCSC code is lcsc, anything else mpn."""
+    if isinstance(value, str) and value.strip():
+        text = value.strip()
+        return ("lcsc", text.upper()) if _LCSC_CODE_ARG.fullmatch(text) else ("mpn", text)
+    return None
+
+
+def _id_or_name(prefix: str) -> Callable[[Any, dict], tuple[str, Any] | None]:
+    """jlc_search_help's category/subcategory (a number or a name) as the search tools' *_id/*_name."""
+    def resolve(value: Any, arguments: dict) -> tuple[str, Any] | None:
+        if (number := _as_int(value)) is not None:
+            return f"{prefix}_id", number
+        if isinstance(value, str) and value.strip():
+            return f"{prefix}_name", value
+        return None
+    return resolve
+
+
+def _category_conflict(subcategory: str, home: str, category: str) -> dict:
+    """Both search tools' reply for a subcategory outside the category given (the subcategory used to
+    win unnoticed in jlc_search)."""
+    return {"error": f"Invalid subcategory: '{subcategory}' is in {home}, not {category}; give a subcategory "
+                     "of that category, or only one of them", "results": [], "total": 0}
+
+
+_WHOLE_NUMBER_TEXT = re.compile(r"([+-]?[0-9]{1,9})(?:\.0*)?")  # ASCII digits: "²".isdigit() is True
+
+
+def _as_int(value: Any) -> int | None:
+    """A whole number as the tools' int arguments take one (2, 2.0, "2" or "2.0"); None for anything
+    else. Every alias and jlc_search_help read IDs and pages with this, so they agree."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float) and value.is_integer() and abs(value) < 1e9:
+        return int(value)
+    if isinstance(value, str) and (match := _WHOLE_NUMBER_TEXT.fullmatch(value.strip())):
+        return int(match.group(1))
+    return None
+
+
+def _page_size(arguments: dict) -> int | None:
+    """The page size both search tools use: limit (default 20) clamped as they clamp it."""
+    limit = _as_int(arguments.get("limit", 20))
+    return clamp_limit(limit, MAX_PAGE_SIZE) if limit is not None else None
+
+
+def _page_to_offset(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """jlc_stock_check pages; jlc_search takes offset: page n is offset (n - 1) * limit (page 0 is
+    page 1, as jlc_stock_check takes it)."""
+    size, page = _page_size(arguments), _as_int(value)
+    if size and page is not None and page >= 0:
+        return "offset", max(page - 1, 0) * size
+    return None
+
+
+def _offset_to_page(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """jlc_search's offset on jlc_stock_check: only one that starts a page."""
+    size, offset = _page_size(arguments), _as_int(value)
+    if size and offset is not None and offset >= 0 and offset % size == 0:
+        return "page", offset // size + 1
+    return None
+
+
+# Aliases whose target depends on the value: alias -> (the names that, when given, leave it to
+# validation, and how it maps). The tools name the same thing differently: jlc_search_help takes
+# category/subcategory as a number or name, the search tools *_id/*_name; jlc_search pages by
+# offset, jlc_stock_check by page; jlc_get_part was sent identifier (2026-11-21).
+VALUE_ALIASES: dict[str, dict[str, tuple[tuple[str, ...], Callable[[Any, dict], tuple[str, Any] | None]]]] = {
+    "jlc_get_part": {"identifier": (("lcsc", "mpn"), _lcsc_or_mpn), "part_number": (("lcsc", "mpn"), _lcsc_or_mpn)},
+    "jlc_search": {"subcategory": (("subcategory_id", "subcategory_name"), _id_or_name("subcategory")),
+                   "category": (("category_id", "category_name"), _id_or_name("category")),
+                   "page": (("offset",), _page_to_offset)},
+    "jlc_stock_check": {"subcategory": (("subcategory_id", "subcategory_name"), _id_or_name("subcategory")),
+                        "category": (("category_id", "category_name"), _id_or_name("category")),
+                        "offset": (("page",), _offset_to_page)},
 }
 
 
 def _with_argument_aliases(tool: str, arguments: Any) -> Any:
     """The call's arguments with an alias renamed to the tool's own name: only when that name isn't
     given and exactly one of its aliases is (anything else is left for validation to refuse)."""
-    aliases = ARGUMENT_ALIASES.get(tool)
-    if not aliases or not isinstance(arguments, dict):
+    if not isinstance(arguments, dict):
         return arguments
-    for name, others in aliases.items():
+    for name, others in (ARGUMENT_ALIASES.get(tool) or {}).items():
         given = [other for other in others if other in arguments]
         if name not in arguments and len(given) == 1:
             arguments = {name if key == given[0] else key: value for key, value in arguments.items()}
+    for alias, (family, resolve) in (VALUE_ALIASES.get(tool) or {}).items():
+        if alias in arguments and not any(name in arguments for name in family):
+            if (mapped := resolve(arguments[alias], arguments)) is not None:
+                target, value = mapped
+                arguments = {(target if key == alias else key): (value if key == alias else given)
+                             for key, given in arguments.items()}
     return arguments
+
+
+async def _cse_lcsc(arguments: Any) -> Any:
+    """cse_get_kicad(lcsc=...): every other part tool takes lcsc, so it's looked up in the catalog
+    snapshot and searched by its MPN. A code the snapshot lacks is left for validation to refuse."""
+    if not isinstance(arguments, dict) or "lcsc" not in arguments or arguments.get("query") or arguments.get("part_id"):
+        return arguments
+    code = arguments["lcsc"]
+    if not (isinstance(code, str) and _LCSC_CODE_ARG.fullmatch(code.strip())):
+        return arguments
+    part = await run_db(COMPONENT_POOL, get_db().get_by_lcsc, code.strip().upper())
+    model = (part or {}).get("model")
+    if not model:
+        return arguments
+    return {("query" if key == "lcsc" else key): (model if key == "lcsc" else value) for key, value in arguments.items()}
+
+
+_ARG_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,39}")
+_ERROR_ITEMS_SHOWN = 5  # unknown names (and other problems) an argument error lists
+
+# What an unknown argument usually means on a tool, said in its error (beyond "did you mean")
+_UNKNOWN_ARGUMENT_ADVICE = {
+    ("jlc_search", "in_stock"): "jlc_search only lists parts in stock (stock >= 10): leave in_stock out, raise "
+                                "min_stock for more, or use jlc_stock_check(min_stock=0) for out-of-stock parts.",
+    # _cse_lcsc took every lcsc it could: this one is malformed or not in the catalog snapshot
+    ("cse_get_kicad", "lcsc"): "cse_get_kicad takes lcsc only for a part in the catalog snapshot (searched by its "
+                               "MPN); for any other part give its MPN as query.",
+}
+_LIST_ADVICE = ("{tool} runs one search (query); for many parts at once use jlc_get_parts(parts=[...]), "
+                "up to 50 LCSC codes or MPNs.")
+
+
+def _unknown_argument_error(tool: str, arguments: Any, error: ValidationError, params: set[str]) -> ValidationError | None:
+    """A clearer error for arguments the tool doesn't have: its own argument names, the likely
+    meant one, and advice for common mix-ups. None for any other validation error (unchanged)."""
+    cause = error.__cause__
+    if not isinstance(cause, PydanticValidationError):
+        return None
+    problems = cause.errors(include_url=False, include_input=False)
+    unknown = [str(item["loc"][0]) for item in problems
+               if item.get("type") == "unexpected_keyword_argument" and item.get("loc")]
+    if not unknown or not params:
+        return None
+    shown = unknown[:_ERROR_ITEMS_SHOWN]  # a request can hold thousands: bounded work and reply
+    names = [repr(name) if _ARG_NAME.fullmatch(name) else "named that (not an identifier)" for name in shown]
+    more = f" and {len(unknown) - len(shown)} more" if len(unknown) > len(shown) else ""
+    lines = [f"{tool} has no argument {', '.join(names)}{more}. Its arguments: {', '.join(sorted(params))}."]
+    candidates = sorted(params)
+    for name in shown:
+        if not _ARG_NAME.fullmatch(name):
+            continue
+        if advice := _UNKNOWN_ARGUMENT_ADVICE.get((tool, name)):
+            lines.append(advice)
+        elif tool == "jlc_stock_check" and isinstance(arguments, dict) and isinstance(arguments.get(name), list):
+            lines.append(_LIST_ADVICE.format(tool=tool))
+        elif close := difflib.get_close_matches(name.lower(), candidates, n=1, cutoff=0.6):
+            lines.append(f"Did you mean {close[0]!r} instead of {name!r}?")
+    others = [item for item in problems if item.get("type") != "unexpected_keyword_argument"]
+    for item in others[:_ERROR_ITEMS_SHOWN]:  # the other problems, briefly (no input values or links)
+        where = ".".join(str(part) for part in item.get("loc") or ()) or "arguments"
+        lines.append(f"{where}: {item.get('msg')}")
+    if len(others) > _ERROR_ITEMS_SHOWN:
+        lines.append(f"and {len(others) - _ERROR_ITEMS_SHOWN} more problems")
+    return ValidationError("\n".join(lines))
+
+
+_SURROGATE = re.compile("[\ud800-\udfff]")
+
+
+def _without_surrogates(value: Any, depth: int = 0) -> Any:
+    """value with any unpaired surrogate (invalid text a JSON escape can carry) as U+FFFD: SQLite
+    can't encode one, so any text argument holding one failed the call with an internal error.
+    The same object when nothing changed."""
+    if isinstance(value, str):
+        return _SURROGATE.sub("\ufffd", value) if _SURROGATE.search(value) else value
+    if depth >= 4:
+        return value
+    if isinstance(value, list):
+        items = [_without_surrogates(item, depth + 1) for item in value]
+        return items if any(new is not old for new, old in zip(items, value)) else value
+    if isinstance(value, dict):
+        pairs = [(_without_surrogates(key, depth + 1), _without_surrogates(item, depth + 1)) for key, item in value.items()]
+        changed = any(k is not key or v is not item for (k, v), (key, item) in zip(pairs, value.items()))
+        return dict(pairs) if changed else value
+    return value
 
 
 class ArgumentAliasMiddleware(FastMCPMiddleware):
@@ -686,12 +882,29 @@ class ArgumentAliasMiddleware(FastMCPMiddleware):
     async def on_call_tool(self, context, call_next):
         try:
             message = context.message
-            arguments = _with_argument_aliases(message.name, message.arguments)
+            arguments = _with_argument_aliases(message.name, _without_surrogates(message.arguments))
+            if message.name == "cse_get_kicad":
+                arguments = await _cse_lcsc(arguments)
             if arguments is not message.arguments:
                 context = context.copy(message=message.model_copy(update={"arguments": arguments}))
         except Exception:
             logger.exception("Argument aliases: couldn't read a tool call")
-        return await call_next(context)
+        try:
+            return await call_next(context)
+        except ValidationError as error:
+            # Counted by UsageStatsMiddleware (inside this one) with its usual label first.
+            try:
+                tool = context.message.name
+                params = stats.usage.tool_params.get(tool) or next(
+                    (set(t.parameters.get("properties", {})) for t in await mcp.list_tools(run_middleware=False)
+                     if t.name == tool), set())
+                clearer = _unknown_argument_error(tool, context.message.arguments, error, params)
+            except Exception:
+                logger.exception("Argument aliases: couldn't explain an argument error")
+                clearer = None
+            if clearer is None:
+                raise
+            raise clearer from error.__cause__
 
 
 mcp.add_middleware(ArgumentAliasMiddleware())
@@ -1123,7 +1336,17 @@ LibraryType = Annotated[
 ]
 
 
-SearchSort = Annotated[Literal["stock", "price", "spec"] | None, BeforeValidator(_normalize_library_type)]
+def _sort_word(same: str, other: str) -> Callable[[Any], Any]:
+    """jlc_search sorts by "stock" and jlc_stock_check by "quantity" for the same order: each takes
+    the other's word (normalized like library_type) so a caller using one tool's word on the other
+    isn't refused. The tool list still shows each tool's own word."""
+    def normalize(value: Any) -> Any:
+        value = _normalize_library_type(value)
+        return same if value == other else value
+    return normalize
+
+
+SearchSort = Annotated[Literal["stock", "price", "spec"] | None, BeforeValidator(_sort_word("stock", "quantity"))]
 
 
 def _normalize_sort_order(value: Any) -> Any:
@@ -1134,7 +1357,7 @@ def _normalize_sort_order(value: Any) -> Any:
 
 
 SortOrder = Annotated[Literal["asc", "desc"] | None, BeforeValidator(_normalize_sort_order)]
-StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_normalize_library_type)]
+StockSort = Annotated[Literal["quantity", "price"] | None, BeforeValidator(_sort_word("quantity", "stock"))]
 
 
 @mcp.tool(
@@ -1236,7 +1459,8 @@ async def jlc_stock_check(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_category_id = _client.match_category_by_name(category_name)
         if resolved_category_id is None:
-            return {"error": f"Category not found: '{category_name}'", "hint": "Use jlc_search_help() to see available categories"}
+            return {"error": f"Category not found: '{category_name}'", "hint": CATEGORY_NOT_FOUND_HINT,
+                    "similar_categories": await run_db(COMPONENT_POOL, get_db()._find_similar_categories, category_name)}
 
     # Resolve subcategory_name to subcategory_id if provided (ID takes precedence)
     resolved_subcategory_id = subcategory_id
@@ -1246,7 +1470,21 @@ async def jlc_stock_check(
             return {"error": "Categories not loaded. Server may still be starting up.", "hint": "Try again in a moment"}
         resolved_subcategory_id = _client.get_subcategory_id_by_name(subcategory_name)
         if resolved_subcategory_id is None:
-            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": "Use jlc_search_help(category='Connectors') to see available subcategories"}
+            return {"error": f"Subcategory not found: '{subcategory_name}'", "hint": SUBCATEGORY_NOT_FOUND_HINT,
+                    "similar_subcategories": await run_db(COMPONENT_POOL, get_db()._find_similar_subcategories,
+                                                          subcategory_name)}
+
+    # The client drops an ID it doesn't know, which searched every category; refused as jlc_search does
+    # (a name resolved above is one it knows)
+    if subcategory_id is not None and not _client._get_subcategory(subcategory_id):
+        return {"error": f"Subcategory ID {subcategory_id} not found", "hint": SUBCATEGORY_ID_NOT_FOUND_HINT}
+    if category_id is not None and not _client._get_category(category_id):
+        return {"error": f"Category ID {category_id} not found", "hint": CATEGORY_ID_NOT_FOUND_HINT}
+    if resolved_subcategory_id and resolved_category_id:
+        home_id, sub = _client._get_subcategory(resolved_subcategory_id)
+        if home_id != resolved_category_id:
+            return _category_conflict(sub["name"], _client._get_category(home_id)["name"],
+                                      _client._get_category(resolved_category_id)["name"])
 
     if call_log.recorder.path is not None:
         stats.note(stock_shape={"category_id": resolved_category_id, "subcategory_id": resolved_subcategory_id,
@@ -1519,6 +1757,8 @@ def jlc_search(
     query: str | None = None,
     subcategory_id: int | None = None,
     subcategory_name: str | None = None,
+    category_id: int | None = None,
+    category_name: str | None = None,
     spec_filters: list[dict[str, Any]] | str | None = None,
     min_stock: int = DEFAULT_MIN_STOCK,
     library_type: LibraryType = None,
@@ -1526,6 +1766,7 @@ def jlc_search(
     package: str | None = None,
     packages: list[str] | str | None = None,
     manufacturer: str | None = None,
+    manufacturers: list[str] | str | None = None,
     match_all_terms: bool = True,
     sort_by: SearchSort = None,
     limit: int = 20,
@@ -1578,6 +1819,8 @@ def jlc_search(
             others, so compare the datasheets' max columns before choosing.
         subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
         subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
+        category_id: Category ID from jlc_search_help (all its subcategories; spec names differ between them)
+        category_name: Category name (e.g., "Capacitors"), as category_id
         spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
             "value": "2.5V"}]. Values accept text or numbers (unitless uses base units: V, A,
             ohms, F, H, Hz, W, mm, bytes); names ignore case. JSON arrays as strings also work.
@@ -1606,6 +1849,7 @@ def jlc_search(
             or pass a JSON array string. Commas within a package stay literal. Explicit package
             arguments override query packages; "0402 or 0603" in a query also means OR.
         manufacturer: Manufacturer
+        manufacturers: Several manufacturers (OR); same formats as packages, never comma-split
         match_all_terms: Require every query term (AND)
         sort_by: "stock" (most first), "price" (cheapest within library tiers when prefer_no_fee) or
             "spec" (by sort_spec); omitted defaults to stock unless the query says "cheapest"/"lowest
@@ -1666,6 +1910,10 @@ def jlc_search(
         parsed_packages = _parse_list_param(packages)
     except ValueError as exc:
         return _argument_error("packages", exc, ["string", "array of strings", "JSON array of strings"])
+    try:
+        parsed_manufacturers = _parse_list_param(manufacturers)
+    except ValueError as exc:
+        return _argument_error("manufacturers", exc, ["string", "array of strings", "JSON array of strings"])
     # The catalog's packages are in English since 0.8.15: "插件,12.6x4.4mm" from an older reply or a
     # BOM is "Plugin,12.6x4.4mm". A database built before that still has JLCPCB's spelling.
     if db.english_packages():
@@ -1699,10 +1947,35 @@ def jlc_search(
     query_library = library_type is None
 
     # Reject abusive oversized list params before building a large SQL statement
-    for _name, _val in (("spec_filters", parsed_filters), ("packages", parsed_packages)):
+    for _name, _val in (("spec_filters", parsed_filters), ("packages", parsed_packages),
+                        ("manufacturers", parsed_manufacturers)):
         _cap_err = _check_list_cap(_name, _val)
         if _cap_err:
             return _cap_err
+
+    # A category name means what it means to jlc_stock_check ("LED" is Optoelectronics); the search
+    # then uses that category's exact name
+    if category_name and not category_id:
+        found = _client.match_category_by_name(category_name) if _client and _categories else None
+        if found is None and not (_client and _categories):
+            found = db.resolve_category_name(category_name)
+        if found is None:
+            return {"error": f"Category not found: '{category_name}'", "hint": CATEGORY_NOT_FOUND_HINT,
+                    "similar_categories": db._find_similar_categories(category_name), "results": [], "total": 0}
+        category_name = db.get_category_name(found) or category_name
+    # An ID the catalog doesn't have searched everything (category_id) or found nothing (subcategory_id)
+    if subcategory_id is not None and not db.get_subcategory_name(subcategory_id):
+        return {"error": f"Subcategory ID {subcategory_id} not found", "hint": SUBCATEGORY_ID_NOT_FOUND_HINT,
+                "results": [], "total": 0}
+    if category_id is not None and not db.get_category_name(category_id):
+        return {"error": f"Category ID {category_id} not found", "hint": CATEGORY_ID_NOT_FOUND_HINT,
+                "results": [], "total": 0}
+    if (subcategory_id or subcategory_name) and (category_id or category_name):
+        explicit_sub = subcategory_id or db.resolve_subcategory_name(subcategory_name)
+        explicit_cat = category_id or db.resolve_category_name(category_name)
+        home = db.get_category_for_subcategory(explicit_sub) if explicit_sub else None
+        if home and explicit_cat and home[0] != explicit_cat:
+            return _category_conflict(db.get_subcategory_name(explicit_sub), home[1], db.get_category_name(explicit_cat))
 
     # Smart parsing: always parse query to clean up text and extract structured info
     # This handles cases like "lipo charger" where terms don't exist in FTS index
@@ -1716,6 +1989,7 @@ def jlc_search(
     part_number_text = None
     protected_tokens: list[str] = []
     fuse_adjustment = None
+    type_left_out = False  # every part type the query named is outside the category given
 
     if query:
         # Parse natural language query to extract structured info and clean text
@@ -1821,7 +2095,7 @@ def jlc_search(
         if strict:
             query_packages = parsed.packages or ([parsed.package] if parsed.package else [])
             if query_packages and (package or packages):
-                explicit_packages = ([package] if package else []) + (_parse_list_param(packages) or [])
+                explicit_packages = parsed_packages or ([package] if package else [])
                 if {p.casefold() for p in explicit_packages} != {p.casefold() for p in query_packages}:
                     parsed_query_info.setdefault("adjusted_filters", []).append({
                         "filter": "packages: " + ", ".join(query_packages), "now": None,
@@ -1845,6 +2119,37 @@ def jlc_search(
                 effective_subcategory_ids = widened
                 parsed_query_info["subcategories"] = [
                     (db.get_subcategory_name(i) or "").lower() for i in widened]
+
+        # An explicit category keeps only the part types the query words picked inside it: words that
+        # name a type in another category would otherwise empty the search
+        if (category_id or category_name) and not (subcategory_id or subcategory_name):
+            wanted_category = category_id or db.resolve_category_name(category_name)
+            if wanted_category:
+                def _inside(sub_id: int | None) -> bool:
+                    found = db.get_category_for_subcategory(sub_id) if sub_id else None
+                    return bool(found) and found[0] == wanted_category
+                dropped = []
+                if effective_subcategory_ids:
+                    dropped = [i for i in effective_subcategory_ids if not _inside(i)]
+                    effective_subcategory_ids = [i for i in effective_subcategory_ids if _inside(i)] or None
+                if effective_subcategory_name and not _inside(sub_id := db.resolve_subcategory_name(effective_subcategory_name)):
+                    dropped.append(sub_id)
+                    effective_subcategory_name = None
+                if dropped:  # reported, so strict=true refuses instead of searching without the part type
+                    names = ", ".join(dict.fromkeys(db.get_subcategory_name(i) or str(i) for i in dropped if i))
+                    kept = effective_subcategory_ids or effective_subcategory_name
+                    if parsed_query_info.get("subcategories") and effective_subcategory_ids:
+                        parsed_query_info["subcategories"] = [
+                            (db.get_subcategory_name(i) or "").lower() for i in effective_subcategory_ids]
+                    else:
+                        parsed_query_info.pop("subcategories", None)
+                    if not kept:
+                        parsed_query_info["subcategory"] = None
+                        type_left_out = True
+                    parsed_query_info.setdefault("adjusted_filters", []).append({
+                        "filter": f"subcategory: {names or parsed.subcategory}", "now": None,
+                        "reason": f"not in category {db.get_category_name(wanted_category)}, so that part type isn't searched"
+                                  + ("; strict mode cannot omit it" if strict else "")})
 
         # Filters the parser made up must fit the part type: "5V relay" asked for Voltage Rating,
         # which no relay lists, and found nothing
@@ -1894,6 +2199,8 @@ def jlc_search(
         subcategory_id=subcategory_id,
         subcategory_name=None if effective_subcategory_ids else effective_subcategory_name,
         subcategory_ids=effective_subcategory_ids,
+        category_id=category_id,
+        category_name=category_name,
         spec_filters=parsed_filters,
         library_type=library_type if library_type != "all" else None,
         prefer_no_fee=prefer_no_fee,
@@ -1901,6 +2208,7 @@ def jlc_search(
         package=effective_package,
         packages=parsed_packages,
         manufacturer=manufacturer,
+        manufacturers=parsed_manufacturers,
         mounting_type=effective_mounting_type,
         match_all_terms=match_all_terms,
         sort_by=sort_by or "stock",
@@ -1994,7 +2302,7 @@ def jlc_search(
     # Without a recognized part type the words are what names it ("gizmo 3.3V 2A"): leaving them out
     # searched the whole catalog on the numbers alone, so the reply stays empty with a hint instead.
     if (not strict and result.get("total") == 0 and not result.get("error") and parsed and effective_query
-            and not part_number_text and parsed.subcategory
+            and not part_number_text and parsed.subcategory and not type_left_out
             and not (subcategory_id or subcategory_name or spec_filters)):
         retry = db.search(query=None, **search_args)
         if retry.get("total"):
@@ -2119,8 +2427,9 @@ def jlc_search(
         if resolved_name:
             hints.append(f"Try jlc_search_help(subcategory={json.dumps(resolved_name)}) for attribute names and values.")
         explicit = [name for name, value in (("library_type", None if query_library else library_type),
-                    ("package/packages", package or packages), ("manufacturer", manufacturer),
-                    ("pcba_type", pcba_type)) if value]
+                    ("package/packages", package or packages),
+                    ("manufacturer/manufacturers", manufacturer or parsed_manufacturers),
+                    ("category", category_id or category_name), ("pcba_type", pcba_type)) if value]
         if explicit:
             hints.append("Try without " + ", ".join(explicit) + ".")
         other_tier_total = 0
@@ -2170,12 +2479,15 @@ def jlc_search(
             narrowed = [name for name, value in (
                 ("spec_filters", search_args.get("spec_filters")),
                 ("package", search_args.get("package") or search_args.get("packages")),
-                ("mounting_type", search_args.get("mounting_type")), ("manufacturer", manufacturer),
+                ("mounting_type", search_args.get("mounting_type")),
+                ("manufacturer", manufacturer or parsed_manufacturers),
+                ("category", category_id or category_name),
                 ("subcategory", search_args.get("subcategory_id") or search_args.get("subcategory_name")
                  or search_args.get("subcategory_ids"))) if value]
             unfiltered = db.search(query=effective_query, **{
                 **search_args, "spec_filters": None, "package": None, "packages": None, "mounting_type": None,
-                "manufacturer": None, "subcategory_id": None, "subcategory_name": None, "subcategory_ids": None,
+                "manufacturer": None, "manufacturers": None, "category_id": None, "category_name": None,
+                "subcategory_id": None, "subcategory_name": None, "subcategory_ids": None,
                 "preferred_specs": None, "limit": 1, "count_unlisted": False}).get("total") if narrowed else 0
             if unfiltered:
                 hints.insert(0, f"{unfiltered} in-stock part{'s' if unfiltered != 1 else ''} match "
@@ -2402,24 +2714,32 @@ def jlc_search_help(
     # Subcategory mode: list filterable attributes
     if subcategory is not None:
         db = get_db()
-        if isinstance(subcategory, int):
-            return db.list_attributes(subcategory_id=subcategory)
+        if (number := _as_int(subcategory)) is not None:
+            return db.list_attributes(subcategory_id=number)
         return db.list_attributes(subcategory_name=str(subcategory))
 
     # Category mode: list subcategories
     if category is not None:
         if not _categories:
             return {"error": "Categories not loaded. Server may still be starting up."}
+        db = get_db()
 
-        matched = None
-        if isinstance(category, int):
-            matched = next((c for c in _categories if c["id"] == category), None)
-        else:
-            cat_lower = str(category).lower()
-            matched = next((c for c in _categories if c["name"].lower() == cat_lower), None)
+        # A name resolves as both search tools resolve category_name, so a name one tool takes, every tool takes
+        number = _as_int(category)
+        wanted = number if number is not None else _client.match_category_by_name(str(category))
+        matched = next((c for c in _categories if c["id"] == wanted), None) if wanted is not None else None
+        if not matched and wanted is not None:  # a category with no part in the snapshot (jlc_stock_check's)
+            known, subcategories = db.catalog_ids()
+            if wanted in known:
+                matched = {"id": wanted, "name": known[wanted]["name"], "subcategories": [
+                    {"id": sub_id, "name": sub["name"], "count": 0}
+                    for sub_id, sub in sorted(subcategories.items()) if sub.get("category_id") == wanted]}
 
+        if not matched and number is not None:
+            return {"error": f"Category ID {number} not found", "hint": CATEGORY_ID_NOT_FOUND_HINT}
         if not matched:
-            return {"error": f"Category not found: '{category}'", "hint": "Call jlc_search_help() with no args to see all categories"}
+            return {"error": f"Category not found: '{category}'", "hint": CATEGORY_NOT_FOUND_HINT,
+                    "similar_categories": db._find_similar_categories(str(category))}
 
         subcats = sorted(matched.get("subcategories", []), key=lambda s: -s["count"])
         return {
@@ -4303,6 +4623,11 @@ def main():
         # 127.0.0.1 unless set), which would put callers' IPs on every access-log line if the proxy
         # ever connected from there; _client_ip() reads X-Forwarded-For itself
         proxy_headers=False,
+        # Docker kills the process 10 s after its stop signal. Without a limit uvicorn waits for every
+        # running request first, so one slow call at a deploy meant the shutdown below never ran and
+        # the day's per-address counts, the hour's lines and the stats since the last save were lost.
+        # After 6 s it cancels what's still running and then shuts down.
+        timeout_graceful_shutdown=6,
         **log_options,
     )
 

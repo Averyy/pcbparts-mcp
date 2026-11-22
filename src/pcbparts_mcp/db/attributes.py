@@ -9,7 +9,9 @@ from ..alternatives import SPEC_PARSERS
 from ..search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, _ATTR_FULL_TO_ALIASES
 from ..search.spec_sort import sort_spec_for_attribute
 from ..subcategory_aliases import (
+    CATEGORY_NOT_FOUND_HINT, SUBCATEGORY_ID_NOT_FOUND_HINT, SUBCATEGORY_NOT_FOUND_HINT,
     resolve_subcategory_name as _resolve_subcategory_name,
+    find_similar_categories as _find_similar_categories,
     find_similar_subcategories as _find_similar_subcategories,
 )
 
@@ -65,11 +67,11 @@ def list_attributes(
             )
             return {
                 "error": f"Subcategory not found: '{subcategory_name}'",
-                "hint": "Use jlc_search_help() to browse categories and subcategories",
+                "hint": SUBCATEGORY_NOT_FOUND_HINT,
                 "similar_subcategories": similar,
             }
 
-    if not resolved_id:
+    if resolved_id is None:
         return {
             "error": "Must provide subcategory_id or subcategory_name",
             "hint": "Use jlc_search_help() to browse categories and subcategories",
@@ -79,7 +81,7 @@ def list_attributes(
     if not subcat_info:
         return {
             "error": f"Subcategory ID {resolved_id} not found",
-            "hint": "Use jlc_search_help(category='Connectors') to see valid subcategory IDs",
+            "hint": SUBCATEGORY_ID_NOT_FOUND_HINT,
         }
 
     # Sample components from this subcategory
@@ -93,7 +95,9 @@ def list_attributes(
     attr_values: dict[str, set[str]] = {}
     malformed_count = 0
 
+    parts_read = 0  # fewer than sample_size in a small or empty subcategory
     for row in cursor:
+        parts_read += 1
         if not row["attributes"]:
             continue
         try:
@@ -187,6 +191,6 @@ def list_attributes(
         "subcategory_id": resolved_id,
         "subcategory_name": subcat_info["name"],
         "category_name": subcat_info["category_name"],
-        "sample_size": sample_size,
+        "sample_size": parts_read,
         "attributes": attributes,
     }

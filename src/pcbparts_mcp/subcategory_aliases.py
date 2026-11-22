@@ -8,6 +8,8 @@ IMPORTANT: All alias targets must match actual subcategory names in the database
 Run validation script before committing changes to ensure all mappings are valid.
 """
 
+import re
+import difflib
 from typing import Any
 
 
@@ -745,50 +747,80 @@ def resolve_subcategory_name(
     return matches[0][1]
 
 
+# The same hint on every unknown name, in jlc_search, jlc_stock_check and jlc_search_help
+SUBCATEGORY_NOT_FOUND_HINT = ("similar_subcategories lists the closest names; jlc_search_help(category=...) lists a "
+                              "category's subcategories")
+CATEGORY_NOT_FOUND_HINT = "similar_categories lists the closest names; jlc_search_help() lists every category"
+# An unknown ID has no closest names: where the IDs are listed
+SUBCATEGORY_ID_NOT_FOUND_HINT = "jlc_search_help(category=...) lists a category's subcategories and their IDs"
+CATEGORY_ID_NOT_FOUND_HINT = "jlc_search_help() lists every category and its ID"
+
+
+def _name_words(text: str) -> set[str]:
+    """Words of 3+ letters, singular and plural alike ("resistors" is "resistor")."""
+    words = set()
+    for word in re.findall(r"[a-z0-9]+", text.lower()):
+        if len(word) >= 3:
+            words.add(word[:-1] if len(word) > 3 and word.endswith("s") and not word.endswith("ss") else word)
+    return words
+
+
+_SIMILAR_NAME_CHARS = 120
+
+
+def _ranked_names(name: str, names: dict[str, int], info: dict[int, dict[str, Any]], limit: int,
+                  category_key: str | None) -> list[dict[str, Any]]:
+    """The names matching most of name's words (then the closest spellings), at most limit, one per id.
+    A word matches a name's word (singular or plural), a close spelling of one ("resistorz"), or part
+    of the name ("conv" in "DC-DC Converters", as before 0.10.6)."""
+    name = name[:_SIMILAR_NAME_CHARS]  # catalog names are under 70 characters; bounds the matching work
+    lowered = name.lower()
+    words = {candidate: _name_words(candidate) for candidate in names}
+    vocabulary = set().union(*words.values()) if words else set()
+    forms = {word: {word, *difflib.get_close_matches(word, vocabulary, n=2, cutoff=0.8)} if word not in vocabulary
+             else {word} for word in _name_words(name)}
+    scored: dict[int, tuple[int, float, str]] = {}
+    for candidate, item_id in names.items():
+        shared = sum(1 for word, spellings in forms.items() if spellings & words[candidate] or word in candidate)
+        if not shared:
+            continue
+        score = (shared, difflib.SequenceMatcher(None, lowered, candidate).ratio(), candidate)
+        if item_id not in scored or score[:2] > scored[item_id][:2]:
+            scored[item_id] = score
+    if not scored:  # no word in common: the whole name may still be a close spelling
+        for candidate in difflib.get_close_matches(lowered, list(names), n=limit, cutoff=0.75):
+            item_id = names[candidate]
+            scored.setdefault(item_id, (0, difflib.SequenceMatcher(None, lowered, candidate).ratio(), candidate))
+    best = sorted(scored.items(), key=lambda pair: (-pair[1][0], -pair[1][1], pair[1][2]))[:limit]
+    result = []
+    for item_id, (_, _, candidate) in best:
+        item = info.get(item_id, {})
+        entry = {"id": item_id, "name": item.get("name", candidate)}
+        if category_key:
+            entry["category"] = item.get(category_key, "")
+        result.append(entry)
+    return result
+
+
 def find_similar_subcategories(
     name: str,
     name_to_id: dict[str, int],
     subcategory_info: dict[int, dict[str, Any]],
     limit: int = 5,
 ) -> list[dict[str, Any]]:
-    """Find subcategories similar to the given name (for error suggestions).
+    """Subcategories closest to an unknown name (for error suggestions): most shared words first,
+    singular and plural alike, then the closest spelling. Each: id, name, category."""
+    return _ranked_names(name, name_to_id, subcategory_info, limit, "category_name")
 
-    Args:
-        name: Search query
-        name_to_id: Dict mapping lowercase subcategory names to IDs
-        subcategory_info: Dict mapping subcategory ID to info dict with 'name' and 'category_name'
-        limit: Max results to return
 
-    Returns:
-        List of similar subcategory dicts with id, name, category.
-    """
-    name_lower = name.lower()
-    matches = []
-
-    for subcat_name_lower, subcat_id in name_to_id.items():
-        # Check if any word from the query appears in the subcategory name
-        words = name_lower.split()
-        for word in words:
-            if len(word) >= 3 and word in subcat_name_lower:
-                subcat_info = subcategory_info.get(subcat_id, {})
-                matches.append({
-                    "id": subcat_id,
-                    "name": subcat_info.get("name", subcat_name_lower),
-                    "category": subcat_info.get("category_name", ""),
-                })
-                break
-
-    # Dedupe and limit
-    seen: set[int] = set()
-    unique = []
-    for m in matches:
-        if m["id"] not in seen:
-            seen.add(m["id"])
-            unique.append(m)
-            if len(unique) >= limit:
-                break
-
-    return unique
+def find_similar_categories(
+    name: str,
+    name_to_id: dict[str, int],
+    category_info: dict[int, dict[str, Any]],
+    limit: int = 5,
+) -> list[dict[str, Any]]:
+    """Categories closest to an unknown name, ranked like find_similar_subcategories. Each: id, name."""
+    return _ranked_names(name, name_to_id, category_info, limit, None)
 
 
 # Known part types with no JLCPCB catalog bucket. Keep these separate from real targets.

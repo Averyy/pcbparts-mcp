@@ -74,8 +74,8 @@ from .db_worker import COMPONENT_POOL, run_db
 from .easyeda_store import EasyEDAStore, FootprintAnswer, answer_problem, pick_answer
 from .land import CONNECTOR_LAND_HINT, LAND_NOTE, compare_land, first_pad, land_rank
 from .pinout import parse_easyeda_footprint
-from .manufacturer_aliases import KNOWN_MANUFACTURERS, MANUFACTURER_ALIASES
 from .mounting import detect_mounting_type, english_package
+from .search.resolvers import resolve_manufacturer
 from .search.result import pcba_type_from_item
 from .rf_coverage import COVERAGE_ORDER, RF_BAND_SUBCATEGORIES, check_candidates
 from .alternatives import (
@@ -137,12 +137,6 @@ async def _sent(source: str, request: Awaitable[Any]) -> Any:
     return response
 
 
-def _normalize_manufacturer_name(name: str) -> str:
-    """Normalize manufacturer name for matching: lowercase, remove punctuation, collapse spaces."""
-    normalized = re.sub(r'[.,\-\(\)&]', ' ', name.lower())  # Replace punctuation with space
-    return re.sub(r'\s+', ' ', normalized).strip()  # Collapse multiple spaces
-
-
 def _normalize_package_for_matching(pkg: str) -> str:
     """Normalize package name for fuzzy matching.
 
@@ -162,17 +156,6 @@ def _normalize_package_for_matching(pkg: str) -> str:
     pkg = re.sub(r"^(CASE-[A-Z]-\d{4})-\d{1,2}\(mm\)$", r"\1", pkg)
     return pkg
 
-# Build case-insensitive lookup for exact manufacturer names
-# This allows "molex" to match "MOLEX" without explicit aliases
-_MANUFACTURER_EXACT_NAMES: dict[str, str] = {name.lower(): name for name in KNOWN_MANUFACTURERS}
-
-# Build normalized lookups (without punctuation) for fuzzy matching
-_MANUFACTURER_ALIASES_NORMALIZED: dict[str, str] = {
-    _normalize_manufacturer_name(k): v for k, v in MANUFACTURER_ALIASES.items()
-}
-_MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
-    _normalize_manufacturer_name(name): name for name in KNOWN_MANUFACTURERS
-}
 
 # A datasheet_pdf link closer than this to expiring isn't served: the caller needs time to fetch it
 PDF_LINK_MIN_REMAINING = 300
@@ -383,6 +366,7 @@ class JLCPCBClient:
         self._categories: list[dict[str, Any]] = []
         self._category_map: dict[int, dict[str, Any]] = {}  # id -> category
         self._category_name_map: dict[str, int] = {}  # lowercase name -> category_id (O(1) lookup)
+        self._catalog_extra: tuple | None = None  # add_catalog_ids' arguments, reapplied by set_categories
         self._subcategory_map: dict[int, tuple[int, dict[str, Any]]] = {}  # id -> (parent_id, subcategory)
         self._subcategory_name_map: dict[str, int] = {}  # name -> subcategory_id
         # EasyEDA footprint cache: lcsc -> (timestamp, result_dict, is_error)
@@ -444,6 +428,27 @@ class JLCPCBClient:
                 self._subcategory_map[sub["id"]] = (cat["id"], sub)
                 # Store lowercase for case-insensitive matching
                 self._subcategory_name_map[sub["name"].lower()] = sub["id"]
+        if self._catalog_extra is not None:  # a new listing keeps the whole catalog's IDs and names
+            self.add_catalog_ids(*self._catalog_extra)
+
+    def add_catalog_ids(self, categories: dict[int, dict[str, Any]], subcategories: dict[int, dict[str, Any]],
+                        subcategory_names: dict[str, int] | None = None) -> None:
+        """Every category and subcategory the catalog has, including those with no part in the
+        snapshot (set_categories leaves them out of the listing): jlc_stock_check looks for exactly
+        those parts. Their IDs and names then resolve here as jlc_search resolves them (the same
+        names, so "Stepper motor" is the subcategory of that name, not Stepper Motor Driver)."""
+        self._catalog_extra = (categories, subcategories, subcategory_names)
+        for cat_id, cat in categories.items():
+            if cat_id not in self._category_map:
+                entry = {"id": cat_id, "name": cat["name"], "count": 0, "subcategories": []}
+                self._category_map[cat_id] = entry
+                self._build_category_name_mappings(entry)
+        for sub_id, sub in subcategories.items():
+            if sub_id not in self._subcategory_map and sub.get("category_id") in self._category_map:
+                self._subcategory_map[sub_id] = (sub["category_id"], {"id": sub_id, "name": sub["name"], "count": 0})
+                self._subcategory_name_map.setdefault(sub["name"].lower(), sub_id)
+        if subcategory_names:  # the catalog's own map, in its order: partial names then tie the same way
+            self._subcategory_name_map = dict(subcategory_names)
 
     def _build_category_name_mappings(self, cat: dict[str, Any]) -> None:
         """Build O(1) name lookup mappings for a category.
@@ -466,7 +471,9 @@ class JLCPCBClient:
             and not name_lower.endswith("ches")
             and not name_lower.endswith("shes")
         ):
-            self._category_name_map[name_lower[:-1]] = cat["id"]
+            # "Others" must not take the name of the category called "other" (an exact name, set
+            # before or after this, always wins)
+            self._category_name_map.setdefault(name_lower[:-1], cat["id"])
 
     def _get_jlcpcb_session(self) -> wafer.AsyncSession:
         """Get or create persistent JLCPCB session.
@@ -662,30 +669,9 @@ class JLCPCBClient:
     }
 
     def _resolve_manufacturer(self, name: str) -> str:
-        """Resolve manufacturer alias to full name.
-
-        Lookup order:
-        1. Check aliases exactly (case-insensitive)
-        2. Check exact manufacturer names (case-insensitive)
-        3. Check aliases with normalized punctuation
-        4. Check manufacturer names with normalized punctuation
-        5. Return original name unchanged
-        """
-        name_lower = name.lower()
-        # Check aliases first (abbreviations and alternate names)
-        if name_lower in MANUFACTURER_ALIASES:
-            return MANUFACTURER_ALIASES[name_lower]
-        # Check if it matches a known manufacturer name (case-insensitive)
-        if name_lower in _MANUFACTURER_EXACT_NAMES:
-            return _MANUFACTURER_EXACT_NAMES[name_lower]
-        # Try normalized matching (ignore punctuation like . , - & etc)
-        name_normalized = _normalize_manufacturer_name(name)
-        if name_normalized in _MANUFACTURER_ALIASES_NORMALIZED:
-            return _MANUFACTURER_ALIASES_NORMALIZED[name_normalized]
-        if name_normalized in _MANUFACTURER_EXACT_NORMALIZED:
-            return _MANUFACTURER_EXACT_NORMALIZED[name_normalized]
-        # Return original unchanged
-        return name
+        """Resolve manufacturer alias to full name, as jlc_search resolves it: aliases, then known
+        names (any case), then both ignoring punctuation; else the name unchanged."""
+        return resolve_manufacturer(name)
 
     def _resolve_manufacturers(self, names: list[str]) -> list[str]:
         """Resolve a list of manufacturer names/aliases."""

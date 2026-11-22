@@ -246,7 +246,7 @@ class PackingRule:
 
 
 PACKING_RULES = tuple(PackingRule(vendors, re.compile(pattern)) for vendors, pattern in [
-    (("Analog Devices",), r"(?P<base>AD[A-Z]*\d[A-Z0-9]*?)(?:REEL7|REEL|R7)?"),
+    (("Analog Devices",), r"(?P<base>AD[A-Z]*\d[A-Z0-9]*?)(?:REEL7|REEL|RL7|RL|R7)?"),
     (("Analog Devices",), r"(?P<base>LTC?\d[A-Z0-9]*)#(?:TR)?PBF"),
     (("Texas Instruments",), r"(?P<base>[A-Z]+\d[A-Z0-9]*[A-Z]{2})[RT](?P<tail>Q1)?(?:G4|E6)?"),
     (("Texas Instruments",), r"(?P<base>ISO7741FQDWW)[RT]?(?P<tail>Q1)"),
@@ -269,6 +269,10 @@ PACKING_RULES = tuple(PackingRule(vendors, re.compile(pattern)) for vendors, pat
     (("Vishay Intertech",), r"(?P<base>SMBJ\d+[A-Z0-9]*M3)[IH]"),
     (("Nichicon",), r"(?P<base>URZ[A-Z0-9]+MHD)(?:1TO)?"),
     (("Diodes Incorporated",), r"(?P<base>FL\d+)(?:TR)?(?:ND)?"),
+    # Toshiba's lead-free/RoHS and tape codes only (JLCPCB often drops the closing bracket). Ranks
+    # and other codes in the same brackets ((GB-TPL,SE, (D4-TP,E) or after a comma (,LXHF, ,L3F)
+    # are a different grade or qualification, so they never match.
+    (("TOSHIBA",), r"(?P<base>[A-Z0-9]*\d[A-Z0-9]*?)(?:,LF|\((?:TP|TPL|TPR|TE85L),[EF]\)?|\([EF]\)?)?"),
 ])
 
 

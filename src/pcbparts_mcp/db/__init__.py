@@ -422,6 +422,25 @@ class ComponentDatabase:
         return get_subcategory_name(subcategory_id, self._subcategories)
 
     @_reads
+    def catalog_ids(self) -> tuple[dict[int, dict[str, Any]], dict[int, dict[str, Any]]]:
+        """Every category and subcategory (id -> info), with or without parts in the snapshot."""
+        self._ensure_db()
+        return self._categories, self._subcategories
+
+    @_reads
+    def subcategory_name_map(self) -> dict[str, int]:
+        """Every subcategory's lowercase name -> id, as jlc_search resolves names."""
+        self._ensure_db()
+        return self._subcategory_name_to_id
+
+    @_reads
+    def get_category_name(self, category_id: int) -> str | None:
+        """Get category name by ID."""
+        self._ensure_db()
+        found = self._categories.get(category_id)
+        return found["name"] if found else None
+
+    @_reads
     def get_category_for_subcategory(self, subcategory_id: int) -> tuple[int, str] | None:
         """Get category (id, name) for a subcategory."""
         self._ensure_db()
@@ -442,6 +461,14 @@ class ComponentDatabase:
         if self._search_engine:
             return self._search_engine.resolve_category_name(name)
         return None
+
+    @_reads
+    def _find_similar_categories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
+        """Find categories similar to the given name (for error suggestions)."""
+        self._ensure_db()
+        if self._search_engine:
+            return self._search_engine._find_similar_categories(name, limit)
+        return []
 
     @_reads
     def _find_similar_subcategories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
@@ -488,6 +515,7 @@ class ComponentDatabase:
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,
+        manufacturers: list[str] | None = None,
         mounting_type: str | None = None,
         match_all_terms: bool = True,
         sort_by: Literal["stock", "price", "relevance"] = "stock",
@@ -521,6 +549,7 @@ class ComponentDatabase:
             package: Package filter (exact match, single value)
             packages: Package filter (exact match, multiple values with OR logic)
             manufacturer: Manufacturer filter (exact match)
+            manufacturers: More manufacturers (OR with manufacturer)
             mounting_type: Mounting type filter ("Through Hole" or "SMD")
             match_all_terms: FTS matching mode (default True)
             sort_by: "stock" (default), "price", or "relevance" (requires query)
@@ -562,6 +591,7 @@ class ComponentDatabase:
             package=package,
             packages=packages,
             manufacturer=manufacturer,
+            manufacturers=manufacturers,
             mounting_type=mounting_type,
             match_all_terms=match_all_terms,
             sort_by=sort_by,

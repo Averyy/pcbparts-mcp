@@ -58,7 +58,7 @@ HTTP_HOST = os.getenv("HTTP_HOST", "").strip() or "0.0.0.0"
 HTTP_PORT = number_setting("HTTP_PORT", 8080, 1, maximum=65535)
 # Optional application log, separate from stdout's per-request log. Docker keeps it on the cache volume.
 LOG_PATH = os.getenv("LOG_PATH", "")
-LOG_KEEP_DAYS = number_setting("LOG_KEEP_DAYS", 7, 1)
+LOG_KEEP_DAYS = number_setting("LOG_KEEP_DAYS", 30, 1)
 LOG_MAX_BYTES_PER_DAY = number_setting("LOG_MAX_BYTES_PER_DAY", 50_000_000, 1)
 # Requests a rolling minute per address (IPv4) or /64 (IPv6), at least 1. HTTP requests, not tool
 # calls: most clients send three per call, and a BOM tool loading a board at its normal pace sends

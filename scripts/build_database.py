@@ -824,6 +824,9 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("CREATE INDEX idx_library_type ON components(library_type)")
     conn.execute("CREATE INDEX idx_package ON components(package)")
     conn.execute("CREATE INDEX idx_manufacturer ON components(manufacturer)")
+    # jlc_search's manufacturer filters compare LOWER(manufacturer): without this a maker-only search
+    # read every part in stock (about 650 ms)
+    conn.execute("CREATE INDEX idx_manufacturer_lower ON components(LOWER(manufacturer))")
     conn.execute("CREATE INDEX idx_mpn ON components(mpn)")
     # Match lookup.py's ASCII-only case-insensitive exact and normalized MPN queries.
     conn.execute("CREATE INDEX idx_mpn_lower ON components(LOWER(mpn))")

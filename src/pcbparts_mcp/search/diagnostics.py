@@ -20,7 +20,7 @@ def next_search(query: str | None, plan: dict) -> dict | None:
     if plan.get('subcategory_ids'):
         return None
     names = ('subcategory_id','subcategory_name','category_id','category_name','min_stock',
-             'package','packages','manufacturer','mounting_type','match_all_terms','pcba_type')
+             'package','packages','manufacturer','manufacturers','mounting_type','match_all_terms','pcba_type')
     # Mounting is not a public argument: retain it through an explicit query word.
     words = ' '.join(v for v in (plan.get('part_number') or query, plan.get('mounting_type')) if v)
     args = {k:plan[k] for k in names if k != 'mounting_type' and plan.get(k) is not None}

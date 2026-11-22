@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>PCB Parts usage</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/static/style.css">
+  <script type="module" src="/static/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo"><img src="/static/favicon.svg" alt=""><span class="logo-text">PCB <span class="dim">Parts usage</span></span></div>
+      <div class="board-status" id="board-status" aria-live="polite">
+        <span class="led" id="led" data-state="unknown" hidden><i></i><span id="led-text"></span></span>
+      </div>
+      <div class="fetch-state" id="fetch-state" aria-live="polite">
+        <span class="fetch-text" id="fetch-text"></span>
+        <button type="button" class="btn-copper" id="refresh" title="Ask the server for fresh numbers now">Refresh</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="boot" id="boot">Loading the numbers…</div>
+    <div id="app" hidden>
+      <div class="controls">
+        <div class="ranges" role="group" aria-label="Range" id="ranges"></div>
+        <div class="range-text" id="range-text"></div>
+      </div>
+
+      <section class="attention" id="attention" aria-label="Worth a look"></section>
+
+      <section class="kpis" aria-label="Headline numbers">
+        <figure class="card hero" id="hero"></figure>
+        <div class="tiles" id="tiles"></div>
+      </section>
+
+      <section class="card" id="traffic" data-ref="U1"></section>
+      <section class="card" id="tools" data-ref="U2"></section>
+      <section class="card" id="clients" data-ref="U3"></section>
+      <section class="card" id="errors" data-ref="U4"></section>
+      <section class="card" id="upstreams" data-ref="U5"></section>
+      <section class="card" id="capacity" data-ref="U6"></section>
+      <section class="card" id="search" data-ref="U7"></section>
+      <section class="card" id="events" data-ref="U8"></section>
+    </div>
+  </main>
+
+  <footer id="footer" hidden>
+    <div class="inner">
+    <div class="brand"><img src="/static/favicon.svg" alt=""><span>PCB <span class="dim">Parts usage</span></span></div>
+    <p id="footer-time"></p>
+    <p id="footer-source"></p>
+    </div>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+  <div class="pcb-grain" aria-hidden="true"></div>
+</body>
+</html>

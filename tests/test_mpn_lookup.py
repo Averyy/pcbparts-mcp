@@ -194,6 +194,44 @@ def test_packing_preserves_device_and_manufacturer(catalog, query, target, wrong
     assert info == {"match": "packing", "matched_mpn": target}
 
 
+# 0.10.6, from prod's misses on 2026-11-21 (jlc_get_parts said not_found for parts in stock): ADI's
+# -RL reel codes and Toshiba's packing codes. jlc_get_parts matches without full text, so the
+# packing rules find these; jlc_get_part's full text still answers first, as "related" (unchanged).
+@pytest.mark.parametrize("asked,listed,other_device,vendor", [
+    ("ADM3057EBRWZ", "ADM3057EBRWZ-RL", "ADM3053BRWZ-RL", "Analog Devices"),
+    ("ADUM1201ARZ", "ADUM1201ARZ-RL7", "ADUM1201BRZ-RL7", "Analog Devices"),
+    ("TLP172A", "TLP172A(TP,F)", "TLP172AM(TPL,E", "TOSHIBA"),
+    ("TC7SZ08FU", "TC7SZ08FU(TE85L,F)", "TC7SZ32FU(TE85L,F)", "TOSHIBA"),
+    ("SSM3K324R", "SSM3K324R,LF", "SSM3K324R,LXHF", "TOSHIBA"),
+    ("TLP2745", "TLP2745(E", "TLP2745(D4-TP,E", "TOSHIBA"),
+])
+def test_batch_lookups_find_the_makers_packing_codes(catalog, asked, listed, other_device, vendor):
+    conn = catalog([(listed, vendor), (listed, "Other Manufacturer"), (other_device, vendor)])
+    info = {}
+    assert [p["lcsc"] for p in get_by_mpn(conn, asked, {}, match_info=info, full_text=False)] == ["C1"]
+    assert info == {"match": "packing", "matched_mpn": listed}
+    single = {}
+    get_by_mpn(conn, asked, {}, match_info=single)
+    assert single.get("match") == "related"  # jlc_get_part: full text first, as before
+
+
+@pytest.mark.parametrize("asked,listed", [
+    ("TLP185", "TLP185(GB-TPL,SE"),  # GB: a CTR rank
+    ("TLP2745", "TLP2745(D4-TP,E"),  # D4: a rank
+    ("SSM3K324R", "SSM3K324R,LXHF"),  # another qualification
+    ("SSM3K324R", "SSM3K324R,L3F"),
+    ("TLP172A", "TLP172AM(TPL,E"),  # another device
+])
+def test_toshiba_ranks_and_other_codes_stay_distinct(catalog, asked, listed):
+    conn = catalog([(listed, "TOSHIBA")])
+    assert get_by_mpn(conn, asked, {}, full_text=False) == []
+
+
+def test_toshibas_rule_is_toshibas_only(catalog):
+    conn = catalog([("TLP172A(TP,F)", "Other Manufacturer")])
+    assert get_by_mpn(conn, "TLP172A", {}, full_text=False) == []
+
+
 def test_no_unlisted_generic_suffix_stripping(catalog):
     conn = catalog([("RANDOM123", "Texas Instruments"), ("ABC123", "Analog Devices")])
     assert get_by_mpn(conn, "RANDOM123R", {}) == []
