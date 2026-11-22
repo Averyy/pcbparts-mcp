@@ -29,6 +29,9 @@ landing
 .env.example
 *.md
 
+# The usage dashboard builds its own image from dashboard/
+dashboard
+
 # The scrape's price breaks, downloaded by docker-build.yml (not in git): the database build reads
 # them from the data/catalog bind mount, so they must stay in the build context
 !data/catalog/price_tiers.tsv.gz

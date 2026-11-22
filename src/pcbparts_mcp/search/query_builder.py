@@ -388,6 +388,16 @@ def build_manufacturer_clause(manufacturer: str) -> tuple[str, list[str]]:
     return "", []
 
 
+def build_manufacturers_clause(manufacturers: list[str]) -> tuple[str, list[str]]:
+    """Filter clause for any of several manufacturers (already resolved; OR, case-insensitive)."""
+    names = list(dict.fromkeys(name for name in manufacturers if name))
+    if not names:
+        return "", []
+    if len(names) == 1:
+        return build_manufacturer_clause(names[0])
+    return f"AND LOWER(manufacturer) IN ({', '.join('LOWER(?)' for _ in names)})", names
+
+
 def build_mounting_type_clause(mounting_type: str | None) -> tuple[str, list[str]]:
     """Build mounting type filter clause.
 

@@ -17,7 +17,9 @@ from ..parsers import (
     RESISTANCE_MATCH_TOLERANCE, parse_dimensions_from_package, parse_esp32_module_memory, parse_resistance, parse_voltage, parse_impedance_at_freq,
 )
 from ..subcategory_aliases import (
+    CATEGORY_NOT_FOUND_HINT, SUBCATEGORY_NOT_FOUND_HINT,
     resolve_subcategory_name as _resolve_subcategory_name,
+    find_similar_categories as _find_similar_categories,
     find_similar_subcategories as _find_similar_subcategories,
 )
 from .spec_filter import (
@@ -38,6 +40,7 @@ from .query_builder import (
     package_has_constraints,
     resolve_package_constraints,
     build_manufacturer_clause,
+    build_manufacturers_clause,
     build_mounting_type_clause,
     build_pcba_type_clause,
     build_spec_filter_clauses,
@@ -468,6 +471,10 @@ class SearchEngine:
         matches.sort(key=lambda x: len(x[0]))
         return matches[0][1]
 
+    def _find_similar_categories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
+        """Categories closest to an unknown name (error suggestions)."""
+        return _find_similar_categories(name, self._category_name_to_id, self._categories, limit)
+
     def _find_similar_subcategories(self, name: str, limit: int = 5) -> list[dict[str, Any]]:
         """Find subcategories similar to the given name (for error suggestions)."""
         return _find_similar_subcategories(
@@ -483,7 +490,7 @@ class SearchEngine:
         library_type: str | None,
         min_stock: int,
         expanded_packages: list[str],
-        manufacturer: str | None,
+        manufacturer: str | list[str] | None,
         mounting_type: str | None,
         match_all_terms: bool,
         sort_by: Literal["stock", "price", "relevance"],
@@ -582,8 +589,8 @@ class SearchEngine:
 
         # Manufacturer filter
         if manufacturer:
-            resolved_mfr = resolve_manufacturer(manufacturer)
-            mfr_sql, mfr_params = build_manufacturer_clause(resolved_mfr)
+            names = [manufacturer] if isinstance(manufacturer, str) else manufacturer
+            mfr_sql, mfr_params = build_manufacturers_clause([resolve_manufacturer(name) for name in names])
             sql_parts.append(mfr_sql)
             count_parts.append(mfr_sql)
             params.extend(mfr_params)
@@ -900,6 +907,7 @@ class SearchEngine:
         package: str | None = None,
         packages: list[str] | None = None,
         manufacturer: str | None = None,
+        manufacturers: list[str] | None = None,
         mounting_type: str | None = None,
         match_all_terms: bool = True,
         sort_by: Literal["stock", "price", "relevance"] = "stock",
@@ -932,6 +940,7 @@ class SearchEngine:
             package: Single package filter
             packages: Multiple package filter (OR logic)
             manufacturer: Manufacturer filter
+            manufacturers: Several manufacturers (OR); replaces manufacturer
             mounting_type: Filter by mounting type ("Through Hole" or "SMD")
             match_all_terms: FTS matching mode
             sort_by: Sort order
@@ -959,7 +968,7 @@ class SearchEngine:
                 similar = self._find_similar_subcategories(subcategory_name, limit=5)
                 return {
                     "error": f"Subcategory not found: '{subcategory_name}'",
-                    "hint": "Use jlc_search_help() to browse categories, then jlc_search_help(category='Power Management (PMIC)') for subcategories",
+                    "hint": SUBCATEGORY_NOT_FOUND_HINT,
                     "similar_subcategories": similar,
                     "results": [],
                     "total": 0,
@@ -976,7 +985,8 @@ class SearchEngine:
             if resolved_category_id is None:
                 return {
                     "error": f"Category not found: '{category_name}'",
-                    "hint": "Use jlc_search_help() to see available categories",
+                    "hint": CATEGORY_NOT_FOUND_HINT,
+                    "similar_categories": self._find_similar_categories(category_name, limit=5),
                     "results": [],
                     "total": 0,
                     "library_type_counts": {"basic": 0, "preferred": 0, "extended": 0},
@@ -1043,6 +1053,8 @@ class SearchEngine:
                     ))
             spec_filters = mapped_filters
 
+        # The list replaces the single name, as packages replaces package here and in jlc_stock_check
+        maker_filter = manufacturers or manufacturer or None
         # Execute the search
         search_result = self._execute_search(
             query=query,
@@ -1052,7 +1064,7 @@ class SearchEngine:
             library_type=library_type,
             min_stock=min_stock,
             expanded_packages=expanded_packages,
-            manufacturer=manufacturer,
+            manufacturer=maker_filter,
             mounting_type=mounting_type,
             match_all_terms=match_all_terms,
             sort_by=sort_by,
@@ -1091,7 +1103,7 @@ class SearchEngine:
                     library_type=library_type,
                     min_stock=min_stock,
                     expanded_packages=expanded_packages,
-                    manufacturer=manufacturer,
+                    manufacturer=maker_filter,
                     mounting_type=mounting_type,
                     match_all_terms=match_all_terms,
                     sort_by=sort_by,
@@ -1145,6 +1157,7 @@ class SearchEngine:
                 "package": package,
                 "packages": packages,
                 "manufacturer": manufacturer,
+                "manufacturers": manufacturers,
                 "match_all_terms": match_all_terms,
             },
             "library_type_counts": library_type_counts,

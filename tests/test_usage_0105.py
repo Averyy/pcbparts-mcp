@@ -553,6 +553,12 @@ async def test_stock_empty_split_leaves_reply_unchanged(monkeypatch, args, reaso
         async def search(self, **kwargs):
             return reply.copy()
 
+        def _get_category(self, category_id):  # IDs it knows (0.10.6 refuses others)
+            return {"id": category_id, "name": "Resistors"}
+
+        def _get_subcategory(self, subcategory_id):
+            return 1, {"id": subcategory_id, "name": "Chip Resistor - Surface Mount"}
+
     monkeypatch.setattr(server, "_client", Live())
     monkeypatch.setattr(server, "get_db", lambda: SimpleNamespace(
         mpns_containing=lambda fragment: [], upstream_packages=lambda wanted: wanted))

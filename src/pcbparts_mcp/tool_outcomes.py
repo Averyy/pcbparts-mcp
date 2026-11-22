@@ -24,7 +24,7 @@ _NOT_FOUND_ERRORS = (
 # re.S: messages echo caller input, which can hold a newline ("Board 'a\nb' not found")
 _BAD_REQUEST_ERRORS = [(label, re.compile(pattern, re.S)) for label, pattern in (
     ("category_not_found", r"(Subcategory|Category) not found: "),
-    ("category_not_found", r"Subcategory ID \S+ not found$"),
+    ("category_not_found", r"(Subcategory|Category) ID \S+ not found$"),
     ("too_long", r"[\w ]+ too long \(max \d+ characters\)$"),
     ("too_many", r"Too many "),
     ("invalid_value", r"Invalid [\w ]+: "),

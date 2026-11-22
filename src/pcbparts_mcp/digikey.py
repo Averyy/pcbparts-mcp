@@ -241,7 +241,7 @@ class DigiKeyClient:
         self._closed = False
         self._address_daily = address_daily if site is not None else None
         self.callers = CallerTally("DigiKey") if site is not None else None
-        self.held_back = CallerTally("DigiKey", what="calls held back") if site is not None else None
+        self.held_back = CallerTally("DigiKey", top=None, what="calls held back") if site is not None else None
         self._inflight: dict[str, asyncio.Task] = {}  # cache key -> its running site lookup
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:

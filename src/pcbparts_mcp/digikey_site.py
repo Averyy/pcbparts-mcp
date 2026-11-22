@@ -88,8 +88,13 @@ class SiteRefused(Exception):
 
 def _refused_request(reason: str) -> "SiteRefused":
     """A request the site refused, counted for /mcp/stats (distributor_limits.digikey.refusals) as
-    it's classified, once per request: a lookup stopped or cancelled afterwards loses none."""
-    stats.count_distributor_limit("digikey", "refusals", "refused")
+    it's classified, once per lookup or batch (0.10.4's meaning): its first refused request counts,
+    others in the same lookup or batch don't, and a lookup stopped or cancelled afterwards keeps it."""
+    counted = _batch_refused.get()
+    if counted is None or not counted[0]:
+        stats.count_distributor_limit("digikey", "refusals", "refused")
+        if counted is not None:
+            counted[0] = True
     return SiteRefused(reason)
 
 
@@ -132,15 +137,17 @@ _batch_number: contextvars.ContextVar[str | None] = contextvars.ContextVar("digi
 # statuses(held=...): told at once when a number gives up waiting for a slot before its first request
 _batch_held: contextvars.ContextVar[Callable[[str, "SiteUnavailable"], None] | None] = contextvars.ContextVar(
     "digikey_batch_held", default=None)
+# Whether the lookup or batch has had its refusal counted (a one-item list its tasks share)
+_batch_refused: contextvars.ContextVar[list[bool] | None] = contextvars.ContextVar("digikey_batch_refused", default=None)
 
 
 @contextlib.contextmanager
 def _scope(sent: set[str] | None, charge: Callable[[str], bool] | None, number: str | None = None,
            held: Callable[[str, "SiteUnavailable"], None] | None = None) -> Iterator[None]:
-    """One lookup's or batch's sent set, charge and held callback (and a lookup's number) for the
-    requests it makes."""
+    """One lookup's or batch's sent set, charge, held callback and refusal flag (and a lookup's
+    number) for the requests it makes."""
     tokens = [(_batch_sent, _batch_sent.set(set() if sent is None else sent)), (_batch_charge, _batch_charge.set(charge)),
-              (_batch_held, _batch_held.set(held))]
+              (_batch_held, _batch_held.set(held)), (_batch_refused, _batch_refused.set([False]))]
     if number is not None:
         tokens.append((_batch_number, _batch_number.set(number)))
     try:

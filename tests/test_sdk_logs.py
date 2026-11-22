@@ -190,3 +190,22 @@ server.main()
         assert "Traceback" not in text and "ClientDisconnect)" in text and "ClosedResourceError)" in text
         assert "Client disconnected before sending its whole request" in text
         assert "Stateless session ended after its client disconnected" in text
+
+
+async def test_fastmcps_invalid_arguments_line_keeps_five_problems_and_short_values(installed, caplog):
+    """A request can hold 20,000 unknown names; the line names five and counts the rest (0.10.6)."""
+    from fastmcp import Client
+    mcp = FastMCP("t")
+
+    @mcp.tool
+    def ping(text: str = "") -> str:
+        return "pong"
+
+    arguments = {"text": "x" * 5000, **{f"name_{n}": "v" * 300 for n in range(50)}}
+    with caplog.at_level(logging.WARNING, logger="fastmcp"):
+        async with Client(mcp) as client:
+            result = await client.call_tool("ping", arguments, raise_on_error=False)
+    assert result.is_error
+    lines = [r.getMessage() for r in caplog.records if r.getMessage().startswith("Invalid arguments for tool")]
+    assert len(lines) == 1 and lines[0].endswith(" and 45 more") and len(lines[0]) < 2000
+    assert "'name_0'" in lines[0] and "'name_5'" not in lines[0] and "v" * 101 not in lines[0]

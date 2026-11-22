@@ -349,7 +349,7 @@ async def test_each_cause_logs_one_held_back_line(clients, clock, caplog, name, 
         pool.held_back.flush_if_due()
         pool.held_back.flush_if_due()
     assert [r.message for r in caplog.records if "calls held back" in r.message] == [
-        f"{name} calls held back 2026-10-16 21:00-22:00 UTC: 1 from 1 IPs; top: {ADDRESS} 1"]
+        f"{name} calls held back 2026-10-16 21:00-22:00 UTC: 1 from 1 IPs; all: {ADDRESS} 1"]
     day = stats.usage.summary()["days"][0]
     assert day["distributor_limits"][name.lower()]["held_back"][cause] == 1
 
@@ -428,7 +428,7 @@ async def test_server_wires_default_caps_and_shutdown_flushes_tallies(clock, mon
                 health = json.loads((await server.health(None)).body)
                 assert "address_daily" not in json.dumps(health) and ADDRESS not in json.dumps(health)
     assert [r.message for r in caplog.records if "calls held back" in r.message] == [
-        f"{name} calls held back 2026-10-16 21:00-21:15 UTC: 1 from 1 IPs; top: {ADDRESS} 1"
+        f"{name} calls held back 2026-10-16 21:00-21:15 UTC: 1 from 1 IPs; all: {ADDRESS} 1"
         for name in ("Mouser", "DigiKey")]
 
 
@@ -484,3 +484,66 @@ async def test_minute_task_drops_previous_day_addresses_without_any_quota_pool(c
     with pytest.raises(asyncio.CancelledError):
         await server._every_minute()
     assert day._counts == {}
+
+
+# --- 0.10.6: who reaches the cap is always named ---
+
+def _tally_lines(caplog):
+    return [r.getMessage() for r in caplog.records if r.name == "pcbparts_mcp.cache"]
+
+
+def test_held_back_lines_name_every_address(caplog):
+    from pcbparts_mcp.cache import CallerTally
+    now = [1_792_000_000.0]
+    tally = CallerTally("DigiKey", lambda: now[0], top=None, what="calls held back")
+    for index in range(8):
+        for _ in range(index + 1):
+            tally.record(f"192.0.2.{index}")
+    with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):
+        tally.flush()
+    (line,) = _tally_lines(caplog)
+    assert "36 from 8 IPs; all: 192.0.2.7 8, " in line
+    assert all(f"192.0.2.{index} {index + 1}" in line for index in range(8))
+
+
+def test_a_long_held_back_list_continues_on_lines_that_fit_the_file_log(caplog):
+    from pcbparts_mcp.cache import CallerTally
+    from pcbparts_mcp.file_logging import MAX_MESSAGE_CHARS
+    tally = CallerTally("Mouser", lambda: 1_792_000_000.0, top=None, what="calls held back")
+    addresses = [f"2001:db8:{index:x}::/64" for index in range(400)]
+    for address in addresses:
+        tally.record(address)
+    with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):
+        tally.flush()
+    lines = _tally_lines(caplog)
+    assert len(lines) > 1 and all(len(line) <= MAX_MESSAGE_CHARS for line in lines)
+    assert "(continued, 2 of " in lines[1]
+    named = [item for line in lines for item in line.split("; all: ", 1)[1].split(", ")]
+    assert sorted(named) == sorted(f"{address} 1" for address in addresses)
+
+
+def test_requests_sent_lines_keep_the_top_five(caplog):
+    from pcbparts_mcp.cache import CallerTally
+    tally = CallerTally("Mouser", lambda: 1_792_000_000.0)
+    for index in range(8):
+        tally.record(f"192.0.2.{index}")
+    with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):
+        tally.flush()
+    (line,) = _tally_lines(caplog)
+    assert "8 from 8 IPs; top: " in line and line.count("192.0.2.") == 5
+
+
+def test_reaching_the_cap_logs_the_address_once(caplog):
+    from pcbparts_mcp.cache import AddressDailyQuota
+    now = [1_792_000_000.0]  # 2026-10-14 17:46 UTC
+    day = AddressDailyQuota(3, key=lambda ip: None if ip == "exempt" else ip, clock=lambda: now[0])
+    with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cache"):
+        day.record("192.0.2.1")
+        day.record("192.0.2.1")
+        assert not _tally_lines(caplog)
+        day.record("192.0.2.1")
+        day.record("192.0.2.1")
+        for _ in range(5):
+            day.record("exempt")
+    (line,) = _tally_lines(caplog)
+    assert line == "Mouser and DigiKey per-address limit: 192.0.2.1 reached its 3 lookups for 2026-10-14 at 17:46 UTC"

@@ -1,0 +1,9 @@
+secrets.local
+data/
+.venv/
+.git/
+.codex-dobby/
+.pytest_cache/
+**/__pycache__/
+tests/
+docs/

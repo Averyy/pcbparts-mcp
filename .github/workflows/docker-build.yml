@@ -147,6 +147,33 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
 
+      # The private usage dashboard (dashboard/) ships as its own small image. A failure here must
+      # not stop the MCP server's deploy below (the VPS then keeps the dashboard image it has).
+      - name: Extract usage dashboard metadata
+        id: meta-dashboard
+        continue-on-error: true
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dashboard
+          tags: |
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-,suffix=-{{date 'YYYYMMDD'}},format=short,enable=${{ github.event_name != 'pull_request' }}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push the usage dashboard image
+        if: steps.meta-dashboard.outcome == 'success'
+        continue-on-error: true
+        uses: docker/build-push-action@v7
+        with:
+          context: ./dashboard
+          file: ./dashboard/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-dashboard.outputs.tags }}
+          labels: ${{ steps.meta-dashboard.outputs.labels }}
+          cache-from: type=gha,scope=dashboard
+          cache-to: type=gha,mode=max,scope=dashboard
+          platforms: linux/amd64
+
       - name: Deploy to VPS
         if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v1.0.3
@@ -172,8 +199,16 @@ jobs:
             # Pull the new image while the old container still serves, then swap containers. Stopping
             # first (down, then pull) left the site down for the whole download: calls during deploys
             # got an empty 502 ("Error POSTing to endpoint:" in MCP clients). The app starts in ~1s.
-            docker compose pull
-            docker compose up -d --remove-orphans
+            docker compose pull pcbparts-mcp
+            docker compose up -d --remove-orphans pcbparts-mcp
+
+            # The usage dashboard comes second and on its own: a failed pull or start there never
+            # holds up the MCP server's deploy.
+            if docker compose pull pcbparts-dashboard; then
+              docker compose up -d pcbparts-dashboard || echo "Usage dashboard not started"
+            else
+              echo "Usage dashboard image not pulled (is the ghcr.io package public?)"
+            fi
 
             # Cleanup
             docker image prune -f

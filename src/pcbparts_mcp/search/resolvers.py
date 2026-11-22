@@ -125,6 +125,21 @@ _MANUFACTURER_LOWER_TO_EXACT: dict[str, str] = {
 }
 
 
+def normalize_manufacturer_name(name: str) -> str:
+    """Normalize manufacturer name for matching: lowercase, remove punctuation, collapse spaces."""
+    normalized = re.sub(r'[.,\-\(\)&]', ' ', name.lower())  # Replace punctuation with space
+    return re.sub(r'\s+', ' ', normalized).strip()  # Collapse multiple spaces
+
+
+# Normalized lookups (without punctuation) for fuzzy matching
+_MANUFACTURER_ALIASES_NORMALIZED: dict[str, str] = {
+    normalize_manufacturer_name(k): v for k, v in MANUFACTURER_ALIASES.items()
+}
+_MANUFACTURER_EXACT_NORMALIZED: dict[str, str] = {
+    normalize_manufacturer_name(name): name for name in KNOWN_MANUFACTURERS
+}
+
+
 def expand_package(package: str) -> list[str]:
     """Expand package name to include family variants.
 
@@ -175,6 +190,13 @@ def resolve_manufacturer(name: str) -> str:
     # Check case-insensitive match against known manufacturers
     if name_lower in _MANUFACTURER_LOWER_TO_EXACT:
         return _MANUFACTURER_LOWER_TO_EXACT[name_lower]
+
+    # Then both again, ignoring punctuation ("Texas-Instruments" is Texas Instruments)
+    normalized = normalize_manufacturer_name(name)
+    if normalized in _MANUFACTURER_ALIASES_NORMALIZED:
+        return _MANUFACTURER_ALIASES_NORMALIZED[normalized]
+    if normalized in _MANUFACTURER_EXACT_NORMALIZED:
+        return _MANUFACTURER_EXACT_NORMALIZED[normalized]
 
     # Return as-is (will use case-insensitive SQL match)
     return name

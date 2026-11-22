@@ -1434,7 +1434,7 @@ async def test_keyless_hourly_lines_sent_and_held_back(clock, caplog):
             client.held_back.flush()
         lines = [r.message for r in caplog.records]
         assert any(line.startswith("DigiKey requests sent ") and f"from 1 IPs; top: {CALLER} " in line for line in lines)
-        assert any(line.startswith("DigiKey calls held back ") and line.endswith(f"1 from 1 IPs; top: {CALLER} 1")
+        assert any(line.startswith("DigiKey calls held back ") and line.endswith(f"1 from 1 IPs; all: {CALLER} 1")
                    for line in lines)
     finally:
         await client.close()
@@ -2040,8 +2040,8 @@ async def test_close_stops_a_batch_still_waiting_for_a_slot(clock):
         store.close()
 
 
-async def test_each_refused_request_is_counted_once(clock):
-    """Two requests of one batch in flight, both refused: two refusals (counted as each is classified)."""
+async def test_a_batch_with_two_refused_requests_counts_one_refusal(clock):
+    """Two requests of one batch in flight, both refused: one refusal, per lookup or batch as in 0.10.4."""
     gate = asyncio.Event()
     session = Gated(gate, {"/suggestions": [Reply(403, {}), Reply(403, {})]})
     site, _ = make_site(clock, session, concurrency=2)
@@ -2052,6 +2052,19 @@ async def test_each_refused_request_is_counted_once(clock):
     with pytest.raises(SiteUnavailable):
         await task
     assert len(session.paths) == 2
+    assert stats.usage.summary()["days"][0]["distributor_limits"]["digikey"]["refusals"]["refused"] == 1
+
+
+async def test_two_lookups_refused_count_two_refusals(clock):
+    """Separate lookups each count their own refusal."""
+    session = Session({"/suggestions": [Reply(403, {}), Reply(403, {})]})
+    site, _ = make_site(clock, session)
+    with pytest.raises(SiteUnavailable):
+        await site.lookup("LM358DR")
+    clock.advance(DIGIKEY_SITE_PAUSE + 1)  # past the first refusal's pause, so the next one sends
+    with pytest.raises(SiteUnavailable):
+        await site.lookup("AO3400A")
+    assert sum(path.startswith("/suggestions") for path in session.paths) == 2
     assert stats.usage.summary()["days"][0]["distributor_limits"]["digikey"]["refusals"]["refused"] == 2
 
 

@@ -1,0 +1,26 @@
+[project]
+name = "pcbparts-dashboard"
+version = "0.1.0"
+description = "Private usage dashboard for the PCB Parts MCP server: polls /mcp/stats and serves one page"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+]
+
+[project.scripts]
+pcbparts-dashboard = "pcbparts_dashboard.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pcbparts_dashboard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

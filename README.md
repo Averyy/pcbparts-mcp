@@ -180,7 +180,7 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
 | `STATS_TOKEN` | empty | Bearer token for `/mcp/stats`; blank or unset refuses every stats request |
 | `LOG_PATH` | set in Docker; else empty | Application log file, kept across deploys (empty: none) |
-| `LOG_KEEP_DAYS` | `7` | Full days after a log file’s UTC day ends before deletion is due |
+| `LOG_KEEP_DAYS` | `30` | Full days after a log file’s UTC day ends before deletion is due |
 | `LOG_MAX_BYTES_PER_DAY` | `50000000` | Persistent application-log byte budget per UTC day; excess lines are dropped and counted (messages limited to 2,000 characters) |
 | `CALL_LOG_DIR` | `/app/cache/call-log` in Docker; else empty | Private call records and failed-search text; empty disables both |
 | `CALL_LOG_DAYS` | `30` | UTC days of call records to keep, including today (minimum 1) |

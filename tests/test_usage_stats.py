@@ -899,6 +899,8 @@ ERROR_REPLIES = {
     "Subcategory not found: '{}'": "bad_request",
     "Category not found: '{}'": "bad_request",
     "Subcategory ID {} not found": "bad_request",
+    "Category ID {} not found": "bad_request",
+    "Invalid subcategory: '{}' is in {}, not {}; give a subcategory of that category, or only one of them": "bad_request",
     "Must provide subcategory_id or subcategory_name": "bad_request",
     "Must provide either query or part_id": "bad_request",
     "Must provide either lcsc or mpn": "bad_request",

@@ -1,0 +1,335 @@
+"""Threaded HTTP serving and wall-clock-aligned background collection."""
+
+import base64
+import binascii
+import gzip
+import hmac
+import ipaddress
+import json
+import logging
+import math
+import socket
+import sys
+import threading
+from datetime import UTC, datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path, PurePosixPath
+from urllib.parse import parse_qs, unquote, urlsplit
+
+from .collector import collect
+from .config import Settings
+from .eastern import EASTERN
+from .payload import build_payload
+from .store import Store, utc_datetime
+
+logger = logging.getLogger(__name__)
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Content-Security-Policy": (
+        "default-src 'self'; style-src 'self' https://fonts.googleapis.com; "
+        "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; "
+        "frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+    ),
+}
+CONTENT_TYPES = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".woff2": "font/woff2",
+    ".json": "application/json",
+}
+
+
+def validate_bind(settings: Settings) -> None:
+    if settings.password or settings.host.lower() == "localhost":
+        return
+    try:
+        if ipaddress.ip_address(settings.host).is_loopback:
+            return
+    except ValueError:
+        pass
+    raise ValueError("DASHBOARD_PASSWORD is required when binding to a non-loopback host")
+
+
+class CollectionRunner:
+    """One gate for polling and refreshes, including their shared minimum interval."""
+
+    def __init__(self, settings: Settings, store: Store, *, clock=None, collector=None):
+        self.settings = settings
+        self.store = store
+        self.clock = clock or utc_datetime
+        self.collector = collector or collect
+        self.lock = threading.Lock()
+        self.last_started: datetime | None = None
+
+    def run(self, *, days=None) -> tuple[int, dict]:
+        if not self.lock.acquire(blocking=False):
+            return 429, {"error": "A collection is already running", "retry_after": 60}
+        try:
+            now = utc_datetime(self.clock())
+            if self.last_started is not None:
+                remaining = 60 - (now - self.last_started).total_seconds()
+                if remaining > 0:
+                    return 429, {"error": "Refresh is limited to once per 60 seconds", "retry_after": math.ceil(remaining)}
+            self.last_started = now
+            return 200, self.collector(self.settings, self.store, days=days, now=now)
+        finally:
+            self.lock.release()
+
+
+def next_poll_at(now: datetime, minutes: int) -> datetime:
+    """UTC slots are aligned multiples of the interval, offset by 30 seconds."""
+    if minutes < 5:
+        raise ValueError("POLL_MINUTES must be at least 5")
+    period = minutes * 60
+    slot = (math.floor((utc_datetime(now).timestamp() - 30) / period) + 1) * period + 30
+    return datetime.fromtimestamp(slot, UTC)
+
+
+class Poller(threading.Thread):
+    def __init__(self, runner: CollectionRunner, *, clock=None, sleep=None):
+        super().__init__(name="pcbparts-poller", daemon=True)
+        self.runner = runner
+        self.clock = clock or runner.clock
+        self.stopped = threading.Event()
+        self.sleep = sleep or self.stopped.wait
+
+    def stop(self) -> None:
+        self.stopped.set()
+
+    def run(self) -> None:
+        while not self.stopped.is_set():
+            try:
+                self.runner.run()
+            except Exception as exc:
+                # Exception text can contain request details; log only its type.
+                logger.error("Background collection failed (%s)", type(exc).__name__)
+            if self.stopped.is_set():
+                break
+            now = utc_datetime(self.clock())
+            delay = (next_poll_at(now, self.runner.settings.poll_minutes) - now).total_seconds()
+            self.sleep(delay)
+
+
+def _allows_gzip(header: str) -> bool:
+    encodings = {}
+    for item in header.lower().split(","):
+        name, *parameters = item.strip().split(";")
+        quality = 1.0
+        for parameter in parameters:
+            key, _, value = parameter.strip().partition("=")
+            if key == "q":
+                try:
+                    quality = float(value)
+                except ValueError:
+                    quality = 0.0
+        encodings[name.strip()] = quality if 0 <= quality <= 1 else 0.0
+    return encodings.get("gzip", encodings.get("*", 0)) > 0
+
+
+class DashboardHTTPServer(ThreadingHTTPServer):
+    settings: Settings
+    store: Store
+    runner: CollectionRunner
+    static_dir: Path
+    polling: bool = False
+
+    def data_reply(self, now: datetime) -> tuple[bytes, bytes]:
+        # Serialize cache fills as well as store reads; simultaneous page loads share one build.
+        with self._data_lock, self.store.lock:
+            key = (self.store.revision(), now.astimezone(EASTERN).date(), self.polling)
+            if self._data_cache is not None and self._data_cache[0] == key:
+                return self._data_cache[1:]
+            next_poll = next_poll_at(now, self.settings.poll_minutes) if self.polling else None
+            payload = build_payload(self.store, self.settings, now, next_poll=next_poll)
+            body = json.dumps(payload, separators=(",", ":")).encode()
+            compressed = gzip.compress(body, compresslevel=1, mtime=0)
+            # Keep the starting revision: an external commit during the build must invalidate it.
+            self._data_cache = (key, body, compressed)
+            return body, compressed
+
+
+class DashboardHandler(BaseHTTPRequestHandler):
+    server: DashboardHTTPServer
+    # http.server waits for a request line forever by default, and every connection holds a
+    # thread before any password is asked for. This is a socket timeout: it bounds a stalled
+    # read or write, not how long a collection may take.
+    timeout = 30
+
+    def end_headers(self) -> None:
+        for key, value in SECURITY_HEADERS.items():
+            self.send_header(key, value)
+        if getattr(self, "path", "").split("?", 1)[0].startswith("/api/"):
+            self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def log_request(self, code="-", size="-") -> None:
+        path = getattr(self, "path", "").split("?", 1)[0]
+        # Escape control characters rather than letting a request forge log lines.
+        print(f"{self.command} {json.dumps(path, ensure_ascii=True)} {code}", file=sys.stderr)
+
+    def log_message(self, *_args) -> None:
+        # BaseHTTPRequestHandler otherwise logs arbitrary parse errors as well.
+        pass
+
+    def _send(self, status: int, body: bytes, content_type: str, headers=None) -> None:
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        for key, value in (headers or {}).items():
+            self.send_header(key, value)
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(body)
+
+    def _json(self, status: int, value, *, compress=False, headers=None) -> None:
+        body = json.dumps(value, separators=(",", ":")).encode()
+        extra_headers = dict(headers or {})
+        if compress:
+            extra_headers["Vary"] = "Accept-Encoding"
+            if _allows_gzip(self.headers.get("Accept-Encoding", "")):
+                body = gzip.compress(body, mtime=0)
+                extra_headers["Content-Encoding"] = "gzip"
+        self._send(status, body, "application/json; charset=utf-8", extra_headers)
+
+    def _authorized(self) -> bool:
+        settings = self.server.settings
+        if not settings.password or self.path.split("?", 1)[0] == "/healthz":
+            return True
+        authorization = self.headers.get("Authorization", "")
+        scheme, _, credentials = authorization.partition(" ")
+        if scheme.lower() == "basic":
+            try:
+                decoded = base64.b64decode(credentials, validate=True)
+                user, separator, password = decoded.partition(b":")
+                valid_user = hmac.compare_digest(user, settings.username.encode())
+                valid_password = hmac.compare_digest(password, settings.password.encode())
+                if separator and valid_user and valid_password:
+                    return True
+            except (ValueError, binascii.Error):
+                pass
+        self._json(401, {"error": "Authentication required"}, headers={
+            "WWW-Authenticate": 'Basic realm="pcbparts dashboard"',
+        })
+        return False
+
+    def _same_origin(self) -> bool:
+        """False for a request a browser made on behalf of another site.
+
+        Basic auth credentials ride along with any request the browser sends here, so without
+        this any page the user visits could start collections (each one calls the stats server,
+        and holds the poller's cooldown). Clients that send neither header are not browsers.
+        """
+        site = self.headers.get("Sec-Fetch-Site")
+        if site is not None:
+            return site.strip().lower() in ("same-origin", "none")
+        origin = self.headers.get("Origin")
+        if origin is None:
+            return True
+        return urlsplit(origin).netloc.lower() == self.headers.get("Host", "").strip().lower()
+
+    def _static(self, name: str) -> None:
+        relative = PurePosixPath(name)
+        if not name or relative.is_absolute() or ".." in relative.parts or "\\" in name or "\x00" in name:
+            self._json(404, {"error": "Not found"})
+            return
+        try:
+            target = (self.server.static_dir / name).resolve()
+            if not target.is_relative_to(self.server.static_dir) or not target.is_file():
+                self._json(404, {"error": "Not found"})
+                return
+            body = target.read_bytes()
+        except (OSError, RuntimeError, ValueError):
+            self._json(404, {"error": "Not found"})
+            return
+        self._send(200, body, CONTENT_TYPES.get(target.suffix.lower(), "application/octet-stream"))
+
+    def do_GET(self) -> None:
+        if not self._authorized():
+            return
+        path = urlsplit(self.path).path
+        if path == "/healthz":
+            self._json(200, {"ok": True})
+        elif path == "/api/data":
+            now = utc_datetime(self.server.runner.clock())
+            body, compressed = self.server.data_reply(now)
+            headers = {"Vary": "Accept-Encoding"}
+            if _allows_gzip(self.headers.get("Accept-Encoding", "")):
+                body = compressed
+                headers["Content-Encoding"] = "gzip"
+            self._send(200, body, "application/json; charset=utf-8", headers)
+        elif path in ("/", "/index.html"):
+            self._static("index.html")
+        elif path.startswith("/static/"):
+            self._static(unquote(path[len("/static/"):]))
+        else:
+            self._json(404, {"error": "Not found"})
+
+    do_HEAD = do_GET
+
+    def do_POST(self) -> None:
+        if not self._authorized():
+            return
+        target = urlsplit(self.path)
+        if target.path != "/api/refresh":
+            self._json(404, {"error": "Not found"})
+            return
+        if not self._same_origin():
+            self._json(403, {"error": "Cross-site requests are not accepted"})
+            return
+        full = parse_qs(target.query).get("full", [None])[0] == "1"
+        try:
+            status, result = self.server.runner.run(days=365 if full else None)
+        except Exception as exc:
+            logger.error("Manual collection failed (%s)", type(exc).__name__)
+            self._json(500, {"error": "Collection failed"})
+            return
+        headers = {"Retry-After": str(result["retry_after"])} if status == 429 else None
+        self._json(status, result, headers=headers)
+
+    def send_error(self, code, message=None, explain=None) -> None:
+        if code == 501:
+            if self._authorized():
+                self._json(404, {"error": "Not found"})
+        else:
+            self._json(code, {"error": self.responses.get(code, ("Request error",))[0]})
+
+
+def create_server(settings: Settings, store: Store, *, clock=None, collector=None, static_dir=None) -> DashboardHTTPServer:
+    validate_bind(settings)
+    server_class = DashboardHTTPServer
+    if ":" in settings.host:
+        class IPv6DashboardHTTPServer(DashboardHTTPServer):
+            address_family = socket.AF_INET6
+        server_class = IPv6DashboardHTTPServer
+    server = server_class((settings.host, settings.port), DashboardHandler)
+    server.settings = settings
+    server.store = store
+    server.runner = CollectionRunner(settings, store, clock=clock, collector=collector)
+    server.static_dir = Path(static_dir or Path(__file__).with_name("static")).resolve()
+    server._data_lock = threading.Lock()
+    server._data_cache = None
+    return server
+
+
+def serve(settings: Settings, store: Store, *, no_poll=False) -> None:
+    server = create_server(settings, store)
+    poller = None if no_poll else Poller(server.runner)
+    server.polling = poller is not None
+    host = f"[{settings.host}]" if ":" in settings.host else settings.host
+    print(f"http://{host}:{server.server_port}", flush=True)
+    try:
+        if poller:
+            poller.start()
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if poller:
+            poller.stop()
+            poller.join()
+        server.server_close()

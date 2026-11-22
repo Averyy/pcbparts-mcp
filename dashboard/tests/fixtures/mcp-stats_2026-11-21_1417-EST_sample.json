@@ -1,0 +1,4312 @@
+{
+  "about": "Private counts per UTC day, default 30 days, up to 365, newest first; totals adds up the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, 00 to 23 (null: not recorded); in totals, each hour added up across the days. failed_hours (from 0.10.1): the calls whose outcome was failed, in each UTC hour; refused_hours (from 0.10.1): the requests counted in per_ip_refusals, in each UTC hour; both null on days before 0.10.1 and, on the day it started, for the hours before that; not in totals. Each tool's calls = ok (found something; for alternatives, verified replacements) + similar_only (only similar parts for manual comparison, no verified replacements) + not_found (worked, found nothing) + bad_request (the request was invalid) + rate_limited (a limit turned it away) + failed (something broke on this server or a service it calls), plus unsorted where shown (error replies from before 0.6.4, which weren't sorted). callers counts distinct IPs, which isn't the number of people: hosted apps such as claude.ai call from their own servers' IPs, and a caller seen before and after a restart counts twice. apps are the names MCP apps send when they connect. The stats keep no IPs, whole queries or individual lookup numbers; popular_terms can include part-number tokens once they reach its caller threshold. Cutover 2026-10-26: alternatives replies before that date counted similar-parts-only replies as not found; historical counts have not been reclassified. reasons (from 0.9.0; earlier days have none): for each tool, why calls came back not_found or failed, one fixed label a call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, package or stock limit to test). distributors retry_found and retry_missed: before 0.9.3, DigiKey all-digit numbers that missed the direct lookup and went on to a keyword search, also counted in sent. distributors skipped (from 0.10.0, on days with any): part numbers not sent because no distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII text, not 3-40 characters); one a number. From 0.10.0 (earlier days have none): upstream, for each service this server calls: jlcpcb (parts search), lcsc (product data), easyeda_products (footprint checks), easyeda_components (symbols and footprints for pinouts), easyeda_pads (footprint pads for land checks), cse (SamacSys searches and model downloads) and, from 0.10.4, digikey (DigiKey's HTTP requests; distributors counts lookups); sent is HTTP requests sent, one each, not tool calls; retries the further attempts the HTTP client made on its own for them, where it reports them (a timeout reports none); cached answers given without a request (memory cache, on-disk store or seed); rate_limited requests this server's own budget or pause for that service kept back (for cse, also sent model downloads SamacSys refused for quota); waited (from 0.10.4) requests sent after waiting for a free request slot. parts_asked: part numbers asked for with Mouser and DigiKey, whether stored answers gave them, a request did or the limits turned them away (total; skipped ones aren't counted), and how many were different that day (distinct, ignoring case and - _ /; counted through salted hashes held in memory, so a restart counts them again; not in totals, which can't add them across days). per_ip_refusals: HTTP requests admission control turned away (429): total (all of the groups) and by group: per-address rate limit refusals by address group (platform_ranges: addresses in the AI platforms' published ranges, which have a higher limit; everyone_else: every other caller), then, regardless of address, server_busy (0.10.0 only: shared database queue pressure; 0 from 0.10.1, which removed that refusal) and too_many_clients (the server was tracking as many addresses as it can); null on days before it was counted. restarts (from 0.10.0; null before): how many times the server started that day; callers and parts_asked distinct count a caller or part seen on both sides of a restart twice. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code lookups and jlc_stock_check's one-code queries were answered, one each: snapshot (the daily snapshot, no request), live (answered from a live lookup, including its 1-hour cache), fallback (JLCPCB didn't answer and the snapshot did: live_failed in the reply) and live_failed (the live lookup failed and nothing answered instead: the error). distributor_apps (from 0.10.2; null before): calls to mouser_get_part, digikey_get_part and part_lifecycle by app, and how many were rate_limited; a call counts under the app its address last connected with (remembered for 10 minutes after the address's last connection or tool call), else under unknown. distributor_limits (from 0.10.3; null before): for mouser and digikey, held_back counts lookups not sent, by cause: minute_cap and daily_count (this server's limits), address_daily (the address's daily cap), distributor_daily, distributor_minute and distributor_refused (pauses after the distributor refused), other; it adds up to distributors rate_limited. held_back_hours: the same by UTC hour. refusals: sent requests the distributor refused (daily, minute, refused). datasheet_links (from 0.10.3; null before): visits to datasheet_pdf links: reused (no JLCPCB request), signed (one was made), waited (of those, after waiting for a slot), refused (429), failed (502), not_found (404). db_waits (from 0.10.3; null before): database jobs (jobs), those that waited at least 0.1 s for a worker (waited), the longest wait (longest_ms), and waited_hours and longest_ms_hours by UTC hour; components: the same for the component catalog alone. In totals the longest is the maximum. lifecycle_inputs (from 0.10.4; null before): part_lifecycle entries by input form, before catalog resolution: bare_number, with_manufacturer or lcsc_code; invalid inputs aren't counted. Counts only, no part numbers or maker names. bad_request_reasons (from 0.10.5; null before): one fixed label per bad_request, separate from reasons; arg:<declared parameter or unknown_argument>:<fixed error type> for argument validation, all_inputs_invalid for invalid batches, unknown_tool for unknown tools. tool_apps (from 0.10.5; null before): each tool's calls and every outcome by app, up to 50 named apps per tool today, later new names count as other; past UTC days keep the 14 busiest apps by calls plus other, which sums every outcome from the rest (compacted on rollover, load, save and summary); same app attribution as distributor_apps. latency (from 0.10.5; null before): each tool's bucket counts and p50_ms, p95_ms, p99_ms, counting ok, similar_only, not_found and failed only; latency_bounds_ms gives inclusive upper bounds, with one final open bucket; percentiles are bucket upper bounds (null for an empty histogram or the open bucket). tool_apps, latency and popular_terms are kept for the last 30 days only, cleared from older days on rollover, load, save and summary, even with no new calls. popular_terms (from 0.10.5; null before): top 200 query tokens by occurrences, each counted once per call, up to 20 tokens per query, for jlc_search, jlc_stock_check, cse_search, board_search and sensor_recommend except bad_request. Only tokens from at least 10 distinct callers that UTC day are retained; all platform addresses count as one caller, other IPv6 addresses by /48. This is a popularity heuristic, not an anonymity guarantee against someone controlling many addresses. Below-threshold tokens and salted caller hashes stay in memory only (20,000 tokens, 10 hashes each). No phrases. A restart keeps retained counts but resets the threshold for new tokens; totals sums retained daily counts, keeping the top 200. versions (from 0.10.5; null before): server starts by running version. upstream_status (from 0.10.5; null before): one class per sent request per source: 2xx, 3xx, 4xx, 429 (separate from 4xx), 5xx, timeout, connection, challenge, too_large, cancelled or other_error. Cutovers from 0.10.5: mouser_get_part misses count part_not_found instead of no_results; jlc_stock_check's no_results splits into no_results_filtered, no_results_part_number and no_results_words; jlc_search's part_number_not_in_stock becomes part_number_sold_out or part_number_unknown, using a label-only lookup of previously listed parts. Historical labels and counts are kept. Failed calls also produce one labels-only WARNING per UTC minute.",
+  "latency_bounds_ms": [
+    50,
+    100,
+    250,
+    500,
+    1000,
+    2500,
+    5000,
+    10000,
+    30000,
+    60000
+  ],
+  "kept_across_restarts": true,
+  "totals": {
+    "from": "2026-11-19",
+    "to": "2026-11-21",
+    "days": 3,
+    "calls": 5835,
+    "hours": [
+      253,
+      253,
+      253,
+      253,
+      253,
+      253,
+      251,
+      251,
+      251,
+      251,
+      251,
+      251,
+      251,
+      251,
+      251,
+      250,
+      250,
+      250,
+      250,
+      250,
+      202,
+      202,
+      202,
+      202
+    ],
+    "tools": {
+      "jlc_get_part": {
+        "calls": 1200,
+        "ok": 1177,
+        "similar_only": 0,
+        "not_found": 18,
+        "bad_request": 2,
+        "rate_limited": 0,
+        "failed": 3,
+        "avg_ms": 62
+      },
+      "jlc_search": {
+        "calls": 1200,
+        "ok": 1117,
+        "similar_only": 0,
+        "not_found": 80,
+        "bad_request": 3,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 62
+      },
+      "digikey_get_part": {
+        "calls": 600,
+        "ok": 558,
+        "similar_only": 0,
+        "not_found": 12,
+        "bad_request": 0,
+        "rate_limited": 30,
+        "failed": 0,
+        "avg_ms": 61
+      },
+      "jlc_stock_check": {
+        "calls": 600,
+        "ok": 574,
+        "similar_only": 0,
+        "not_found": 21,
+        "bad_request": 2,
+        "rate_limited": 0,
+        "failed": 3,
+        "avg_ms": 63
+      },
+      "jlc_get_pinout": {
+        "calls": 240,
+        "ok": 230,
+        "similar_only": 0,
+        "not_found": 6,
+        "bad_request": 1,
+        "rate_limited": 0,
+        "failed": 3,
+        "avg_ms": 68
+      },
+      "jlc_stock_history": {
+        "calls": 240,
+        "ok": 240,
+        "similar_only": 0,
+        "not_found": 0,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 69
+      },
+      "mouser_get_part": {
+        "calls": 360,
+        "ok": 342,
+        "similar_only": 0,
+        "not_found": 13,
+        "bad_request": 0,
+        "rate_limited": 5,
+        "failed": 0,
+        "avg_ms": 65
+      },
+      "jlc_find_alternatives": {
+        "calls": 240,
+        "ok": 202,
+        "similar_only": 30,
+        "not_found": 8,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 69
+      },
+      "cse_search": {
+        "calls": 120,
+        "ok": 114,
+        "similar_only": 0,
+        "not_found": 6,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 78
+      },
+      "jlc_get_parts": {
+        "calls": 240,
+        "ok": 223,
+        "similar_only": 0,
+        "not_found": 15,
+        "bad_request": 1,
+        "rate_limited": 0,
+        "failed": 1,
+        "avg_ms": 68
+      },
+      "get_design_rules": {
+        "calls": 120,
+        "ok": 115,
+        "similar_only": 0,
+        "not_found": 5,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 78
+      },
+      "jlc_search_help": {
+        "calls": 120,
+        "ok": 119,
+        "similar_only": 0,
+        "not_found": 0,
+        "bad_request": 1,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 76
+      },
+      "board_search": {
+        "calls": 120,
+        "ok": 114,
+        "similar_only": 0,
+        "not_found": 6,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 78
+      },
+      "cse_get_kicad": {
+        "calls": 120,
+        "ok": 97,
+        "similar_only": 0,
+        "not_found": 14,
+        "bad_request": 1,
+        "rate_limited": 0,
+        "failed": 8,
+        "avg_ms": 76
+      },
+      "board_get": {
+        "calls": 60,
+        "ok": 60,
+        "similar_only": 0,
+        "not_found": 0,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 96
+      },
+      "part_lifecycle": {
+        "calls": 120,
+        "ok": 117,
+        "similar_only": 0,
+        "not_found": 3,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 78
+      },
+      "sensor_recommend": {
+        "calls": 120,
+        "ok": 118,
+        "similar_only": 0,
+        "not_found": 2,
+        "bad_request": 0,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 78
+      },
+      "unknown": {
+        "calls": 15,
+        "ok": 0,
+        "similar_only": 0,
+        "not_found": 0,
+        "bad_request": 15,
+        "rate_limited": 0,
+        "failed": 0,
+        "avg_ms": 5
+      }
+    },
+    "apps": {
+      "app-alpha": 4168,
+      "app-beta": 1125,
+      "unknown": 542
+    },
+    "distributors": {
+      "digikey": {
+        "sent": 240,
+        "cached": 60,
+        "rate_limited": 30,
+        "skipped": 6,
+        "retry_found": 0,
+        "retry_missed": 0
+      },
+      "mouser": {
+        "sent": 120,
+        "cached": 30,
+        "rate_limited": 5,
+        "skipped": 6
+      }
+    },
+    "reasons": {
+      "board_get": {
+        "board_not_found": 0
+      },
+      "board_search": {
+        "no_results": 6
+      },
+      "cse_get_kicad": {
+        "cse_invalid_zip": 5,
+        "no_ecad_model": 6,
+        "no_parts_for_query": 6,
+        "no_kicad_in_archive": 2,
+        "cse_download_refused": 3
+      },
+      "cse_search": {
+        "no_results": 6
+      },
+      "digikey_get_part": {
+        "part_not_found": 6,
+        "not_sent": 6,
+        "digikey_failed": 0
+      },
+      "get_design_rules": {
+        "no_results": 5
+      },
+      "jlc_find_alternatives": {
+        "no_alternatives": 6,
+        "lcsc_not_found": 2,
+        "jlcpcb_unavailable": 0
+      },
+      "jlc_get_part": {
+        "mpn_not_in_snapshot": 6,
+        "lcsc_not_found": 6,
+        "jlcpcb_unavailable": 3,
+        "placeholder_mpn": 6
+      },
+      "jlc_get_parts": {
+        "mpn_not_in_snapshot": 6,
+        "lcsc_not_found": 6,
+        "part_not_found": 3,
+        "exception": 1
+      },
+      "jlc_get_pinout": {
+        "no_easyeda_symbol": 6,
+        "part_not_found": 0,
+        "jlcpcb_unavailable": 3,
+        "easyeda_failed": 0
+      },
+      "jlc_search": {
+        "part_number_not_in_stock": 6,
+        "no_part_type": 6,
+        "blocked_by_library_type": 6,
+        "spec_filters_no_match": 6,
+        "words_unmatched": 6,
+        "part_number_filtered_out": 6,
+        "blocked_by_several": 6,
+        "blocked_by_package": 6,
+        "no_results": 6,
+        "filter_ignored_or_sparse": 6,
+        "value_not_listed": 5,
+        "blocked_by_min_stock": 6,
+        "part_number_unknown": 1,
+        "no_catalog_subcategory": 3,
+        "offset_past_end": 5,
+        "exception": 0
+      },
+      "jlc_stock_check": {
+        "no_results": 6,
+        "stock_below_minimum": 6,
+        "part_number_fragment": 6,
+        "jlcpcb_unavailable": 3,
+        "offset_past_end": 0,
+        "no_results_part_number": 1,
+        "no_results_words": 1,
+        "no_results_filtered": 1
+      },
+      "mouser_get_part": {
+        "no_results": 6,
+        "not_sent": 6,
+        "mouser_failed": 0,
+        "part_not_found": 1
+      },
+      "part_lifecycle": {
+        "not_sent": 2,
+        "part_not_found": 1
+      },
+      "sensor_recommend": {
+        "no_results": 2
+      }
+    },
+    "why_empty": {
+      "no_counterfactual": 68,
+      "complete": 6,
+      "budget_exhausted_or_busy": 6
+    },
+    "upstream": {
+      "jlcpcb": {
+        "sent": 60,
+        "retries": 6,
+        "cached": 30,
+        "rate_limited": 12,
+        "waited": 0
+      },
+      "lcsc": {
+        "sent": 120,
+        "retries": 0,
+        "cached": 30,
+        "rate_limited": 0,
+        "waited": 0
+      },
+      "easyeda_products": {
+        "sent": 180,
+        "retries": 0,
+        "cached": 30,
+        "rate_limited": 0,
+        "waited": 0
+      },
+      "easyeda_components": {
+        "sent": 240,
+        "retries": 0,
+        "cached": 30,
+        "rate_limited": 0,
+        "waited": 0
+      },
+      "easyeda_pads": {
+        "sent": 300,
+        "retries": 0,
+        "cached": 30,
+        "rate_limited": 0,
+        "waited": 0
+      },
+      "cse": {
+        "sent": 360,
+        "retries": 0,
+        "cached": 30,
+        "rate_limited": 0,
+        "waited": 0
+      },
+      "digikey": {
+        "sent": 70,
+        "retries": 0,
+        "cached": 5,
+        "rate_limited": 0,
+        "waited": 3
+      }
+    },
+    "parts_asked": {
+      "digikey": {
+        "total": 330
+      },
+      "mouser": {
+        "total": 155
+      }
+    },
+    "per_ip_refusals": {
+      "total": 30,
+      "everyone_else": 18,
+      "platform_ranges": 6,
+      "server_busy": 0,
+      "too_many_clients": 6
+    },
+    "lcsc_lookups": {
+      "jlc_get_part": {
+        "snapshot": 240,
+        "live": 120,
+        "fallback": 6,
+        "live_failed": 0
+      },
+      "jlc_stock_check": {
+        "snapshot": 60,
+        "live": 120,
+        "fallback": 0,
+        "live_failed": 0
+      }
+    },
+    "distributor_apps": {
+      "mouser_get_part": {
+        "app-alpha": {
+          "calls": 258,
+          "rate_limited": 4
+        },
+        "app-beta": {
+          "calls": 69,
+          "rate_limited": 1
+        },
+        "unknown": {
+          "calls": 33,
+          "rate_limited": 0
+        }
+      },
+      "digikey_get_part": {
+        "app-alpha": {
+          "calls": 426,
+          "rate_limited": 21
+        },
+        "app-beta": {
+          "calls": 117,
+          "rate_limited": 6
+        },
+        "unknown": {
+          "calls": 57,
+          "rate_limited": 3
+        }
+      },
+      "part_lifecycle": {
+        "app-alpha": {
+          "calls": 88,
+          "rate_limited": 0
+        },
+        "app-beta": {
+          "calls": 22,
+          "rate_limited": 0
+        },
+        "unknown": {
+          "calls": 10,
+          "rate_limited": 0
+        }
+      }
+    },
+    "distributor_limits": {
+      "digikey": {
+        "held_back": {
+          "minute_cap": 0,
+          "daily_count": 0,
+          "address_daily": 30,
+          "distributor_daily": 0,
+          "distributor_minute": 0,
+          "distributor_refused": 0,
+          "other": 0
+        },
+        "held_back_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "refusals": {
+          "daily": 0,
+          "minute": 0,
+          "refused": 0
+        }
+      },
+      "mouser": {
+        "held_back": {
+          "minute_cap": 5,
+          "daily_count": 0,
+          "address_daily": 0,
+          "distributor_daily": 0,
+          "distributor_minute": 0,
+          "distributor_refused": 0,
+          "other": 0
+        },
+        "held_back_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "refusals": {
+          "daily": 0,
+          "minute": 0,
+          "refused": 0
+        }
+      }
+    },
+    "datasheet_links": {
+      "visits": 168,
+      "reused": 60,
+      "signed": 90,
+      "waited": 12,
+      "refused": 6,
+      "failed": 3,
+      "not_found": 9
+    },
+    "db_waits": {
+      "jobs": 300,
+      "waited": 15,
+      "longest_ms": 500,
+      "waited_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        15,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "longest_ms_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        500,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "components": {
+        "jobs": 240,
+        "waited": 9,
+        "longest_ms": 400,
+        "waited_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "longest_ms_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          400,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "lifecycle_inputs": {
+      "bare_number": 10,
+      "with_manufacturer": 5,
+      "lcsc_code": 5
+    },
+    "bad_request_reasons": {
+      "jlc_search_help": {
+        "category_not_found": 1
+      },
+      "jlc_get_part": {
+        "missing_argument": 1,
+        "arg:unknown_argument:unexpected_keyword_argument": 1
+      },
+      "jlc_get_pinout": {
+        "missing_argument": 1
+      },
+      "jlc_search": {
+        "too_long": 1,
+        "arg:unknown_argument:unexpected_keyword_argument": 1,
+        "category_not_found": 1
+      },
+      "jlc_stock_check": {
+        "category_not_found": 1,
+        "arg:unknown_argument:unexpected_keyword_argument": 1
+      },
+      "jlc_get_parts": {
+        "arg:unknown_argument:unexpected_keyword_argument": 1
+      },
+      "cse_get_kicad": {
+        "arg:unknown_argument:unexpected_keyword_argument": 1
+      },
+      "unknown": {
+        "unknown_tool": 5
+      }
+    },
+    "tool_apps": {
+      "jlc_get_part": {
+        "app-alpha": {
+          "calls": 142,
+          "ok": 137,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 2,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 39,
+          "ok": 39,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 19,
+          "ok": 19,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "digikey_get_part": {
+        "app-alpha": {
+          "calls": 72,
+          "ok": 63,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 7,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 19,
+          "ok": 17,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 2,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 9,
+          "ok": 8,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 1,
+          "failed": 0
+        }
+      },
+      "jlc_stock_check": {
+        "app-alpha": {
+          "calls": 72,
+          "ok": 65,
+          "similar_only": 0,
+          "not_found": 5,
+          "bad_request": 2,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 19,
+          "ok": 18,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 9,
+          "ok": 9,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_search": {
+        "app-alpha": {
+          "calls": 142,
+          "ok": 130,
+          "similar_only": 0,
+          "not_found": 9,
+          "bad_request": 3,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 39,
+          "ok": 37,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 19,
+          "ok": 18,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_stock_history": {
+        "app-alpha": {
+          "calls": 28,
+          "ok": 28,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 8,
+          "ok": 8,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 4,
+          "ok": 4,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "mouser_get_part": {
+        "app-alpha": {
+          "calls": 44,
+          "ok": 37,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 4,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 11,
+          "ok": 10,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 1,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 5,
+          "ok": 5,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_get_pinout": {
+        "app-alpha": {
+          "calls": 30,
+          "ok": 28,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 7,
+          "ok": 7,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_get_parts": {
+        "app-alpha": {
+          "calls": 30,
+          "ok": 25,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 1
+        },
+        "app-beta": {
+          "calls": 7,
+          "ok": 7,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "part_lifecycle": {
+        "app-alpha": {
+          "calls": 16,
+          "ok": 15,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_find_alternatives": {
+        "app-alpha": {
+          "calls": 30,
+          "ok": 25,
+          "similar_only": 4,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 7,
+          "ok": 6,
+          "similar_only": 1,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "jlc_search_help": {
+        "app-alpha": {
+          "calls": 16,
+          "ok": 15,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "board_search": {
+        "app-alpha": {
+          "calls": 16,
+          "ok": 15,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "cse_search": {
+        "app-alpha": {
+          "calls": 16,
+          "ok": 15,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "get_design_rules": {
+        "app-alpha": {
+          "calls": 14,
+          "ok": 14,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 4,
+          "ok": 4,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 2,
+          "ok": 2,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "cse_get_kicad": {
+        "app-alpha": {
+          "calls": 16,
+          "ok": 12,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 1
+        },
+        "app-beta": {
+          "calls": 3,
+          "ok": 3,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "board_get": {
+        "app-alpha": {
+          "calls": 7,
+          "ok": 7,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 2,
+          "ok": 2,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 1,
+          "ok": 1,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "sensor_recommend": {
+        "app-alpha": {
+          "calls": 14,
+          "ok": 14,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 4,
+          "ok": 4,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "unknown": {
+          "calls": 2,
+          "ok": 2,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      },
+      "unknown": {
+        "app-alpha": {
+          "calls": 4,
+          "ok": 0,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 4,
+          "rate_limited": 0,
+          "failed": 0
+        },
+        "app-beta": {
+          "calls": 1,
+          "ok": 0,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 0
+        }
+      }
+    },
+    "latency": {
+      "jlc_get_part": {
+        "counts": [
+          158,
+          0,
+          39,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 250
+      },
+      "digikey_get_part": {
+        "counts": [
+          71,
+          0,
+          18,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_stock_check": {
+        "counts": [
+          78,
+          0,
+          19,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_search": {
+        "counts": [
+          157,
+          0,
+          39,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 250
+      },
+      "jlc_stock_history": {
+        "counts": [
+          31,
+          0,
+          8,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "mouser_get_part": {
+        "counts": [
+          43,
+          0,
+          11,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_get_pinout": {
+        "counts": [
+          31,
+          0,
+          7,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_get_parts": {
+        "counts": [
+          31,
+          0,
+          7,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "part_lifecycle": {
+        "counts": [
+          15,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_find_alternatives": {
+        "counts": [
+          31,
+          0,
+          8,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "jlc_search_help": {
+        "counts": [
+          15,
+          0,
+          3,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 1000,
+        "p99_ms": 1000
+      },
+      "board_search": {
+        "counts": [
+          15,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "cse_search": {
+        "counts": [
+          15,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "get_design_rules": {
+        "counts": [
+          15,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "cse_get_kicad": {
+        "counts": [
+          15,
+          0,
+          3,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 1000,
+        "p99_ms": 1000
+      },
+      "board_get": {
+        "counts": [
+          7,
+          0,
+          2,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 1000,
+        "p99_ms": 1000
+      },
+      "sensor_recommend": {
+        "counts": [
+          15,
+          0,
+          4,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": 50,
+        "p95_ms": 250,
+        "p99_ms": 1000
+      },
+      "unknown": {
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "p50_ms": null,
+        "p95_ms": null,
+        "p99_ms": null
+      }
+    },
+    "versions": {
+      "0.10.5": 2
+    },
+    "upstream_status": {
+      "jlcpcb": {
+        "2xx": 9,
+        "5xx": 1
+      },
+      "easyeda_products": {
+        "2xx": 30
+      },
+      "digikey": {
+        "4xx": 1,
+        "2xx": 69
+      },
+      "easyeda_components": {
+        "2xx": 40
+      },
+      "lcsc": {
+        "2xx": 20
+      },
+      "easyeda_pads": {
+        "2xx": 50
+      },
+      "cse": {
+        "2xx": 60
+      }
+    },
+    "popular_terms": {
+      "esp32": 30,
+      "ldo": 20,
+      "0603": 10
+    }
+  },
+  "days": [
+    {
+      "date": "2026-11-21",
+      "calls": 975,
+      "hours": [
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        49,
+        48,
+        48,
+        48,
+        48,
+        48,
+        0,
+        0,
+        0,
+        0
+      ],
+      "failed_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "refused_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "callers": 25,
+      "tools": {
+        "jlc_get_part": {
+          "calls": 200,
+          "ok": 195,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 2,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 63
+        },
+        "digikey_get_part": {
+          "calls": 100,
+          "ok": 88,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 10,
+          "failed": 0,
+          "avg_ms": 62
+        },
+        "jlc_stock_check": {
+          "calls": 100,
+          "ok": 92,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 2,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 65
+        },
+        "jlc_search": {
+          "calls": 200,
+          "ok": 185,
+          "similar_only": 0,
+          "not_found": 12,
+          "bad_request": 3,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 62
+        },
+        "jlc_stock_history": {
+          "calls": 40,
+          "ok": 40,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "mouser_get_part": {
+          "calls": 60,
+          "ok": 52,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 5,
+          "failed": 0,
+          "avg_ms": 68
+        },
+        "jlc_get_pinout": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 73
+        },
+        "jlc_get_parts": {
+          "calls": 40,
+          "ok": 35,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 1,
+          "avg_ms": 73
+        },
+        "part_lifecycle": {
+          "calls": 20,
+          "ok": 19,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "jlc_find_alternatives": {
+          "calls": 40,
+          "ok": 34,
+          "similar_only": 5,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "jlc_search_help": {
+          "calls": 20,
+          "ok": 19,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 86
+        },
+        "board_search": {
+          "calls": 20,
+          "ok": 19,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "cse_search": {
+          "calls": 20,
+          "ok": 19,
+          "similar_only": 0,
+          "not_found": 1,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "get_design_rules": {
+          "calls": 20,
+          "ok": 20,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "cse_get_kicad": {
+          "calls": 20,
+          "ok": 16,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 1,
+          "rate_limited": 0,
+          "failed": 1,
+          "avg_ms": 86
+        },
+        "board_get": {
+          "calls": 10,
+          "ok": 10,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 132
+        },
+        "sensor_recommend": {
+          "calls": 20,
+          "ok": 20,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "unknown": {
+          "calls": 5,
+          "ok": 0,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 5,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 5
+        }
+      },
+      "apps": {
+        "app-alpha": 709,
+        "app-beta": 182,
+        "unknown": 84
+      },
+      "distributors": {
+        "digikey": {
+          "sent": 40,
+          "cached": 10,
+          "rate_limited": 10,
+          "skipped": 1
+        },
+        "mouser": {
+          "sent": 20,
+          "cached": 5,
+          "rate_limited": 5,
+          "skipped": 1
+        }
+      },
+      "reasons": {
+        "board_search": {
+          "no_results": 1
+        },
+        "cse_get_kicad": {
+          "no_ecad_model": 1,
+          "cse_download_refused": 1,
+          "no_parts_for_query": 1
+        },
+        "cse_search": {
+          "no_results": 1
+        },
+        "digikey_get_part": {
+          "part_not_found": 1,
+          "not_sent": 1
+        },
+        "jlc_find_alternatives": {
+          "no_alternatives": 1
+        },
+        "jlc_get_part": {
+          "mpn_not_in_snapshot": 1,
+          "lcsc_not_found": 1,
+          "placeholder_mpn": 1
+        },
+        "jlc_get_parts": {
+          "mpn_not_in_snapshot": 1,
+          "exception": 1,
+          "lcsc_not_found": 1,
+          "part_not_found": 1
+        },
+        "jlc_get_pinout": {
+          "no_easyeda_symbol": 1
+        },
+        "jlc_search": {
+          "part_number_not_in_stock": 1,
+          "blocked_by_library_type": 1,
+          "spec_filters_no_match": 1,
+          "no_part_type": 1,
+          "words_unmatched": 1,
+          "blocked_by_package": 1,
+          "blocked_by_several": 1,
+          "part_number_filtered_out": 1,
+          "part_number_unknown": 1,
+          "filter_ignored_or_sparse": 1,
+          "no_results": 1,
+          "blocked_by_min_stock": 1
+        },
+        "jlc_stock_check": {
+          "no_results": 1,
+          "no_results_part_number": 1,
+          "part_number_fragment": 1,
+          "no_results_words": 1,
+          "stock_below_minimum": 1,
+          "no_results_filtered": 1
+        },
+        "mouser_get_part": {
+          "no_results": 1,
+          "not_sent": 1,
+          "part_not_found": 1
+        },
+        "part_lifecycle": {
+          "part_not_found": 1
+        }
+      },
+      "why_empty": {
+        "no_counterfactual": 10,
+        "complete": 1,
+        "budget_exhausted_or_busy": 1
+      },
+      "upstream": {
+        "jlcpcb": {
+          "sent": 10,
+          "retries": 1,
+          "cached": 5,
+          "rate_limited": 2,
+          "waited": 0
+        },
+        "lcsc": {
+          "sent": 20,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_products": {
+          "sent": 30,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_components": {
+          "sent": 40,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_pads": {
+          "sent": 50,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "cse": {
+          "sent": 60,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "digikey": {
+          "sent": 70,
+          "retries": 0,
+          "cached": 5,
+          "rate_limited": 0,
+          "waited": 3
+        }
+      },
+      "parts_asked": {
+        "digikey": {
+          "total": 60,
+          "distinct": 55
+        },
+        "mouser": {
+          "total": 30,
+          "distinct": 25
+        }
+      },
+      "per_ip_refusals": {
+        "total": 5,
+        "everyone_else": 3,
+        "platform_ranges": 1,
+        "server_busy": 0,
+        "too_many_clients": 1
+      },
+      "restarts": 2,
+      "lcsc_lookups": {
+        "jlc_get_part": {
+          "snapshot": 40,
+          "live": 20,
+          "fallback": 1,
+          "live_failed": 0
+        },
+        "jlc_stock_check": {
+          "snapshot": 10,
+          "live": 20,
+          "fallback": 0,
+          "live_failed": 0
+        }
+      },
+      "distributor_apps": {
+        "mouser_get_part": {
+          "app-alpha": {
+            "calls": 44,
+            "rate_limited": 4
+          },
+          "app-beta": {
+            "calls": 11,
+            "rate_limited": 1
+          },
+          "unknown": {
+            "calls": 5,
+            "rate_limited": 0
+          }
+        },
+        "digikey_get_part": {
+          "app-alpha": {
+            "calls": 72,
+            "rate_limited": 7
+          },
+          "app-beta": {
+            "calls": 19,
+            "rate_limited": 2
+          },
+          "unknown": {
+            "calls": 9,
+            "rate_limited": 1
+          }
+        },
+        "part_lifecycle": {
+          "app-alpha": {
+            "calls": 16,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 3,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "rate_limited": 0
+          }
+        }
+      },
+      "distributor_limits": {
+        "digikey": {
+          "held_back": {
+            "minute_cap": 0,
+            "daily_count": 0,
+            "address_daily": 10,
+            "distributor_daily": 0,
+            "distributor_minute": 0,
+            "distributor_refused": 0,
+            "other": 0
+          },
+          "held_back_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "refusals": {
+            "daily": 0,
+            "minute": 0,
+            "refused": 0
+          }
+        },
+        "mouser": {
+          "held_back": {
+            "minute_cap": 5,
+            "daily_count": 0,
+            "address_daily": 0,
+            "distributor_daily": 0,
+            "distributor_minute": 0,
+            "distributor_refused": 0,
+            "other": 0
+          },
+          "held_back_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "refusals": {
+            "daily": 0,
+            "minute": 0,
+            "refused": 0
+          }
+        }
+      },
+      "datasheet_links": {
+        "visits": 56,
+        "reused": 20,
+        "signed": 30,
+        "waited": 4,
+        "refused": 2,
+        "failed": 1,
+        "not_found": 3
+      },
+      "db_waits": {
+        "jobs": 100,
+        "waited": 5,
+        "longest_ms": 250,
+        "waited_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "longest_ms_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          250,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "components": {
+          "jobs": 80,
+          "waited": 3,
+          "longest_ms": 200,
+          "waited_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "longest_ms_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            200,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "lifecycle_inputs": {
+        "bare_number": 10,
+        "with_manufacturer": 5,
+        "lcsc_code": 5
+      },
+      "bad_request_reasons": {
+        "jlc_search_help": {
+          "category_not_found": 1
+        },
+        "jlc_get_part": {
+          "missing_argument": 1,
+          "arg:unknown_argument:unexpected_keyword_argument": 1
+        },
+        "jlc_get_pinout": {
+          "missing_argument": 1
+        },
+        "jlc_search": {
+          "too_long": 1,
+          "arg:unknown_argument:unexpected_keyword_argument": 1,
+          "category_not_found": 1
+        },
+        "jlc_stock_check": {
+          "category_not_found": 1,
+          "arg:unknown_argument:unexpected_keyword_argument": 1
+        },
+        "jlc_get_parts": {
+          "arg:unknown_argument:unexpected_keyword_argument": 1
+        },
+        "cse_get_kicad": {
+          "arg:unknown_argument:unexpected_keyword_argument": 1
+        },
+        "unknown": {
+          "unknown_tool": 5
+        }
+      },
+      "tool_apps": {
+        "jlc_get_part": {
+          "app-alpha": {
+            "calls": 142,
+            "ok": 137,
+            "similar_only": 0,
+            "not_found": 3,
+            "bad_request": 2,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 39,
+            "ok": 39,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 19,
+            "ok": 19,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "digikey_get_part": {
+          "app-alpha": {
+            "calls": 72,
+            "ok": 63,
+            "similar_only": 0,
+            "not_found": 2,
+            "bad_request": 0,
+            "rate_limited": 7,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 19,
+            "ok": 17,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 2,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 9,
+            "ok": 8,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 1,
+            "failed": 0
+          }
+        },
+        "jlc_stock_check": {
+          "app-alpha": {
+            "calls": 72,
+            "ok": 65,
+            "similar_only": 0,
+            "not_found": 5,
+            "bad_request": 2,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 19,
+            "ok": 18,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 9,
+            "ok": 9,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_search": {
+          "app-alpha": {
+            "calls": 142,
+            "ok": 130,
+            "similar_only": 0,
+            "not_found": 9,
+            "bad_request": 3,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 39,
+            "ok": 37,
+            "similar_only": 0,
+            "not_found": 2,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 19,
+            "ok": 18,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_stock_history": {
+          "app-alpha": {
+            "calls": 28,
+            "ok": 28,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 8,
+            "ok": 8,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 4,
+            "ok": 4,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "mouser_get_part": {
+          "app-alpha": {
+            "calls": 44,
+            "ok": 37,
+            "similar_only": 0,
+            "not_found": 3,
+            "bad_request": 0,
+            "rate_limited": 4,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 11,
+            "ok": 10,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 1,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 5,
+            "ok": 5,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_get_pinout": {
+          "app-alpha": {
+            "calls": 30,
+            "ok": 28,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 1,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 7,
+            "ok": 7,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_get_parts": {
+          "app-alpha": {
+            "calls": 30,
+            "ok": 25,
+            "similar_only": 0,
+            "not_found": 3,
+            "bad_request": 1,
+            "rate_limited": 0,
+            "failed": 1
+          },
+          "app-beta": {
+            "calls": 7,
+            "ok": 7,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "part_lifecycle": {
+          "app-alpha": {
+            "calls": 16,
+            "ok": 15,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_find_alternatives": {
+          "app-alpha": {
+            "calls": 30,
+            "ok": 25,
+            "similar_only": 4,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 7,
+            "ok": 6,
+            "similar_only": 1,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "jlc_search_help": {
+          "app-alpha": {
+            "calls": 16,
+            "ok": 15,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 1,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "board_search": {
+          "app-alpha": {
+            "calls": 16,
+            "ok": 15,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "cse_search": {
+          "app-alpha": {
+            "calls": 16,
+            "ok": 15,
+            "similar_only": 0,
+            "not_found": 1,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "get_design_rules": {
+          "app-alpha": {
+            "calls": 14,
+            "ok": 14,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 4,
+            "ok": 4,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 2,
+            "ok": 2,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "cse_get_kicad": {
+          "app-alpha": {
+            "calls": 16,
+            "ok": 12,
+            "similar_only": 0,
+            "not_found": 2,
+            "bad_request": 1,
+            "rate_limited": 0,
+            "failed": 1
+          },
+          "app-beta": {
+            "calls": 3,
+            "ok": 3,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "board_get": {
+          "app-alpha": {
+            "calls": 7,
+            "ok": 7,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 2,
+            "ok": 2,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 1,
+            "ok": 1,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "sensor_recommend": {
+          "app-alpha": {
+            "calls": 14,
+            "ok": 14,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 4,
+            "ok": 4,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "unknown": {
+            "calls": 2,
+            "ok": 2,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 0,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        },
+        "unknown": {
+          "app-alpha": {
+            "calls": 4,
+            "ok": 0,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 4,
+            "rate_limited": 0,
+            "failed": 0
+          },
+          "app-beta": {
+            "calls": 1,
+            "ok": 0,
+            "similar_only": 0,
+            "not_found": 0,
+            "bad_request": 1,
+            "rate_limited": 0,
+            "failed": 0
+          }
+        }
+      },
+      "latency": {
+        "jlc_get_part": {
+          "counts": [
+            158,
+            0,
+            39,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 250
+        },
+        "digikey_get_part": {
+          "counts": [
+            71,
+            0,
+            18,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_stock_check": {
+          "counts": [
+            78,
+            0,
+            19,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_search": {
+          "counts": [
+            157,
+            0,
+            39,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 250
+        },
+        "jlc_stock_history": {
+          "counts": [
+            31,
+            0,
+            8,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "mouser_get_part": {
+          "counts": [
+            43,
+            0,
+            11,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_get_pinout": {
+          "counts": [
+            31,
+            0,
+            7,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_get_parts": {
+          "counts": [
+            31,
+            0,
+            7,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "part_lifecycle": {
+          "counts": [
+            15,
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_find_alternatives": {
+          "counts": [
+            31,
+            0,
+            8,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "jlc_search_help": {
+          "counts": [
+            15,
+            0,
+            3,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 1000,
+          "p99_ms": 1000
+        },
+        "board_search": {
+          "counts": [
+            15,
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "cse_search": {
+          "counts": [
+            15,
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "get_design_rules": {
+          "counts": [
+            15,
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "cse_get_kicad": {
+          "counts": [
+            15,
+            0,
+            3,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 1000,
+          "p99_ms": 1000
+        },
+        "board_get": {
+          "counts": [
+            7,
+            0,
+            2,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 1000,
+          "p99_ms": 1000
+        },
+        "sensor_recommend": {
+          "counts": [
+            15,
+            0,
+            4,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": 50,
+          "p95_ms": 250,
+          "p99_ms": 1000
+        },
+        "unknown": {
+          "counts": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_ms": null,
+          "p95_ms": null,
+          "p99_ms": null
+        }
+      },
+      "versions": {
+        "0.10.5": 2
+      },
+      "upstream_status": {
+        "jlcpcb": {
+          "2xx": 9,
+          "5xx": 1
+        },
+        "easyeda_products": {
+          "2xx": 30
+        },
+        "digikey": {
+          "4xx": 1,
+          "2xx": 69
+        },
+        "easyeda_components": {
+          "2xx": 40
+        },
+        "lcsc": {
+          "2xx": 20
+        },
+        "easyeda_pads": {
+          "2xx": 50
+        },
+        "cse": {
+          "2xx": 60
+        }
+      },
+      "popular_terms": {
+        "esp32": 30,
+        "ldo": 20,
+        "0603": 10
+      }
+    },
+    {
+      "date": "2026-11-20",
+      "calls": 1950,
+      "hours": [
+        82,
+        82,
+        82,
+        82,
+        82,
+        82,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        81
+      ],
+      "failed_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "refused_hours": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "callers": 50,
+      "tools": {
+        "jlc_get_part": {
+          "calls": 400,
+          "ok": 394,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 62
+        },
+        "jlc_search": {
+          "calls": 400,
+          "ok": 374,
+          "similar_only": 0,
+          "not_found": 26,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 62
+        },
+        "digikey_get_part": {
+          "calls": 200,
+          "ok": 176,
+          "similar_only": 0,
+          "not_found": 4,
+          "bad_request": 0,
+          "rate_limited": 20,
+          "failed": 0,
+          "avg_ms": 58
+        },
+        "jlc_stock_check": {
+          "calls": 200,
+          "ok": 194,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 64
+        },
+        "jlc_get_pinout": {
+          "calls": 80,
+          "ok": 78,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 69
+        },
+        "jlc_stock_history": {
+          "calls": 80,
+          "ok": 80,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 69
+        },
+        "mouser_get_part": {
+          "calls": 120,
+          "ok": 116,
+          "similar_only": 0,
+          "not_found": 4,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 66
+        },
+        "jlc_find_alternatives": {
+          "calls": 80,
+          "ok": 66,
+          "similar_only": 10,
+          "not_found": 4,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 69
+        },
+        "jlc_get_parts": {
+          "calls": 80,
+          "ok": 74,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 69
+        },
+        "part_lifecycle": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "jlc_search_help": {
+          "calls": 40,
+          "ok": 40,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "cse_get_kicad": {
+          "calls": 40,
+          "ok": 30,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 4,
+          "avg_ms": 78
+        },
+        "cse_search": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "get_design_rules": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "board_search": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "board_get": {
+          "calls": 20,
+          "ok": 20,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 96
+        },
+        "sensor_recommend": {
+          "calls": 40,
+          "ok": 38,
+          "similar_only": 0,
+          "not_found": 2,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 78
+        },
+        "unknown": {
+          "calls": 10,
+          "ok": 0,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 10,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 5
+        }
+      },
+      "apps": {
+        "app-alpha": 1393,
+        "app-beta": 376,
+        "unknown": 181
+      },
+      "distributors": {
+        "digikey": {
+          "sent": 80,
+          "cached": 20,
+          "rate_limited": 20,
+          "skipped": 2
+        },
+        "mouser": {
+          "sent": 40,
+          "cached": 10,
+          "rate_limited": 0,
+          "skipped": 2
+        }
+      },
+      "reasons": {
+        "board_search": {
+          "no_results": 2
+        },
+        "cse_get_kicad": {
+          "cse_invalid_zip": 2,
+          "no_ecad_model": 2,
+          "no_parts_for_query": 2,
+          "cse_download_refused": 2,
+          "no_kicad_in_archive": 2
+        },
+        "cse_search": {
+          "no_results": 2
+        },
+        "digikey_get_part": {
+          "part_not_found": 2,
+          "not_sent": 2
+        },
+        "get_design_rules": {
+          "no_results": 2
+        },
+        "jlc_find_alternatives": {
+          "no_alternatives": 2,
+          "lcsc_not_found": 2
+        },
+        "jlc_get_part": {
+          "mpn_not_in_snapshot": 2,
+          "lcsc_not_found": 2,
+          "placeholder_mpn": 2
+        },
+        "jlc_get_parts": {
+          "mpn_not_in_snapshot": 2,
+          "part_not_found": 2,
+          "lcsc_not_found": 2
+        },
+        "jlc_get_pinout": {
+          "no_easyeda_symbol": 2
+        },
+        "jlc_search": {
+          "part_number_not_in_stock": 2,
+          "no_part_type": 2,
+          "blocked_by_library_type": 2,
+          "spec_filters_no_match": 2,
+          "words_unmatched": 2,
+          "part_number_filtered_out": 2,
+          "blocked_by_package": 2,
+          "blocked_by_several": 2,
+          "no_results": 2,
+          "filter_ignored_or_sparse": 2,
+          "blocked_by_min_stock": 2,
+          "value_not_listed": 2,
+          "offset_past_end": 2
+        },
+        "jlc_stock_check": {
+          "no_results": 2,
+          "part_number_fragment": 2,
+          "stock_below_minimum": 2
+        },
+        "mouser_get_part": {
+          "no_results": 2,
+          "not_sent": 2
+        },
+        "part_lifecycle": {
+          "not_sent": 2
+        },
+        "sensor_recommend": {
+          "no_results": 2
+        }
+      },
+      "why_empty": {
+        "no_counterfactual": 22,
+        "complete": 2,
+        "budget_exhausted_or_busy": 2
+      },
+      "upstream": {
+        "jlcpcb": {
+          "sent": 20,
+          "retries": 2,
+          "cached": 10,
+          "rate_limited": 4,
+          "waited": 0
+        },
+        "lcsc": {
+          "sent": 40,
+          "retries": 0,
+          "cached": 10,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_products": {
+          "sent": 60,
+          "retries": 0,
+          "cached": 10,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_components": {
+          "sent": 80,
+          "retries": 0,
+          "cached": 10,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_pads": {
+          "sent": 100,
+          "retries": 0,
+          "cached": 10,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "cse": {
+          "sent": 120,
+          "retries": 0,
+          "cached": 10,
+          "rate_limited": 0,
+          "waited": 0
+        }
+      },
+      "parts_asked": {
+        "digikey": {
+          "total": 120,
+          "distinct": 110
+        },
+        "mouser": {
+          "total": 50,
+          "distinct": 40
+        }
+      },
+      "per_ip_refusals": {
+        "total": 10,
+        "everyone_else": 6,
+        "platform_ranges": 2,
+        "server_busy": 0,
+        "too_many_clients": 2
+      },
+      "restarts": 1,
+      "lcsc_lookups": {
+        "jlc_get_part": {
+          "snapshot": 80,
+          "live": 40,
+          "fallback": 2,
+          "live_failed": 0
+        },
+        "jlc_stock_check": {
+          "snapshot": 20,
+          "live": 40,
+          "fallback": 0,
+          "live_failed": 0
+        }
+      },
+      "distributor_apps": {
+        "mouser_get_part": {
+          "app-alpha": {
+            "calls": 86,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 23,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 11,
+            "rate_limited": 0
+          }
+        },
+        "digikey_get_part": {
+          "app-alpha": {
+            "calls": 142,
+            "rate_limited": 14
+          },
+          "app-beta": {
+            "calls": 39,
+            "rate_limited": 4
+          },
+          "unknown": {
+            "calls": 19,
+            "rate_limited": 2
+          }
+        },
+        "part_lifecycle": {
+          "app-alpha": {
+            "calls": 30,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 7,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 3,
+            "rate_limited": 0
+          }
+        }
+      },
+      "distributor_limits": {
+        "digikey": {
+          "held_back": {
+            "minute_cap": 0,
+            "daily_count": 0,
+            "address_daily": 20,
+            "distributor_daily": 0,
+            "distributor_minute": 0,
+            "distributor_refused": 0,
+            "other": 0
+          },
+          "held_back_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            20,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "refusals": {
+            "daily": 0,
+            "minute": 0,
+            "refused": 0
+          }
+        }
+      },
+      "datasheet_links": {
+        "visits": 112,
+        "reused": 40,
+        "signed": 60,
+        "waited": 8,
+        "refused": 4,
+        "failed": 2,
+        "not_found": 6
+      },
+      "db_waits": {
+        "jobs": 200,
+        "waited": 10,
+        "longest_ms": 500,
+        "waited_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "longest_ms_hours": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          500,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "components": {
+          "jobs": 160,
+          "waited": 6,
+          "longest_ms": 400,
+          "waited_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "longest_ms_hours": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            400,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "lifecycle_inputs": null,
+      "bad_request_reasons": null,
+      "tool_apps": null,
+      "latency": null,
+      "versions": null,
+      "upstream_status": null,
+      "popular_terms": null
+    },
+    {
+      "date": "2026-11-19",
+      "calls": 2910,
+      "hours": [
+        122,
+        122,
+        122,
+        122,
+        122,
+        122,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121,
+        121
+      ],
+      "failed_hours": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        12,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "refused_hours": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        15,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "callers": 75,
+      "tools": {
+        "jlc_get_part": {
+          "calls": 600,
+          "ok": 588,
+          "similar_only": 0,
+          "not_found": 9,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 3,
+          "avg_ms": 61
+        },
+        "jlc_search": {
+          "calls": 600,
+          "ok": 558,
+          "similar_only": 0,
+          "not_found": 42,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 61
+        },
+        "digikey_get_part": {
+          "calls": 300,
+          "ok": 294,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 62
+        },
+        "jlc_stock_check": {
+          "calls": 300,
+          "ok": 288,
+          "similar_only": 0,
+          "not_found": 9,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 3,
+          "avg_ms": 62
+        },
+        "jlc_stock_history": {
+          "calls": 120,
+          "ok": 120,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 66
+        },
+        "mouser_get_part": {
+          "calls": 180,
+          "ok": 174,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 64
+        },
+        "jlc_get_pinout": {
+          "calls": 120,
+          "ok": 114,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 3,
+          "avg_ms": 66
+        },
+        "jlc_get_parts": {
+          "calls": 120,
+          "ok": 114,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 66
+        },
+        "jlc_find_alternatives": {
+          "calls": 120,
+          "ok": 102,
+          "similar_only": 15,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 66
+        },
+        "jlc_search_help": {
+          "calls": 60,
+          "ok": 60,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        },
+        "cse_search": {
+          "calls": 60,
+          "ok": 57,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        },
+        "get_design_rules": {
+          "calls": 60,
+          "ok": 57,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        },
+        "cse_get_kicad": {
+          "calls": 60,
+          "ok": 51,
+          "similar_only": 0,
+          "not_found": 6,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 3,
+          "avg_ms": 72
+        },
+        "part_lifecycle": {
+          "calls": 60,
+          "ok": 60,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        },
+        "board_search": {
+          "calls": 60,
+          "ok": 57,
+          "similar_only": 0,
+          "not_found": 3,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        },
+        "board_get": {
+          "calls": 30,
+          "ok": 30,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 84
+        },
+        "sensor_recommend": {
+          "calls": 60,
+          "ok": 60,
+          "similar_only": 0,
+          "not_found": 0,
+          "bad_request": 0,
+          "rate_limited": 0,
+          "failed": 0,
+          "avg_ms": 72
+        }
+      },
+      "apps": {
+        "app-alpha": 2066,
+        "app-beta": 567,
+        "unknown": 277
+      },
+      "distributors": {
+        "digikey": {
+          "sent": 120,
+          "cached": 30,
+          "rate_limited": 0,
+          "skipped": 3
+        },
+        "mouser": {
+          "sent": 60,
+          "cached": 15,
+          "rate_limited": 0,
+          "skipped": 3
+        }
+      },
+      "reasons": {
+        "board_search": {
+          "no_results": 3
+        },
+        "cse_get_kicad": {
+          "cse_invalid_zip": 3,
+          "no_ecad_model": 3,
+          "no_parts_for_query": 3
+        },
+        "cse_search": {
+          "no_results": 3
+        },
+        "digikey_get_part": {
+          "part_not_found": 3,
+          "not_sent": 3
+        },
+        "get_design_rules": {
+          "no_results": 3
+        },
+        "jlc_find_alternatives": {
+          "no_alternatives": 3
+        },
+        "jlc_get_part": {
+          "mpn_not_in_snapshot": 3,
+          "jlcpcb_unavailable": 3,
+          "lcsc_not_found": 3,
+          "placeholder_mpn": 3
+        },
+        "jlc_get_parts": {
+          "mpn_not_in_snapshot": 3,
+          "lcsc_not_found": 3
+        },
+        "jlc_get_pinout": {
+          "no_easyeda_symbol": 3,
+          "jlcpcb_unavailable": 3
+        },
+        "jlc_search": {
+          "part_number_not_in_stock": 3,
+          "no_part_type": 3,
+          "blocked_by_library_type": 3,
+          "spec_filters_no_match": 3,
+          "part_number_filtered_out": 3,
+          "words_unmatched": 3,
+          "blocked_by_several": 3,
+          "blocked_by_package": 3,
+          "filter_ignored_or_sparse": 3,
+          "no_results": 3,
+          "value_not_listed": 3,
+          "no_catalog_subcategory": 3,
+          "offset_past_end": 3,
+          "blocked_by_min_stock": 3
+        },
+        "jlc_stock_check": {
+          "no_results": 3,
+          "jlcpcb_unavailable": 3,
+          "stock_below_minimum": 3,
+          "part_number_fragment": 3
+        },
+        "mouser_get_part": {
+          "no_results": 3,
+          "not_sent": 3
+        }
+      },
+      "why_empty": {
+        "no_counterfactual": 36,
+        "complete": 3,
+        "budget_exhausted_or_busy": 3
+      },
+      "upstream": {
+        "jlcpcb": {
+          "sent": 30,
+          "retries": 3,
+          "cached": 15,
+          "rate_limited": 6,
+          "waited": 0
+        },
+        "lcsc": {
+          "sent": 60,
+          "retries": 0,
+          "cached": 15,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_products": {
+          "sent": 90,
+          "retries": 0,
+          "cached": 15,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_components": {
+          "sent": 120,
+          "retries": 0,
+          "cached": 15,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "easyeda_pads": {
+          "sent": 150,
+          "retries": 0,
+          "cached": 15,
+          "rate_limited": 0,
+          "waited": 0
+        },
+        "cse": {
+          "sent": 180,
+          "retries": 0,
+          "cached": 15,
+          "rate_limited": 0,
+          "waited": 0
+        }
+      },
+      "parts_asked": {
+        "digikey": {
+          "total": 150,
+          "distinct": 135
+        },
+        "mouser": {
+          "total": 75,
+          "distinct": 60
+        }
+      },
+      "per_ip_refusals": {
+        "total": 15,
+        "everyone_else": 9,
+        "platform_ranges": 3,
+        "server_busy": 0,
+        "too_many_clients": 3
+      },
+      "restarts": 1,
+      "lcsc_lookups": {
+        "jlc_get_part": {
+          "snapshot": 120,
+          "live": 60,
+          "fallback": 3,
+          "live_failed": 0
+        },
+        "jlc_stock_check": {
+          "snapshot": 30,
+          "live": 60,
+          "fallback": 0,
+          "live_failed": 0
+        }
+      },
+      "distributor_apps": {
+        "mouser_get_part": {
+          "app-alpha": {
+            "calls": 128,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 35,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 17,
+            "rate_limited": 0
+          }
+        },
+        "digikey_get_part": {
+          "app-alpha": {
+            "calls": 212,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 59,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 29,
+            "rate_limited": 0
+          }
+        },
+        "part_lifecycle": {
+          "app-alpha": {
+            "calls": 42,
+            "rate_limited": 0
+          },
+          "app-beta": {
+            "calls": 12,
+            "rate_limited": 0
+          },
+          "unknown": {
+            "calls": 6,
+            "rate_limited": 0
+          }
+        }
+      },
+      "distributor_limits": null,
+      "datasheet_links": null,
+      "db_waits": null,
+      "lifecycle_inputs": null,
+      "bad_request_reasons": null,
+      "tool_apps": null,
+      "latency": null,
+      "versions": null,
+      "upstream_status": null,
+      "popular_terms": null
+    }
+  ]
+}

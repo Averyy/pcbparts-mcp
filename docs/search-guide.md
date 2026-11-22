@@ -35,6 +35,7 @@ The reply always says what happened:
 
 - `filters_applied` lists every filter that ran, and `parsed` what was read from the query text.
 - `parsed.adjusted_filters` lists values moved to another spec or left out because the part type doesn't list that spec.
+- With `category_name` or `category_id`, query words naming a part type in another category (`resistor` with Capacitors) are left out, so the whole category is searched; `parsed.adjusted_filters` names them. A `subcategory_name` or `subcategory_id` outside the category given is an error.
 - `relaxed` names query words left out because nothing matched them together with the rest of the query. `relaxed.dropped_filters` lists parsed spec filters dropped when a part number was retried. With `subcategory_name` or `spec_filters` given, those words aren't left out: the reply is empty and `hint` names them and how many parts match without them.
 - `ignored_filters` lists filters that couldn't be applied, or that few of these parts list.
 - `unlisted` counts parts a range filter dropped only because they list no value for it (AO3401A lists no operating temperature, so a `-40°C` filter drops it).

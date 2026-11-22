@@ -12,6 +12,10 @@ change, and anything that doesn't match exactly is left as it is.
   (the SDK answers -32602): shared/session.py logs "Failed to validate request: 31 validation
   errors for ClientRequest" on the root logger, about 95 lines. Seen 16 times in 19 hours. A known
   method with bad parameters keeps its full message: that one says what was wrong.
+- fastmcp's "Invalid arguments for tool" (fastmcp.server.server) lists every problem pydantic
+  found, with the values given. One request under the 1 MB body limit can hold 20,000 unknown
+  names: a line of megabytes that the console handler took seconds to print, on the event loop.
+  It keeps its first five problems, names and values cut to 100 characters, and counts the rest.
 
 install() runs once at startup (server.main); it adds logger filters, so every handler (console
 and the persistent file) gets the short line.
@@ -116,7 +120,37 @@ class _UnknownRequest(logging.Filter):
         return True
 
 
+_ARGUMENT_PROBLEMS_SHOWN = 5
+_ARGUMENT_TEXT_CHARS = 100
+
+
+def _cut(value: object) -> object:
+    text = value if isinstance(value, str) else repr(value)
+    return value if len(text) <= _ARGUMENT_TEXT_CHARS else text[:_ARGUMENT_TEXT_CHARS] + "..."
+
+
+class _InvalidArguments(logging.Filter):
+    """fastmcp.server.server: "Invalid arguments for tool %r: %s", bounded (see the module text)."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if (record.msg != "Invalid arguments for tool %r: %s" or not isinstance(record.args, tuple)
+                or len(record.args) != 2):
+            return True
+        tool, detail = record.args
+        if isinstance(detail, list):
+            shown = [{key: (tuple(_cut(part) for part in value) if key == "loc" and isinstance(value, tuple)
+                            else _cut(value) if key == "input" else value)
+                      for key, value in item.items()} if isinstance(item, dict) else _cut(item)
+                     for item in detail[:_ARGUMENT_PROBLEMS_SHOWN]]
+            more = len(detail) - len(shown)
+            record.args = (tool, f"{shown}" + (f" and {more} more" if more > 0 else ""))
+        else:
+            record.args = (tool, _cut(str(detail)))
+        return True
+
+
 _FILTERS = {
+    "fastmcp.server.server": _InvalidArguments,
     "mcp.server.streamable_http": _PostDisconnect,
     "mcp.server.lowlevel.server": _ForwardedDisconnect,
     "mcp.server.streamable_http_manager": _SessionGone,

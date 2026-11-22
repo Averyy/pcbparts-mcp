@@ -4,6 +4,46 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.6 (2026-11-22)
+
+### Breaking
+
+- **`jlc_search`**: `category_id`/`category_name` and a `manufacturers` list (OR; replaces `manufacturer`, as `packages` replaces `package`), as `jlc_stock_check` has; a category name reads as there (`LED` is Optoelectronics).
+- **`jlc_search`, `jlc_stock_check`**: an unknown `category_id` or `subcategory_id` is an error (`Category ID … not found`), not a search of every category or an empty reply; so is a subcategory outside the category given (`Invalid subcategory: …`).
+- **`jlc_search_help`**: also takes `category_name`/`category_id` and `subcategory_name`/`subcategory_id`; a number given as text is an ID.
+- **`jlc_search`**: query words naming a part type outside `category_name` are listed in `parsed.adjusted_filters`; `strict=true` refuses the search.
+- **Unknown arguments**: the error names the tool's arguments, the likely intended one, and advice for common mix-ups (still `isError`); it lists at most five unknown names.
+- **`jlc_get_part`**: also takes `identifier` or `part_number` (an LCSC code is `lcsc`, anything else `mpn`).
+- **`jlc_search`, `jlc_stock_check`**: also take `jlc_search_help`'s `subcategory` and `category`, a number or a name.
+- **Paging and sorting**: `jlc_search` also takes `page`, `jlc_stock_check` an `offset` that starts a page; `sort_by` accepts `stock` and `quantity` on both.
+- **`cse_search`, `cse_get_kicad`**: also take `mpn` or `part_number`; `cse_get_kicad` also takes `lcsc` (searched by its catalog MPN).
+- **Unknown subcategory or category names**: `jlc_search`, `jlc_stock_check` and `jlc_search_help` give the same hint and ranked `similar_subcategories` / `similar_categories` (by matching words, parts of words and close spellings); `jlc_search_help` reads a category name as the search tools do.
+
+### Added
+
+- **Usage dashboard** (`dashboard/`): a private page for the server's operator. It reads `/mcp/stats` with `STATS_TOKEN` every hour into SQLite, shows Eastern days, and runs as its own container beside the server, behind a password.
+
+### Changed
+
+- **Application log**: kept 30 days (was 7); hourly held-back lines name every held-back address, and an address reaching the daily per-address limit is logged once.
+- **Application log**: fastmcp's invalid-arguments line keeps the first five problems, names and values cut to 100 characters.
+- **Usage stats**: `distributor_limits.digikey.refusals.refused` counts one per lookup or batch again, as before 0.10.5.
+- **Privacy policy**: says when per-address counts are written to disk, which addresses the hourly lines name, and the 30-day log.
+
+### Fixed
+
+- **Mouser and DigiKey**: an address with 100 or more lookups that day keeps its count across a restart; each deploy had reset them (allowing about twice the 1,000 a day).
+- **Shutdown**: running requests get at most 6 s, so the shutdown that saves counts and stats runs before Docker's 10 s stop timeout.
+- **`jlc_stock_check`**: `category_name="Other"` is the category named other, not Others.
+- **`jlc_stock_check`**: subcategory and category names with no part in the snapshot are found (`USB cable/data cable` was not found), and a name resolves to the same subcategory as in `jlc_search` (`Stepper motor` was Stepper Motor Driver).
+- **Every tool**: a text argument holding an unpaired surrogate (invalid Unicode from a JSON escape) failed the call; it is read as U+FFFD.
+- **`jlc_search_help`**: `sample_size` is the number of parts read (it gave the 1,000 cap).
+- **`jlc_stock_check`**: a `category_id` or `subcategory_id` with no part in the snapshot (USB cables, 84) filters the live search; it was dropped, which searched every category.
+- **`jlc_search`**: a search filtered only by manufacturer no longer reads every part in stock (a new catalog index).
+- **`jlc_search`**: a manufacturer spelled with punctuation (`Texas-Instruments`) is matched, as in `jlc_stock_check`.
+- **`jlc_search`**: `strict=true` compared a query's package with `package` even when `packages` replaced it, and refused the search.
+- **`jlc_get_parts`**: finds parts listed under Analog Devices' `-RL`/`-RL7` reel codes and Toshiba's packing codes (`TLP172A` is `TLP172A(TP,F)`), which it reported not found.
+
 ## 0.10.5 (2026-11-21)
 
 ### Breaking
