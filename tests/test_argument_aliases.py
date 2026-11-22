@@ -266,3 +266,39 @@ async def test_a_surrogate_in_any_text_argument_is_an_ordinary_reply_not_a_faile
                           {"query": "10k", "manufacturers": ["\ud800"]}):
             result = await client.call_tool("jlc_search", arguments, raise_on_error=False)
             assert not result.is_error, result.content[0].text
+
+
+# 0.10.7: names prod still refused under 0.10.6 (the log's "Invalid arguments" lines, 2026-11-22)
+@pytest.mark.parametrize(("tool", "given", "expected"), [
+    ("cse_get_kicad", {"cse_part_id": 1706540}, {"part_id": 1706540}),  # cse_search's own field name
+    ("jlc_get_part", {"model": "NCEP039N10MD"}, {"mpn": "NCEP039N10MD"}),  # our replies' MPN field
+    ("jlc_get_part", {"part_id": "C168076"}, {"lcsc": "C168076"}),
+    ("jlc_get_part", {"query": "C129363"}, {"lcsc": "C129363"}),
+    ("jlc_get_parts", {"codes": '["C7904", "C22935"]'}, {"parts": '["C7904", "C22935"]'}),
+    ("digikey_get_part", {"query": "1951-1803-ND"}, {"part_number": "1951-1803-ND"}),
+    ("mouser_get_part", {"query": "595-LM358P"}, {"part_number": "595-LM358P"}),
+    ("mouser_get_part", {"parts": ["TPS259470LRPWR", "TPS259474ARPWR"]}, {"part_number": "TPS259470LRPWR|TPS259474ARPWR"}),
+    ("mouser_get_part", {"parts": '["NE555P", "LM358P"]'}, {"part_number": "NE555P|LM358P"}),
+    ("jlc_stock_check", {"lcsc": "C25905"}, {"query": "C25905"}),
+    ("jlc_search", {"query": "10k resistor", "mounting_type": "smd"}, {"query": "10k resistor SMD"}),
+    ("jlc_search", {"mounting_type": "Through-hole"}, {"query": "through hole"}),
+])
+def test_names_prod_still_sent_after_0106(tool, given, expected):
+    assert rename(tool, given) == expected
+
+
+@pytest.mark.parametrize(("tool", "given"), [
+    ("jlc_get_part", {"query": "10k resistor 0603"}),  # free text: not a part to look up
+    ("jlc_stock_check", {"lcsc": ["C1", "C2"]}),  # several parts: jlc_get_parts
+    ("mouser_get_part", {"parts": ["NE555P", 7]}),  # not all part numbers
+    ("jlc_search", {"query": "x", "mounting_type": "vertical"}),  # not a mounting the query reads
+    ("mouser_get_part", {"part_number": "NE555P", "query": "LM358P"}),  # a clash stays for validation
+])
+def test_unclear_values_are_left_for_validation(tool, given):
+    assert rename(tool, given) == given
+
+
+async def test_the_remaining_cases_get_advice():
+    assert "use jlc_search(query=...)" in await _error("jlc_get_part", {"query": "10k resistor 0603"})
+    assert "add SMD or through hole to query" in await _error("jlc_search", {"query": "x", "mounting_type": "vertical"})
+    assert "use jlc_get_parts(parts=[...])" in await _error("jlc_stock_check", {"parts": '["C49242260","C5441768"]'})

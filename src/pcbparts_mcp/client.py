@@ -43,6 +43,7 @@ from .config import (
     EASYEDA_PRODUCTS_BUDGET,
     EASYEDA_PRODUCTS_WINDOW,
     EASYEDA_NOT_FOUND_TTL,
+    EASYEDA_SEED_NOT_FOUND_TTL,
     EASYEDA_RECHECK_INTERVAL,
     EASYEDA_COOLDOWN_BASE,
     EASYEDA_COOLDOWN_MAX,
@@ -876,8 +877,8 @@ class JLCPCBClient:
         candidates: list[FootprintAnswer | None] = [self._easyeda_overrides.get(lcsc)]
         if self._easyeda_store is not None:
             candidates.append(self._easyeda_store.get(lcsc))
-        candidates.append(seed)
-        answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL)
+        answer = pick_answer(candidates, now, EASYEDA_NOT_FOUND_TTL, seed=seed,
+                             seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL)
         return answer.as_result() if answer is not None else None
 
     def footprint_seed(self, lcsc: str) -> FootprintAnswer | None:

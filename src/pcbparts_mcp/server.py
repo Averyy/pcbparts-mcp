@@ -79,6 +79,7 @@ from .search.query_builder import package_family_adjustments
 from .search.spec_sort import SORTABLE_LABELS, SortSpecError, SpecSort
 from .smart_parser import ParsedQuery, parse_smart_query, merge_spec_filters
 from .smart_parser.mapping import DEFAULT_SPECS
+from .smart_parser.types import extract_mounting_type
 from .alternatives import SPEC_PARSERS
 from .search.spec_filter import ATTRIBUTE_ALIASES, SPEC_TO_COLUMN, BatterySizeFilter, ConnectorFilter, FuseFilter, ScopedTextFilter
 from .parsers import parse_resistance
@@ -678,12 +679,13 @@ class UsageStatsMiddleware(FastMCPMiddleware):
 # Renamed before the arguments are validated, so the tool list shows one name. 0.10.6: the CSE
 # tools take the part number as query, which callers send as the other tools' names.
 ARGUMENT_ALIASES: dict[str, dict[str, tuple[str, ...]]] = {
-    "mouser_get_part": {"part_number": ("product_number", "mpn")},
-    "digikey_get_part": {"part_number": ("product_number", "mpn")},
-    "jlc_get_parts": {"parts": ("lcsc", "lcsc_codes", "identifiers")},
+    "mouser_get_part": {"part_number": ("product_number", "mpn", "query")},
+    "digikey_get_part": {"part_number": ("product_number", "mpn", "query")},
+    "jlc_get_parts": {"parts": ("lcsc", "lcsc_codes", "identifiers", "codes")},
     "jlc_stock_history": {"lcsc": ("parts",)},
     "cse_search": {"query": ("mpn", "part_number")},
-    "cse_get_kicad": {"query": ("mpn", "part_number")},
+    # 0.10.7: cse_search's rows name the ID cse_part_id, and callers pass it back by that name
+    "cse_get_kicad": {"query": ("mpn", "part_number"), "part_id": ("cse_part_id",)},
     # the search tools' names, the other way round from VALUE_ALIASES' category/subcategory
     "jlc_search_help": {"category": ("category_name", "category_id"),
                         "subcategory": ("subcategory_name", "subcategory_id")},
@@ -697,6 +699,34 @@ def _lcsc_or_mpn(value: Any, arguments: dict) -> tuple[str, Any] | None:
     if isinstance(value, str) and value.strip():
         text = value.strip()
         return ("lcsc", text.upper()) if _LCSC_CODE_ARG.fullmatch(text) else ("mpn", text)
+    return None
+
+
+def _one_lcsc_code(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """jlc_stock_check's lcsc: one LCSC code is a query for that part (a list stays an error that
+    points to jlc_get_parts)."""
+    if isinstance(value, str) and _LCSC_CODE_ARG.fullmatch(value.strip()):
+        return "query", value.strip().upper()
+    return None
+
+
+def _lcsc_only(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """jlc_get_part's query: an LCSC code is lcsc; other text stays an error that points to jlc_search."""
+    if isinstance(value, str) and _LCSC_CODE_ARG.fullmatch(value.strip()):
+        return "lcsc", value.strip().upper()
+    return None
+
+
+def _joined_part_numbers(value: Any, arguments: dict) -> tuple[str, Any] | None:
+    """mouser_get_part's parts: a list (or JSON-array text) of part numbers is its "|"-joined batch.
+    More than 10 still gets the tool's own limit error."""
+    if isinstance(value, str) and value.lstrip().startswith("["):
+        try:
+            value = _parse_list_param(value)
+        except ValueError:
+            return None
+    if isinstance(value, list) and value and all(isinstance(item, str) and item.strip() for item in value):
+        return "part_number", "|".join(item.strip() for item in value)
     return None
 
 
@@ -763,13 +793,17 @@ def _offset_to_page(value: Any, arguments: dict) -> tuple[str, Any] | None:
 # category/subcategory as a number or name, the search tools *_id/*_name; jlc_search pages by
 # offset, jlc_stock_check by page; jlc_get_part was sent identifier (2026-11-21).
 VALUE_ALIASES: dict[str, dict[str, tuple[tuple[str, ...], Callable[[Any, dict], tuple[str, Any] | None]]]] = {
-    "jlc_get_part": {"identifier": (("lcsc", "mpn"), _lcsc_or_mpn), "part_number": (("lcsc", "mpn"), _lcsc_or_mpn)},
+    "jlc_get_part": {**{name: (("lcsc", "mpn"), _lcsc_or_mpn)
+                        for name in ("identifier", "part_number", "part_id", "model")},  # model: our replies' MPN field
+                     "query": (("lcsc", "mpn"), _lcsc_only)},
     "jlc_search": {"subcategory": (("subcategory_id", "subcategory_name"), _id_or_name("subcategory")),
                    "category": (("category_id", "category_name"), _id_or_name("category")),
                    "page": (("offset",), _page_to_offset)},
     "jlc_stock_check": {"subcategory": (("subcategory_id", "subcategory_name"), _id_or_name("subcategory")),
                         "category": (("category_id", "category_name"), _id_or_name("category")),
-                        "offset": (("page",), _offset_to_page)},
+                        "offset": (("page",), _offset_to_page),
+                        "lcsc": (("query",), _one_lcsc_code)},
+    "mouser_get_part": {"parts": (("part_number",), _joined_part_numbers)},
 }
 
 
@@ -788,6 +822,14 @@ def _with_argument_aliases(tool: str, arguments: Any) -> Any:
                 target, value = mapped
                 arguments = {(target if key == alias else key): (value if key == alias else given)
                              for key, given in arguments.items()}
+    # jlc_search reads mounting from the query ("SMD", "through hole"): mounting_type="smd" joins it
+    if tool == "jlc_search" and isinstance(arguments.get("mounting_type"), str):
+        mounting, rest = extract_mounting_type(arguments["mounting_type"])
+        query = arguments.get("query")
+        if mounting and not rest and (query is None or isinstance(query, str)):
+            word = "SMD" if mounting == "SMD" else "through hole"
+            arguments = {key: value for key, value in arguments.items() if key != "mounting_type"}
+            arguments["query"] = f"{query} {word}" if query and query.strip() else word
     return arguments
 
 
@@ -813,6 +855,9 @@ _ERROR_ITEMS_SHOWN = 5  # unknown names (and other problems) an argument error l
 _UNKNOWN_ARGUMENT_ADVICE = {
     ("jlc_search", "in_stock"): "jlc_search only lists parts in stock (stock >= 10): leave in_stock out, raise "
                                 "min_stock for more, or use jlc_stock_check(min_stock=0) for out-of-stock parts.",
+    ("jlc_search", "mounting_type"): "jlc_search reads mounting from the query: add SMD or through hole to query.",
+    ("jlc_get_part", "query"): "jlc_get_part looks up one part by lcsc (an LCSC code) or mpn; to search by words or "
+                               "values use jlc_search(query=...).",
     # _cse_lcsc took every lcsc it could: this one is malformed or not in the catalog snapshot
     ("cse_get_kicad", "lcsc"): "cse_get_kicad takes lcsc only for a part in the catalog snapshot (searched by its "
                                "MPN); for any other part give its MPN as query.",
@@ -842,7 +887,9 @@ def _unknown_argument_error(tool: str, arguments: Any, error: ValidationError, p
             continue
         if advice := _UNKNOWN_ARGUMENT_ADVICE.get((tool, name)):
             lines.append(advice)
-        elif tool == "jlc_stock_check" and isinstance(arguments, dict) and isinstance(arguments.get(name), list):
+        elif tool == "jlc_stock_check" and isinstance(arguments, dict) and (
+                isinstance(arguments.get(name), list)
+                or (isinstance(arguments.get(name), str) and arguments[name].lstrip().startswith("["))):
             lines.append(_LIST_ADVICE.format(tool=tool))
         elif close := difflib.get_close_matches(name.lower(), candidates, n=1, cutoff=0.6):
             lines.append(f"Did you mean {close[0]!r} instead of {name!r}?")

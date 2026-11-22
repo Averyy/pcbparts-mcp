@@ -18,7 +18,7 @@ from pcbparts_mcp.config import (
     EASYEDA_COOLDOWN_BASE,
     EASYEDA_COOLDOWN_MAX,
     EASYEDA_FOOTPRINT_CACHE_TTL,
-    EASYEDA_NOT_FOUND_TTL,
+    EASYEDA_NOT_FOUND_TTL, EASYEDA_SEED_NOT_FOUND_TTL,
     EASYEDA_PRODUCTS_BUDGET,
     EASYEDA_PRODUCTS_WINDOW,
     EASYEDA_RECHECK_INTERVAL,
@@ -144,6 +144,31 @@ class TestPickAnswer:
     def test_nothing(self):
         assert pick_answer([], self.NOW, EASYEDA_NOT_FOUND_TTL) is None
         assert pick_answer([None, None], self.NOW, EASYEDA_NOT_FOUND_TTL) is None
+
+    def test_a_seed_no_footprint_keeps_the_seed_expiry(self):
+        """A seed run takes weeks: its "no footprint" rows keep 90 days, live answers 7 (0.10.7)."""
+        from pcbparts_mcp.config import EASYEDA_SEED_NOT_FOUND_TTL
+        month_old = FootprintAnswer(False, None, None, self.NOW - 30 * DAY)
+        assert pick_answer([], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=month_old,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) == month_old
+        assert pick_answer([month_old], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=None,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) is None  # a live answer: 7 days
+        too_old = FootprintAnswer(False, None, None, self.NOW - EASYEDA_SEED_NOT_FOUND_TTL)
+        assert pick_answer([], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=too_old,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) is None
+
+    def test_a_newer_live_answer_still_wins_over_the_seed(self):
+        from pcbparts_mcp.config import EASYEDA_SEED_NOT_FOUND_TTL
+        seeded_none = FootprintAnswer(False, None, None, self.NOW - 30 * DAY)
+        live_found = FootprintAnswer(True, SYM, FP, self.NOW - DAY)
+        assert pick_answer([live_found], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=seeded_none,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) == live_found
+        stale_live_none = FootprintAnswer(False, None, None, self.NOW - 8 * DAY)  # newer than the seed, expired
+        assert pick_answer([stale_live_none], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=seeded_none,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) is None
+        same_time = FootprintAnswer(True, SYM2, FP2, seeded_none.checked_at)
+        assert pick_answer([same_time], self.NOW, EASYEDA_NOT_FOUND_TTL, seed=seeded_none,
+                           seed_not_found_ttl=EASYEDA_SEED_NOT_FOUND_TTL) == same_time
 
 
 # --- EasyEDAStore ----------------------------------------------------------------------
@@ -406,13 +431,16 @@ class TestClientStore:
         assert client._easyeda_store is None
         seeds = {"C1": FootprintAnswer(True, SYM2, FP2, clock.now - 400 * DAY),
                  "C2": FootprintAnswer(False, None, None, clock.now - DAY),
-                 "C3": FootprintAnswer(False, None, None, clock.now - EASYEDA_NOT_FOUND_TTL)}
+                 "C3": FootprintAnswer(False, None, None, clock.now - EASYEDA_NOT_FOUND_TTL),
+                 "C4": FootprintAnswer(False, None, None, clock.now - EASYEDA_SEED_NOT_FOUND_TTL)}
         client.set_easyeda_seed(seeds.get)
         assert await client._check_easyeda_footprint("C1") == (
             {"has_easyeda_footprint": True, "easyeda_symbol_uuid": SYM2, "easyeda_footprint_uuid": FP2}, "stored")
         assert (await client._check_easyeda_footprint("C2"))[1] == "stored"
+        # a seed's "no footprint" keeps 90 days (0.10.7; a live answer's 7)
+        assert (await client._check_easyeda_footprint("C3"))[1] == "stored"
         assert session.urls == []
-        assert (await client._check_easyeda_footprint("C3"))[1] == "checked"  # expired "no footprint"
+        assert (await client._check_easyeda_footprint("C4"))[1] == "checked"  # expired seed "no footprint"
         assert len(session.urls) == 1
 
     async def test_newer_store_answer_beats_older_seed(self, clock, tmp_path):

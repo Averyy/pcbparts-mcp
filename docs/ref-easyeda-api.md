@@ -47,7 +47,9 @@ Where a footprint answer comes from, first match wins:
    - "Has a footprint" never expires: EasyEDA edits records in place and keeps their UUIDs (the
      STM32F103C8T6 symbol was edited in 2020 and 2025, its footprint in Aug 2026, same UUIDs).
      "No footprint" expires after 7 days (`EASYEDA_NOT_FOUND_TTL`): EasyEDA draws footprints for
-     parts after they go on sale. Errors and blocks are never stored, and neither is a "has a
+     parts after they go on sale. A seed row's "no footprint" keeps 90 days since 0.10.7
+     (`EASYEDA_SEED_NOT_FOUND_TTL`): a full seed run takes weeks, and the seed's monthly refresh
+     (`build_easyeda_seed.py parts --refresh-days 30`) re-checks those rows instead. Errors and blocks are never stored, and neither is a "has a
      footprint" answer without a usable symbol UUID: it's served as EasyEDA gave it and asked
      again once the memory cache expires (`easyeda_store.answer_problem()`; the seed script skips
      those too).
