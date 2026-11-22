@@ -87,6 +87,7 @@
 {"l":"C41378688","m":"GT-BTP12706-0170B-013A","f":"G-Switch","p":"SMD,P=1.27mm","t":"e","c":2048,"d":"SMD,P=1.27mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0}
 {"l":"C41378690","m":"GT-BTP12702-0225B-013B","f":"G-Switch","p":"SMD,P=1.27mm","t":"e","c":2048,"d":"SMD,P=1.27mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C41378691","m":"GT-BTP12703-0225B-013B","f":"G-Switch","p":"SMD,P=1.27mm","t":"e","c":2048,"d":"SMD,P=1.27mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C41378692","m":"GT-BTP12704-0225B-013B","f":"G-Switch","p":"SMD,P=1.27mm","t":"e","c":2048,"d":"SMD,P=1.27mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C41378693","m":"GT-BTP12705-0225B-013B","f":"G-Switch","p":"SMD,P=1.27mm","t":"e","c":2048,"d":"SMD,P=1.27mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C41378700","m":"GT-BTP16004-0180B-014A","f":"G-Switch","p":"SMD,P=1.6mm","t":"e","c":2048,"d":"SMD,P=1.6mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C41378702","m":"GT-BTP16006-0180B-014A","f":"G-Switch","p":"SMD,P=1.6mm","t":"e","c":2048,"d":"SMD,P=1.6mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
@@ -575,4 +576,7 @@
 {"l":"C56525300","m":"111052-110106902","f":"SYNWIN","p":"Plugin,P=2.5mm","t":"e","c":2048,"d":"Plugin,P=2.5mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56525301","m":"111049-000111901","f":"SYNWIN","p":"Plugin,P=2.5mm","t":"e","c":2048,"d":"Plugin,P=2.5mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56525302","m":"111052-110111902","f":"SYNWIN","p":"Plugin,P=2.5mm","t":"e","c":2048,"d":"Plugin,P=2.5mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C56525303","m":"C1128-1303-111","f":"SYNWIN","p":"SMD","t":"e","c":2048,"d":"SMD Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C56525304","m":"111010-080103421","f":"SYNWIN","p":"SMD,P=3mm","t":"e","c":2048,"d":"SMD,P=3mm Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C56525307","m":"C1121-1104-411","f":"SYNWIN","p":"SMD","t":"e","c":2048,"d":"SMD Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56525565","m":"111052-110102902","f":"SYNWIN","p":"Plugin","t":"e","c":2048,"d":"Plugin Blade / Shrapnel Contact Battery Connectors ROHS","a":[],"x":0,"n":1}

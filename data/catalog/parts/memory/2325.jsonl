@@ -13,3 +13,4 @@
 {"l":"C17627475","m":"S80KS5122GABHI020","f":"Infineon Technologies","p":"FBGA-24(6x8)","t":"e","c":2325,"d":"FBGA-24(6x8) DRAM ROHS","a":[["Voltage - Supply","-"],["Refresh Current","40mA"]],"x":0}
 {"l":"C17668865","m":"D1216ECMDXGJDI-U","f":"Kingston Technology","p":"FBGA-96(7.5x13.5)","t":"e","c":2325,"d":"-40℃~+95℃ 1.283V~1.45V 2Gbit FBGA-96(7.5x13.5) DRAM ROHS","a":[["Operating Temperature","-40℃~+95℃"],["Memory Size","2Gbit"],["Voltage - Supply","1.283V~1.45V"]],"x":0}
 {"l":"C19192462","m":"H9HCNNNCPMMLXR-NEE","f":"SK HYNIX","p":"BGA-200","t":"e","c":2325,"d":"600mV、1.1V、1.8V BGA-200 DRAM ROHS","a":[["Operating Temperature","-"],["Memory Size","-"],["Voltage - Supply","600mV、1.1V、1.8V"],["Interface","-"]],"x":2}
+{"l":"C42963059","m":"APS256XXN-OBR-WA","f":"AP Memory","p":"-","t":"e","c":2325,"d":"- DRAM ROHS","a":[],"x":0}

@@ -246,6 +246,7 @@
 {"l":"C55213216","m":"WS2813B-2121-V6","f":"Worldsemi","p":"SMD2222-6P","t":"e","c":2115,"d":"SMD2222-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55382837","m":"X9N3N3S3YYD","f":"Beking Optoelectronics","p":"SMD,2x1.7mm","t":"e","c":2115,"d":"SMD,2x1.7mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55382838","m":"F8S3S3S3YYD","f":"Beking Optoelectronics","p":"SMD-4P,2x1.7mm","t":"e","c":2115,"d":"SMD-4P,2x1.7mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C55382839","m":"HK13S3R6S3YYD-5MA","f":"Beking Optoelectronics","p":"SMD-4P,2x1.7mm","t":"e","c":2115,"d":"SMD-4P,2x1.7mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55382840","m":"HK13S3R6S3YYD 12MA","f":"Beking Optoelectronics","p":"SMD-4P,2x1.7mm","t":"e","c":2115,"d":"SMD-4P,2x1.7mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55382841","m":"M5S3R3S3YYDAN-E0 5MA","f":"Beking Optoelectronics","p":"SMD-4P,1x1mm","t":"e","c":2115,"d":"SMD-4P,1x1mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55382845","m":"1204GRBH-M5M3R3M3YYDAN-E0 12MA","f":"Beking Optoelectronics","p":"SMD-4P,3.2x1mm","t":"e","c":2115,"d":"SMD-4P,3.2x1mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
@@ -255,6 +256,7 @@
 {"l":"C55629351","m":"WS2813B-MINI-V6","f":"Worldsemi","p":"SMD3535-6P","t":"e","c":2115,"d":"SMD3535-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55629353","m":"WS2812B-B-T-V6","f":"Worldsemi","p":"SMD5050-4P","t":"e","c":2115,"d":"SMD5050-4P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55629354","m":"WS2813C-V6","f":"Worldsemi","p":"SMD5050-6P","t":"e","c":2115,"d":"SMD5050-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
+{"l":"C55629356","m":"WS2812A-5054MP","f":"Worldsemi","p":"SMD5050-6P","t":"e","c":2115,"d":"SMD5050-6P RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55629711","m":"WS2812D-F5-V6","f":"Worldsemi","p":"Plugin,D=5mm","t":"e","c":2115,"d":"Plugin,D=5mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C55629712","m":"WS2812D-F8-V6","f":"Worldsemi","p":"Plugin,D=8mm","t":"e","c":2115,"d":"Plugin,D=8mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}
 {"l":"C56145017","m":"CT-2018UGRBC/HW-P8-M2","f":"CHONGTIAN","p":"SMD-4P,2x1.8mm","t":"e","c":2115,"d":"SMD-4P,2x1.8mm RGB LEDs(Built-in IC) ROHS","a":[],"x":0,"n":1}

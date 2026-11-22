@@ -354,6 +354,7 @@
 {"l":"C55509745","m":"ULN2402-Gcore","f":"Gcore","p":"SOP-10","t":"e","c":2308,"d":"SOP-10 Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
 {"l":"C55629664","m":"ULN2803ADMT/TR-HG","f":"HGSEMI","p":"TSSOP-20","t":"e","c":2308,"d":"TSSOP-20 Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
 {"l":"C56055403","m":"ULN2803A-HXY","f":"HXY MOSFET","p":"TSSOP-20","t":"e","c":2308,"d":"TSSOP-20 Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
+{"l":"C56055690","m":"ULN2803A-HXY","f":"HXY MOSFET","p":"QFN-20(4x4)","t":"e","c":2308,"d":"QFN-20(4x4) Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
 {"l":"C56055987","m":"ULN2803A-HXY","f":"HXY MOSFET","p":"SSOP-24","t":"e","c":2308,"d":"SSOP-24 Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
 {"l":"C56132536","m":"ULN2803Q-MS","f":"MSKSEMI","p":"QFN-20L(4x4)","t":"e","c":2308,"d":"QFN-20L(4x4) Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}
 {"l":"C56462495","m":"XLULN2001D","f":"XINLUDA","p":"SOP-8","t":"e","c":2308,"d":"SOP-8 Darlington Transistor Arrays ROHS","a":[],"x":0,"n":1}

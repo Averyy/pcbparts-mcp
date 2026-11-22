@@ -162,6 +162,7 @@
 {"l":"C3008197","m":"HFCG-1100+","f":"Mini-Circuits","p":"SMD-8P,2x1.2mm","t":"e","c":3254,"d":"-40℃~+85℃ 1.4GHz~3.9GHz 2.5dB 50Ω High pass SMD-8P,2x1.2mm RF Filters ROHS","a":[["Frequency - Center","-"],["Cut-Off Frequency","1.05GHz"],["Insertion Loss","2.5dB"],["Operating Temperature","-40℃~+85℃"],["Absolute Bandwidth","1.4GHz~3.9GHz"],["Relative Bandwidth","-"],["Attenuation","20dB、30dB、40dB、53dB"],["Ripple","-"],["Filter Type","High pass"],["Impedance","50Ω"]],"x":0}
 {"l":"C3008199","m":"BFCN-2275+","f":"Mini-Circuits","p":"SMD-4P,3.2x1.6mm","t":"e","c":3254,"d":"-55℃~+100℃ 2.17GHz~2.38GHz 2.275GHz 2dB 50Ω Bandpass SMD-4P,3.2x1.6mm RF Filters ROHS","a":[["Frequency - Center","2.275GHz"],["Cut-Off Frequency","-"],["Operating Temperature","-55℃~+100℃"],["Insertion Loss","2dB"],["Absolute Bandwidth","2.17GHz~2.38GHz"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","Bandpass"],["Impedance","50Ω"]],"x":0}
 {"l":"C3008205","m":"LFCN-490+","f":"Mini-Circuits","p":"SMD-4P,3.2x1.6mm","t":"e","c":3254,"d":"-55℃~+100℃ 1.2dB 50Ω 650MHz Low Pass SMD-4P,3.2x1.6mm RF Filters ROHS","a":[["Frequency - Center","-"],["Cut-Off Frequency","650MHz"],["Operating Temperature","-55℃~+100℃"],["Insertion Loss","1.2dB"],["Absolute Bandwidth","-"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","Low Pass"],["Impedance","50Ω"]],"x":0}
+{"l":"C3008206","m":"HFCN-3500+","f":"Mini-Circuits","p":"SMD-6P,3.2x1.6mm","t":"e","c":3254,"d":"-55℃~+100℃ 3.5GHz 3.5GHz 3.9GHz~9.8GHz 50Ω SMD-6P,3.2x1.6mm RF Filters ROHS","a":[["Frequency - Center","3.5GHz"],["Cut-Off Frequency","3.5GHz"],["Operating Temperature","-59℃~+100℃"],["Insertion Loss","1.5dB"],["Absolute Bandwidth","3.9GHz~9.8GHz"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","High pass"],["Impedance","50Ω"]],"x":0}
 {"l":"C3155203","m":"RBP-204+","f":"Mini-Circuits","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"-40℃~+85℃ 175MHz~237MHz 2.11dB 204MHz 50Ω Bandpass SMD-8P,8.9x8.9mm RF Filters ROHS","a":[["Frequency - Center","204MHz"],["Cut-Off Frequency","-"],["Insertion Loss","2.11dB"],["Operating Temperature","-40℃~+85℃"],["Absolute Bandwidth","175MHz~237MHz"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","Bandpass"],["Impedance","50Ω"]],"x":0}
 {"l":"C3155213","m":"EQY-6-63+","f":"Mini-Circuits","p":"TFDFN-8-EP","t":"e","c":3254,"d":"50Ω TFDFN-8-EP RF Filters ROHS","a":[["Frequency - Center","-"],["Cut-Off Frequency","-"],["Insertion Loss","0.5dB、0.8dB、1.5dB、2.6dB、4.2dB、6.1dB、7dB"],["Operating Temperature","-40℃~+85℃"],["Absolute Bandwidth","-"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","-"],["Impedance","50Ω"]],"x":0}
 {"l":"C3155259","m":"BPF-C45+","f":"Mini-Circuits","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"Bandpass SMD-14P,22.1x20.3mm RF Filters ROHS","a":[["Frequency - Center","45MHz"],["Cut-Off Frequency","-"],["Insertion Loss","0.36dB"],["Operating Temperature","-40℃~+85℃"],["Absolute Bandwidth","30MHz~70MHz"],["Relative Bandwidth","-"],["Attenuation","-"],["Ripple","-"],["Filter Type","Bandpass"],["Impedance","50Ω"]],"x":0}
@@ -554,6 +555,51 @@
 {"l":"C56258999","m":"JY-RLP-70+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C56259000","m":"JY-RLP-83+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C56259001","m":"JY-RLP-105+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259052","m":"JY-RLP-120+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259053","m":"JY-RLP-137+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259055","m":"JY-RLP-190+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259056","m":"JY-RLP-216+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259058","m":"JY-RLP-340+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259059","m":"JY-RLP-900+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259061","m":"JY-SXLP-3+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259062","m":"JY-SXLP-4.7+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259063","m":"JY-SXLP-5+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259064","m":"JY-SXLP-8+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259065","m":"JY-SXLP-10+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259066","m":"JY-SXLP-10.7+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259067","m":"JY-SXLP-21.4+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259068","m":"JY-SXLP-23+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259069","m":"JY-SXLP-25+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259070","m":"JY-SXLP-36+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259073","m":"JY-SXLP-135+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259074","m":"JY-SXLP-190+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259075","m":"JY-SXLP-380+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259076","m":"JY-SXLP-400+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259077","m":"JY-SXLP-550+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259078","m":"JY-SXLP-700+","f":"JIEYING","p":"SMD-8P,19x11.7mm","t":"e","c":3254,"d":"SMD-8P,19x11.7mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259079","m":"JY-ULP-30+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259080","m":"JY-ULP-70+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259081","m":"JY-ULP-83+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259084","m":"JY-ULP-176+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259086","m":"JY-ULP-216+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259087","m":"JY-ULP-320+","f":"JIEYING","p":"SMD-6P,6.4x6.4mm","t":"e","c":3254,"d":"SMD-6P,6.4x6.4mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259088","m":"JY-BPF-A75+","f":"JIEYING","p":"SMD-14P,34.5x9.3mm","t":"e","c":3254,"d":"SMD-14P,34.5x9.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259089","m":"JY-BPF-A127+","f":"JIEYING","p":"SMD-14P,34.5x9.3mm","t":"e","c":3254,"d":"SMD-14P,34.5x9.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259090","m":"JY-BPF-A475+","f":"JIEYING","p":"SMD-14P,34.5x9.3mm","t":"e","c":3254,"d":"SMD-14P,34.5x9.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259091","m":"JY-BPF-A535+","f":"JIEYING","p":"SMD-14P,34.5x9.3mm","t":"e","c":3254,"d":"SMD-14P,34.5x9.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259094","m":"JY-BPF-C4R5+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259095","m":"JY-BPF-C45+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259096","m":"JY-BPF-C59+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259097","m":"JY-BPF-C73+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259098","m":"JY-BPF-C75+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259099","m":"JY-BPF-C138+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259100","m":"JY-BPF-C141+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259101","m":"JY-BPF-C450+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259102","m":"JY-BPF-C510+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259104","m":"JY-BPF-C587+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259105","m":"JY-BPF-C650+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259106","m":"JY-BPF-C670+","f":"JIEYING","p":"SMD-14P,22.1x20.3mm","t":"e","c":3254,"d":"SMD-14P,22.1x20.3mm RF Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C56259108","m":"JY-RBP-75+","f":"JIEYING","p":"SMD-8P,8.9x8.9mm","t":"e","c":3254,"d":"SMD-8P,8.9x8.9mm RF Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C56271004","m":"HM-LP1608-2690M","f":"HenryTech","p":"SMD-4P,1.6x0.8mm","t":"e","c":3254,"d":"SMD-4P,1.6x0.8mm RF Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C56271005","m":"HM-BP2520-5800-125M-1","f":"HenryTech","p":"SMD-4P,2.5x2mm","t":"e","c":3254,"d":"SMD-4P,2.5x2mm RF Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C56271006","m":"HM-HP5032-1300M","f":"HenryTech","p":"SMD-4P,5x3.2mm","t":"e","c":3254,"d":"SMD-4P,5x3.2mm RF Filters ROHS","a":[],"x":0,"n":1}
