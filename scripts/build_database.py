@@ -42,6 +42,7 @@ from pcbparts_mcp.parsers import (
     parse_integer,
     parse_luminosity,
     parse_memory_size,
+    parse_numeric_range,
     parse_percentage,
     parse_power,
     parse_ppm,
@@ -84,6 +85,7 @@ ATTRIBUTE_TO_COLUMN: dict[str, tuple[str, Any]] = {
 
     # Current
     "Current Rating": ("current_max_a", parse_current),
+    "Hold Current": ("hold_current_a", parse_current),
 
     # Tolerance
     "Tolerance": ("tolerance_pct", parse_tolerance),
@@ -271,8 +273,13 @@ def extract_numeric_columns(attributes: list) -> dict[str, Any]:
                 if max_val is not None:
                     result["temp_max_c"] = max_val
             else:
-                # Regular column
-                parsed = parser(attr_value)
+                # Bound columns must parse each endpoint, not the first number (or unit)
+                # the scalar parser happens to find. Nominal-value columns stay scalar.
+                if "_max_" in col_name or "_min_" in col_name:
+                    low, high = parse_numeric_range(attr_value, parser)
+                    parsed = high if "_max_" in col_name else low
+                else:
+                    parsed = parser(attr_value)
                 if parsed is not None:
                     result[col_name] = parsed
         except (ValueError, TypeError, AttributeError):
@@ -294,6 +301,7 @@ NUMERIC_COLUMNS = [
     "isat_a REAL",
     "voltage_max_v REAL",
     "current_max_a REAL",
+    "hold_current_a REAL",
     "tolerance_pct REAL",
     "power_w REAL",
     # MOSFETs
@@ -846,6 +854,7 @@ def _fill_tmp_and_swap(conn: sqlite3.Connection, data_dir: Path, db_path: Path, 
     conn.execute("CREATE INDEX idx_inductance ON components(inductance_h) WHERE inductance_h IS NOT NULL")
     conn.execute("CREATE INDEX idx_voltage_max ON components(voltage_max_v) WHERE voltage_max_v IS NOT NULL")
     conn.execute("CREATE INDEX idx_current_max ON components(current_max_a) WHERE current_max_a IS NOT NULL")
+    conn.execute("CREATE INDEX idx_hold_current ON components(hold_current_a) WHERE hold_current_a IS NOT NULL")
     conn.execute("CREATE INDEX idx_vds ON components(vds_max_v) WHERE vds_max_v IS NOT NULL")
     conn.execute("CREATE INDEX idx_rds_on ON components(rds_on_ohms) WHERE rds_on_ohms IS NOT NULL")
     create_mosfet_gate_index(conn)

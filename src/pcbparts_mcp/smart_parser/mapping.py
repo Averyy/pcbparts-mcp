@@ -1,7 +1,7 @@
 """Category-aware attribute mapping for smart query parsing."""
 
 from .values import ExtractedValue
-from ..search.spec_filter import FUSE_ATTRIBUTE_MAP
+from ..search.spec_filter import FUSE_ATTRIBUTE_MAP, FuseFilter, SpecFilter
 from ..subcategory_aliases import POWER_MODULE_WORDS
 
 
@@ -20,6 +20,17 @@ _THERMISTOR = {"resistance": ("Resistance @ 25℃", "=")}
 _SUPPLY = {"voltage": ("Supply Voltage", "=")}  # runs at that voltage: inside the supply range
 # A "12V 2W" power module outputs 12V and at least 2W (modules list a fixed output, "12V")
 _POWER_MODULE = {"voltage": ("Output Voltage", "="), "current": "Output Current", "power": "Output Power"}
+_CHARGER = {"current": "Charge Current - Max", "voltage": ("Charging Saturation Voltage", "=")}
+_RESETTABLE_FUSE = {"voltage": "Voltage - Max", "current": ("Hold Current", "=")}
+
+
+class RatedFuseFilter(FuseFilter):
+    """A query's rating operator survives remapping to another fuse family."""
+
+    def for_subcategory(self, name: str, scope: int | None = None) -> SpecFilter:
+        mapped = super().for_subcategory(name, scope)
+        return RatedFuseFilter(mapped.name, self.operator, self.value, mapped.subcategory_id, mapped.subcategory)
+
 
 CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     # MOSFETs
@@ -165,26 +176,7 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     },
 
     # Battery Management / Chargers
-    "battery charger": {
-        "current": "Charge Current - Max",
-        "voltage": "Charging Saturation Voltage",
-    },
-    "lipo charger": {
-        "current": "Charge Current - Max",
-        "voltage": "Charging Saturation Voltage",
-    },
-    "lithium charger": {
-        "current": "Charge Current - Max",
-        "voltage": "Charging Saturation Voltage",
-    },
-    "battery management": {
-        "current": "Charge Current - Max",
-        "voltage": "Charging Saturation Voltage",
-    },
-    "charging ic": {
-        "current": "Charge Current - Max",
-        "voltage": "Charging Saturation Voltage",
-    },
+    **dict.fromkeys(("battery charger", "lipo charger", "lithium charger", "battery management", "charging ic"), _CHARGER),
 
     # Voltage Regulators
     "ldo": _LDO,
@@ -241,14 +233,7 @@ CATEGORY_ATTRIBUTE_MAP: dict[str, dict[str, str | tuple[str, str]]] = {
     # Fuses/PTCs
     "fuse": FUSE_ATTRIBUTE_MAP["disposable fuses"],
     **FUSE_ATTRIBUTE_MAP,
-    "ptc": {
-        "voltage": "Voltage - Max",
-        "current": "Hold Current",
-    },
-    "resettable fuse": {
-        "voltage": "Voltage - Max",
-        "current": "Hold Current",
-    },
+    **dict.fromkeys(("ptc", "resettable fuse", "resettable fuses"), _RESETTABLE_FUSE),
 
     # Connectors - comprehensive mappings for all connector types
     # USB connectors use "Number of Contacts" not "Number of Pins"

@@ -4,6 +4,42 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.8 (2026-11-22)
+
+### Breaking
+
+- **`cse_get_kicad`**: a query no SamacSys model is numbered like (or none from the maker given, or with `lcsc` the catalog's maker) returns an error with `candidates` instead of downloading an unrelated part (`ABS10` got an Abracon crystal).
+
+### Added
+
+- **`cse_get_kicad`**: `manufacturer` argument; `lcsc` uses the catalog's maker. When several makers list the number, the reply adds `other_matches` and `note`.
+- **`jlc_get_parts`**: a code row whose given `mpn` or `manufacturer` disagrees with the code's part adds `mismatch` and `note`; code rows add `datasheet_pdf`.
+- **Self-hosting**: `DATASHEET_LINK_BASE` sets the public address for short datasheet links, or `direct` for the providers' own links (a private gateway's internal hostname ended up in links).
+- **`jlc_search`**: `Hold Current` is a numeric spec: indexed for filters and usable as `sort_spec`.
+
+### Changed
+
+- **Tool descriptions**: about half as long (all tools ~12.5k → ~6.8k tokens); argument and reply details are in `llms.txt`, and a test caps their length.
+- **`jlc_search`**: a resettable fuse's current is its nominal hold rating (`2A 1812 fuse`: Hold Current = 2A, as ordinary fuses already were); `at least 2A` is a minimum. With no stocked part at that rating, higher ratings are listed, lowest first (`relaxed.widened_filters`).
+- **`cse_search`, README, privacy policy**: datasheets point to `jlc_get_part`'s `datasheet_pdf`; short datasheet links are described as passing through this server.
+- **Privacy policy**: lists the operator's private usage dashboard, which keeps a copy of the daily usage counts (no IP addresses) indefinitely.
+- **EasyEDA footprint checks**: at most 5 live checks per 75 s (was 20 per 2 minutes), under EasyEDA's tightened limit; over it, a footprint is unknown instead of a block pausing every check.
+
+### Fixed
+
+- **`jlc_search`**: comma decimals (`2,2k`, `3,3V`, `-3,3V`, `4,7uF`, `2,54mm`) are decimals; they found 2k, 3V or nothing.
+- **`jlc_search`**: an `=` spec filter matches any unit spelling of the value (`Hold Current = 0.5A` missed parts listed as 500mA).
+- **`jlc_search`**: ratings listed as ranges are indexed by their upper end (`4.5V~37V` was 4.5V; about 60,000 parts, such as DRV8874, missed voltage filters and sorts).
+- **`jlc_search`**: asymmetric tolerances filter and sort by their largest deviation (`-20%~+80%` passed `Tolerance <= 20%`).
+- **`jlc_search`**: `4.2V LiPo charger` requires a charging IC at exactly 4.2V; it listed protection ICs and 4.35V chargers.
+- **`jlc_search`**: `6A peak` filters Peak Current, not Output Current, keeping a written comparison (`<6A peak`, `peak current under 6A`); `PPTC` and `polyswitch` find resettable fuses.
+- **`jlc_search`**: `220p` beside a capacitor word or dielectric (C0G, X7R) is 220 pF, not 220 pins; a bare `560p` notes its pin reading.
+- **`jlc_search`**: another maker's copy with its own suffix (`MCP73831T-2ACI/OT-HXY`) is `same_suffix`, not `full`, and the maker's own part ranks first.
+- **`jlc_find_alternatives`**: battery chargers and protection ICs must match a stated charge or cutoff voltage; 4.5V chargers were listed for a 4.2V one.
+- **`jlc_get_part`**: a malformed LCSC link from JLCPCB (`https://lcsc.comhttps://…`) is replaced with one built from the code.
+- **Datasheet links**: a malformed `Host` header (`pcbparts.dev:80@other.example`) no longer becomes the short link's address.
+- **Self-hosting**: `docker compose up -d` starts only the server; the usage dashboard is the opt-in `dashboard` profile (it restarted without a password, and polled pcbparts.dev by default). `DASHBOARD_STATS_URL` and `DASHBOARD_HEALTH_URL` point it at your own server.
+
 ## 0.10.7 (2026-11-22)
 
 ### Added

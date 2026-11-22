@@ -27,6 +27,7 @@ uv venv && uv pip install -e ".[dev]"
 uv run pytest tests/ -q -p no:cacheprovider     # unit tests (default)
 uv run pytest tests/ -v -m integration          # hits live APIs: see the rules below first
 uv run python scripts/build_database.py         # rebuild data/components.db (about 30 s)
+cd dashboard && uv run pytest -q -p no:cacheprovider && node --test tests/frontend/   # the usage dashboard: own uv project
 ```
 
 Python runs through `uv`, never pip.
@@ -41,7 +42,7 @@ Python runs through `uv`, never pip.
 ## Rules that protect outside services
 
 - **JLCPCB:** use `wafer.AsyncSession` configured as in `client.py`; raw httpx/aiohttp gets 403s. Always pair wafer's `timeout=` (a total budget) with `attempt_timeout=`. Sensor scrapers use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
-- **EasyEDA `/api/products`:** stay under 20 requests per 2 minutes per IP. On the first 403, stop sending: don't retry or re-run tests. Details: `docs/ref-easyeda-api.md`.
+- **EasyEDA `/api/products`:** at most one request per 15 s per IP, and bursts of 5. Integration tests share a waiting budget of 4 per rolling 75 s and footprint answers across clients; run in one process, alone on the IP. The first EasyEDA 403 skips further EasyEDA calls for that session: don't retry or re-run tests. Details: `docs/ref-easyeda-api.md`.
 - **EasyEDA seed scripts** (`scripts/build_easyeda_seed.py`, `scripts/build_easyeda_pads.py`): run on your own machine only, never on prod or in CI, and never while integration tests or the other seed script run.
 - **Mouser and DigiKey:** their daily limits are shared by everyone using pcbparts.dev. Never call them from tests or probes. Check `/health` (`distributor_quota`) before any test with the prod credentials. DigiKey suspends an app that goes over its per-second threshold.
 - Don't run `scripts/load_test.py` against anything but a local container.
@@ -68,7 +69,7 @@ Python runs through `uv`, never pip.
 
 - Every error message a tool returns must be listed in `ERROR_REPLIES` (`tests/test_usage_stats.py`), with a reason for not-found and failed ones (`tests/test_usage_reasons.py`).
 - A new upstream request or cache must be counted for `/mcp/stats` (`_sent()`/`_count_upstream()`; `tests/test_usage_upstream.py`).
-- Tool docstrings: only the first text section and `Args` reach clients (`tests/test_release_0817.py`). They are sent on every session: keep them short.
+- Tool docstrings: only the first text section and `Args` reach clients (`tests/test_release_0817.py`). They are sent on every session: keep them short; `tests/test_tool_text_budget.py` caps each tool. Detail goes in `landing/llms.txt`.
 - A code path that queues many `run_db` jobs at once should batch them into one.
 - `/mcp/stats` stays same-origin; if another site ever needs it, allow that domain only, never `*`.
 - Don't do server-side work the calling AI can already do (for example downloading or parsing PDFs).

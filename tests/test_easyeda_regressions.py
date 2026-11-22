@@ -121,15 +121,17 @@ async def test_no_requests_while_blocked():
 
 
 async def test_request_rate_is_capped():
-    """At most 20 /api/products requests per rolling 2 minutes, whatever the callers do (old: 25)."""
+    """At most 5 /api/products requests per rolling 75s, whatever the callers do (old: 25; 20 per
+    2 minutes before EasyEDA's limit tightened, 2026-11-22)."""
     client, fake = client_with(lambda url: FakeResponse(200, FOUND))
     results = [await client.check_easyeda_footprint(f"C{n}") for n in range(1, 26)]
-    assert len(fake.urls) == 20
-    assert [r["has_easyeda_footprint"] for r in results] == [True] * 20 + [None] * 5
+    assert len(fake.urls) == 5
+    assert [r["has_easyeda_footprint"] for r in results] == [True] * 5 + [None] * 20
 
 
 async def test_find_alternatives_footprint_filter_checks_at_most_15(monkeypatch):
-    """limit=50 used to fire 2 x limit = 100 checks in one call; now at most 15."""
+    """limit=50 used to fire 2 x limit = 100 checks in one call; now at most 15 candidates are
+    checked, and the request budget lets 5 of them go to EasyEDA."""
     client, fake = client_with(lambda url: FakeResponse(200, FOUND))
     original = {"lcsc": "C999999", "subcategory": "Unsupported Thing", "package": "0402",
                 "library_type": "extended", "price": 0.1, "stock": 100, "specs": {}}
@@ -150,8 +152,9 @@ async def test_find_alternatives_footprint_filter_checks_at_most_15(monkeypatch)
     monkeypatch.setattr(client, "_ensure_categories", ensure_categories)
 
     result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=50)
-    assert len(fake.urls) == 15
-    assert len(result["similar_parts"]) == 15
+    assert len(fake.urls) == 5
+    assert len(result["similar_parts"]) == 5
+    assert result["summary"]["footprint_filter"]["checked"] == 15
 
 
 async def test_found_footprint_stays_cached_past_one_hour(wall):

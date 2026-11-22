@@ -1,7 +1,9 @@
 """0.8.19: Iq as a spec_filters name, and CSE descriptions without a time cap the code doesn't have.
 
-The jlc_get_pinout `unverified` description test is in test_easyeda_store.py (TestPinoutPolarizedPair).
+The jlc_get_pinout `unverified` reference test is in test_easyeda_store.py (TestPinoutPolarizedPair).
 """
+
+from pathlib import Path
 
 import pytest
 from fastmcp.utilities.docstring_parsing import parse_docstring
@@ -38,9 +40,11 @@ async def test_help_still_labels_quiescent_current():
     assert labels == {"Quiescent Current"}
 
 
-def test_iq_in_the_sent_short_names():
+def test_iq_example_and_short_names_reference():
     spec_filters = " ".join(parse_docstring(server.jlc_search).parameters["spec_filters"].split())
-    assert "Iout, Iq, Supply Voltage" in spec_filters
+    assert '"name":"Iq"' in spec_filters and "jlc_search_help" in spec_filters
+    reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+    assert "`Iout`, `Iq`, `Supply Voltage`" in reference
 
 
 @pytest.mark.parametrize("name", ["cse_search", "cse_get_kicad"])

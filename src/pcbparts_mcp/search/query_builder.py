@@ -699,16 +699,19 @@ def build_spec_filter_clauses(
             scope = "subcategory_id != ? OR " if f.subcategory_id is not None else ""
             if scope:
                 params.append(f.subcategory_id)
-            if f.name == "Current Rating":
-                sql_clauses.append(f"AND ({scope}current_max_a = ?)")
-                params.append(parse_current(f.value))
+            if f.name in ("Current Rating", "Hold Current"):
+                # Nominal ("2A fuse": =) unless the query set a limit ("at least 2A": >=)
+                operator = f.operator if f.operator in ("=", ">=", "<=", ">", "<") else "="
+                column, parser = SPEC_TO_COLUMN[f.name]
+                sql_clauses.append(f"AND ({scope}{column} {operator} ?)")
+                params.append(parser(f.value))
             else:
                 sql_clauses.append(
                     f"AND ({scope}EXISTS (SELECT 1 FROM json_each(components.attributes) j "
                     "WHERE json_extract(j.value, '$[0]') = ?))"
                 )
                 params.append(f.name)
-                parser = parse_current if f.name == "Hold Current" else parse_voltage
+                parser = parse_voltage
                 post_filter_metadata.append((f, {f.name}, parser, parser(f.value)))
     fuse_scopes = sorted({f.subcategory_id for f in spec_filters
                           if isinstance(f, FuseFilter) and f.subcategory_id is not None})
@@ -930,6 +933,11 @@ def build_spec_filter_clauses(
                 params.extend(f'%"{like_text(name)}", "{prefix}%' for name in attr_names)
                 sql_clauses.append(f"AND ({' OR '.join(or_conditions)})")
             elif spec_filter.operator == "=" and not is_range:
+                # Most rows lack this attribute. Reject them before scanning their JSON once
+                # per unit spelling ("5V", "5000mV", ...), keeping the same value matches.
+                names = " OR ".join("attributes LIKE ? ESCAPE '\\'" for _ in attr_names)
+                sql_clauses.append(f"AND ({names})")
+                params.extend(f'%"{like_text(name)}"%' for name in attr_names)
                 or_conditions = []
                 for name in attr_names:
                     value_patterns = generate_value_patterns(name, spec_filter.value, parsed_value)

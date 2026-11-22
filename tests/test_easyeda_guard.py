@@ -92,6 +92,11 @@ def make_client(clock: FakeClock, respond, delay=lambda url: 1) -> tuple[JLCPCBC
     return client, session
 
 
+def roomy_budget(client: JLCPCBClient, clock: FakeClock) -> None:
+    """A budget that lets every capped check through (the server's allows 5 per 75s)."""
+    client._easyeda_products_budget = SlidingWindowBudget(EASYEDA_MAX_FOOTPRINT_CHECKS, EASYEDA_PRODUCTS_WINDOW, clock)
+
+
 def lcsc_of(url: str) -> str:
     return url.split("/api/products/")[1].split("/")[0]
 
@@ -440,6 +445,7 @@ def stub_alternatives(client, monkeypatch, n_candidates: int, supported: bool = 
 class TestFootprintFilter:
     async def test_cap_note(self, clock, monkeypatch):
         client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 60)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=50)
         assert len(session.urls) == EASYEDA_MAX_FOOTPRINT_CHECKS
@@ -451,6 +457,7 @@ class TestFootprintFilter:
 
     async def test_note_when_twice_limit_caps_checks(self, clock, monkeypatch):
         client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 60)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=5)
         assert len(session.urls) == 10  # 2 x limit, as before
@@ -465,6 +472,7 @@ class TestFootprintFilter:
 
     async def test_cap_doesnt_fire_when_few_candidates(self, clock, monkeypatch):
         client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 12)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=50)
         assert len(session.urls) == 12
@@ -503,7 +511,18 @@ class TestFootprintFilter:
         assert len(session.urls) == 4
         note = result["summary"]["footprint_filter"]
         assert note["unknown"] == 6
-        assert note["note"].endswith("6 candidate(s) skipped to stay under EasyEDA's rate limit. Try again in about 2 min.")
+        assert note["note"].endswith("6 candidate(s) skipped to stay under EasyEDA's rate limit. Try again in about 1 min.")
+
+    async def test_server_budget_limits_live_checks(self, clock, monkeypatch):
+        """The server's own budget (5 per 75s, under EasyEDA's 2026-11-22 limit): one filter call over
+        unseeded candidates sends that many checks and reports the rest as skipped."""
+        client, session = make_client(clock, lambda url: FakeResponse(200, FOUND))
+        stub_alternatives(client, monkeypatch, 60)
+        result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=10)
+        assert len(session.urls) == EASYEDA_PRODUCTS_BUDGET == 5
+        note = result["summary"]["footprint_filter"]
+        assert note["unknown"] == EASYEDA_MAX_FOOTPRINT_CHECKS - EASYEDA_PRODUCTS_BUDGET
+        assert "skipped to stay under EasyEDA's rate limit" in note["note"]
 
     async def test_block_and_budget_notes_together(self, clock, monkeypatch):
         """A real block and our own budget are reported separately: only one is EasyEDA's doing.
@@ -526,6 +545,7 @@ class TestFootprintFilter:
 
     async def test_error_note(self, clock, monkeypatch):
         client, _ = make_client(clock, lambda url: RuntimeError("timed out") if lcsc_of(url) == "C2" else FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 20)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=5)
         note = result["summary"]["footprint_filter"]
@@ -534,6 +554,7 @@ class TestFootprintFilter:
 
     async def test_note_on_supported_categories_too(self, clock, monkeypatch):
         client, _ = make_client(clock, lambda url: FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 60, supported=True)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=True, limit=50)
         assert result["summary"]["is_supported_category"] is True
@@ -542,6 +563,7 @@ class TestFootprintFilter:
 
     async def test_filter_for_parts_without_footprints(self, clock, monkeypatch):
         client, _ = make_client(clock, lambda url: FakeResponse(404) if int(lcsc_of(url)[1:]) % 2 else FakeResponse(200, FOUND))
+        roomy_budget(client, clock)  # this test is about the per-call cap, not the budget
         stub_alternatives(client, monkeypatch, 20)
         result = await client.find_alternatives("C999999", has_easyeda_footprint=False, limit=5)
         assert {p["lcsc"] for p in result["similar_parts"]} == {"C1", "C3", "C5", "C7", "C9"}

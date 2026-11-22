@@ -61,7 +61,18 @@ _PITCH = re.compile(r'\b(\d+(?:\.\d+)?)\s*mm(?:\s+pitch)?\b', re.IGNORECASE)
 _POSITION = re.compile(r'\b(\d+)\s*-?\s*(?:pos(?:ition)?|way|P)\b', re.IGNORECASE)
 
 # Header pin structure: 1x7, 2x20, 1X40 (rows x pins per row)
-_PIN_STRUCTURE = re.compile(r'\b([12])\s*[xX]\s*(\d+)\b')
+_PIN_STRUCTURE = re.compile(r'\b([12])\s*[xX]\s*(\d+)[pP]?\b')
+
+_VALUE_UNIT = r"(?:meg|milliohm|[kKmM]?ohm|[kKmMrR]|[munp]?[FH]|[kmun]?[VAW]|[kmg]?Hz|mm)\b|%"
+_DECIMAL_COMMA = re.compile(rf"(?<![\w.,+-])([+-]?\d+),(\d{{1,2}})(?=\s*(?:{_VALUE_UNIT}))", re.IGNORECASE)
+_THOUSANDS = re.compile(r"(?<![\w.,-])\d{1,3}(?:,\d{3})+(?![\d.,])")
+_PICOFARAD_SHORT = re.compile(r"(?<![\w.-])(\d+(?:\.\d+)?)p\b", re.IGNORECASE)
+_VOLTAGE_BEFORE_P = re.compile(r"\b\d+(?:\.\d+)?\s*V\s+", re.IGNORECASE)
+_VOLTAGE_AFTER_P = re.compile(r"\s+\d+(?:\.\d+)?\s*V\b", re.IGNORECASE)
+_CAPACITOR_CONTEXT = re.compile(r"\b(?:capacitors?|caps?|mlcc|c0g|cog|np0|x7r|x5r|x6s|x7s|y5v|z5u)\b", re.IGNORECASE)
+_CONNECTOR_CONTEXT = re.compile(
+    r"\b(?:headers?|connectors?|sockets?|fpc|ffc|board[- ]to[- ]board|terminal\s+blocks?)\b"
+    r"|\b[12]\s*x\s*\d+p?\b", re.IGNORECASE)
 
 
 def value_digits(*digit_runs: str) -> bool:
@@ -90,9 +101,27 @@ def _parse_resistance_value(match: re.Match) -> tuple[float, str]:
     return value, f"{value_str}Ohm"
 
 
-def normalize_value_notation(query: str) -> str:
+def normalize_value_notation(query: str, *, subcategory_hint: str | None = None) -> str:
     """Normalize electrical notation before extraction; callers retain the original query."""
     query = query.replace("µ", "u").replace("μ", "u").replace("Ω", "ohm")
+    query = query.replace("−", "-")
+    # A comma before one or two decimal digits needs a unit; package lists remain lists.
+    # Three-digit groups are thousands, even without a unit ("10,000").
+    query = _THOUSANDS.sub(lambda m: m.group(0).replace(",", ""), query)
+    query = _DECIMAL_COMMA.sub(r"\1.\2", query)
+    context = f"{query} {subcategory_hint or ''}"
+    if not _CONNECTOR_CONTEXT.search(context):
+        capacitor = bool(_CAPACITOR_CONTEXT.search(context))
+        # Scan voltage neighbours once, not a growing prefix/suffix for every p token.
+        voltage_ends = set() if capacitor else {m.end() for m in _VOLTAGE_BEFORE_P.finditer(query)}
+        voltage_starts = set() if capacitor else {m.start() for m in _VOLTAGE_AFTER_P.finditer(query)}
+
+        def picofarads(match: re.Match) -> str:
+            # A neighbouring voltage also supplies capacitor context: "220p 50V".
+            voltage = match.start() in voltage_ends or match.end() in voltage_starts
+            return f"{match.group(1)}pF" if capacitor or voltage else match.group(0)
+
+        query = _PICOFARAD_SHORT.sub(picofarads, query)
     unit = "uH" if re.search(r"\b(inductor|inductors|coil|choke)\b", query, re.IGNORECASE) else "uF"
     query = re.sub(r"(?<![\w-])(\d+)u(\d+)(?![\w-])", rf"\1.\2{unit}", query)
     if unit == "uH":
@@ -102,7 +131,8 @@ def normalize_value_notation(query: str) -> str:
     return re.sub(r"(?<![\w-])(\d+)[vV](\d+)(?![\w-])", r"\1.\2V", query)
 
 
-def extract_values(query: str, *, connector_context: bool = False) -> tuple[list[ExtractedValue], str]:
+def extract_values(query: str, *, connector_context: bool = False,
+                   subcategory_hint: str | None = None) -> tuple[list[ExtractedValue], str]:
     """Extract all numeric values from query, return (values, remaining_query).
 
     Args:
@@ -111,7 +141,7 @@ def extract_values(query: str, *, connector_context: bool = False) -> tuple[list
     Returns:
         Tuple of (list of ExtractedValue, remaining_query with values removed)
     """
-    query = normalize_value_notation(query)
+    query = normalize_value_notation(query, subcategory_hint=subcategory_hint or ("connector" if connector_context else None))
     values = []
     remaining = query
 

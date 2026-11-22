@@ -5,6 +5,7 @@ No network: httpx.MockTransport fakes, a fake clock, a fake pacer."""
 
 import json
 import re
+from pathlib import Path
 
 import httpx
 import pytest
@@ -242,11 +243,11 @@ async def test_digikey_miss_unchanged(digikey):
     assert await d.get_part("NOPE-ND") == {"error": "Part not found: NOPE-ND"}
 
 
-def test_descriptions_say_so():
-    from fastmcp.utilities.docstring_parsing import parse_docstring
+def test_reference_names_matching_fields():
+    reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
     for name in ("mouser_get_part", "digikey_get_part"):
-        sent = parse_docstring(getattr(server, name)).description
-        assert "requested" in sent and "matched_by" in sent, name
+        section = reference.split(f"### {name}\n", 1)[1].split("\n### ", 1)[0]
+        assert "`requested`" in section and "`matched_by`" in section, name
 
 
 # --- Mouser and JST's (LF)/(SN) endings: the same rule as DigiKey's ---
@@ -366,7 +367,7 @@ async def test_one_part_asked_twice_goes_to_the_first(mouser, numbers):
 
 
 def test_packing_wording_names_jst_only():
-    from fastmcp.utilities.docstring_parsing import parse_docstring
+    reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
     for name in ("mouser_get_part", "digikey_get_part"):
-        sent = " ".join(parse_docstring(getattr(server, name)).description.split())
-        assert "packing (JST's (LF)/(SN) endings set aside)" in sent, name
+        section = reference.split(f"### {name}\n", 1)[1].split("\n### ", 1)[0]
+        assert "JST's `(LF)`/`(SN)` endings are optional" in section, name

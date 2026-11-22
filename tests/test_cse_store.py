@@ -288,7 +288,7 @@ class TestDownloadRefusals:
         assert "CSE daily download quota refused at 2026-11-01T15:17:00Z: 1 downloads stored in the last 24 h; next try at 2026-11-01T15:47:00Z" in caplog.text
         assert "CSE model wanted: part 1 (P1): quota" in caplog.text
         assert (await client.get_kicad(part_id=90))["kicad_symbol"] == "stored"
-        assert (await client.get_kicad(query="new search"))["error"] == QUOTA  # searches still run
+        assert (await client.get_kicad(query="P-1"))["error"] == QUOTA  # searches still run
         assert (await client.get_kicad(part_id=1))["error"] == QUOTA
         assert downloads == ["1"]
         assert client._store.wanted()[0]["times_asked"] == 3

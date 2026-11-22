@@ -111,6 +111,8 @@ EMPTY = {"results": [], "total": 0}
 
 
 @pytest.mark.parametrize("content,reason", [
+    ({"error": "No ECAD model available for 'ABS10' by 'MDD' matching that part number. "
+               "Pass a candidate's cse_part_id as part_id to choose it explicitly.", "candidates": []}, "no_ecad_model"),
     ({"results": [], "total": 9}, "offset_past_end"),
     ({**EMPTY, **BLOCK}, "blocked_by_package"),
     ({**EMPTY, **TWO}, "blocked_by_several"),

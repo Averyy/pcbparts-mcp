@@ -173,7 +173,7 @@ async def test_input_schema_and_client_stats(history_db, monkeypatch):
         for value in ("C1", ["C1", "C2"], '["C1"]'):
             validate({"lcsc": value}, tool.inputSchema)
         assert {item["type"] for item in tool.inputSchema["properties"]["lcsc"]["anyOf"]} == {"string", "array"}
-        assert "newest 10 events each, notes once" in tool.description
+        assert "newest 100 events, a list 10 each" in tool.description
         for value, outcome in (("C999", "ok"), (["C999", "bad"], "ok"), (["bad"], "bad_request")):
             reply = await client.call_tool("jlc_stock_history", {"lcsc": value})
             assert server._call_outcome(reply) == outcome

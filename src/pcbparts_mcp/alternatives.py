@@ -9,6 +9,7 @@ This module provides intelligent alternative finding that:
 
 import math
 import re
+from decimal import Decimal
 from typing import Any, Callable
 from .catalog_evidence import multi_diode, reviewed_specs
 from .catalog_files import unpack_tiers
@@ -205,6 +206,8 @@ SPEC_PARSERS: dict[str, Callable[[str], float | None] | str | None] = {
     "Number of Cells": parse_count,
     "Threshold Voltage": parse_voltage,  # supervisors' reset threshold ("2.93V", dual "2.63V、2.93V")  # "1", "2~4": a range in search; alternatives compare it as text
     "Charge Current - Max": parse_current,
+    "Charging Saturation Voltage": parse_voltage,
+    "End-Off Voltage": parse_voltage,
     # Level Shifters
     "Channel Type": None,
     # TVS/ESD
@@ -307,6 +310,12 @@ STRING_MATCH_SPECS = {
     # Audio Amplifiers
     "Class",
 }
+
+
+# The catalog uses Charging Saturation Voltage for chargers and protection ICs'
+# overcharge threshold; End-Off Voltage is the lower cutoff. Neither is a rating
+# where a higher/lower value or the usual 2% matching tolerance is acceptable.
+BATTERY_SETPOINT_SPECS = ("Charging Saturation Voltage", "End-Off Voltage")
 
 
 # =============================================================================
@@ -1160,7 +1169,8 @@ COMPATIBILITY_RULES: dict[str, dict[str, Any]] = {
     # ============== BATTERY MANAGEMENT ==============
     "Battery Management": {
         "primary": "Type of Battery",
-        "must_match": ["Type of Battery", "Number of Cells", "The Chip Type", "Interface"],
+        "must_match": ["Type of Battery", "Number of Cells", "The Chip Type", "Interface",
+                       *BATTERY_SETPOINT_SPECS],
         "ranges": {"Voltage - Supply": True},
         "same_or_better": {
             "Charge Current - Max": "higher",
@@ -1317,12 +1327,30 @@ def is_stated(value: str | None) -> bool:
     return value is not None and not _PLACEHOLDER_PATTERN.fullmatch(value)
 
 
+def _battery_setpoints(value: str) -> set[Decimal] | None:
+    """Read every listed setpoint exactly; ranges or partly read values prove no match."""
+    voltages = set()
+    for item in value.split("、"):
+        match = re.fullmatch(r"\s*([+-]?\d+(?:\.\d+)?)\s*([mk]?)V\s*", item, re.IGNORECASE)
+        if match is None:
+            return None
+        scale = {"": "1", "m": "0.001", "k": "1000"}[match[2].lower()]
+        voltages.add(Decimal(match[1]) * Decimal(scale))
+    return voltages
+
+
 def _compare_values(orig_val: str, cand_val: str, spec: str) -> bool | None:
     """Check if two spec values match (for must_match rules). None if they can't be compared
     (a numeric spec whose value doesn't parse)."""
     # Special handler for complex formats
     if spec == "Impedance @ Frequency":
         return impedance_at_freq_match(orig_val, cand_val)
+
+    if spec in BATTERY_SETPOINT_SPECS:
+        orig_points, cand_points = _battery_setpoints(orig_val), _battery_setpoints(cand_val)
+        if orig_points is None or cand_points is None:
+            return None
+        return orig_points == cand_points
 
     # Pin count specs: normalize before comparing (handles "8P" vs "1x8P" vs "8")
     if spec in PIN_COUNT_SPECS:
@@ -1615,6 +1643,7 @@ def is_compatible_alternative(
         orig_val = orig_specs.get(spec)
         cand_val = cand_specs.get(spec)
         battery_interface = subcategory == "Battery Management" and spec == "Interface"
+        battery_setpoint = subcategory == "Battery Management" and spec in BATTERY_SETPOINT_SPECS
         if spec == "Utilized IC / Part":
             inferred = not (is_stated(orig_val) and is_stated(cand_val))
             orig_val, cand_val = _module_chip(original), _module_chip(candidate)
@@ -1625,7 +1654,7 @@ def is_compatible_alternative(
                 specs_unparseable.append(spec)
                 unverified_requirements.append(spec)
                 continue  # A family match cannot verify the exact chip.
-        if (spec == "Reference Series" or battery_interface) and not is_stated(orig_val):
+        if (spec == "Reference Series" or battery_interface or battery_setpoint) and not is_stated(orig_val):
             continue
         if spec in rules.get("ranges", {}):
             continue  # Compare both endpoints below, rather than the first number.

@@ -45,7 +45,11 @@ services:
   # in SQLite and serves one page behind HTTP Basic auth; Caddy on the VPS routes its subdomain here
   # (pcbparts-dashboard:8050 on the web network, no published port). It refuses to start without
   # DASHBOARD_PASSWORD in the VPS's .env, which never affects pcbparts-mcp.
+  # Opt-in: `docker compose up -d` starts only the server; `--profile dashboard` (or
+  # COMPOSE_PROFILES=dashboard, as the deploy sets) adds this. Self-hosting it, point
+  # DASHBOARD_STATS_URL and DASHBOARD_HEALTH_URL at your own server.
   pcbparts-dashboard:
+    profiles: ["dashboard"]
     image: ghcr.io/averyy/pcbparts-mcp-dashboard:latest
     build:
       context: ./dashboard
@@ -58,6 +62,8 @@ services:
     environment:
       - STATS_TOKEN=${STATS_TOKEN:-}
       - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD:-}
+      - STATS_URL=${DASHBOARD_STATS_URL:-https://pcbparts.dev/mcp/stats}
+      - HEALTH_URL=${DASHBOARD_HEALTH_URL:-https://pcbparts.dev/health}
       # optional: count problems from a fixed moment instead of the latest deploy it saw
       - PROBLEMS_SINCE=${DASHBOARD_PROBLEMS_SINCE:-}
       - PROBLEMS_VERSION=${DASHBOARD_PROBLEMS_VERSION:-}

@@ -30,6 +30,42 @@ async def search(query: str | None = None, **kwargs):
     return result
 
 
+async def assert_nominal_fuse_rating(result, value, *, subcategory="Resettable Fuses",
+                                     strict=False, limit=50, **kwargs):
+    """Compare with an explicit nominal search, widening only when the catalog requires it."""
+    name = "Hold Current" if subcategory == "Resettable Fuses" else "Current Rating"
+    current = parse_current(value)
+    filters = [{"name": name, "op": "=", "value": value}, *kwargs.pop("spec_filters", [])]
+    expected = await search(subcategory_name=subcategory, spec_filters=filters,
+                            strict=True, limit=100, **kwargs)
+    operator = "="
+    if not strict and not expected["total"]:
+        widened = [{**filters[0], "op": ">="}, *filters[1:]]
+        retry = await search(subcategory_name=subcategory, spec_filters=widened,
+                             strict=True, limit=100, sort_spec=name, **kwargs)
+        if retry["total"]:
+            expected = retry
+            operator = ">="
+    assert result["total"] == expected["total"]
+    assert result["results"] == expected["results"][:limit]
+    for key in ("package", "packages", "subcategory_resolved"):
+        assert result["filters_applied"][key] == expected["filters_applied"][key]
+    currents = [f for f in result["filters_applied"]["spec_filters"] if f["name"] == name]
+    assert len(currents) == 1
+    assert currents[0]["op"] == operator
+    assert parse_current(currents[0]["value"]) == current
+    if operator == ">=":
+        spelling = currents[0]["value"]
+        assert result["relaxed"]["widened_filters"] == [
+            {"filter": f"{name} = {spelling}", "now": f"{name} >= {spelling}"}]
+        assert result["relaxed"]["reason"]
+    else:
+        assert not result.get("relaxed")
+    for part in result["results"]:
+        rating = parse_current(part["specs"][name])
+        assert rating >= current if operator == ">=" else rating == current
+
+
 class TestMosfetGateDrive:
     @pytest.mark.parametrize("cue", ["logic level 3.3V", "logic-level 3.3V", "gate drive 3.3V",
                                     "3.3V gate", "3.3V gate voltage", "Vgs 3.3V", "3.3V GPIO", "3.3V MCU",
@@ -392,46 +428,42 @@ class TestFuseRatings:
     @pytest.mark.parametrize("strict", [False, True])
     async def test_generic_fuse_package_routing(self, query, package, current, strict):
         result = await search(query, strict=strict, limit=100)
-        filters = [{"name": "Hold Current", "op": ">=", "value": f"{current}A"}] if current else []
-        expected = await search(subcategory_name="Resettable Fuses", package=package,
-                                spec_filters=filters, limit=100)
-        assert result["total"] == expected["total"] > 0
-        assert result["results"] == expected["results"]
+        if current:
+            await assert_nominal_fuse_rating(result, f"{current}A", package=package, strict=strict, limit=100)
+        else:
+            expected = await search(subcategory_name="Resettable Fuses", package=package, limit=100)
+            assert result["total"] == expected["total"] > 0
+            assert result["results"] == expected["results"]
+            assert not result.get("relaxed")
         assert result["parsed"]["subcategory"] == "resettable fuses"
-        assert not result.get("relaxed")
         assert {"filter": "subcategory: disposable fuses", "now": "resettable fuses",
                 "reason": f"{package} fuses in the catalog are all resettable"} in result["parsed"]["adjusted_filters"]
         for part in result["results"]:
             assert part["subcategory"] == "Resettable Fuses"
             assert part["package"] == package
-            if current:
-                assert parse_current(part["specs"]["Hold Current"]) >= current
 
     @pytest.mark.parametrize("package", ["1812", "2920", "1210", "2018", "2512", "2016", "3425"])
     @pytest.mark.parametrize("via", ["package", "packages"])
     async def test_explicit_package_routes_and_remaps_ratings(self, package, via):
         args = {via: package if via == "package" else [package]}
         result = await search("1A fuse 6V", strict=True, **args)
-        assert result["total"] > 0 and not result.get("relaxed")
+        await assert_nominal_fuse_rating(result, "1A", strict=True, **args,
+                                         spec_filters=[{"name": "Voltage - Max", "op": ">=", "value": "6V"}])
+        assert result["parsed"]["subcategory"] == "resettable fuses"
         assert result["filters_applied"]["spec_filters"] == [
-            {"name": "Hold Current", "op": ">=", "value": "1A"},
+            {"name": "Hold Current", "op": "=", "value": "1A"},
             {"name": "Voltage - Max", "op": ">=", "value": "6V"},
         ]
         for part in result["results"]:
             assert part["subcategory"] == "Resettable Fuses" and part["package"] == package
-            assert parse_current(part["specs"]["Hold Current"]) >= 1
             assert parse_voltage(part["specs"]["Voltage - Max"]) >= 6
 
     @pytest.mark.parametrize("query", ["1A fuse", "1A fuses"])
     @pytest.mark.parametrize("strict", [False, True])
     async def test_generic_fuse_with_explicit_package(self, query, strict):
         result = await search(query, package="1812", strict=strict)
-        expected = await search(subcategory_name="Resettable Fuses", package="1812", spec_filters=[
-            {"name": "Hold Current", "op": ">=", "value": "1A"}])
-        assert result["total"] == expected["total"] > 0
-        assert result["results"] == expected["results"]
+        await assert_nominal_fuse_rating(result, "1A", package="1812", strict=strict)
         assert result["parsed"]["subcategory"] == "resettable fuses"
-        assert not result.get("relaxed")
 
     @pytest.mark.parametrize("args,packages", [
         ({"query": "1A fuse 1812 or 2920"}, ["1812", "2920"]),
@@ -439,11 +471,8 @@ class TestFuseRatings:
     ])
     async def test_resettable_package_alternatives(self, args, packages):
         result = await search(**args, strict=True, limit=100)
-        expected = await search(subcategory_name="Resettable Fuses", packages=packages, spec_filters=[
-            {"name": "Hold Current", "op": ">=", "value": "1A"}], limit=100)
-        assert result["total"] == expected["total"] > 0
-        assert result["results"] == expected["results"]
-        assert not result.get("relaxed")
+        await assert_nominal_fuse_rating(result, "1A", packages=packages, strict=True, limit=100)
+        assert result["parsed"]["subcategory"] == "resettable fuses"
 
     @pytest.mark.parametrize("package", [None, "0402", "0603", "0805", "1206"])
     @pytest.mark.parametrize("strict", [False, True])
@@ -467,12 +496,9 @@ class TestFuseRatings:
 
     async def test_ptc_package_routing_unchanged(self):
         result = await search("PTC 1812 fuse 1A", strict=True)
-        expected = await search(subcategory_name="Resettable Fuses", package="1812", spec_filters=[
-            {"name": "Hold Current", "op": ">=", "value": "1A"}])
-        assert result["total"] == expected["total"] > 0
-        assert result["results"] == expected["results"]
+        await assert_nominal_fuse_rating(result, "1A", package="1812", strict=True)
+        assert result["parsed"]["subcategory"] == "resettable fuses"
         assert not result.get("parsed", {}).get("adjusted_filters")
-        assert not result.get("relaxed")
 
     @pytest.mark.parametrize("via", ["name", "id"])
     @pytest.mark.parametrize("strict", [False, True])
@@ -584,40 +610,35 @@ class TestFuseRatings:
 
     async def test_resettable_modifiers_are_consumed(self):
         result = await search("PTC resettable fuse 500mA", limit=100)
-        expected = await search(subcategory_name="Resettable Fuses", spec_filters=[
-            {"name": "Hold Current", "op": ">=", "value": "500mA"},
-        ], limit=100)
-        assert result["total"] == expected["total"] > 0
-        assert result["results"] == expected["results"]
-        assert result["filters_applied"]["spec_filters"] == expected["filters_applied"]["spec_filters"]
-        for part in result["results"]:
-            assert parse_current(part["specs"]["Hold Current"]) >= .5
+        await assert_nominal_fuse_rating(result, "500mA", limit=100)
+        assert not result["parsed"]["remaining_text"]
+        assert len(result["filters_applied"]["spec_filters"]) == 1
 
-    @pytest.mark.parametrize("query,current", [
-        ("120mA PTC 0603 fuse", .12),
-        ("350mA PTC 1206 fuse", .35),
-        ("3A PTC 1206 fuse", 3),
-        ("50mA PTC 0603 fuse", .05),
-        ("PTC 4.5A 1206 1206 fuse", 4.5),
-        ("fuse 1206 500mA polyfuse", .5),
-        ("poly fuse 500mA 1206", .5),
-        ("500mA polyswitch 1206 fuse", .5),
-        ("fuse 500mA 1206 resettable", .5),
-    ])
+    @pytest.mark.parametrize("query,current,package", [
+        ("120mA PTC 0603 fuse", .12, "0603"),
+        ("350mA PTC 1206 fuse", .35, "1206"),
+        ("3A PTC 1206 fuse", 3, "1206"),
+        ("50mA PTC 0603 fuse", .05, "0603"),
+        ("PTC 4.5A 1206 1206 fuse", 4.5, "1206"),
+        ("fuse 1206 500mA polyfuse", .5, "1206"),
+        ("poly fuse 500mA 1206", .5, "1206"),
+        ("500mA polyswitch 1206 fuse", .5, "1206"),
+        ("fuse 500mA 1206 resettable", .5, "1206"),
+    ], ids=["ptc120", "ptc350", "ptc3", "ptc50", "duplicate", "polyfuse", "poly", "polyswitch", "resettable"])
     @pytest.mark.parametrize("strict", [False, True])
     @pytest.mark.parametrize("voltage", [None, 6])
-    async def test_resettable_wording(self, query, current, strict, voltage):
+    async def test_resettable_wording(self, query, current, package, strict, voltage):
         result = await search(query + (f" {voltage}V" if voltage else ""), strict=strict, limit=100)
-        assert result["total"] > 0
+        voltage_filters = [{"name": "Voltage - Max", "op": ">=", "value": f"{voltage}V"}] if voltage else []
+        await assert_nominal_fuse_rating(result, f"{current}A", package=package, strict=strict,
+                                         spec_filters=voltage_filters, limit=100)
         assert result["parsed"]["subcategory"] == "resettable fuses"
         filters = result["filters_applied"]["spec_filters"]
-        assert any(f["name"] == "Hold Current" and f["op"] == ">="
-                   and parse_current(f["value"]) == current for f in filters)
         if voltage:
             assert {"name": "Voltage - Max", "op": ">=", "value": f"{voltage}V"} in filters
         for part in result["results"]:
             assert part["subcategory"] == "Resettable Fuses"
-            assert parse_current(part["specs"]["Hold Current"]) >= current
+            assert part["package"] == package
             if voltage:
                 assert parse_voltage(part["specs"]["Voltage - Max"]) >= voltage
 
@@ -639,9 +660,12 @@ class TestFuseRatings:
         assert result["total"] == 0
         assert result["filters_applied"]["spec_filters"] == filters
 
-    @pytest.mark.parametrize("query", ["fuse 500mA 30V", "resettable fuse 500mA 30V"])
+    @pytest.mark.parametrize("query,operator", [
+        ("fuse 500mA 30V", "="), ("resettable fuse 500mA 30V", "="),
+        ("fuse at least 500mA 30V", ">="), ("resettable fuse at least 500mA 30V", ">="),
+    ], ids=["fuse_nominal", "ptc_nominal", "fuse_min", "ptc_min"])
     @pytest.mark.parametrize("scoped", [False, True])
-    def test_mixed_families_map_current_and_voltage_per_subcategory(self, query, scoped):
+    def test_mixed_families_map_current_and_voltage_per_subcategory(self, query, operator, scoped):
         from pcbparts_mcp.db import get_db
         from pcbparts_mcp.search.spec_filter import FUSE_ATTRIBUTE_MAP
         from pcbparts_mcp.smart_parser import parse_smart_query
@@ -656,7 +680,7 @@ class TestFuseRatings:
         for part in result["results"]:
             mapping = FUSE_ATTRIBUTE_MAP[part["subcategory"].lower()]
             current = parse_current(part["specs"]["Hold Current" if part["subcategory"] == "Resettable Fuses" else "Current Rating"])
-            assert current >= .5 if part["subcategory"] == "Resettable Fuses" else current == .5
+            assert current == .5 if operator == "=" else current >= .5
             assert parse_voltage(part["specs"][mapping["voltage"]]) >= 30
 
     async def test_explicit_current_operator_kept(self):
@@ -2360,10 +2384,34 @@ class TestBacklogClosure:
 
     @pytest.mark.parametrize("query, expected", [
         ("1.5A/3A 1206 fuse", ("Current Rating", "=", "1.5A")),          # rated/trip: the first only
-        ("6V/2.0A/4.0A 1210 fuse", ("Hold Current", ">=", "2.0A")),        # a PTC's hold/trip
+        ("6V/2.0A/4.0A 1210 fuse", ("Hold Current", "=", "2.0A")),        # a PTC's hold/trip
         ("20V/4.2A/52mohm/1.4W SOT-23-3 mosfet", ("Id", ">=", "4.2A"))])
     async def test_slash_currents_first_only(self, query, expected):
+        from pcbparts_mcp.search import SpecFilter
+
         result = await search(query)
+        if expected[0] in ("Hold Current", "Current Rating"):
+            if expected[0] == "Hold Current":
+                args = {"subcategory_name": "Resettable Fuses", "package": "1210"}
+                filters = [{"name": "Hold Current", "op": "=", "value": "2A"},
+                           {"name": "Voltage - Max", "op": ">=", "value": "6V"}]
+            else:
+                # The second slash current stays text; the word retry leaves it out before any widening.
+                args = {"subcategory_name": "Disposable fuses", "package": "1206"}
+                filters = [{"name": "Current Rating", "op": "=", "value": "1.5A"}]
+            # Use the DB directly so the filters are not parsed a second time.
+            explicit = [SpecFilter(name=f["name"], operator=f["op"], value=f["value"]) for f in filters]
+            exact = server.get_db().search(**args, spec_filters=explicit)
+            if not exact["total"]:
+                widened = server.get_db().search(**args, spec_filters=[
+                    SpecFilter(name=explicit[0].name, operator=">=", value=explicit[0].value), *explicit[1:]])
+                if not widened["total"]:
+                    pytest.skip("no stocked fuse matches the slash query's nominal or higher rating")
+                assert result["relaxed"]["widened_filters"] == [
+                    {"filter": f"{expected[0]} = {expected[2]}", "now": f"{expected[0]} >= {expected[2]}"}]
+                expected = (expected[0], ">=", expected[2])
+            else:
+                assert not result.get("relaxed", {}).get("widened_filters")
         currents = [(f["name"], f["op"], f["value"]) for f in result["filters_applied"]["spec_filters"]
                     if f["value"].endswith("A")]
         assert currents == [expected]

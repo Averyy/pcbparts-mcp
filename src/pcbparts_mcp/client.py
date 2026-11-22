@@ -304,6 +304,21 @@ def apply_lcsc_fallback(result: dict[str, Any], product: dict[str, Any] | None) 
             annotate_catalog(result)
 
 
+def _lcsc_product_url(value: Any, code: str | None) -> str | None:
+    """Use only a single, well-formed LCSC URL; upstream sometimes doubles its prefix."""
+    if isinstance(value, str):
+        try:
+            url = urlparse(value)
+            if (url.scheme in ("http", "https") and url.hostname in ("lcsc.com", "www.lcsc.com")
+                    and url.username is None and url.password is None and url.port != 0
+                    and not re.search(r"[\s\\\x00-\x1f\x7f]", value)
+                    and "http" not in value.split("://", 1)[-1].lower()):
+                return value
+        except ValueError:
+            pass
+    return f"https://www.lcsc.com/product-detail/{code}.html" if code else None
+
+
 def _cached_datasheet(part: dict[str, Any], now: float) -> str | None:
     """The /mcp/datasheet link a cached live part gives without a request: JLCPCB's signed PDF
     unless about to expire (then None: it is signed again), else (JLCPCB had none) the maker's
@@ -1389,11 +1404,9 @@ class JLCPCBClient:
             if not pdf_url and not maker:
                 result["datasheet_note"] = ("JLCPCB has no datasheet PDF for this part; find it on the "
                                             "manufacturer's site by its part number.")
-            # Null for some parts LCSC does list (C52139901); the product-detail URL works from the code
+            # Missing or malformed for some parts; the product-detail URL works from the code.
             code = item.get("componentCode")
-            result["lcsc_url"] = item.get("lcscGoodsUrl") or (
-                f"https://www.lcsc.com/product-detail/{code}.html" if code else None
-            )
+            result["lcsc_url"] = _lcsc_product_url(item.get("lcscGoodsUrl"), code)
 
         # Every stated price tier: full details, and a stock check of one LCSC code (a BOM line)
         if prices and (not slim or with_prices):

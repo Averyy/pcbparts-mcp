@@ -23,6 +23,7 @@ from ..parsers import (
     parse_inductance,
     parse_integer,
     parse_memory_size,
+    parse_numeric_range,
     parse_power,
     parse_ppm,
     parse_resistance,
@@ -133,13 +134,16 @@ SORTABLE_SPECS: tuple[SortableSpec, ...] = (
                  conditions="pulse waveforms"),
     SortableSpec("Voltage Rating", "voltage_max_v", ("Voltage Rating",), parse_voltage,
                  words=("Voltage", "rated voltage"), phrases=("voltage rating", "rated voltage"),
-                 # a supply range's first number, and a resistor's working voltage
+                 # a supply range's upper bound, and a resistor's working voltage
                  other_sources=("Voltage - Supply", "Voltage-Supply(Max)")),
     SortableSpec("Current Rating", "current_max_a", ("Current Rating",), parse_current,
                  words=("rated current",), phrases=("current rating", "rated current")),
+    SortableSpec("Hold Current", "hold_current_a", ("Hold Current",), parse_current,
+                 phrases=("hold current",)),
     SortableSpec("Power", "power_w", ("Power(Watts)", "Pd - Power Dissipation"), parse_power,
                  words=("power rating", "power dissipation", "Pd"), phrases=("power rating", "power dissipation")),
-    SortableSpec("Tolerance", "tolerance_pct", ("Tolerance",), parse_tolerance, phrases=("tolerance",)),
+    SortableSpec("Tolerance", "tolerance_pct", ("Tolerance",), parse_tolerance, phrases=("tolerance",),
+                 caveat="Asymmetric tolerances sort by their largest absolute deviation."),
     SortableSpec("Resistance", "resistance_ohms", ("Resistance",), parse_resistance, zero_is_missing=False),
     SortableSpec("Capacitance", "capacitance_f", ("Capacitance",), parse_capacitance),
     SortableSpec("Inductance", "inductance_h", ("Inductance",), parse_inductance),
@@ -322,7 +326,7 @@ class SpecSort:
             found = vf_at_current(specs.get("Voltage - Forward(Vf@If)"), self.at)
             return found[1] if found else None
         for name in spec.names:
-            if (text := specs.get(name)) is not None and _valid(spec, spec.parser(text)) is not None:
+            if (text := specs.get(name)) is not None and _listed_value(spec, text) is not None:
                 return text
         return None
 
@@ -366,6 +370,16 @@ def _valid(spec: SortableSpec, value: float | None) -> float | None:
     if value is None or (spec.zero_is_missing and value <= 0):
         return None
     return float(value)
+
+
+def _listed_value(spec: SortableSpec, text: str) -> float | None:
+    """Match the build's bound selection when a sort reads the original attribute."""
+    if "_max_" in spec.column or "_min_" in spec.column:
+        low, high = parse_numeric_range(text, spec.parser)
+        value = high if "_max_" in spec.column else low
+    else:
+        value = spec.parser(text)
+    return _valid(spec, value)
 
 
 def vf_at_current(value: str | None, amps: float) -> tuple[float, str] | None:
@@ -418,7 +432,7 @@ def spec_sort_value_json(attributes: str | None, label: str) -> float | None:
     specs = _attributes(attributes)
     for name in spec.names:
         if (text := specs.get(name)) is not None:
-            return _valid(spec, spec.parser(text))
+            return _listed_value(spec, text)
     return None
 
 

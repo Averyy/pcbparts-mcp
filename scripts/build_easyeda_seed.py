@@ -21,12 +21,20 @@ Steps (each resumable; Ctrl-C saves progress):
   validate       Re-check a random sample of search answers on /api/products. Any mismatch fails.
   report         Coverage by library type, and manufacturers whose keyword matched poorly.
 
-Pacing: one EasyEDA request every --delay seconds: 10 for the search steps, 15 for the
-/api/products steps. Search traffic counts toward /api/products' block (on 2026-10-10 products got
+Pacing: one EasyEDA request every --delay seconds: 10 for the search steps, 15 (also the
+fastest allowed) for the /api/products steps. Measured 2026-11-22 from a residential IP:
+/api/products allows about one request per 14.3s sustained, with a reserve of about 7 (one per 8s
+was blocked on its 16th request; one per 15s held for 160). Search traffic counts toward /api/products' block (on 2026-10-10 products got
 a 403 on its 17th request at one per 7s, right after 133 searches at one per 7s; afterwards 65
 products requests at one per 15s went through), so the parts and validate steps won't start
-within 10 minutes of a search request. On the first 403 or 429 it saves and exits with
-code 2; wait and run it again later.
+within 10 minutes of a search request. On the first 403 or 429 the search and validate steps save
+and exit with code 2; wait and run them again later.
+
+The parts step runs unattended for weeks: on a 403/429 it saves, sends nothing for 30 minutes
+(60 after a second block in a row), then resumes 1s slower; the third block in a row saves and
+exits with code 2. After 6 hours without a block it goes 0.5s faster, never faster than --delay.
+A lookup that fails gets one more try after the rest, and 10 failures in a row (the connection is
+down?) pause it 5 minutes. SIGTERM (launchd, docker stop, a shutdown) saves like Ctrl-C.
 
 Usage:
   uv run python scripts/build_easyeda_seed.py manufacturers [--only NAME ... [--redo]] [--max-manufacturers N] [--fresh]
@@ -44,6 +52,7 @@ import math
 import os
 import random
 import re
+import signal
 import sqlite3
 from contextlib import closing
 import sys
@@ -55,7 +64,9 @@ from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from pcbparts_mcp.cache import SlidingWindowBudget  # noqa: E402
 from pcbparts_mcp.client import JLCPCBClient  # noqa: E402
+from pcbparts_mcp.config import EASYEDA_PRODUCTS_BUDGET, EASYEDA_PRODUCTS_WINDOW  # noqa: E402
 from pcbparts_mcp.easyeda_store import (  # noqa: E402
     SEED_FILE, SeedRow, answer_problem, format_checked, lcsc_number, read_seed_csv, seed_checked_at, write_seed_csv,
 )
@@ -106,6 +117,16 @@ SAVE_EVERY = 25  # requests between saves in the parts and validate steps
 SEARCH_DELAY = 10.0
 PRODUCTS_DELAY = 15.0
 QUIET_AFTER_SEARCH = 600  # seconds between the last search request and a /api/products step
+# parts step, for a run of several weeks. A block pauses BLOCK_PAUSES[n] after the (n+1)th block in
+# a row (one with no answer since the last); one more block stops the run. The first pause outlasts
+# the client's own cooldown (EASYEDA_COOLDOWN_MAX), so a resumed run really sends a request.
+BLOCK_PAUSES = (1800.0, 3600.0)
+SLOWER_AFTER_BLOCK = 1.0  # seconds added to the pace after each block
+FASTER_AFTER = 6 * 3600.0  # this long without a block takes SPEED_UP off the pace, down to --delay
+SPEED_UP = 0.5
+MAX_DELAY = 30.0
+FAIL_STREAK = 10  # failed lookups in a row (connection down?) before FAIL_PAUSE
+FAIL_PAUSE = 300.0
 
 DEFAULT_DB = Path("data/components.db")
 DEFAULT_CSV = Path("data") / SEED_FILE
@@ -219,11 +240,22 @@ class EasyEDA:
                     makers[parsed[0]] = maker
         return SearchPage(int((result.get("facets") or {}).get("lcsc") or 0), items, makers)
 
+    def forget_failure(self, lcsc: str) -> None:
+        """Drop the client's cached failure for a part (kept 5 minutes), so a second try asks EasyEDA."""
+        entry = self.client._easyeda_cache.get(lcsc)
+        if entry is not None and entry[2]:  # (time, result, is_error)
+            del self.client._easyeda_cache[lcsc]
+
     async def products(self, lcsc: str) -> SeedRow | None:
         """Live /api/products answer as a seed row; None if the lookup failed (try again later)."""
-        await self.pacer.wait()
-        result, status = await self.client._check_easyeda_footprint(lcsc)
-        if status in ("blocked", "cooldown", "budget"):
+        while True:
+            await self.pacer.wait()
+            result, status = await self.client._check_easyeda_footprint(lcsc)
+            if status != "budget":
+                break
+            # The client's own budget refused it: nothing was sent, so it's not EasyEDA's block.
+            self.pacer.requests -= 1
+        if status in ("blocked", "cooldown"):
             raise Blocked(f"/api/products {status}")
         if status != "checked":
             return None
@@ -235,8 +267,17 @@ class EasyEDA:
         return SeedRow(lcsc, has, result["easyeda_symbol_uuid"], result["easyeda_footprint_uuid"], checked_now(), "p")
 
 
+def seed_budget(clock: Callable[[], float] = time.monotonic) -> SlidingWindowBudget:
+    """The client budget for this script: one slot more than the server's. The server's (5 per 75s)
+    is exactly one per 15s, this script's pace, so timing jitter would make it refuse now and then
+    (each refusal costs another --delay); the Pacer sets the pace, and this stays a backstop."""
+    return SlidingWindowBudget(EASYEDA_PRODUCTS_BUDGET + 1, EASYEDA_PRODUCTS_WINDOW, clock)
+
+
 def make_client() -> JLCPCBClient:
-    return JLCPCBClient()  # no store or seed: every check asks EasyEDA
+    client = JLCPCBClient()  # no store or seed: every check asks EasyEDA
+    client._easyeda_products_budget = seed_budget()
+    return client
 
 
 # --- Data -------------------------------------------------------------------------------------
@@ -588,26 +629,87 @@ def parts_todo(seed: Seed, db: sqlite3.Connection, types: str, refresh_days: int
     return unanswered + stale
 
 
+def _duration(seconds: float) -> str:
+    return str(datetime.timedelta(seconds=round(seconds / 60) * 60))  # "18 days, 3:12:00"
+
+
 async def run_parts(seed: Seed, db: sqlite3.Connection, easyeda: EasyEDA, types: str, max_requests: int | None,
-                    refresh_days: int) -> None:
-    todo = parts_todo(seed, db, types, refresh_days)
+                    refresh_days: int, *, clock: Callable[[], float] = time.monotonic, sleep=asyncio.sleep) -> None:
+    """Ask /api/products about parts_todo(), unattended (see the module docstring): blocks pause and
+    slow the pace, the third in a row raises Blocked; failed lookups get one more try at the end."""
+    queue = parts_todo(seed, db, types, refresh_days)
     if max_requests is not None:
-        todo = todo[:max_requests]
-    eta = datetime.timedelta(seconds=round(len(todo) * easyeda.pacer.delay))
-    print(f"{stamp()} parts: {len(todo)} to check (types {types}), about {eta} at one per {easyeda.pacer.delay:g}s")
-    found = none = failed = 0
-    for index, lcsc in enumerate(todo, 1):
-        row = await easyeda.products(lcsc)
+        queue = queue[:max_requests]
+    first_tries = len(queue)
+    pacer = easyeda.pacer
+    floor = pacer.delay
+    print(f"{stamp()} parts: {len(queue):,} to check (types {types}), about {_duration(len(queue) * floor)} "
+          f"at one per {floor:g}s", flush=True)
+    found = none = failed = gave_up = blocks = in_a_row = fails_in_a_row = 0
+    started = calm_since = clock()
+
+    async def ask(lcsc: str) -> SeedRow | None:
+        nonlocal blocks, in_a_row, calm_since
+        while True:
+            try:
+                row = await easyeda.products(lcsc)
+            except Blocked as e:
+                blocks += 1
+                in_a_row += 1
+                seed.save()
+                if in_a_row > len(BLOCK_PAUSES) or (max_requests is not None and pacer.requests >= max_requests):
+                    print(f"{stamp()} EasyEDA blocked this IP ({e}), {in_a_row} blocks in a row: stopping. "
+                          "Progress saved; run it again later.", flush=True)
+                    raise
+                pause = BLOCK_PAUSES[in_a_row - 1]
+                pacer.delay = min(pacer.delay + SLOWER_AFTER_BLOCK, max(MAX_DELAY, floor))
+                print(f"{stamp()} EasyEDA blocked this IP ({e}), block {in_a_row} in a row ({blocks} this run). "
+                      f"Progress saved; sending nothing for {pause / 60:.0f} min, then one per {pacer.delay:g}s",
+                      flush=True)
+                await sleep(pause)
+                calm_since = clock()
+                continue
+            if row is not None:
+                in_a_row = 0  # only an answer ends a streak of blocks; a failed lookup proves nothing
+            if pacer.delay > floor and clock() - calm_since >= FASTER_AFTER:
+                pacer.delay = max(floor, pacer.delay - SPEED_UP)
+                calm_since = clock()
+                print(f"{stamp()} no block for {FASTER_AFTER / 3600:g} h: one per {pacer.delay:g}s", flush=True)
+            return row
+
+    index = 0
+    while index < len(queue):
+        lcsc = queue[index]
+        index += 1
+        if index > first_tries:
+            easyeda.forget_failure(lcsc)
+        row = await ask(lcsc)
         if row is None:
             failed += 1
+            fails_in_a_row += 1
+            if index > first_tries:
+                gave_up += 1
+            elif max_requests is None or len(queue) < max_requests:
+                queue.append(lcsc)  # one more try after the rest
+            if fails_in_a_row >= FAIL_STREAK:
+                print(f"{stamp()} {fails_in_a_row} lookups failed in a row; pausing {FAIL_PAUSE / 60:.0f} min",
+                      flush=True)
+                fails_in_a_row = 0
+                await sleep(FAIL_PAUSE)
         else:
+            fails_in_a_row = 0
             seed.add_products_answer(row)
             found += row.has_footprint
             none += not row.has_footprint
-        if index % SAVE_EVERY == 0 or index == len(todo):
+        if index % SAVE_EVERY == 0 or index == len(queue):
             seed.save()
-            print(f"{stamp()} parts {index}/{len(todo)}: {found} have a footprint, {none} don't, {failed} failed",
-                  flush=True)
+            hours = (clock() - started) / 3600
+            rate = f"{index / hours:,.0f}/h" if hours > 0 else "-"
+            print(f"{stamp()} parts {index:,}/{len(queue):,}: {found:,} have a footprint, {none:,} don't, "
+                  f"{failed:,} failed; one per {pacer.delay:g}s, {rate}, {blocks} block(s); "
+                  f"about {_duration((len(queue) - index) * pacer.delay)} left", flush=True)
+    print(f"{stamp()} parts: finished. {found:,} have a footprint, {none:,} don't"
+          + (f", {gave_up:,} failed twice (the next run asks again)" if gave_up else ""), flush=True)
 
 
 async def run_validate(seed: Seed, easyeda: EasyEDA, sample: int) -> int:
@@ -674,6 +776,15 @@ def report(seed: Seed, db: sqlite3.Connection) -> str:
 # --- CLI --------------------------------------------------------------------------------------
 
 
+def cancel_on_sigterm(task: asyncio.Task) -> None:
+    """Make SIGTERM (launchd, docker stop, a shutdown) cancel `task`, so its finally saves progress the
+    way Ctrl-C does. Windows event loops have no signal handlers; there it stays the default."""
+    try:
+        asyncio.get_running_loop().add_signal_handler(signal.SIGTERM, task.cancel)
+    except (NotImplementedError, AttributeError, RuntimeError):
+        pass
+
+
 def main(argv: Iterable[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("step", choices=["manufacturers", "names", "parts", "validate", "report"])
@@ -682,7 +793,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--state", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--delay", type=float,
                         help=f"seconds between EasyEDA requests (default {SEARCH_DELAY:g} for search, "
-                             f"{PRODUCTS_DELAY:g} for /api/products steps)")
+                             f"{PRODUCTS_DELAY:g} for /api/products steps; the parts step's fastest pace)")
     parser.add_argument("--force", action="store_true",
                         help=f"start a /api/products step within {QUIET_AFTER_SEARCH // 60} min of a search request")
     parser.add_argument("--page-size", type=int, default=MAX_PAGE_SIZE)
@@ -700,7 +811,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     if args.delay is None:
         args.delay = SEARCH_DELAY if args.step in ("manufacturers", "names") else PRODUCTS_DELAY
     if args.delay < 6:
-        parser.error("--delay under 6s can cross EasyEDA's limit (24 requests per 2 minutes)")
+        parser.error("--delay under 6s can cross EasyEDA's limit")
+    if args.step in ("parts", "validate") and args.delay < PRODUCTS_DELAY:
+        parser.error(f"--delay under {PRODUCTS_DELAY:g}s for /api/products: EasyEDA allows about one request per "
+                     "14.3s sustained (measured 2026-11-22), then blocks")
     if args.redo and not args.only:
         parser.error("--redo needs --only (use --fresh to redo every manufacturer)")
     if not 1 <= args.page_size <= MAX_PAGE_SIZE:
@@ -722,6 +836,7 @@ def main(argv: Iterable[str] | None = None) -> int:
                 return 3
 
         async def run() -> int:
+            cancel_on_sigterm(asyncio.current_task())
             client = make_client()
             easyeda = EasyEDA(client, Pacer(args.delay))
             try:
@@ -749,6 +864,9 @@ def main(argv: Iterable[str] | None = None) -> int:
         except KeyboardInterrupt:
             print("Interrupted; progress saved.")
             return 130
+        except asyncio.CancelledError:  # SIGTERM
+            print(f"{stamp()} Stopped (SIGTERM); progress saved.")
+            return 143
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ All parsers return values in base SI units:
 """
 
 import re
+from collections.abc import Callable
 from typing import Any
 
 
@@ -52,9 +53,6 @@ _IMPEDANCE_AT_FREQ_PATTERN = re.compile(
 )
 _DECIBEL_PATTERN = re.compile(r"([\d.]+)\s*dB", re.IGNORECASE)
 _TEMPERATURE_PATTERN = re.compile(r"([+-]?[\d.]+)\s*[°℃]?C?", re.IGNORECASE)
-_TEMP_RANGE_PATTERN = re.compile(
-    r"([+-]?\d+(?:\.\d+)?)\s*[°℃]?C?\s*(?:~|\bto\b)\s*[+]?([+-]?\d+(?:\.\d+)?)\s*[°℃]?C?", re.IGNORECASE
-)
 _MEMORY_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])?BIT", re.IGNORECASE)
 _MEMORY_SHORT_BIT_PATTERN = re.compile(r"([\d.]+)\s*([KMG])b\b")
 _MEMORY_BYTE_PATTERN = re.compile(r"([\d.]+)\s*([KMG])?B", re.IGNORECASE)
@@ -64,16 +62,55 @@ _CAPACITANCE_PF_PATTERN = re.compile(r"([\d.]+)\s*([pn])?", re.IGNORECASE)
 _LENGTH_MM_PATTERN = re.compile(r"([\d.]+)\s*mm", re.IGNORECASE)
 _INTEGER_PATTERN = re.compile(r"(\d+)")
 _BARE_NUMBER_PATTERN = re.compile(r"\s*\d+(?:\.\d+)?\s*")
-_VGS_RANGE_PATTERN = re.compile(r"([\d.]+)\s*V?\s*~\s*([\d.]+)\s*V?", re.IGNORECASE)
-_FREQ_RANGE_PATTERN = re.compile(
-    r"([\d.]+)\s*([kKmMgG])?Hz?\s*~\s*([\d.]+)\s*([kKmMgG])?Hz?", re.IGNORECASE
-)
+_RANGE_SEPARATOR = re.compile(r"[~～–]|\bto\b", re.IGNORECASE)
+_RANGE_NUMBER = re.compile(r"\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*")
+_RANGE_UNIT = re.compile(r"\s*[±+-]?[\d.]+\s*([a-zA-ZµμΩ%°℃]+)")
 
 
 # =============================================================================
 # SPEC PARSERS
 # =============================================================================
 # Each parser returns a float in base units for comparison, or None if unparseable.
+
+
+def parse_numeric_range(
+    s: str, parser: Callable[[str], float | None], default_unit: str = "",
+) -> tuple[float | None, float | None]:
+    """Bounds of stated ranges, in the parser's units.
+
+    Parse endpoints separately so mixed units and reversed ranges work; a bare endpoint
+    inherits the other's unit ("500mA~2A", "2.7~5.5V"). Keep signs on ranges, while a
+    non-range value retains the scalar parser's convention (including lists of ratings
+    at different conditions, and a -30V MOSFET rating's magnitude).
+    """
+    if not s:
+        return None, None
+    if not _RANGE_SEPARATOR.search(s):
+        single = parser(s)
+        return single, single
+    values = []
+    for item in re.split(r"[、;,]", s):
+        endpoints = _RANGE_SEPARATOR.split(item)
+        if len(endpoints) == 1:
+            value = parser(item)
+            if value is not None:
+                values.append(value)
+            continue
+        if len(endpoints) != 2:
+            continue
+        low_text, high_text = endpoints
+        units = [_RANGE_UNIT.match(text) for text in endpoints]
+        parsed = []
+        for text, other_unit in zip((low_text, high_text), reversed(units)):
+            if _RANGE_NUMBER.fullmatch(text):
+                text = text.strip() + (other_unit[1] if other_unit else default_unit)
+            value = parser(text)
+            if value is not None and text.strip().startswith("-"):
+                value = -abs(value)
+            parsed.append(value)
+        # An endpoint without a figure ("DC~6GHz", "Up to 5V") leaves the other one, as before
+        values.extend(value for value in parsed if value is not None)
+    return (min(values), max(values)) if values else (None, None)
 
 
 def parse_voltage(s: str) -> float | None:
@@ -102,11 +139,13 @@ def parse_isolation_voltage(s: str) -> float | None:
 
 
 def parse_tolerance(s: str) -> float | None:
-    """Parse tolerance: '±1%' -> 1, '±10%' -> 10, '1%' -> 1"""
+    """Largest absolute deviation: '±1%' -> 1, '-20%~+80%' -> 80, '0%~+100%' -> 100."""
     if not s:
         return None
-    match = _TOLERANCE_PATTERN.search(s)
-    return float(match.group(1)) if match else None
+    values = [float(value) for value in _TOLERANCE_PATTERN.findall(s)]
+    if _RANGE_SEPARATOR.search(s):
+        values.extend(abs(value) for value in parse_numeric_range(s, parse_percentage) if value is not None)
+    return max(values, default=None)
 
 
 def parse_ppm(s: str) -> float | None:
@@ -337,13 +376,12 @@ def parse_temperature(s: str) -> float | None:
 
 
 def parse_temp_range(s: str) -> tuple[float | None, float | None]:
-    """Parse temperature range: '-40℃~+85℃' -> (-40, 85)"""
-    if not s:
+    """Parse temperature range: '-40℃~+85℃' -> (-40, 85). A list keeps its first range: later ones
+    are other conditions or grades ('-40℃~+85℃@(TA)、-40℃~+125℃@(TJ)' is rated to 85 ambient)."""
+    first = re.split(r"[、;,]", s, maxsplit=1)[0] if s else s
+    if not first or not _RANGE_SEPARATOR.search(first):
         return None, None
-    match = _TEMP_RANGE_PATTERN.search(s)
-    if match:
-        return float(match.group(1)), float(match.group(2))
-    return None, None
+    return parse_numeric_range(first, parse_temperature)
 
 
 def parse_memory_size(s: str) -> float | None:
@@ -462,39 +500,16 @@ def parse_integer(s: str) -> int | None:
 
 def parse_vgs_range(s: str) -> tuple[float | None, float | None]:
     """Parse Vgs(th) range: '1.5V~2.5V' -> (1.5, 2.5), '2V' -> (2, 2)"""
-    if not s:
-        return None, None
-    # Try range format first
-    match = _VGS_RANGE_PATTERN.search(s)
-    if match:
-        return float(match.group(1)), float(match.group(2))
-    # Single value
-    single_match = _VOLTAGE_PATTERN.search(s)
-    if single_match:
-        val = float(single_match.group(1))
-        return val, val
-    return None, None
+    if s and _RANGE_SEPARATOR.search(s):
+        return parse_numeric_range(s, parse_voltage, "V")
+    match = _VOLTAGE_PATTERN.search(s) if s else None
+    single = float(match.group(1)) if match else None
+    return single, single
 
 
 def parse_freq_range(s: str) -> tuple[float | None, float | None]:
     """Parse frequency range: '2.4GHz~2.5GHz' -> (2.4e9, 2.5e9)"""
-    if not s:
-        return None, None
-    # Try range format
-    match = _FREQ_RANGE_PATTERN.search(s)
-    if match:
-        val1 = float(match.group(1))
-        suffix1 = (match.group(2) or "").upper()
-        val2 = float(match.group(3))
-        suffix2 = (match.group(4) or "").upper()
-
-        mult_map = {"K": 1e3, "M": 1e6, "G": 1e9}
-        mult1 = mult_map.get(suffix1, 1)
-        mult2 = mult_map.get(suffix2, 1)
-        return val1 * mult1, val2 * mult2
-    # Single value
-    single = parse_frequency(s)
-    return single, single
+    return parse_numeric_range(s, parse_frequency)
 
 
 _FREQ_UNIT = {"": 1.0, "K": 1e3, "M": 1e6, "G": 1e9}
@@ -535,14 +550,7 @@ def parse_freq_bands(s: str, points: bool = True) -> list[tuple[float, float]] |
 
 def parse_vin_range(s: str) -> tuple[float | None, float | None]:
     """Parse input voltage range: '2.5V~5.5V' -> (2.5, 5.5)"""
-    if not s:
-        return None, None
-    match = _VGS_RANGE_PATTERN.search(s)  # Same pattern as Vgs
-    if match:
-        return float(match.group(1)), float(match.group(2))
-    # Single value (use as both min and max)
-    single = parse_voltage(s)
-    return single, single
+    return parse_numeric_range(s, parse_voltage, "V")
 
 
 def parse_impedance_at_freq(s: str) -> tuple[float, float] | None:

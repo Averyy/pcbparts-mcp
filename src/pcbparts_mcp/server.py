@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import dataclasses
 import datetime
 import functools
 import hmac
@@ -46,7 +47,7 @@ from .cache import SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota,
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
     DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
-    HTTP_HOST, HTTP_PORT, LOG_PATH, LOG_KEEP_DAYS, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
+    HTTP_HOST, HTTP_PORT, DATASHEET_LINK_BASE, LOG_PATH, LOG_KEEP_DAYS, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DISTRIBUTOR_DAILY_PER_ADDRESS, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
@@ -71,7 +72,7 @@ from .history_db import get_history_db, close_history_db
 from .sensor_db import get_sensor_db, close_sensor_db
 from .boards_db import get_boards_db, close_boards_db
 from .search import SpecFilter, get_attribute_names
-from .search.mpn import LCSC_CODE, is_placeholder_mpn, looks_like_mpn, mpn_key, not_sent_reason
+from .search.mpn import LCSC_CODE, PACKING_RULES, is_placeholder_mpn, looks_like_mpn, mpn_key, normalize_mpn, not_sent_reason
 from .subcategory_aliases import (
     CATEGORY_ID_NOT_FOUND_HINT, CATEGORY_NOT_FOUND_HINT, SUBCATEGORY_ID_NOT_FOUND_HINT, SUBCATEGORY_NOT_FOUND_HINT,
 )
@@ -147,7 +148,7 @@ async def lifespan(app):
     global _client, _mouser_client, _digikey_client, _cse_client, _categories, _easyeda_seeded, _easyeda_stored
     global _distributor_store, _distributor_stored, _price_tiers_info, _snapshot_as_of, _address_daily
     _client = JLCPCBClient(easyeda_store_path=EASYEDA_STORE_PATH or None)
-    for warning in CONFIG_WARNINGS:  # numeric settings that weren't usable, and the value used instead
+    for warning in CONFIG_WARNINGS:  # settings that weren't usable, and the value used instead
         logger.warning(warning)
     if not STATS_TOKEN:
         logger.warning("STATS_TOKEN unset: /mcp/stats refuses every request")
@@ -462,7 +463,7 @@ async def _persist_usage(*, prune: bool) -> None:
 mcp = FastMCP(
     name="pcbparts",
     version=__version__,  # serverInfo.version: this server's, not fastmcp's
-    instructions="PCB design assistant: JLCPCB part search, Mouser and DigiKey lookups, reference boards, sensor picks and design rules. No auth. Find parts with jlc_search (local, fast, parametric filters); jlc_get_parts for a BOM's parts (up to 50 LCSC codes or MPNs per call, from the daily snapshot, no live requests); jlc_stock_check only for live stock or out-of-stock parts; mouser_get_part/digikey_get_part share small daily limits across all users: use them for parts JLCPCB doesn't carry or when the user asks for that distributor's stock or price, and batch Mouser lookups. part_lifecycle gives lifecycle status (NRND, obsolete) for up to 50 parts per call. sensor_recommend picks sensors by measurement, protocol or platform. Workflow: get_design_rules / board_search + board_get(focus=IC) → jlc_search → jlc_get_part (datasheet, footprint; live=true for live stock) → jlc_find_alternatives → cse_get_kicad (KiCad files). jlc_stock_history shows recorded stock changes for one part or a BOM's list of up to 50.",
+    instructions="PCB design assistant. Start with jlc_search (fast, daily in-stock snapshot); jlc_get_parts for BOMs, jlc_stock_check for live stock. Mouser/DigiKey share small daily limits across all users: use for parts JLCPCB does not carry or a requested distributor; batch Mouser. part_lifecycle for lifecycle. Design workflow: get_design_rules / board_search → board_get(focus=IC) → jlc_search → jlc_get_part → jlc_find_alternatives → cse_get_kicad. Full tool reference (arguments, defaults, limits, replies): https://pcbparts.dev/llms.txt.",
     lifespan=lifespan,
     # Don't leak raw exception text (SQL, file paths, internals) to anonymous clients.
     # Intentional user-facing errors are returned as dicts, not raised, so masking is UX-free.
@@ -835,7 +836,7 @@ def _with_argument_aliases(tool: str, arguments: Any) -> Any:
 
 async def _cse_lcsc(arguments: Any) -> Any:
     """cse_get_kicad(lcsc=...): every other part tool takes lcsc, so it's looked up in the catalog
-    snapshot and searched by its MPN. A code the snapshot lacks is left for validation to refuse."""
+    snapshot and searched by its MPN and maker. A code the snapshot lacks is left for validation to refuse."""
     if not isinstance(arguments, dict) or "lcsc" not in arguments or arguments.get("query") or arguments.get("part_id"):
         return arguments
     code = arguments["lcsc"]
@@ -845,7 +846,11 @@ async def _cse_lcsc(arguments: Any) -> Any:
     model = (part or {}).get("model")
     if not model:
         return arguments
-    return {("query" if key == "lcsc" else key): (model if key == "lcsc" else value) for key, value in arguments.items()}
+    resolved = {("query" if key == "lcsc" else key): (model if key == "lcsc" else value)
+                for key, value in arguments.items()}
+    if not resolved.get("manufacturer") and part.get("manufacturer"):
+        resolved["manufacturer"] = part["manufacturer"]
+    return resolved
 
 
 _ARG_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,39}")
@@ -1432,32 +1437,24 @@ async def jlc_stock_check(
     page: int = 1,
     limit: int = 20,
 ) -> dict:
-    """Live JLCPCB stock and price search. Use jlc_search first (faster, parametric filters); use this
-    only to confirm stock before ordering, find parts with stock under 10 or out of stock, or page
-    through large result sets.
-    JLCPCB matches whole part numbers and their starts, not text inside them: when no result
-    contains a part-number fragment ("2812"), hint names in-stock parts that do (WS2812B). Use
-    jlc_get_part(lcsc=...) for full details. When JLCPCB doesn't answer, one LCSC code gets the
-    snapshot's row, marked live_failed.
+    """Live JLCPCB stock/prices, including stock under 10. Prefer jlc_search for parametric search.
+    JLCPCB matches whole part numbers and their starts, not text inside them.
 
     Args:
-        query: Keywords (e.g., "ESP32", "10uF 25V", "STM32F103"); one LCSC code ("C5947") returns
-            that part only, not the parts with its digits in their part number (TLC5947), with its
-            price tiers (prices, as in jlc_get_part)
-        category_id: Category ID from jlc_search_help
-        subcategory_id: Subcategory ID from jlc_search_help
-        category_name: Category name (e.g., "Resistors")
-        subcategory_name: Subcategory name (e.g., "Tactile Switches")
-        min_stock: Set 0 to include out-of-stock parts
-        library_type: "basic", "preferred", "no_fee", "extended" or "all"; ignores case,
-            accepts no-fee; invalid values list valid choices
-        package: Package (e.g., "0402", "LQFP48")
-        manufacturer: Manufacturer
-        packages: Several packages (OR); accepts a list, JSON array string, or one bare string
-        manufacturers: Several manufacturers (OR); same formats as packages, never comma-split
-        sort_by: "quantity" (default; highest stock first) or "price" (cheapest first); case-insensitive
-        page: Page number
-        limit: Results per page (max 100)
+        query: Keywords or one exact LCSC code ("C5947"); max 500 characters.
+        category_id: Category ID from jlc_search_help.
+        subcategory_id: Subcategory ID from jlc_search_help.
+        category_name: Category, e.g. "Resistors".
+        subcategory_name: Subcategory, e.g. "MOSFETs".
+        min_stock: Minimum stock; default 10, 0 includes out-of-stock parts.
+        library_type: basic, preferred, no_fee (both), extended, all; default all.
+        package: One package, e.g. "0402".
+        manufacturer: One maker.
+        packages: OR list, JSON array or string; replaces package, max 50; no comma splitting.
+        manufacturers: OR list, JSON array or string; replaces manufacturer, max 50.
+        sort_by: quantity (most first, default) or price (least first).
+        page: Page number; default 1.
+        limit: Results per page; default 20, max 100.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -1716,6 +1713,10 @@ _FOOTPRINT_NAME = re.compile(
 )
 
 
+# Fuse currents a query gives as a nominal rating (smart_parser's fuse families)
+_NOMINAL_FUSE_CURRENTS = ("Hold Current", "Current Rating")
+
+
 def _keep_part_number_matches(retry: dict, part_number_text: str, limit: int, offset: int = 0) -> dict:
     """A part-number retry keeps only parts whose MPN contains a requested part number, or is
     contained in it (JK-nSMD005/60V for nSMD005/60V, IR333-A for LED/IR333-A/5mm): the engine's
@@ -1824,105 +1825,37 @@ def jlc_search(
     sort_order: SortOrder = None,
     facets: bool = False,
 ) -> dict:
-    """Search in-stock JLCPCB parts locally with natural-language parsing and spec filters.
-    Stock is from the daily catalog snapshot, scraped at data_as_of; the 1-piece price is refreshed
-    weekly (prices_as_of; a part new since then has its first scraped price). jlc_stock_check and
-    jlc_get_part(live=true) are live. Default 20 results; strict=true disables relaxation.
-    Reply: filters_applied lists every filter that ran, given or read from the query; parsed shows
-    only what the query text gave. relaxed names query words, a
-    query-only library preference or part type left out; ignored_filters explains unapplied/rare filters,
-    parsed.adjusted_filters explains moved/omitted specs; unlisted counts, per range filter, parts it
-    left out only because they don't list that attribute ("-"); counts_complete=false means partial counts;
-    valid_values lists accepted inputs on errors.
-    When the search shortens a full part number (LM1117-3.3 searches LM1117), parts matching it
-    come first: mpn_match is full, same_suffix or family, and mpn_matches counts each.
-    A full package (QFN-24-EP(4x4)) keeps its body size and exposed pad; a bare family (QFN-24)
-    matches any body, and parsed.adjusted_filters says so.
-    In results, pcba_type "standard_only" means one such part moves the whole order to Standard
-    assembly (higher setup and stencil fees), and no_datasheet=true that JLCPCB lists no datasheet
-    (find it on the maker's site, or pick another). total counts every match before limit and
-    offset; library_type_counts use the same constraints. Spec sorts add sort_value (the figure
-    sorted on, as listed, with its test condition, or null) and sort (what was compared, at which
-    condition, and how far the order compares like with like). An empty reply's hint suggests a
-    next step. why_empty adds bounded local library/package/stock checks with counts, next calls and
-    diagnostics_complete; original results stay empty. Negative Vout preserves polarity, impedance@frequency
-    compares that condition, and part-number exclusions are reported as unsupported. Part rows carry
-    data_source (snapshot/provider/observation time); no diagnostic makes live requests.
+    """Fast parametric search of in-stock JLCPCB parts: daily catalog snapshot (stock >= 10),
+    1-piece prices refreshed weekly. jlc_stock_check and jlc_get_part(live=true) are live.
+    Use jlc_search_help for spec names/types and sortable specs. Check datasheets before choosing.
 
     Args:
-        query: Natural language, e.g. "10k resistor 0603 1%", "100nF 25V capacitor" (adds
-            Voltage >= 25V), "n-channel mosfet SOT-23" (picks the subcategory). With explicit
-            filters it's a text search within the results.
-            PD controller/sink/source/trigger roles take precedence over USB-C connector words.
-            Sink/trigger/receiver and source rank listed Receiver/Supply controllers first;
-            sink voltage ranks negotiated Output Voltage matches within the role. Missing
-            attributes stay in results; strict=true requires listed matches instead.
-            Strict sink-and-source requirements are reported as unsupported.
-            MOSFET gate/logic-drive voltage is separate from Vds. Listed RDS(on) at or
-            below that drive ranks first; other parts remain eligible. rds_on_at_drive
-            is the entry at the highest listed gate voltage <= drive, or null without
-            such evidence; this does not establish load-current or thermal suitability.
-            LCSC's RDS(on) and Vgs(th) are typical figures on some listings and maximum on
-            others, so compare the datasheets' max columns before choosing.
-        subcategory_id: Subcategory ID (e.g., 2954 for MOSFETs)
-        subcategory_name: Subcategory name (e.g., "MOSFETs", "Schottky Diodes")
-        category_id: Category ID from jlc_search_help (all its subcategories; spec names differ between them)
-        category_name: Category name (e.g., "Capacitors"), as category_id
-        spec_filters: List of {"name", "op", "value"}, e.g. [{"name": "Vgs(th)", "op": "<",
-            "value": "2.5V"}]. Values accept text or numbers (unitless uses base units: V, A,
-            ohms, F, H, Hz, W, mm, bytes); names ignore case. JSON arrays as strings also work.
-            op: =, >=, <=, >, < (=> normalizes to >=); invalid inputs return valid_values. Short names: Vgs(th), Vds, Id, Rds(on), Vr,
-            If, Vf, Vceo, Ic, Vout, Iout, Iq, Supply Voltage, Capacitance, Resistance, Inductance,
-            Voltage, Tolerance, Power, DCR, Isat, Frequency; others by the name jlc_search_help
-            shows. Range ops only work on attributes it lists as "numeric"; parts with no value
-            ("-") don't match them. On ranges ("2.7V~5.5V": supply, output voltage) = means the
-            range includes the value. Several = filters on one spec match any of the values (OR),
-            except Supply Voltage and Vin, where a part must cover all of them (AND).
-            Operating Temperature (any name for the rated range,
-            junction range for diodes) in °C: <= -40 means rated down to -40, >= 85 up to 85,
-            = "-40~85" covers both. A query's "-40°C", "105C" or "-40~85℃" does the same.
-            LDO dropout at a load: {"name": "Dropout", "op": "<=", "value": "0.3V@500mA"} uses each
-            part's listed dropout at or above that load, or scales a lower test current's figure up
-            linearly (dropout_at_load shows which); parts rated below the load are left out.
-        min_stock: Minimum stock (the database only has stock >= 10)
-        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", "all", or omit;
-            case-insensitive, with "no-fee" accepted. Unknown values list the valid choices.
-        prefer_no_fee: Sort basic/preferred first
-        package: One package (e.g., "0603", "SOT-23"). Bare QFN/QFP/SOIC families include
-            vendor variants of any body size. Give e.g. "QFN-24-EP(4x4)" to require that body
-            and exposed pad. AxB/BxA, decimal zeros and mm spellings of the body are equivalent.
-            A suffix absent from the entire catalog falls back to the bare family unless strict=true.
-        packages: Several packages (OR), e.g. ["0402", "0603"]; a bare string is one package,
-            or pass a JSON array string. Commas within a package stay literal. Explicit package
-            arguments override query packages; "0402 or 0603" in a query also means OR.
-        manufacturer: Manufacturer
-        manufacturers: Several manufacturers (OR); same formats as packages, never comma-split
-        match_all_terms: Require every query term (AND)
-        sort_by: "stock" (most first), "price" (cheapest within library tiers when prefer_no_fee) or
-            "spec" (by sort_spec); omitted defaults to stock unless the query says "cheapest"/"lowest
-            price", or names a spec after lowest/highest/smallest/most ("lowest Iq LDO", "highest Isat
-            4.7uH inductor", "most flash STM32"), which sorts by that spec.
-        limit: Max results (default 20, max 100)
-        offset: Results to skip, for the next page of the same search (offset=20 with limit=20 is
-            page 2; max 10000); total stays the whole population
-        strict: If true, keep query words and parsed requirements; no relaxed retry. Unsupported
-            constraints return an error with ignored_filters/parsed.adjusted_filters and no results.
-            Default false allows relaxation, reporting omitted requirements.
-        pcba_type: "economic" keeps parts JLCPCB's Economic assembly can place (its PCBA Type
-            "Economic and Standard"); "standard_only" keeps the parts that need Standard assembly.
-        sort_spec: Sort by a spec (sort_by="spec" is implied), parts that don't list it last, then
-            library tier and stock: RDS(on), Iq, Dropout, Vf, Isat, DCR, ESR, Ripple Current, Lifetime,
-            GBW, CMRR, Noise Figure, Load Capacitance, Frequency Stability, Flash, RAM, CPU Speed, Memory
-            Size, Charge Current, Clamping Voltage, Standoff Voltage, Peak Pulse Power, Gate Charge, Voltage Rating,
-            Current Rating, Power, Tolerance, Resistance, Capacitance, Inductance, Vds, Id, Vr, If,
-            Output Current (jlc_search_help marks them with sort_spec). Ranges (supply or adjustable
-            output voltage, Vgs(th)) are refused. RDS(on), dropout and Vf are listed at different test
-            conditions; sort at one: "RDS(on)@4.5V" (gate drive), "Dropout@500mA" (load), "Vf@1A".
-            Without one it's taken from the query's gate drive, a Dropout filter's load, an Output
-            Current or If filter. A listed 0 counts as not listed.
-        sort_order: "asc" (default, lowest first) or "desc" (highest first), with sort_spec or a
-            query that names the spec ("lowest Iq LDO"); also ascending/lowest and descending/highest.
-        facets: Include bounded manufacturer/package/library counts for all final matches (default false).
+        query: Plain words, e.g. "10k resistor 0603 1%"; max 500 characters.
+        subcategory_id: Subcategory ID from jlc_search_help.
+        subcategory_name: Subcategory, e.g. "MOSFETs".
+        category_id: Category ID; searches all its subcategories (spec names differ).
+        category_name: Category, e.g. "Capacitors".
+        spec_filters: Up to 50 {name, op, value}, e.g. {"name":"Iq","op":"<","value":"10uA"}; list/JSON array; names: jlc_search_help.
+            Unitless uses V, A, ohms, F, H, Hz, W, mm, bytes. Repeated = on one spec is OR
+            (Supply Voltage/Vin: all); = on a range means it includes the value.
+            Operating Temperature: <= -40 reaches down to -40°C; >= 85 up to 85°C.
+            Dropout at a load: 0.3V@500mA.
+        min_stock: Minimum stock; default 10 (snapshot floor).
+        library_type: basic, preferred, no_fee (both), extended, all; default all.
+        prefer_no_fee: Basic/preferred first; default true.
+        package: Package, e.g. "QFN-24-EP(4x4)"; bare families allow any body size.
+        packages: OR list, JSON array or string; overrides package/query, max 50; no comma splitting.
+        manufacturer: One maker.
+        manufacturers: OR list, JSON array or string; replaces manufacturer, max 50.
+        match_all_terms: Require all text terms; default true.
+        sort_by: stock (default), price, spec; query may infer price/spec.
+        limit: Results; default 20, range 1-100.
+        offset: Results to skip; default 0, max 10000.
+        strict: Default false allows reported relaxation; true keeps requirements, errors on unsupported constraints.
+        pcba_type: economic or standard_only; one standard_only part moves the whole order to Standard assembly.
+        sort_spec: E.g. "Iq", "RDS(on)@4.5V", "Dropout@500mA", "Vf@1A"; implies spec sort; unlisted last.
+        sort_order: asc (default) or desc; needs sort_spec or a query naming the spec.
+        facets: Manufacturer/package/library counts; default false.
     """
     # Validate query length to prevent abuse
     MAX_QUERY_LENGTH = 500
@@ -2400,6 +2333,27 @@ def jlc_search(
             effective_subcategory_ids = None
             result = retry
 
+    # A fuse's current from the query is nominal ("1A 1812 fuse": Hold Current = 1A). With no stocked
+    # part rated exactly that, the ratings above it answer, nearest first. After the retries above, so
+    # words they leave out ("1.5A/3A") don't pass for a missing rating.
+    nominal = [f for f in (search_args["spec_filters"] or []) if isinstance(f, FuseFilter) and f.operator == "="
+               and f.name in _NOMINAL_FUSE_CURRENTS and f not in explicit_filters]
+    if not strict and nominal and result.get("total") == 0 and not result.get("error"):
+        widened = [dataclasses.replace(f, operator=">=") if f in nominal else f for f in search_args["spec_filters"]]
+        retry = db.search(query=effective_query, **{**search_args, "spec_filters": widened,
+                          "sort_by": "stock", "spec_sort": SpecSort.parse(nominal[0].name)})
+        if retry.get("total"):
+            search_args["spec_filters"] = widened
+            retry["relaxed"] = {
+                "widened_filters": [{"filter": f"{f.name} = {f.value}", "now": f"{f.name} >= {f.value}"}
+                                    for f in nominal],
+                "reason": "no stocked part has exactly this rating, so higher ratings are listed, lowest first",
+            }
+            if dropped_library:
+                retry["relaxed"]["dropped_text"] = dropped_library
+                retry["relaxed"]["reason"] += "; the library preference was left out"
+            result = retry
+
     searched_ids = effective_subcategory_ids or (
         [i for i in [subcategory_id or db.resolve_subcategory_name(effective_subcategory_name)] if i]
         if (subcategory_id or effective_subcategory_name) else []
@@ -2751,12 +2705,12 @@ def jlc_search_help(
     category: str | int | None = None,
     subcategory: str | int | None = None,
 ) -> dict:
-    """List categories, a category's subcategories, or a subcategory's filterable attributes (with
-    type and example values) for jlc_search spec_filters. No args lists all categories.
+    """Browse categories (no args), subcategories, or filterable specs with types, values and sort_spec
+    names for jlc_search. Detailed query syntax and reply fields: https://pcbparts.dev/llms.txt.
 
     Args:
-        category: Category name (e.g., "Connectors") or ID: lists its subcategories
-        subcategory: Subcategory name (e.g., "MOSFETs") or ID: lists its filterable attributes
+        category: Category name/ID, e.g. "Connectors"; default null.
+        subcategory: Subcategory name/ID, e.g. "MOSFETs"; default null; wins over category.
     """
     # Subcategory mode: list filterable attributes
     if subcategory is not None:
@@ -2827,16 +2781,13 @@ def jlc_search_help(
 )
 @offload(COMPONENT_POOL)
 def jlc_stock_history(lcsc: str | list[str], days: Annotated[int, Field(ge=1, le=366, strict=True)] = 180) -> dict:
-    """Recorded low-stock events, newest first: one code gets at most 100; a list gives one reply
-    with a per-part summary and the newest 10 events each, notes once. more_events flags more.
-    Gone is missing from a scrape, not a confirmed stockout; suspect gaps are labelled.
-    Includes the window, recording limits and current_stock from the catalog snapshot (null, with
-    gone_since, for a part that left it).
+    """Recorded low-stock events, not live stock: one code gets the newest 100 events, a list 10 each.
+    Recording is selective; no events doesn't mean stable stock, and gone isn't a confirmed stockout.
+    Use jlc_stock_check for live stock.
 
     Args:
-        lcsc: One LCSC C-code (e.g. C8314) or a list of up to 50; ignores case and surrounding
-            spaces, de-duplicates lists. Also accepts a JSON array string; never comma-split.
-        days: 1-366 calendar days ending on the newest recorded date (default 180).
+        lcsc: One LCSC code ("C8314") or up to 50; list/JSON array, deduplicated, never comma-split.
+        days: Calendar days ending on the newest recorded date; default 180, range 1-366.
     """
     invalid_code = {"error": "lcsc must be an LCSC C-code (e.g., C6186); use jlc_get_part(mpn=...) to find the code for an MPN"}
     if not isinstance(lcsc, str) or lcsc.lstrip().startswith("["):
@@ -2907,49 +2858,15 @@ def _current_stock(part: dict[str, Any] | None, gone: dict[str, Any] | None) -> 
     )
 )
 async def jlc_get_part(lcsc: str | None = None, mpn: str | None = None, live: bool = False) -> dict:
-    """Full details for one JLCPCB part (all price tiers, datasheet, specs, EasyEDA footprint
-    availability), or the JLCPCB parts matching a manufacturer part number.
-
-    Reply: an LCSC code answers from the daily catalog snapshot (stock >= 10; data_as_of), without
-    min_order, reel_qty, datasheet, maker_datasheet, datasheet_note or lcsc_url; live=true, a code not
-    in the snapshot, or a server without price tiers, asks JLCPCB (live, held up to an hour) and adds
-    them. live_failed: JLCPCB didn't answer, so the snapshot's row answers (note). prices lists quantity
-    tiers; datasheet is LCSC's viewer page (null when LCSC has none) and datasheet_pdf the PDF: a short
-    link on this server that stays valid (LCSC's link for its copy); maker_datasheet is the maker's own
-    link where JLCPCB lists one (most TI parts); datasheet_note says when there is no PDF, or that
-    datasheet_pdf is LCSC's copy (specs come from LCSC too when JLCPCB lists none); specs_note says when
-    LCSC lists no specs, or what the listing leaves out for the part type (Isat's definition, MLCC
-    DC-bias loss, RF cable ends, MOSFET RDS(on)/Vgs(th) typical and maximum mixed, multi-diode loading);
-    spec_evidence cites reviewed maker values, conditions and sources; spec_discrepancies flags
-    catalog/document conflicts without replacing catalog specs. no_datasheet/no_datasheet_note refer
-    only to JLCPCB availability; lcsc_url is the LCSC product page; pcba_type is "economic" or
-    "standard_only" (JLCPCB's PCBA Type: one standard_only part moves the whole order to Standard
-    assembly). Optional lifecycle {status, raw, source, observed_at}: a stored Mouser/DigiKey
-    reading, no request (raw "not stated by Mouser": listed without a status); for a lookup use
-    part_lifecycle. Footprint pads: jlc_get_pinout(lcsc, footprint=true).
-    has_easyeda_footprint=null means unknown, false means absent; MPN lookups return results, total,
-    exact (the number itself matched) and ambiguous (several parts match). Non-exact replies
-    add match (separators, packing, alias, alternative, lcsc or related), matched_mpn, and a note
-    naming the part types for related full-text results (and parts another
-    manufacturer numbered after the original). An LCSC code given as mpn finds that part
-    (match=lcsc); BOM placeholders such as N/A or DNP find nothing.
-    MPN lookups search the daily catalog snapshot (stock >= 10), most stock first; price is refreshed
-    weekly (prices_as_of), prices' tiers daily (price_tiers_as_of; null: the 1-piece price only).
-    Many parts at once: jlc_get_parts.
-    Rows carry data_source (kind/provider/observed_at; a cached live one keeps its time).
-    MPN misses: availability outside the snapshot is unknown; next_call suggests jlc_stock_check with
-    min_stock=0 (not run). Parts that left the snapshot (stock under 10 or delisted) answer when no
-    in-stock part matches but by full text or as another maker's spelling (listed after them): gone,
-    gone_since, last_stock and stock null (unknown), with hint and next_call; otherwise gone_matches
-    counts them.
+    """Part details, price tiers, datasheet_pdf and EasyEDA footprint availability. LCSC lookup uses the
+    snapshot; live=true, an absent code or missing price tiers uses JLCPCB live (cached up to an hour).
+    MPN lookup always uses the daily snapshot, including gone parts. For batches use jlc_get_parts;
+    for lifecycle use part_lifecycle; for footprint pads use jlc_get_pinout(footprint=true).
 
     Args:
-        lcsc: LCSC part code (e.g., "C82899")
-        mpn: Manufacturer part number (e.g., "LM358P"), over in-stock parts (stock >= 10), then gone ones. Also
-            finds other dash/space spellings, the same manufacturer's other packing codes, and BOM
-            entries with notes or alternatives; never a different grade. Finds the JLCPCB
-            equivalent of a part from another distributor or a reference design.
-        live: True: lcsc from JLCPCB live, not the snapshot; ignored for mpn (always the snapshot)
+        lcsc: LCSC code, e.g. "C82899"; wins over mpn.
+        mpn: MPN, e.g. "LM358P"; max 100 characters; also matches packing/separator variants.
+        live: Live lookup for lcsc; default false, ignored for mpn.
     """
     if not lcsc and not mpn:
         return {"error": "Must provide either lcsc or mpn"}
@@ -3223,6 +3140,24 @@ def _parts_lookup(db: Any, mpn: str, maker: str | None, cache: dict[tuple[str, s
     return cache[key]
 
 
+def _parts_mpn_matches(db: Any, mpn: str, part: dict[str, Any],
+                       cache: dict[tuple[str, str | None], PartsLookup]) -> bool:
+    """Check a BOM's number against its code using the catalog's spelling/packing/alias rules.
+    Compare packing identities first: an exact listing of another packing variant can hide this
+    code in get_by_mpn's earlier match tiers."""
+    key = mpn_key(part.get("model") or "")
+    if key and key in {mpn_key(value) for value in normalize_mpn(mpn)}:
+        return True
+    for rule in PACKING_RULES:
+        if not any(makers_match(part.get("manufacturer"), maker) for maker in rule.manufacturers):
+            continue
+        asked, listed = rule.pattern.fullmatch(mpn_key(mpn)), rule.pattern.fullmatch(key)
+        if asked and listed and rule.identity(asked) == rule.identity(listed):
+            return True
+    found, _, gone, _ = _parts_lookup(db, mpn, part.get("manufacturer"), cache)
+    return any(row["lcsc"] == part["lcsc"] for row in [*found, *gone])
+
+
 def _get_parts_mpn_row(mpn: str, answer: tuple[str, list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]],
                        everyone: list[dict[str, Any]] | None, gone: list[dict[str, Any]],
                        rows: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -3274,21 +3209,12 @@ PartsItem = Annotated[Any, WithJsonSchema({"anyOf": [{"type": "string"},
 )
 @offload(COMPONENT_POOL)
 def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
-    """Up to 50 JLCPCB parts in one call, by LCSC code or MPN, from the daily catalog snapshot (stock
-    >= 10), database only: for BOM refreshes and checking many parts at once. For one part's live
-    stock, prices or datasheet, use jlc_get_part(live=true).
-    Reply: data_as_of, prices_as_of, price_tiers_as_of, counts (found, gone, not_found, error), hint
-    when any part is gone or not found, and results in input order, each with input. An LCSC code's
-    row has jlc_get_part's fields (prices: quantity tiers), or not_found; an MPN's row is like
-    jlc_get_part(mpn=...): mpn, total, up to 10 results, exact, ambiguous, match info, gone_matches,
-    or not_found with other_manufacturers. Gone parts (left the snapshot): stock null, gone,
-    gone_since, last_stock. MPNs never match by full text: search values with jlc_search. An
-    unusable input has error. Each part may add lifecycle, as in jlc_get_part.
+    """BOM refreshes: up to 50 JLCPCB parts from the daily snapshot, no live requests.
+    MPNs never match by full text; search values with jlc_search. For specs or live stock,
+    use jlc_get_part (live=true for live stock).
 
     Args:
-        parts: Up to 50, each an LCSC code ("C7950"), an MPN ("LM358P") or {"mpn", "manufacturer"}
-            (the maker narrows the matches; "lcsc" also works, and wins over mpn; {"mpn": "C1815"}
-            for a part number shaped like a code). A list or a JSON array string; never comma-split.
+        parts: Codes/MPNs or {"mpn","manufacturer","lcsc"}; list/JSON array/string, max 50; lcsc wins; use {"mpn":"C1815"} for code-shaped MPNs.
     """
     items: Any = parts
     if isinstance(items, str) and items.lstrip().startswith(("[", "{")):
@@ -3363,6 +3289,17 @@ def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
         if codes or gone_codes:
             listed.update(rows_for(codes, gone_codes))
         listed = {part["lcsc"]: part for part in _with_stored_lifecycle(list(listed.values()))}
+        mismatches = {}
+        for index, entry in enumerate(entries):
+            if entry.error is not None or not entry.lcsc or not (part := listed.get(entry.lcsc)):
+                continue
+            mismatch = {}
+            if entry.mpn and not _parts_mpn_matches(db, entry.mpn, part, cache):
+                mismatch["mpn"] = entry.mpn
+            if entry.maker and not makers_match(entry.maker, part.get("manufacturer")):
+                mismatch["manufacturer"] = entry.maker
+            if mismatch:
+                mismatches[index] = mismatch
         data_as_of, prices_as_of, tiers_as_of = db.scraped_at(), db.prices_as_of(), db.price_tiers_as_of()
     except (OSError, sqlite3.Error):
         logger.exception("jlc_get_parts: catalog lookup failed")
@@ -3388,6 +3325,12 @@ def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
         elif entry.lcsc:
             part = listed.get(entry.lcsc)
             row.update(part or {"lcsc": entry.lcsc, "not_found": True})
+            if part and not part.get("gone") and not part.get("no_datasheet") and (base := _datasheet_link_base()):
+                row["datasheet_pdf"] = f"{base}/mcp/datasheet/{entry.lcsc}"
+            if index in mismatches:
+                row["mismatch"] = mismatches[index]
+                row["note"] = " ".join(filter(None, [row.get("note"),
+                    "Check this BOM row: the given MPN or manufacturer disagrees with the LCSC code's part."]))
             counts["not_found" if not part else "gone" if part.get("gone") else "found"] += 1
         elif result is None:  # the database failed on this number; the others are answered
             row["error"] = "Database not available"
@@ -3410,22 +3353,41 @@ def jlc_get_parts(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
 
 def _datasheet_link_base() -> str | None:
     """This server's public address inside a tool call, for short datasheet links: https for the
-    allowlisted public hosts (TLS ends at the proxy, as ALLOWED_ORIGINS assumes). None outside an
-    HTTP request (tests)."""
+    allowlisted public hosts (TLS ends at the proxy, as ALLOWED_ORIGINS assumes), unless configured
+    explicitly. None in direct mode, outside an HTTP request, or with a malformed Host."""
     try:
         request = get_http_request()
     except RuntimeError:
         return None
+    if DATASHEET_LINK_BASE == "direct":
+        return None
+    if DATASHEET_LINK_BASE:
+        return DATASHEET_LINK_BASE
     host = request.headers.get("host")
     if not host:
         return None
-    return f"{'https' if host.split(':')[0] in ALLOWED_HOSTS else request.url.scheme}://{host}"
+    # Host matching alone can accept userinfo such as pcbparts.dev:80@attacker.example.
+    # Validate the entire authority before interpolating it into a client-facing URL.
+    authority = re.fullmatch(r"(\[[0-9A-Fa-f:.]+\]|[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.?)(?::([0-9]+))?", host)
+    if authority is None:
+        return None
+    hostname, port = authority.groups()
+    try:
+        if port is not None and not 1 <= int(port) <= 65535:
+            return None
+        if hostname.startswith("["):
+            ipaddress.IPv6Address(hostname[1:-1])
+        elif any(label.startswith("-") or label.endswith("-") for label in hostname.rstrip(".").split(".")):
+            return None
+    except ValueError:
+        return None
+    return f"{'https' if hostname in ALLOWED_HOSTS else request.url.scheme}://{host}"
 
 
 def _short_datasheet_link(part: dict[str, Any]) -> dict[str, Any]:
     """A part reply whose datasheet_pdf is this server's /mcp/datasheet/<lcsc>, which signs a fresh
     JLCPCB link on each visit. The signed link was ~1.2KB of a 3.3KB reply and expired in 30 minutes.
-    Without an HTTP request (tests) the signed link and datasheet_pdf_expires stay. LCSC's copy (no
+    In direct mode or without an HTTP request the signed link and datasheet_pdf_expires stay. LCSC's copy (no
     expiry; JLCPCB has none to sign) is returned as it is."""
     if (not part.get("datasheet_pdf") or not part.get("datasheet_pdf_expires") or not part.get("lcsc")
             or not (base := _datasheet_link_base())):
@@ -3472,52 +3434,20 @@ async def jlc_find_alternatives(
     placements_per_board: int = 1,
     land_compatible: bool = False,
 ) -> dict:
-    """Find catalog-checked alternatives, ranked no-fee first (same-package passives/crystals first
-    within each tier). Reply: summary.found counts verified alternatives; unverified_alternatives
-    need manual comparison for missing required matches or incomparable rating conditions (inductor Isat, DCR,
-    thermal current; multi-diode loading); specs_unparseable lists specs not verified;
-    unchecked_requirements includes pinout/circuit checks still needed; has_easyeda_footprint=null means unknown.
-    Reviewed spec_evidence cites manufacturer values/conditions; spec_discrepancies preserves catalog conflicts.
-    no_datasheet and no_datasheet_note refer only to JLCPCB availability.
-    RF parts (splitters, baluns, couplers, amplifiers, filters, transceivers) have no rules, so they come
-    back as similar_parts from every maker, ordered by how much of the original's frequency range
-    each covers (frequency_coverage: full, partial with share, or unknown); parts that don't overlap it
-    are left out and counted in summary.frequency_check. Other part types without rules (modules,
-    load switches, addressable LEDs) list parts in the original's package and part family first, with
-    likely_drop_in (pinout unchecked), then other makers' parts in the same package.
-    library_type="no_fee" with no basic/preferred match names the best extended ones in
-    summary.extended_examples. Listed parts carry has_easyeda_footprint where it's already known (no
-    extra request), and pcba_type ("economic" or "standard_only"). Lifecycle (NRND) isn't checked:
-    part_lifecycle has it.
-    Stock comes from the live search or the daily catalog snapshot. Each part's data_source identifies
-    that observation. Savings use a rounded $3 Economic loading-fee estimate (is_estimate and
-    assembly_service_assumption), not a current quote; Standard service differs.
-    savings.order_total prices component_quantity (boards * placements) at each part's price break
-    for that quantity (savings.price_basis, savings.price_tiers_as_of; the *_at_quantity fields give
-    the prices used); unit_price_diff and the ranking use qty-1 prices.
-    summary.stages reports retrieval counts/limits/errors, primary/spec passed/failed/unknown,
-    library/package eligibility, footprint and land-check outcomes/cap omissions and per-list output truncation.
-    Connector alternatives list "land pattern and pin 1 position" as unchecked: makers' footprints for
-    one series often differ; land_compatible=true compares them (summary.land_note explains the fields).
+    """Catalog-checked replacements, no-fee first; unverified candidates need manual comparison.
+    Check pinout/circuit; lifecycle isn't checked (part_lifecycle). Stock is live or snapshot.
+    Savings use a $3 Economic loading-fee estimate, not a quote. Land checks don't verify pin functions.
 
     Args:
-        lcsc: LCSC code of the original part (e.g., "C2557")
-        min_stock: Minimum stock
-        same_package: Only parts with the same package
-        library_type: "basic", "preferred", "no_fee" (basic or preferred), "extended", or omit
-            for all; case-insensitive, accepts no-fee. Invalid values list valid choices.
-        has_easyeda_footprint: True: only parts with an EasyEDA footprint (for Atopile/KiCad);
-            False: only parts without; omit: no filter (fastest). Checks at most min(2 * limit, 15)
-            eligible candidates; extended fallback examples use only the remaining budget.
-            Leaves out unknowns; summary.footprint_filter describes limits and lookup failures.
-        limit: Max entries per verified/unverified list (max 50)
-        board_quantity: Number of boards for project savings (default 1, max 1,000,000)
-        placements_per_board: Original part placements per board (default 1, max 1,000,000)
-        land_compatible: True for a board whose copper is already made: compares the top 30
-            candidates' EasyEDA footprint pads with the original's and adds land (fits, turn,
-            max_offset_mm, renumbered); parts that fit as drawn with the same pad numbers come first.
-            Takes a few seconds more the first time footprints are compared (stored after);
-            land is null where a footprint isn't known.
+        lcsc: Original LCSC code, e.g. "C2557".
+        min_stock: Minimum stock; default 10.
+        same_package: Require same package; default false.
+        library_type: basic, preferred, no_fee (both), extended, all; default all.
+        has_easyeda_footprint: True/false filter; default null; checks min(2*limit,15) candidates (≤5 live), excludes unknowns.
+        limit: Results per verified/unverified list; default 10, max 50.
+        board_quantity: Boards for savings; default 1, max 1000000.
+        placements_per_board: Placements per board; default 1, max 1000000.
+        land_compatible: Compare top 30 candidates' pads for existing copper; default false; adds seconds, cached.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -3588,25 +3518,14 @@ def _is_polarized_pair(pins: list[dict[str, Any]]) -> bool:
     )
 )
 async def jlc_get_pinout(lcsc: str | None = None, uuid: str | None = None, footprint: bool = False) -> dict:
-    """Pin numbers and names from a part's EasyEDA symbol, exactly as EasyEDA has them (e.g., VCC,
-    GND, PA0); with footprint=true also the EasyEDA footprint's pads.
-    A pin's number is as the symbol shows it and matches the footprint pad ("1", "A2");
-    electrical (input, output, bidirectional, power) appears only where the symbol's creator set
-    it, so its absence says nothing. unverified ("Symbol not verified by LCSC") appears when LCSC
-    hasn't verified the symbol; note means every pin's name is its number, so the symbol doesn't
-    say what the pins do, or that a polarized two-pin part's numbers may not match its datasheet's
-    (connect it by pin name).
-    footprint_error says why a requested footprint is missing.
+    """EasyEDA symbol pins. Numbers match footprint pads, which may differ from datasheet numbering;
+    connect polarized two-pin parts by name. Absent electrical means unknown.
+    KiCad files: cse_get_kicad.
 
     Args:
-        lcsc: LCSC part code (e.g., "C8304"); finds the symbol for you
-        uuid: EasyEDA symbol UUID, instead of lcsc
-        footprint: Also return the footprint (needs lcsc): its name, source_link (the document it
-            was drawn from), pad_count, numbered_pads, pitch (most common pad spacing, mm),
-            pad_sizes, and pads [{number, x, y (mm from the footprint origin, y down), shape,
-            size [w, h] mm, layer top/bottom/through_hole, hole and slot_length mm}]. Pad positions
-            tell pins with numbers only apart (a switch's common from its throws), and the name and
-            source_link show a footprint drawn for another maker's part or a different model.
+        lcsc: LCSC code, e.g. "C8304"; wins over uuid.
+        uuid: EasyEDA symbol UUID instead of lcsc.
+        footprint: Also return footprint and pads (mm from origin, y down); needs lcsc; default false.
     """
     if not _client:
         raise RuntimeError("Client not initialized")
@@ -3744,26 +3663,13 @@ def _redact(message: str, *secrets: str) -> str:
     )
 )
 async def mouser_get_part(part_number: str) -> dict:
-    """Mouser price, stock and datasheet for specific parts: for parts JLCPCB doesn't carry
-    (jlc_search / jlc_get_part found nothing) or when the user asks for Mouser. Lookups share a small
-    daily limit across all users: batch up to 10 parts per call and don't retry a quota error; for
-    lifecycle use part_lifecycle.
-    Reply: answers are kept up to 3 days; observed_at is the oldest used.
-    lifecycle is Mouser's status where it states one, else null: Mouser states none for most parts,
-    including some the maker marks NRND (AP2553W6-7, which digikey_get_part's lifecycle lists as
-    NRND); lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown (null is active).
-    not_found lists the given numbers no result matches, and those not sent (not_sent gives each
-    reason: value such as "10k", lcsc_code, placeholder, not_ascii; no request spent). A spent limit
-    with some numbers kept: those answer, not_checked lists the rest, retry_after says when to ask.
-    lookup_failed: numbers Mouser gave an error for. Each result's requested is the number it
-    answers, matched_by how: exact, separators, packing (JST's (LF)/(SN) endings set aside) or
-    mouser_pn are that part; prefix and other need checking. Check manufacturer too (Mouser's
-    SRV05-4 is onsemi's).
+    """Mouser stock/prices/datasheets: for parts JLCPCB doesn't carry or when the user asks for Mouser.
+    Lookups share a small daily limit across all users: batch up to 10 full part numbers; don't retry
+    a quota error. Answers cached up to 3 days. Check manufacturer on loose matches.
+    For lifecycle use part_lifecycle; Mouser's unstated status doesn't establish absence of NRND.
 
     Args:
-        part_number: Mouser PN or MPN, or up to 10 joined by "|" ("595-LM358P|NE555P"),
-            3-40 chars each. Loose match, max 50 results per request: use full PNs when batching;
-            match results by requested and matched_by.
+        part_number: Mouser PN/MPN, 3-40 chars each; up to 10 joined by "|", e.g. "595-LM358P|NE555P".
     """
     if not _mouser_client:
         return {"error": "Mouser API key not configured. Set MOUSER_API_KEY in environment."}
@@ -3791,23 +3697,12 @@ async def mouser_get_part(part_number: str) -> dict:
     )
 )
 async def digikey_get_part(part_number: str) -> dict:
-    """DigiKey price, stock and datasheet for one part: for parts JLCPCB doesn't carry (jlc_search /
-    jlc_get_part found nothing) or when the user asks for DigiKey. Lookups share a small daily limit
-    across all users: one part per call, not whole BOMs, and don't retry a quota error; for lifecycle
-    use part_lifecycle.
-    Reply: part_number, price, price_breaks and min_qty are one packaging's (the DigiKey PN given,
-    else the smallest order, usually cut tape; packaging names it); other_packaging lists the rest
-    (reel, Digi-Reel) with their PN, min_qty and price. lifecycle is DigiKey's product status;
-    lifecycle_status is active, nrnd, last_time_buy, obsolete or unknown; last_buy_date where given.
-    Answers are kept up to a day, misses 3 days (observed_at). A number several makers use returns
-    each maker's listing, most stock first. requested is the number asked, matched_by how: exact,
-    separators, packing (JST's (LF)/(SN) endings set aside) or digikey_pn are that part; prefix and
-    other need checking. A number that can't be a DigiKey part number isn't sent (not_sent, as in
-    mouser_get_part, plus length: not 3-40 characters).
+    """API-based DigiKey stock/prices/datasheets: for parts JLCPCB doesn't carry or when the user asks
+    for DigiKey. Lookups share a small daily limit across all users: one part per call; don't retry
+    a quota error. Answers cached up to a day. For lifecycle use part_lifecycle.
 
     Args:
-        part_number: DigiKey PN or MPN ("296-1395-5-ND", "LM358P"). Use the full number: a
-            partial one can find nothing and still uses a request. One keyword search per lookup.
+        part_number: Full DigiKey PN/MPN, e.g. "296-1395-5-ND"; partial numbers can waste a request.
     """
     if not _digikey_client:
         return {"error": "DigiKey API credentials not configured. Set DIGIKEY_CLIENT_ID and DIGIKEY_CLIENT_SECRET in environment."}
@@ -3921,23 +3816,12 @@ def _catalog_identities(codes: list[str]) -> dict[str, dict[str, Any] | None]:
     )
 )
 async def part_lifecycle(parts: list[PartsItem] | dict[str, Any] | str) -> dict:
-    """Lifecycle status of up to 50 parts in one call (a BOM's lifecycle check): active, nrnd,
-    last_time_buy, obsolete or unknown, from Mouser and DigiKey. Use it instead of mouser_get_part /
-    digikey_get_part for lifecycle. Readings are shared and kept: active 60 days, nrnd and
-    last_time_buy 30, obsolete a year, others 90; parts not already known are looked up at Mouser and
-    DigiKey (shared daily limits).
-    Reply: results in input order: input, mpn, manufacturer, status, raw (the distributor's wording;
-    "not stated by Mouser" when Mouser gives none, as for most active parts), source, observed_at,
-    last_buy_date (DigiKey). unknown can add not_found (neither lists it), retry_after (seconds
-    until a limit allows the lookup), lookup_failed, not_sent (never sent: value such as "10k",
-    lcsc_code, placeholder, length, not_ascii), error (unusable input), or makers (each maker's
-    reading, when several list the number and none was given, or only other makers do).
-    status_counts counts the statuses.
+    """Lifecycle check for up to 50 parts; use instead of distributor stock tools for NRND/obsolete status.
+    Stored readings reused; unknown parts are looked up at Mouser and DigiKey, sharing daily limits
+    across all users. MPNs never match by full text; supply manufacturer to disambiguate.
 
     Args:
-        parts: Up to 50, each an MPN ("LM358P"), an LCSC code ("C7950": MPN and maker from the
-            catalog snapshot, parts that left it included) or {"mpn", "manufacturer"} (the maker picks among parts sharing a
-            number; "lcsc" also works). A list or a JSON array string.
+        parts: MPNs, LCSC codes or {"mpn","manufacturer","lcsc"}; list/JSON array/string, max 50; codes resolve from snapshot.
     """
     if not _mouser_client and not _digikey_client:
         return {"error": "Mouser API key not configured, nor DigiKey API credentials. Set MOUSER_API_KEY, "
@@ -4021,15 +3905,13 @@ async def cse_search(
     query: str,
     limit: int = 5,
 ) -> dict:
-    """Search SamacSys ComponentSearchEngine for generic ECAD/3D availability and datasheets.
-    Reply: results and total; rows include has_model, has_3d, model_quality and cse_part_id,
-    without confirming individual ECAD formats. Use cse_get_kicad for actual KiCad files.
-    Slow (a search takes about 15 s, longer when busy; answers are kept): only when you need ECAD
-    models. For part search use jlc_search; for EasyEDA footprints, jlc_get_part (live=true if unknown).
+    """Find SamacSys ECAD/3D models; formats unconfirmed. Use cse_get_kicad for KiCad files.
+    Slow (about 15 s, longer when busy; cached). Datasheets: jlc_get_part's datasheet_pdf;
+    part search: jlc_search; EasyEDA availability: jlc_get_part (live=true if unknown).
 
     Args:
-        query: MPN or keyword (e.g., "LM358P", "STM32F103"), max 500 characters
-        limit: Max results (default 5, clamped to 1-10)
+        query: MPN/keyword, e.g. "LM358P"; max 500 characters.
+        limit: Results; default 5, range 1-10.
     """
     if not _cse_client:
         return {"error": "CSE client not initialized"}
@@ -4062,19 +3944,16 @@ async def cse_search(
 async def cse_get_kicad(
     query: str | None = None,
     part_id: int | None = None,
+    manufacturer: str | None = None,
 ) -> dict:
-    """Download a part's KiCad symbol (.kicad_sym) and footprint (.kicad_mod) as text from SamacSys
-    ComponentSearchEngine, for parts SamacSys has models for. Slow (a search of about 15 s, then a
-    download; files are kept): only when you need the KiCad files. For EasyEDA footprints use
-    jlc_get_part (live=true if unknown). Downloads use the server's own SamacSys account; shared daily
-    download limits may apply.
-    Reply: part_id, search metadata when resolved by query, kicad_symbol and kicad_footprint (either
-    file may be null).
+    """Get SamacSys KiCad symbol/footprint text. Slow (search about 15 s, then download; cached).
+    Uses the server's own SamacSys account; shared daily download limits apply.
+    Datasheets: jlc_get_part's datasheet_pdf; EasyEDA availability: jlc_get_part (live=true if unknown).
 
     Args:
-        query: MPN (e.g., "LM358P", "ESP32-WROOM-32E"), max 500 characters; picks the first search
-            result with has_model and cse_part_id. Default null; provide query or part_id.
-        part_id: cse_part_id from cse_search, to skip the search; default null, a nonzero ID wins
+        query: MPN, e.g. "LM358P"; max 500 characters; default null; provide query or part_id.
+        part_id: cse_part_id from cse_search; default null; nonzero ID wins, skips search.
+        manufacturer: Maker filter for query; default null (any).
     """
     if not _cse_client:
         return {"error": "CSE client not initialized"}
@@ -4085,7 +3964,7 @@ async def cse_get_kicad(
         return {"error": "Query too long (max 500 characters)"}
 
     try:
-        return await _cse_client.get_kicad(query=query, part_id=part_id)
+        return await _cse_client.get_kicad(query=query, part_id=part_id, manufacturer=manufacturer)
     except Exception as e:
         logger.error(f"CSE get_kicad failed: {type(e).__name__}: {e}")
         return {"error": "CSE get_kicad failed. Check server logs for details."}
@@ -4110,40 +3989,17 @@ def sensor_recommend(
     platform: str | None = None,
     limit: int = 15,
 ) -> dict:
-    """Recommend sensor ICs and modules for what you want to measure, with protocol and platform
-    support. Unknown measure, protocol and platform values return valid_values; an unknown type
-    returns no matches.
-    Accepts 1-wire/one-wire and heart rate/blood oxygen aliases. Not for buying parts: use jlc_search.
-    Exact normalized query-ID/alias matches come first; within each group, results are
-    sorted by how many platforms have drivers (platform_count descending), then name ascending.
-    Calculated CO2 (CCS811, ENS160, ENS161, SGP30, iAQ-Core, APC1, SM300D2) is under eco2, not co2;
-    capability_note says what such a part really outputs (BME680/BME688: IAQ and CO2 equivalent come
-    from Bosch's BSEC library on the host), and compensation inputs aren't direct measurements. Generic MCU/platform IDs such as RP2040 are excluded.
-    A query with no searchable words (stop words, single letters, symbols) is ignored and the reply
-    adds a note.
+    """Choose sensor ICs/modules by measurement, bus and driver support; use jlc_search to buy.
+    Unknown measure/protocol/platform returns valid_values. Calculated CO2 is eco2, not co2;
+    compensation inputs aren't measurements.
 
     Args:
-        query: Name, description or manufacturer (e.g., "BME280", "waterproof"), max 500 characters
-        measure: One, or a list/JSON-array string of up to 20 that must all match: temperature,
-            humidity, pressure, distance, tof, lidar, ultrasonic, radar, co2, eco2, co, gas, voc,
-            formaldehyde, h2s, nh3, ozone,
-            oxygen, particulate, light, color, uv, optical, acceleration, gyroscope,
-            magnetic_field, tilt, vibration, rotation, motion, pir, proximity, gesture,
-            face_recognition, current, voltage, sound, flow, level, force, weight, touch, ph,
-            dissolved_oxygen, conductivity, orp, water_quality, moisture, soil_moisture, rain,
-            wind, weather, ir_temperature, flame, biometric, radiation, gps, speed, material.
-            Accepted values come from the catalog. "imu" means
-            acceleration, gyroscope or magnetic_field for a scalar or singleton list; in a
-            multi-item list all expanded measures are required. Everyday words (barometric,
-            lux, dust, compass) are mapped too.
-        type: Sensing technology (e.g., "tof", "ultrasonic", "ndir", "electrochemical", "mems")
-        protocol: "i2c", "i3c", "spi", "uart", "analog", "pwm", "gpio", "one_wire", "rs485", "rs232",
-            "can", "i2s", "usb", "ble", "hdq" or "ssi";
-            gpio includes gpio/analog/pwm/one_wire, digital includes gpio/pwm/one_wire,
-            and 1-wire/one-wire alias one_wire
-        platform: "arduino", "esphome", "micropython", "circuitpython", "tasmota", "zephyr" or
-            "raspberry_pi". ESP-IDF has no support records; unknown platforms return valid_values.
-        limit: Max results (default 15, clamped to 1-100)
+        query: Name/maker/text, e.g. "BME280"; max 500 characters.
+        measure: Up to 20 (AND), list/JSON array/string, e.g. temperature; imu alone: acceleration OR gyroscope OR magnetic_field; with others: all three.
+        type: Technology, e.g. "tof", "ndir", "mems"; unknown gives no matches.
+        protocol: Bus, e.g. i2c, spi, one_wire (1-wire); gpio includes analog/pwm/one_wire; digital includes gpio/pwm/one_wire.
+        platform: Driver platform, e.g. arduino, esphome, zephyr.
+        limit: Results; default 15, range 1-100.
     """
     # Handle JSON-string measure param from some MCP clients (filter non-string
     # elements — they bypass Pydantic and get .lower()'d in sensor_db.search)
@@ -4190,14 +4046,11 @@ def sensor_recommend(
 )
 @offload(RULES_POOL)
 def get_design_rules(topic: str = "") -> dict:
-    """Curated PCB design rules for power, protection, interfaces, MCUs, layout and EMC. An empty
-    topic lists every rule file.
-    note says the files were found by their text, not their name or keywords.
+    """PCB design rules for power, protection, interfaces, MCUs, layout and EMC.
+    Empty topic lists files; narrow a topic matching more than three files to get their full text.
 
     Args:
-        topic: Exact returned key (e.g., "power/ldo", "INDEX.md") or keyword matched against
-            category/filename and common terms (e.g., "ldo", "usb", "type-c", "lipo", "stm32g0");
-            otherwise the files that discuss it most (e.g., "boot mode")
+        topic: Key/keyword, e.g. "power/ldo", "usb", "stm32g0"; default "" (index); max 500 characters.
     """
     return _get_design_rules(topic)
 
@@ -4220,39 +4073,17 @@ def board_search(
     layers: int | None = None,
     limit: int = 10,
 ) -> dict:
-    """Search ~300 open-source reference board schematics to see how real designs use an IC: its
-    passives, decoupling, pull-ups and power topology. Not for buying parts (jlc_search) or
-    choosing sensors (sensor_recommend). Then call board_get(slug, focus=IC) for that IC's
-    pin-by-pin neighborhood.
-
-    Use component= for an IC name (searches the BOMs; when 2+ boards match it adds a cross-board
-    consensus), query= for a function ("motor driver", "USB power delivery"), tag= to browse.
-    Tags ignore case/whitespace; usb-c means usb. Unknown tags return valid_values from the catalog.
-    Combine them to narrow.
-    Matching function phrases in a board's name/description rank ahead of incidental mentions;
-    compound-tag browsing also favors boards describing that function. Remaining ties use
-    relevance, then component count.
-    Empty or all-stopword queries browse the catalog, keeping any other filters; for an all-stopword
-    query a note says so.
-    matched_by says why each appeared
-    (key IC, component, text, tag). A component consensus counts distinct boards per pin choice
-    (pct divides by consensus.board_count); browsing by tag alone adds tag_consensus, the ICs boards
-    in that category commonly use. An empty reply's hint names the words no board matches and what
-    leaving them out finds.
+    """Find reference boards: component for an IC's wiring, query for a function, tag to browse.
+    Then board_get(slug, focus=IC) for pin-by-pin connections; 2+ boards add component consensus.
+    Use jlc_search to buy parts, sensor_recommend to choose sensors.
 
     Args:
-        query: Free text over name, description, key coverage, ICs, tags and org (e.g., "ESP32
-            battery", "motor driver")
-        component: IC or part (e.g., "DRV8825", "STM32F4", "MCP73831")
-        tag: One tag or a list (AND), exact names, e.g. power-supply, sensors, motor-control,
-            adc-dac, audio, rf-sdr, isolation, battery-charging, can-bus, display, inverter,
-            led-driver, level-shifting, signal-conditioning, usb, usb-pd, ethernet, wifi, bluetooth,
-            lora, gps-gnss, video, drone-uav, esd-protection, fpga, battery-management,
-            current-sensing, energy-harvesting, relay, robotics, rs485, 3d-printer
-        org: Organization (e.g., "Adafruit", "SparkFun", "Olimex", "Seeed Studio", "Espressif" for its
-            own DevKits, "Raspberry Pi")
-        layers: PCB layer count (e.g., 2, 4, 6, 8)
-        limit: Max results (max 50)
+        query: Function/text, e.g. "motor driver"; max 500 characters.
+        component: IC/part name, e.g. "DRV8825"; max 200 characters.
+        tag: Tag(s), e.g. usb, motor-control; list/JSON array/string, AND, max 10; unknown returns valid_values.
+        org: Organization, e.g. "Espressif"; max 200 characters.
+        layers: PCB layer count, e.g. 4.
+        limit: Results; default 10, range 1-50.
     """
     # Handle JSON-string tag param from some MCP clients
     if isinstance(tag, str):
@@ -4328,29 +4159,14 @@ def board_get(
     include_bom: bool = False,
     include_nets: bool = False,
 ) -> dict:
-    """A reference board from board_search. With focus=IC it returns that IC's pin-by-pin
-    neighborhood (decoupling, pull-ups, connected parts) and, when 2+ boards use the IC, how the
-    others wire it. Reply: focus_match_type says exact, partial or ref matching; consensus
-    compares wiring across consensus.board_count boards; passives_omitted counts hidden plain passives.
-    Components and a focused IC carry the design files' own part numbers where listed (mpn,
-    manufacturer, lcsc, mouser, digikey): look them up with jlc_get_part or mouser_get_part. An
-    unknown slug's error adds did_you_mean (boards sharing most of its words).
+    """Reference board details; focus returns one part's pin neighborhood and cross-board consensus.
+    Look up design-file part numbers with jlc_get_part or mouser_get_part.
 
     Args:
-        slug: Board slug from board_search (e.g., "adafruit-esp32-s3-feather")
-        focus: IC name (e.g., "MCP73831"; partial match: "ESP32" finds "ESP32-S3"), or any part's ref
-            ("U3", "J1", "D2") or value words ("USB-C" finds the receptacle; connectors first):
-            returns its pin neighborhood instead of the component list. Ground and supply pins are
-            in power_pins: the net, with its parts when few (VBUS through a fuse) or part_count (GND);
-            pins_in_nets counts the part's pins in the netlist; pin_count is the part's own pin count
-            and nc_pins its pins on no net, by pad ({"I/O1": "1"}: left unconnected, a design
-            decision; {} = all connected), where the design files give the footprint's pins (most
-            parts with 3+ pins); pin_nets names each pin's net (numbered pins say what they are: an
-            ESP32 module's "3" is CHIP_PU). A focus matching nothing lists available_ics and
-            available_refs
-        include_bom: Also list plain passives (R/C/L); by default only ICs, connectors and
-            annotated passives (the rest are counted in passives_omitted)
-        include_nets: Add the full netlist, positions and copper pours (can be 100 KB+)
+        slug: Slug from board_search; max 200 characters.
+        focus: IC, ref or value words, e.g. "ESP32", "J1", "USB-C"; max 200 characters.
+        include_bom: Include plain R/C/L too; default false.
+        include_nets: Full netlist, positions and copper pours (can be 100 KB+); default false.
     """
     if not slug or len(slug) > 200:
         return {"error": "Invalid slug"}

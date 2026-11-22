@@ -2,7 +2,7 @@
 
 - jlc_search's stock and price are the daily snapshot's (C14663: 38,555,997 at $0.0083, while
   jlc_get_part had 37,538,619 at $0.0072); replies now say when it was scraped (data_as_of).
-- A spec filter given as an argument is in filters_applied but not in parsed; the description says
+- A spec filter given as an argument is in filters_applied but not in parsed; llms.txt says
   which is which.
 - jlc_stock_check("C5947") also listed four TLC5947 drivers, and "C1622" 16.2k resistors.
 - Packages read "插件,12.6x4.4mm" (C2681581) beside "Plugin" (C496551).
@@ -147,9 +147,11 @@ class TestDataAsOf:
 
     def test_descriptions(self):
         search = _sent(server.jlc_search)
-        assert "daily catalog snapshot" in search and "data_as_of" in search and "1-piece price" in search
+        assert "daily catalog snapshot" in search and "stock >= 10" in search and "1-piece prices refreshed weekly" in search
         assert "jlc_stock_check and jlc_get_part(live=true) are live" in search  # 0.10.2: the snapshot by default
-        assert "live, held up to an hour" in _sent(server.jlc_get_part)
+        assert "live (cached up to an hour)" in _sent(server.jlc_get_part)
+        reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+        assert "`data_as_of`: its stock" in reference and "`prices_as_of`: the 1-piece `price`" in reference
 
 
 class TestFiltersAppliedVsParsed:
@@ -165,10 +167,10 @@ class TestFiltersAppliedVsParsed:
         volts = [float(p["specs"]["Voltage Rating"].rstrip("V")) for p in rated["results"]]
         assert volts and min(volts) >= 25
 
-    def test_description(self):
-        doc = _sent(server.jlc_search)
-        assert "filters_applied lists every filter that ran" in doc
-        assert "parsed shows only what the query text gave" in doc
+    def test_reference(self):
+        doc = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+        assert "`filters_applied` (every filter that ran)" in doc
+        assert "`parsed` (what the query gave)" in doc
 
 
 EXACT = {"lcsc": "C5947", "model": "74HC595D,118", "stock": 430944}
@@ -223,7 +225,7 @@ class TestStockCheckLcscCode:
 
     def test_description(self):
         doc = _sent(server.jlc_stock_check, "query")
-        assert 'one LCSC code ("C5947") returns that part only' in doc
+        assert 'one exact LCSC code ("C5947")' in doc
 
 
 class TestStockCheckPriceTiers:
@@ -263,9 +265,9 @@ class TestStockCheckPriceTiers:
         await server.jlc_stock_check(query="1nF 2kV 1206")
         assert asked == [True, False]
 
-    def test_description(self):
-        doc = _sent(server.jlc_stock_check, "query")
-        assert "with its price tiers (prices, as in jlc_get_part)" in doc
+    def test_reference(self):
+        doc = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+        assert "one LCSC code returns only that part, with `prices`" in doc
 
 
 class TestMouserLifecycle:
@@ -286,13 +288,15 @@ class TestMouserLifecycle:
 
     def test_descriptions(self):
         mouser = _sent(server.mouser_get_part)
-        assert "else null: Mouser states none for most parts" in mouser and "digikey_get_part's lifecycle" in mouser
+        assert "Mouser's unstated status doesn't establish absence of NRND" in mouser
         # 0.10.4: catalog lookups add stored lifecycle; part_lifecycle can look it up
-        part = _sent(server.jlc_get_part)
-        assert "Optional lifecycle {status, raw, source, observed_at}: a stored Mouser/DigiKey reading" in part
-        assert 'raw "not stated by Mouser": listed without a status' in part and "use part_lifecycle" in part
-        digikey = _sent(server.digikey_get_part)
-        assert "other_packaging lists the rest" in digikey and "lifecycle is DigiKey's product status" in digikey
+        for tool in (server.mouser_get_part, server.jlc_get_part, server.digikey_get_part):
+            assert "use part_lifecycle" in _sent(tool)
+        reference = (Path(__file__).parents[1] / "landing" / "llms.txt").read_text(encoding="utf-8")
+        assert "`lifecycle`: Mouser's status, null for most parts" in reference
+        assert "`lifecycle: {status, raw, source, observed_at}`" in reference
+        assert '`raw` "not stated by Mouser" means listed without a status' in reference
+        assert "`other_packaging`" in reference and "`lifecycle`: DigiKey's product status" in reference
 
 
 def _switch_db(tmp_path):

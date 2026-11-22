@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from ..search.spec_filter import BatterySizeFilter, ConnectorFilter, FuseFilter, ScopedTextFilter, SpecFilter, switch_circuit
+from ..search.spec_filter import BatterySizeFilter, ConnectorFilter, ScopedTextFilter, SpecFilter, switch_circuit
 from ..search.spec_sort import SpecSort, extract_sort_phrase
 from ..subcategory_aliases import BATTERY_HOLDER_SUBCATEGORIES, _BATTERY_HOLDER_WORDS, _POWER_MUX_WORDS, SUBCATEGORY_GROUPS
 from .packages import extract_package, extract_package_choices
@@ -15,7 +15,7 @@ from .semantic import (
     SemanticFilter, combine_colors, extract_gate_drive, extract_semantic_descriptors, remove_noise_words,
     CONNECTOR_NOISE_WORDS,
 )
-from .mapping import FUSE_ATTRIBUTE_MAP, map_value_to_spec, infer_subcategory_from_values
+from .mapping import FUSE_ATTRIBUTE_MAP, RatedFuseFilter, map_value_to_spec, infer_subcategory_from_values
 from .connectors import extract_connector_series, extract_connector_manufacturer, ConnectorSpec
 
 
@@ -151,7 +151,7 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         result.model_number = model
         detected["model_number"] = model
 
-    remaining = normalize_value_notation(remaining)
+    remaining = normalize_value_notation(remaining, subcategory_hint=subcategory_hint)
     for pattern, key, value in (
         (r"\b(?:no assembly fee|no fee)\b", "library_type", "no_fee"),
         (r"\bbasic(?: part)?\b", "library_type", "basic"),
@@ -337,6 +337,10 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
             remaining = remaining[:pair.start()] + " " + remaining[pair.end():]
     if matched_keyword == "fuel gauge":
         result.spec_filters.append(SpecFilter("The Chip Type", "=", "Monitoring IC"))
+    if (subcategory_hint or subcat_now).lower() == "battery management" and re.search(
+            r"\b(?:chargers?|charging\s+ic|charge\s+controller)\b", query, re.IGNORECASE):
+        result.spec_filters.append(SpecFilter("The Chip Type", "=", "Charging IC"))
+        detected.setdefault("semantic", []).append("charger (-> The Chip Type=Charging IC)")
     if subcat_now in ("wifi modules", "microcontrollers (mcu/mpu/soc)", "nor flash", "nand flash"):
         remaining = _add_memory_sizes(remaining, subcat_now, result, detected)
     if subcat_now == "usb connectors":
@@ -353,6 +357,9 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
     # Named comparisons must be consumed before a bare current/voltage gets its default
     # quantity and >= operator (Iq is not load current; Vf is not reverse voltage).
     remaining = _add_named_comparisons(remaining, result, detected)
+    rating_subcategory = (subcategory_hint or result.subcategory or "").lower()
+    remaining = _add_current_qualifiers(remaining, rating_subcategory, result, detected,
+                                        subcategories=result.subcategories if not subcategory_hint else None)
 
     if (subcategory_hint or result.subcategory or "").lower() == "mosfets":
         result.gate_drive_v, remaining = extract_gate_drive(remaining)
@@ -361,9 +368,16 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
 
     # Step 4: Extract numeric values
     connector_context = bool(result.connector_spec) or any(
-        word in subcat_now for word in ("connector", "header", "terminal block", "ffc cable")
+        word in (subcategory_hint or subcat_now).lower()
+        for word in ("connector", "header", "socket", "terminal block", "ffc cable")
     )
-    values, remaining = extract_values(remaining, connector_context=connector_context and not strict)
+    values, remaining = extract_values(remaining, connector_context=connector_context and not strict,
+                                       subcategory_hint=subcategory_hint or result.subcategory)
+    if not connector_context:
+        for value in values:
+            if value.unit_type == "position_count" and re.fullmatch(r"\d+p", value.raw, re.IGNORECASE):
+                detected.setdefault("semantic", []).append(
+                    f"{value.raw} was read as {int(value.value)} pins; write {int(value.value)}pF for a capacitor")
     if (subcategory_hint or result.subcategory or "").lower() == "ferrite beads":
         resistances = [v for v in values if v.unit_type == "resistance"]
         frequencies = [v for v in values if v.unit_type == "frequency"]
@@ -557,6 +571,8 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         if result.connector_spec.pins and not any(v.unit_type in ("pin_count", "position_count") for v in values):
             result.spec_filters.append(ConnectorFilter("Number of Pins", "=", f"{result.connector_spec.pins}P"))
 
+    # Comparisons use the original spelling/context, normalized once for all values.
+    comparison_query = normalize_value_notation(query) if "<" in query or ">" in query else ""
     for value in values:
         if pd_sink and value.unit_type == "voltage":
             # This is the negotiated PD output, not the IC's own supply rail.
@@ -600,11 +616,12 @@ def parse_smart_query(query: str, *, strict: bool = False, subcategory_hint: str
         hinted = subcategory_hint if (subcategory_hint or "").lower() in _VALUES_BY_HINT else None
         spec_name, operator = map_value_to_spec(
             value, fuse_subcategory if is_fuse_rating else (subcategory or hinted), matched_keyword)
-        if written := _written_comparison(query, value.raw, operator):
+        if comparison_query and (written := _written_comparison(comparison_query, value.raw, operator)):
             operator = written
             remaining = re.sub(r'(?<!\S)(?:<=|>=|<|>)(?!\S)', ' ', remaining).strip()
-        filter_type = FuseFilter if is_fuse_rating else SpecFilter
-        result.spec_filters.append(filter_type(spec_name, operator, value.normalized))
+        filter_type = RatedFuseFilter if is_fuse_rating else SpecFilter
+        normalized = f"{value.value:g}V" if spec_name == "Charging Saturation Voltage" else value.normalized
+        result.spec_filters.append(filter_type(spec_name, operator, normalized))
 
     # "op amp single supply" with no voltage: parts listing a single-supply range (NE5532 lists none)
     if wants_single_supply and not any(v.unit_type == "voltage" for v in values):
@@ -866,8 +883,8 @@ _EXACT_OUTPUT = ("Output Voltage", "=")
 def _written_comparison(query: str, raw: str, default: str) -> str | None:
     """A sign written before a value ("< 25V") when it points against the default operator, which
     made "capacitor 10uF < 25V" a Voltage >= 25V filter. ">50V" keeps the default >=. The raw value
-    is spelled as extract_values read it ("< 10mΩ" holds 10mohm)."""
-    match = re.search(rf"(<=|>=|<|>)\s*{re.escape(raw)}(?![\w.])", normalize_value_notation(query))
+    is spelled as extract_values read it ("< 10mΩ" holds 10mohm); query is already normalized."""
+    match = re.search(rf"(<=|>=|<|>)\s*{re.escape(raw)}(?![\w.])", query)
     if not match or (default != "=" and match[1][0] == default[0]):
         return None
     return match[1]
@@ -898,6 +915,56 @@ _LENGTH_OPERATORS = (
 )
 _LENGTH_OPERATOR = "|".join(f"(?:{words})" for _, words in _LENGTH_OPERATORS)
 _LENGTH_VALUE = r"(\d+(?:\.\d+)?)\s*mm\b"
+
+
+# These catalog families list Peak Current separately from their continuous rating.
+_PEAK_CURRENT_SUBCATEGORIES = frozenset({
+    "brushed dc motor drivers", "brushless dc (bldc) motor driver", "relay / coil drivers",
+    "intelligent power modules (ipm)", "polypropylene film capacitors (cbb)", "varistors",
+    "esd and surge protection (tvs/esd)",
+})
+_CURRENT_VALUE = r"(\d+(?:\.\d+)?\s*[num]?A)\b"
+_PEAK_OPERATORS = (*_LENGTH_OPERATORS, ("<=", r"up\s+to"))
+_PEAK_OPERATOR = "|".join(f"(?:{words})" for _, words in _PEAK_OPERATORS)
+_PEAK_CURRENT = re.compile(
+    rf"(?<![\w.])(?:({_PEAK_OPERATOR})\s*)?"
+    rf"(?:{_CURRENT_VALUE}\s+peak(?:\s+current)?\b"
+    rf"|\bpeak(?:\s+current)?\b\s*(?:({_PEAK_OPERATOR})\s*)?{_CURRENT_VALUE})", re.IGNORECASE)
+_FUSE_CURRENT_BEFORE = re.compile(rf"(?<!\w)({_LENGTH_OPERATOR})\s*{_CURRENT_VALUE}", re.IGNORECASE)
+_FUSE_CURRENT_AFTER = re.compile(rf"(?<![\w.]){_CURRENT_VALUE}\s+or\s+more\b", re.IGNORECASE)
+
+
+def _add_current_qualifiers(remaining: str, subcategory: str, result: ParsedQuery, detected: dict[str, Any],
+                            *, subcategories: list[str] | None = None) -> str:
+    """Consume peak-current requests and explicit fuse limits before bare-current mapping."""
+    if any(name in _PEAK_CURRENT_SUBCATEGORIES for name in (subcategories or [subcategory])):
+        def peak(match: re.Match) -> str:
+            before, value_before, after, value_after = match.groups()
+            raw = value_before or value_after
+            written = before or after
+            operator = next((op for op, words in _PEAK_OPERATORS
+                             if written and re.fullmatch(words, written, re.IGNORECASE)), ">=")
+            result.spec_filters.append(SpecFilter("Peak Current", operator, re.sub(r"\s+", "", raw)))
+            detected.setdefault("semantic", []).append(f"{match.group(0)} (-> Peak Current {operator} {raw})")
+            return " "
+        remaining = _PEAK_CURRENT.sub(peak, remaining)
+
+    if subcategory in FUSE_ATTRIBUTE_MAP:
+        def fuse(match: re.Match) -> str:
+            if match.re is _FUSE_CURRENT_AFTER:
+                operator, raw = ">=", match.group(1)
+            else:
+                written, raw = match.groups()
+                operator = next(op for op, words in _LENGTH_OPERATORS
+                                if re.fullmatch(words, written, re.IGNORECASE))
+            value = next(v for v in extract_values(raw)[0] if v.unit_type == "current")
+            name, _ = map_value_to_spec(value, subcategory, None)
+            result.spec_filters.append(RatedFuseFilter(name, operator, value.normalized))
+            detected.setdefault("semantic", []).append(f"{match.group(0)} (-> {name} {operator} {value.normalized})")
+            return " "
+        remaining = _FUSE_CURRENT_BEFORE.sub(fuse, remaining)
+        remaining = _FUSE_CURRENT_AFTER.sub(fuse, remaining)
+    return re.sub(r"\s+", " ", remaining).strip()
 
 
 def _add_header_lengths(remaining: str, subcategory: str, result: ParsedQuery, detected: dict[str, Any]) -> str:
