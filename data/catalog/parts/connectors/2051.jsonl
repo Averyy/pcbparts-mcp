@@ -47,7 +47,6 @@
 {"l":"C17615326","m":"QSFP8-038-01-L-D-RA1","f":"Samtec","p":"SMD,P=0.8mm(Staggered pins)","t":"e","c":2051,"d":"SMD,P=0.8mm(Staggered pins) Optical Module Connector ROHS","a":[],"x":0}
 {"l":"C17651388","m":"UE76-3GA20-2600T","f":"Amphenol ICC","p":"SMD","t":"e","c":2051,"d":"SMD Optical Module Connector ROHS","a":[],"x":0}
 {"l":"C20606915","m":"UE62-B1620-02021","f":"Amphenol ICC","p":"Plugin","t":"e","c":2051,"d":"插件 Optical Module Connector ROHS","a":[["Number of Ports","1"],["Number of Pins","60P"],["Connector Type","OSFP"],["Mounting Type","Cage、Right-Angle"]],"x":0}
-{"l":"C20691304","m":"SFPK-SL","f":"Samtec","p":"-","t":"e","c":2051,"d":"- Optical Module Connector ROHS","a":[],"x":0}
 {"l":"C20775127","m":"1367629-2","f":"TE Connectivity","p":"-","t":"e","c":2051,"d":"- Optical Module Connector ROHS","a":[],"x":0}
 {"l":"C20991787","m":"U77-A1618-2001","f":"Amphenol ICC","p":"-","t":"e","c":2051,"d":"- Optical Module Connector ROHS","a":[],"x":0}
 {"l":"C21210235","m":"U77-A4114-2001","f":"Amphenol ICC","p":"-","t":"e","c":2051,"d":"- Optical Module Connector ROHS","a":[["Operating Temperature","-55℃~+85℃"],["Number of Ports","1"],["Connector Type","SFP"],["Mounting Type","Cage、Right-Angle"]],"x":0}
