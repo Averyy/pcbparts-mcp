@@ -3162,7 +3162,7 @@
 {"l":"C56345673","m":"FKBP310","f":"YFW","p":"KBP","t":"e","c":2951,"d":"KBP Bridge Rectifiers ROHS","a":[],"x":0,"n":1}
 {"l":"C56345689","m":"GBU808","f":"YFW","p":"GBU","t":"e","c":2951,"d":"GBU Bridge Rectifiers ROHS","a":[],"x":0,"n":1}
 {"l":"C56345771","m":"HBS1010","f":"YFW","p":"HBS","t":"e","c":2951,"d":"HBS Bridge Rectifiers ROHS","a":[],"x":0,"n":1}
-{"l":"C56345772","m":"HBS410","f":"YFW","p":"HBS","t":"e","c":2951,"d":"HBS Bridge Rectifiers ROHS","a":[],"x":0,"n":1}
+{"l":"C56345772","m":"HBS410","f":"YFW","p":"HBS","t":"e","c":2951,"d":"HBS Bridge Rectifiers ROHS","a":[["Voltage - Forward(Vf@If)","890mV@1A、930mV@2A、980mV@4A"],["Type","Single-Phase Rectifier"],["Non-Repetitive Peak Forward Surge Current","120A"],["Voltage - DC Reverse(Vr)","1kV"],["Operating Junction Temperature Range","-55℃~+150℃"],["Current - Rectified","4A"],["Reverse Leakage Current (Ir)","5uA@1000V"]],"x":0,"n":1}
 {"l":"C56351026","m":"TB10S-10","f":"Shikues","p":"ABS","t":"e","c":2951,"d":"ABS Bridge Rectifiers ROHS","a":[],"x":0,"n":1}
 {"l":"C56379719","m":"ULBFR810","f":"GOODWORK","p":"ULBF","t":"e","c":2951,"d":"ULBF Bridge Rectifiers ROHS","a":[["Voltage - Forward(Vf@If)","1.1V@4A"],["Non-Repetitive Peak Forward Surge Current","220A"],["Voltage - DC Reverse(Vr)","1kV"],["Operating Junction Temperature Range","-55℃~+150℃"],["Current - Rectified","8A"],["Reverse Leakage Current (Ir)","1uA"]],"x":0,"n":1}
 {"l":"C56407357","m":"GBJ2510","f":"YONGYUTAI","p":"GBJ","t":"e","c":2951,"d":"GBJ Bridge Rectifiers ROHS","a":[],"x":0,"n":1}

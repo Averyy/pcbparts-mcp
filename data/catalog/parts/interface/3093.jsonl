@@ -705,6 +705,7 @@
 {"l":"C55111646","m":"SIT1042GQT","f":"SIT","p":"SOP-8","t":"e","c":3093,"d":"SOP-8 CAN Transceivers ROHS","a":[],"x":0}
 {"l":"C55111647","m":"SIT1042GQT/3","f":"SIT","p":"SOP-8","t":"e","c":3093,"d":"SOP-8 CAN Transceivers ROHS","a":[],"x":0}
 {"l":"C55111803","m":"SIT1042GQTK/3","f":"SIT","p":"DFN-8(3x3)","t":"e","c":3093,"d":"DFN-8(3x3) CAN Transceivers ROHS","a":[],"x":0}
+{"l":"C55208040","m":"TCAN6062DR","f":"Texas Instruments","p":"SOIC-8","t":"e","c":3093,"d":"SOIC-8 CAN Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55214292","m":"TJA1043T/1J-TUDI","f":"Tudi","p":"SOP-8","t":"e","c":3093,"d":"SOP-8 CAN Transceivers ROHS","a":[["Operating Temperature","-40℃~+150℃"],["Type","CAN FD Transceiver"],["Number of Channels","1"],["Data Rate","5Mbps"],["Voltage - Supply","4.5V~5.5V"],["Features","Low-power mode、Wake-up function、TXD dominant timeout、ESD Protection、Undervoltage Protection、Thermal shutdown protection、Bus Fault Protection、Short-Circuit  Protection、Enable、Local wake-up"],["Current - Supply","65mA"],["Quiescent Supply Current","2uA"]],"x":0,"n":1}
 {"l":"C55214293","m":"TJA1043T,118-TUDI","f":"Tudi","p":"SOP-8","t":"e","c":3093,"d":"SOP-8 CAN Transceivers ROHS","a":[["Operating Temperature","-40℃~+150℃"],["Type","CAN Transceiver"],["Number of Channels","1"],["Data Rate","5Mbps"],["Voltage - Supply","4.5V~5.5V"],["Current - Supply","65mA"],["Quiescent Supply Current","2uA"]],"x":0,"n":1}
 {"l":"C55219609","m":"SIT1169QTK/F/3","f":"SIT","p":"DFN-20(3.5x5.5)","t":"e","c":3093,"d":"DFN-20(3.5x5.5) CAN Transceivers ROHS","a":[],"x":0,"n":1}
