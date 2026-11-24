@@ -322,7 +322,6 @@
 {"l":"C53135395","m":"X8821T-06-PSN-A24(BR)3-L340-X8821T-Z","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
 {"l":"C53135397","m":"X8821T-10-PSN-A24RBGNYLWAP(YR)-L100-X8821T-Z","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
 {"l":"C53135398","m":"X0800HI-08-A32RBYGLW(YR)P-L100-T2","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
-{"l":"C53135399","m":"X2016TF-PSN-04-A22BRYL-L150-X2016TF-Z","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
 {"l":"C53135400","m":"X2510T-03-PSN-A26YRB-L70-Z","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
 {"l":"C53135401","m":"X2510T-02-PSN-A26RB-L70-Z","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
 {"l":"C53135402","m":"X0800HI-08-A32RBYGLW(YR)P-L50-T3","f":"XKB Connection","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0}
@@ -447,6 +446,7 @@
 {"l":"C53413419","m":"XH3P-24AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53413420","m":"SH6P-28AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53413421","m":"SH4P-28AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
+{"l":"C53413423","m":"SH2P-28AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53413424","m":"PH6P-26AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53413425","m":"PH5P-26AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53413426","m":"PH4P-26AWG-200-A1T","f":"BXCONN","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
@@ -487,10 +487,12 @@
 {"l":"C54308418","m":"GH1.25--5P-200-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308419","m":"GH1.25--5P-300-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308420","m":"VH3.96--5P-200-20A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
+{"l":"C54308421","m":"VH3.96--2P-200-20A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308422","m":"MX1.25--6P-300-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308423","m":"MX1.25--6P-200-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308424","m":"MX1.25--6P-100-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308425","m":"MX1.25--5P-100-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
+{"l":"C54308426","m":"MX1.25--3P-100-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308427","m":"MX1.25--2P-200-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308428","m":"MX1.25--4P-300-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C54308445","m":"GH1.25--2P-300-28A","f":"BEIXUNZE","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}

@@ -1,6 +1,7 @@
 {"l":"C265321","m":"RT-01T-1.0B(LF)","f":"JST","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C367303","m":"0462-201-16141","f":"DEUTSCH","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C531972","m":"2339975-1","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0,"n":1}
+{"l":"C587225","m":"2-330808-8","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C590677","m":"2-5331272-7","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C697846","m":"09560008277","f":"Harting Tech","p":"-","t":"e","c":2047,"d":"24~26 Quick Connect Terminal - Pin / Jack ROHS","a":[["Connector Type","Quick Connect Terminal"],["Wire Gauge - AWG","24~26"],["Wire Gauge - mm2","-"]],"x":0}
 {"l":"C5164513","m":"5-102618-6","f":"TE Connectivity","p":"Plugin","t":"e","c":2047,"d":"Plugin Pin / Jack ROHS","a":[],"x":0,"n":1}
@@ -14,7 +15,6 @@
 {"l":"C5169360","m":"4-1105051-1","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5169490","m":"5499786-1","f":"TE Connectivity","p":"Plugin","t":"e","c":2047,"d":"插件 Pin / Jack ROHS","a":[],"x":0,"n":1}
 {"l":"C5169829","m":"1-5050871-9","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
-{"l":"C5169976","m":"4-5332070-4","f":"TE Connectivity","p":"-","t":"e","c":2047,"d":"- Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5170204","m":"5499160-6","f":"TE Connectivity","p":"Plugin","t":"e","c":2047,"d":"Plugin Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5170261","m":"640501-3","f":"TE Connectivity","p":"Plugin","t":"e","c":2047,"d":"Plugin Pin / Jack ROHS","a":[],"x":0}
 {"l":"C5170493","m":"2-5499160-4","f":"TE Connectivity","p":"Plugin","t":"e","c":2047,"d":"Plugin Pin / Jack ROHS","a":[],"x":0}
