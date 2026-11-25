@@ -10,6 +10,7 @@
 {"l":"C238062","m":"1027","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238063","m":"1028","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238075","m":"110TR","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
+{"l":"C238090","m":"2477","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238097","m":"3000","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C238101","m":"3009","f":"Keystone","p":"-","t":"e","c":1651,"d":"1 25.4x22.61x8.89mm Phosphor bronze - ROHS","a":[["working temperature","-"],["frequency range","-"],["size","25.4x22.61x8.89mm"],["Battery count","1"],["material quality","Phosphor bronze"],["impedance","-"],["Under pressure","-"]],"x":0}
 {"l":"C238102","m":"3012TR","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
@@ -32,7 +33,7 @@
 {"l":"C964749","m":"BS-03-A1AJ005","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base CR2032 Manganese steel Nickel plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Manganese Steel"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C964750","m":"BS-04-A1BJ004","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base Brass CR2032 Nickel plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Brass"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C964751","m":"BS-04-A1BJ005","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base Brass CR2032 Nickel plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Brass"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
-{"l":"C964752","m":"BS-05-A1BJ001","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base Brass CR2032 Nickel plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Brass"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
+{"l":"C964752","m":"BS-05-A1BJ001","f":"MYOUNG","p":"Through hole","t":"e","c":1651,"d":"-25~85℃ Battery base Brass CR2032 Nickel plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Brass"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C964756","m":"BS-06-B4AA002","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Phosphor Bronze"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C964758","m":"BS-06-B4AA012","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base CR2032 Phosphor bronze - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Phosphor Bronze"],["Type","Battery base"],["Applicable battery specifications","CR2032"]],"x":0}
 {"l":"C964762","m":"BS-06-B4AK008","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base CR2032 Phosphor bronze Tin plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Phosphor Bronze"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Tin Plated"]],"x":0}
@@ -150,6 +151,7 @@
 {"l":"C3682998","m":"1747786-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683210","m":"1717478-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683340","m":"1473969-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
+{"l":"C3683414","m":"5787246-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C3683443","m":"1717445-6","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683444","m":"1-1612962-3","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683479","m":"5787526-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
@@ -278,6 +280,7 @@
 {"l":"C19184089","m":"BS-02-A1AK010-X","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery base CR2032 Phosphor bronze Tin plated - ROHS","a":[["Operating Temperature","-25~85℃"],["Contact material","Phosphor Bronze"],["Type","Battery base"],["Applicable battery specifications","CR2032"],["Contact coating","Tin Plated"]],"x":0}
 {"l":"C19184092","m":"MY-927-05-J","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR927 Manganese steel Nickel plated - ROHS","a":[["Contact material","Manganese Steel"],["Type","Battery buckle"],["Applicable battery specifications","CR927"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C19184094","m":"MY-2032-08-J-FE","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery buckle CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Operating Temperature","-25~85℃"],["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
+{"l":"C19184096","m":"MY-2032-08L","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery buckle CR2032 Nickel plated Phosphor bronze - ROHS","a":[["Operating Temperature","-25~85℃"],["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR2032"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C19184098","m":"MY-AA-03","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery spring contact Manganese steel Nickel plated No. 5 - ROHS","a":[["Contact material","Manganese Steel"],["Type","Battery spring contact"],["Applicable battery specifications","No. 5"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C19184102","m":"MY-PCB-116-R","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery contact plate Gold plating Phosphor bronze - ROHS","a":[["Type","Battery contact plate"],["Contact material","Phosphor Bronze"],["Contact coating","Gold plating"]],"x":0}
 {"l":"C19184103","m":"MY-ZJ-110PT","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery contact plate Beryllium copper Gold plating - ROHS","a":[["Contact material","Beryllium Bronze"],["Type","Battery contact plate"],["Contact coating","Gold plating"]],"x":0}

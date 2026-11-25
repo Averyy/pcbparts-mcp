@@ -14,7 +14,7 @@
 {"l":"C691981","m":"AFBR-2418TZ","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"-40℃~+85℃ 2000m 50MBd 865nm Fiber Optic Receiver ST Plugin Fiber Optical Transceivers ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Fiber Optic Receiver"],["Connection type","ST"],["Features","-"],["Signaling Rate","50MBd"],["Distance","2000m"],["Wavelength","865nm"]],"x":0}
 {"l":"C691982","m":"AFBR-2419MZ","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"Fiber Optic Receiver 插件 Fiber Optical Transceivers ROHS","a":[["Type","Fiber Optic Receiver"],["Features","-"]],"x":0}
 {"l":"C691983","m":"AFBR-2419TZ","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"Fiber Optic Receiver Plugin Fiber Optical Transceivers ROHS","a":[["Type","Fiber Optic Receiver"],["Features","-"]],"x":0}
-{"l":"C691988","m":"AFBR-5972Z","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"插件 Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C691988","m":"AFBR-5972Z","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[["Features","-"]],"x":0,"n":1}
 {"l":"C692070","m":"HFBR-1412TZ","f":"Broadcom Limited","p":"-","t":"e","c":2196,"d":"-40℃~+85℃ 1500m 5MBd 820nm ST Transmitter - Fiber Optical Transceivers ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Transmitter"],["Connection type","ST"],["Features","-"],["Signaling Rate","5MBd"],["Distance","1500m"],["Wavelength","820nm"]],"x":0}
 {"l":"C692075","m":"HFBR-1527Z","f":"Broadcom Limited","p":"-","t":"e","c":2196,"d":"Multi-Purpose Fiber Optic Connection - Fiber Optical Transceivers ROHS","a":[["Type","Multi-Purpose Fiber Optic Connection"],["Features","-"]],"x":0}
 {"l":"C692076","m":"HFBR-1531ETZ","f":"Broadcom Limited","p":"Plugin","t":"e","c":2196,"d":"-40℃~+85℃ 20m 5MBd 660nm Multi-Purpose Fiber Optic Connection 插件 Fiber Optical Transceivers ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Multi-Purpose Fiber Optic Connection"],["Features","-"],["Signaling Rate","5MBd"],["Distance","20m"],["Wavelength","660nm"]],"x":0}
@@ -88,6 +88,7 @@
 {"l":"C55166876","m":"NRS1529Z","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55166877","m":"NRS2416TZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55806609","m":"FR05MHIR","f":"Firecomms","p":"-","t":"e","c":2196,"d":"- Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
+{"l":"C55806611","m":"FR05MVIR","f":"Firecomms","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C55806612","m":"FR2521","f":"Firecomms","p":"-","t":"e","c":2196,"d":"- Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C56367140","m":"NRS1538CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}
 {"l":"C56367141","m":"NRS2538CZ","f":"Neorock","p":"Plugin","t":"e","c":2196,"d":"Plugin Fiber Optical Transceivers ROHS","a":[],"x":0,"n":1}

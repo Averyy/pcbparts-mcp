@@ -62,7 +62,7 @@
 {"l":"C3308705","m":"2306334-3","f":"TE Connectivity","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0}
 {"l":"C3308715","m":"2199248-6","f":"TE Connectivity","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0}
 {"l":"C3308716","m":"S7271-45R","f":"Harwin","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0}
-{"l":"C3308717","m":"2199248-4","f":"TE Connectivity","p":"-","t":"e","c":539,"d":"Stainless steel - Antenna spring ROHS","a":[["working temperature","-"],["frequency range","-"],["surface treatment","-"],["size","-"],["Battery count","-"],["material quality","Stainless steel"],["impedance","-"],["Under pressure","-"]],"x":0}
+{"l":"C3308717","m":"2199248-4","f":"TE Connectivity","p":"-","t":"e","c":539,"d":"Stainless Steel - Antenna spring ROHS","a":[["working temperature","-"],["frequency range","-"],["surface treatment","-"],["size","-"],["Battery count","-"],["material quality","Stainless Steel"],["impedance","-"],["Under pressure","-"]],"x":0}
 {"l":"C3308719","m":"S7061-46R","f":"Harwin","p":"-","t":"e","c":539,"d":"- ROHS","a":[],"x":0}
 {"l":"C3308722","m":"S7061-42R","f":"Harwin","p":"-","t":"e","c":539,"d":"- ROHS","a":[],"x":0}
 {"l":"C3308726","m":"1551572-5","f":"TE Connectivity","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0}
@@ -118,8 +118,9 @@
 {"l":"C30607534","m":"ASP-D1805-B01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607536","m":"ASP-D2005-B01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607545","m":"ASP-D2505-B01","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
-{"l":"C30607547","m":"ASP-D2516-A01","f":"XUNPU","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C30607550","m":"ASP-D2611-B51","f":"XUNPU","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
+{"l":"C39833016","m":"RF351525-TJR","f":"SAMZO","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0,"n":1}
+{"l":"C39833017","m":"RF351535-TJR","f":"SAMZO","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C39833018","m":"RF351538-TJR","f":"SAMZO","p":"-","t":"e","c":539,"d":"- Antenna spring ROHS","a":[["working temperature","-"],["frequency range","-"],["size","-"],["material quality","-"],["impedance","-"]],"x":0}
 {"l":"C42421373","m":"HYCW-TXT160910A","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C42421374","m":"HYCW-TXT171017A","f":"HOAUC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
@@ -136,3 +137,4 @@
 {"l":"C55160335","m":"KH-351514-TP-CY","f":"Shenzhen Kinghelm Elec","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0}
 {"l":"C55559809","m":"SPN155A-1101-01","f":"KRCONN Technology","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
 {"l":"C55652076","m":"TXTP-120B1-0264A","f":"Hanbo Electronic","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}
+{"l":"C55807192","m":"LCK002B10275A","f":"LCKELEC","p":"SMD","t":"e","c":539,"d":"SMD Antenna spring ROHS","a":[],"x":0,"n":1}

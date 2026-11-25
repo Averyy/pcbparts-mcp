@@ -879,7 +879,6 @@
 {"l":"C17197291","m":"HVH-280-2/2S-WS","f":"HRS(Hirose)","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17197518","m":"0738380002","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C17198696","m":"M80-2260000B","f":"Harwin","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
-{"l":"C17200084","m":"1731120040","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17201023","m":"2350943-1","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17201381","m":"H3108-01","f":"Harwin","p":"Plugin","t":"e","c":3287,"d":"Plugin Connector Accessories ROHS","a":[],"x":0}
 {"l":"C17202730","m":"1731120217","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
@@ -1379,11 +1378,9 @@
 {"l":"C20624782","m":"34-02-000014","f":"MUP","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C20624783","m":"34-02-000015","f":"MUP","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C20627105","m":"D3086-97","f":"Harwin","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
-{"l":"C20697934","m":"U77-A1110-8000P","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C20699354","m":"Z02G-4G7R1-11000","f":"Amphenol ICC","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
 {"l":"C20848922","m":"11301","f":"Keystone","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C20850105","m":"8-323994-3","f":"TE Connectivity","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
-{"l":"C20928953","m":"36310-3200-008","f":"3M","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C21267236","m":"0191890002","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0}
 {"l":"C21398270","m":"S70-138181045R","f":"Harwin","p":"-","t":"e","c":3287,"d":"-40℃~+180℃ 0.15mΩ 6A Gold - Connector Accessories ROHS","a":[["Operating Temperature","-40℃~+180℃"],["Contact Plating","Gold"],["Current Rating","6A"],["Contact Resistance","0.15mΩ"]],"x":0}
 {"l":"C21478758","m":"0192160011","f":"MOLEX","p":"-","t":"e","c":3287,"d":"- Connector Accessories ROHS","a":[],"x":0,"n":1}
