@@ -162,6 +162,9 @@ WHY_EMPTY_RESULTS = ("complete", "incomplete", "budget_exhausted_or_busy", "diag
 # ComponentSearchEngine (searches and model downloads), and from 0.10.4 the HTTP requests behind
 # DigiKey lookups (DISTRIBUTOR_EVENTS counts Mouser and DigiKey per lookup)
 UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", "easyeda_pads", "cse", "digikey")
+# Mouser's sends are counted in distributors; adding it to UPSTREAM_SOURCES would double-count them.
+# Mouser's sends/retries remain in distributors; from 0.10.9 its HTTP outcomes are counted too.
+UPSTREAM_STATUS_SOURCES = (*UPSTREAM_SOURCES, "mouser")
 # sent: HTTP requests our code sent, one each (a request it repeats, such as CSE's second try, counts
 # again); retries: further attempts the HTTP client (wafer) made on its own for those, as it reports
 # them on the reply (a request that ends in a timeout or a connection failure reports none);
@@ -326,7 +329,7 @@ def _clean_day(day: dict) -> dict[str, Any]:
         if _VERSION.fullmatch(version):
             clean["versions"][version] = max(0, _int(count))
     for source, counts in _dict(day.get("upstream_status")).items():
-        if source in UPSTREAM_SOURCES and isinstance(counts, dict):
+        if source in UPSTREAM_STATUS_SOURCES and isinstance(counts, dict):
             clean["upstream_status"][source] = {label: max(0, _int(count)) for label, count in counts.items()
                                                  if label in UPSTREAM_STATUS_CLASSES}
     if clean["popular_terms"] is not None:
@@ -340,7 +343,7 @@ def _clean_day(day: dict) -> dict[str, Any]:
             counts = {"rate_limited": counts.get("limited"), **counts}  # 0.6.3 called it "limited"
             clean["distributors"][str(name)] = {
                 **{key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS},
-                **{key: _int(counts[key]) for key in (*DISTRIBUTOR_RETRY_EVENTS, DISTRIBUTOR_SKIPPED) if key in counts}}
+                **{key: _int(counts[key]) for key in (*DISTRIBUTOR_RETRY_EVENTS, DISTRIBUTOR_SKIPPED, "retries") if key in counts}}
     for name, counts in _dict(day.get("reasons")).items():
         if isinstance(counts, dict):
             clean["reasons"][str(name)] = {reason: _int(count) for reason, count in counts.items() if reason in REASONS}
@@ -751,7 +754,7 @@ class UsageStats:
     def record_distributor(self, name: str, event: str) -> None:
         """A Mouser/DigiKey lookup: "sent" to the API, "cached" (answered from the cache) or
         "rate_limited" (turned away by our limits or a pause the API asked for); or a part number
-        "skipped" (DISTRIBUTOR_SKIPPED)."""
+        "skipped" (DISTRIBUTOR_SKIPPED). Mouser "retries" counts sent transient retries (also in sent)."""
         counts = self._day()["distributors"].setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
         counts[event] = counts.get(event, 0) + 1
 
@@ -764,7 +767,7 @@ class UsageStats:
 
     def record_upstream_status(self, source: str, label: str) -> None:
         """One class for each sent request, including errors; fixed labels only (from 0.10.5)."""
-        if source in UPSTREAM_SOURCES and label in UPSTREAM_STATUS_CLASSES:
+        if source in UPSTREAM_STATUS_SOURCES and label in UPSTREAM_STATUS_CLASSES:
             counts = self._day()["upstream_status"].setdefault(source, {})
             counts[label] = counts.get(label, 0) + 1
 
@@ -1022,7 +1025,11 @@ class UsageStats:
         totals_tools = _tools_view(total_tools)
         return {
             "about": (f"Private counts per UTC day, default 30 days, up to {KEEP_DAYS}, newest first; totals adds up "
-                      "the days listed (without callers, which can't be added across days). hours: calls in each UTC hour, "
+                      "the days listed (without callers, which can't be added across days). "
+                      "distributor_quota (from 0.10.9): current state per distributor, independent of days and totals; "
+                      "used_today, limit, api_remaining (null when unreported), paused_until (null when not paused), "
+                      "resets_at and kept_across_restarts where available. Quota times use YYYY-MM-DD HH:MM UTC. "
+                      "hours: calls in each UTC hour, "
                       "00 to 23 (null: not recorded); in totals, each hour added up across the days. failed_hours (from "
                       "0.10.1): the calls whose outcome was failed, in each UTC hour; refused_hours (from 0.10.1): "
                       "the requests counted in per_ip_refusals, in each UTC hour; both null on days before 0.10.1 "
@@ -1041,6 +1048,8 @@ class UsageStats:
                       "call. why_empty: how the checks behind jlc_search's why_empty went (no_counterfactual: no library, "
                       "package or stock limit to test). distributors retry_found and retry_missed: before 0.9.3, DigiKey all-digit "
                       "numbers that missed the direct lookup and went on to a keyword search, also counted in sent. "
+                      "distributors mouser retries (from 0.10.9, on days with any): sent attempts after transient "
+                      "failures, also counted in sent; each send counts once, including retries. "
                       "distributors skipped (from 0.10.0, on days with any): part numbers not sent because no "
                       "distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII "
                       "text, not 3-40 characters); one a number. "
@@ -1117,6 +1126,8 @@ class UsageStats:
                       "versions (from 0.10.5; null before): server starts by running version. upstream_status "
                       "(from 0.10.5; null before): one class per sent request per source: 2xx, 3xx, 4xx, 429 "
                       "(separate from 4xx), 5xx, timeout, connection, challenge, too_large, cancelled or other_error. "
+                      "From 0.10.9 also mouser, including every transient retry; its sends are in distributors. "
+                      "Mouser TooManyRequests replies count as 429 regardless of HTTP status. "
                       "Cutovers from 0.10.5: mouser_get_part misses count part_not_found instead of no_results; "
                       "jlc_stock_check's no_results splits into no_results_filtered, no_results_part_number and "
                       "no_results_words; jlc_search's part_number_not_in_stock becomes part_number_sold_out or "
@@ -1296,10 +1307,10 @@ def count_upstream(source: str, event: str, count: int = 1) -> None:
         logger.exception("Usage stats: couldn't count an upstream request")
 
 
-def count_upstream_status(source: str, result: Any) -> None:
+def count_upstream_status(source: str, result: Any, *, status: str | None = None) -> None:
     """Count a response or exception, never propagating a counting failure to the request."""
     try:
-        usage.record_upstream_status(source, _upstream_status(result))
+        usage.record_upstream_status(source, status if status is not None else _upstream_status(result))
     except Exception:
         logger.exception("Usage stats: couldn't count an upstream status")
 

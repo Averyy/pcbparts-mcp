@@ -1,6 +1,8 @@
 import json
+import sqlite3
 import stat
 import zlib
+from contextlib import closing
 from datetime import timedelta
 
 import pytest
@@ -21,6 +23,17 @@ def test_database_is_private_persistent_and_wal(tmp_path):
     with Store(path) as reopened:
         assert reopened.all_days() == [{"date": "2026-11-21", "calls": 3}]
         assert stat.S_IMODE(path.stat().st_mode) == 0o600
+
+
+def test_legacy_health_samples_keep_quota_and_version_history(tmp_path):
+    path = tmp_path / "legacy.db"
+    health = {"version": "0.10.5", "distributor_quota": {"mouser": {"used_today": 20, "limit": 100}}}
+    with closing(sqlite3.connect(path)) as connection, connection:
+        connection.execute("CREATE TABLE health(fetched_at TEXT PRIMARY KEY, data TEXT NOT NULL)")
+        connection.execute("INSERT INTO health VALUES (?, ?)", (AT, json.dumps(health)))
+    with Store(path) as store:
+        assert store.newest_health() == (AT, health)
+        assert store.version_fetch_at("0.10.5") == AT
 
 
 def test_insert_and_higher_count_replace(store):

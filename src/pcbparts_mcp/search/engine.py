@@ -494,7 +494,7 @@ class SearchEngine:
         manufacturer: str | list[str] | None,
         mounting_type: str | None,
         match_all_terms: bool,
-        sort_by: Literal["stock", "price", "relevance"],
+        sort_by: Literal["stock", "stock_asc", "price", "price_desc", "relevance"],
         prefer_no_fee: bool,
         limit: int,
         offset: int,
@@ -638,7 +638,7 @@ class SearchEngine:
             ranks.append("mpn_match_rank(mpn, ?, manufacturer)")
             params.append(part_number)
         words = [w for w in dict.fromkeys((query or "").lower().split()) if len(w) > 1] \
-            if not match_all_terms and sort_by != "price" and spec_sort is None else []
+            if not match_all_terms and sort_by not in ("price", "price_desc") and spec_sort is None else []
         if len(words) > 1:
             # Any-word searches: parts with more of the words first, then the usual order ("mPCIe card
             # latch standoff nut" led with an op-amp that matched one word on stock)
@@ -911,7 +911,7 @@ class SearchEngine:
         manufacturers: list[str] | None = None,
         mounting_type: str | None = None,
         match_all_terms: bool = True,
-        sort_by: Literal["stock", "price", "relevance"] = "stock",
+        sort_by: Literal["stock", "stock_asc", "price", "price_desc", "relevance"] = "stock",
         limit: int = 50,
         offset: int = 0,
         subcategory_ids: list[int] | None = None,

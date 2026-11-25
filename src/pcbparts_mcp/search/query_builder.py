@@ -1017,7 +1017,7 @@ def build_sort_clause(
     """Build ORDER BY clause.
 
     Args:
-        sort_by: Sort mode - "stock", "price", or "relevance"
+        sort_by: "stock", "price", "relevance", or reversed "stock_asc"/"price_desc"
         prefer_no_fee: Whether to prioritize basic > preferred > extended
         has_query: Whether there's a text query (affects relevance sort)
 
@@ -1030,15 +1030,17 @@ def build_sort_clause(
     # specs, datasheet or footprint) can't be checked, so they follow documented parts on stock sorts
     documented = "coalesce(attributes, '[]') = '[]'"
 
-    if sort_by == "price":
+    if sort_by in ("price", "price_desc"):
+        direction = "DESC" if sort_by == "price_desc" else "ASC"
         if prefer_no_fee:
-            return f"ORDER BY {lib_type_order}, price ASC NULLS LAST, lcsc"
+            return f"ORDER BY {lib_type_order}, price {direction} NULLS LAST, lcsc"
         else:
-            return "ORDER BY price ASC NULLS LAST, lcsc"
-    elif prefer_no_fee:
-        return f"ORDER BY {lib_type_order}, {documented}, stock DESC, lcsc"
+            return f"ORDER BY price {direction} NULLS LAST, lcsc"
+    direction = "ASC" if sort_by == "stock_asc" else "DESC"
+    if prefer_no_fee:
+        return f"ORDER BY {lib_type_order}, {documented}, stock {direction}, lcsc"
     else:
-        return f"ORDER BY {documented}, stock DESC, lcsc"
+        return f"ORDER BY {documented}, stock {direction}, lcsc"
 
 
 def needs_numeric_post_filter(spec_filter: SpecFilter) -> bool:

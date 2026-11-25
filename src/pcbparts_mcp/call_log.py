@@ -48,6 +48,11 @@ _MOUSER_PARTS = re.compile(r"[^|\s][^|]*")
 BUFFER_BYTES = 8 * 1024 * 1024
 WRITE_CHUNK_BYTES = 64 * 1024
 _SHAPE_NAME_CHARS = 40
+_UNKNOWN_ARG_NAME = re.compile(r"[A-Za-z_]{1,30}")
+
+
+def _safe_unknown_arg_name(name: str) -> bool:
+    return _UNKNOWN_ARG_NAME.fullmatch(name) is not None
 
 
 def _shape_list(shape: dict, key: str, values: list, cap: int) -> None:
@@ -190,7 +195,7 @@ class ShapeCatalog:
 
     def shape(self, tool: str, args: dict, content: dict, notes: dict, params: set[str], *, rejected: bool = False) -> dict:
         shape: dict[str, Any] = {}
-        _shape_list(shape, "args", sorted({name if name in params else "unknown_argument"
+        _shape_list(shape, "args", sorted({name if name in params or _safe_unknown_arg_name(name) else "unknown_argument"
                                          for name, value in args.items() if value is not None}), 20)
         if tool in {"jlc_get_parts", "part_lifecycle"}:
             items, shape["batch"] = _batch(args.get("parts"), content, notes, rejected=rejected)

@@ -6,11 +6,18 @@ from datetime import UTC, datetime, timedelta
 import httpx
 import pytest
 
-from pcbparts_dashboard.collector import collect, import_files
-from pcbparts_dashboard.store import timestamp
+from pcbparts_dashboard.collector import _validate_stats, collect, import_files
+from pcbparts_dashboard.payload import build_payload
+from pcbparts_dashboard.store import parse_timestamp, timestamp
 
 
-def test_collect_success(settings, store, clock, stats_reply, health_reply):
+@pytest.mark.parametrize("mouser_retries", [False, True], ids=["original", "mouser"])
+def test_collect_success(settings, store, clock, stats_reply, health_reply, mouser_retries):
+    stats_reply["distributor_quota"] = health_reply.pop("distributor_quota")
+    if mouser_retries:
+        stats_reply["days"][0]["upstream_status"]["mouser"] = {"2xx": 10, "5xx": 3, "connection": 1}
+        stats_reply["days"][0]["distributors"]["mouser"]["retries"] = 4
+        stats_reply["distributor_quota"]["mouser"]["resets_at"] = "2026-11-24 09:00 UTC"
     requests = []
 
     def respond(request):
@@ -37,10 +44,112 @@ def test_collect_success(settings, store, clock, stats_reply, health_reply):
         "at": timestamp(clock()), "ok": True, "error": None,
         "days_requested": 365, "status_code": 200, "health_error": None,
     }
-    assert store.newest_health() == (timestamp(clock()), health_reply)
+    expected_health = {**health_reply, "distributor_quota": stats_reply["distributor_quota"]}
+    assert store.newest_health() == (timestamp(clock()), expected_health)
+    assert build_payload(store, settings, clock())["health"] == expected_health
     assert settings.stats_token not in json.dumps(result)
     assert settings.stats_token not in json.dumps(store.get_meta("last_fetch"))
     assert all(key in store.all_days()[-1] for key in ("tool_apps", "latency", "popular_terms"))
+
+
+@pytest.mark.parametrize("with_mouser_http", [False, True], ids=["old", "0.10.9"])
+def test_mouser_http_counts_survive_collection_and_eastern_storage(settings, store, with_mouser_http):
+    settings = replace(settings, problems_since="2026-11-21T05:00:00Z")
+
+    def record(day, hours, sent, errors, retries):
+        row = {"date": day, "calls": hours * 10, "hours": [10] * hours + [0] * (24 - hours),
+               "distributors": {"mouser": {"sent": sent}}}
+        if with_mouser_http:
+            row["distributors"]["mouser"]["retries"] = retries
+            row["upstream_status"] = {"mouser": {"2xx": sent - errors, "5xx": errors}}
+        return row
+
+    first = record("2026-11-21", 5, 10, 2, 2)
+    final = record("2026-11-21", 24, 50, 10, 9)
+    next_start = record("2026-11-22", 5, 15, 4, 3)
+    next_final = record("2026-11-22", 24, 60, 12, 12)
+    for at, days in [
+        ("2026-11-21T05:00:30Z", [first]),
+        ("2026-11-22T05:00:30Z", [next_start, final]),
+        ("2026-11-23T00:00:30Z", [record("2026-11-23", 0, 0, 0, 0), next_final, final]),
+    ]:
+        with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
+            200, json={"days": days} if request.url.path == "/mcp/stats" else {"version": "0.10.9"}
+        ))) as client:
+            assert collect(settings, store, client=client, now=parse_timestamp(at))["ok"]
+
+    assert store.all_days()[0] == final
+    assert store.snapshots_for("2026-11-21")[0][1] == first
+    payload = build_payload(store, settings, parse_timestamp(at))
+    eastern = next(row for row in payload["edays"] if row["date"] == "2026-11-21")
+    saved = store.all_eastern_days()["2026-11-21"]
+    for row in (eastern, eastern["problems"], saved, saved["problems"]):
+        assert row["distributors"]["mouser"]["sent"] == 55  # 50 - 10 + 15 across UTC midnight.
+        if with_mouser_http:
+            assert row["distributors"]["mouser"]["retries"] == 10  # 9 - 2 + 3.
+            assert row["upstream_status"]["mouser"] == {"2xx": 43, "5xx": 12}
+        else:
+            assert "retries" not in row["distributors"]["mouser"]
+            assert "mouser" not in (row.get("upstream_status") or {})
+
+
+@pytest.mark.parametrize("paused", [False, True], ids=["ready", "paused"])
+@pytest.mark.parametrize("public_quota", [False, True], ids=["current", "old"])
+def test_collect_takes_quota_only_from_stats(settings, store, clock, stats_reply, health_reply, paused, public_quota):
+    pause = "2026-11-21 20:00 UTC" if paused else None
+    if not public_quota:
+        health_reply.pop("distributor_quota")
+    stats_reply["distributor_quota"] = {
+        "mouser": {"used_today": 80, "limit": 1000, "api_remaining": None,
+                   "paused_until": pause, "resets_at": "2026-11-22 09:00 UTC", "kept_across_restarts": True},
+        "digikey": {"used_today": 10, "limit": 1000, "api_remaining": 990,
+                    "paused_until": pause, "resets_at": "2026-11-22 00:00 UTC", "kept_across_restarts": True},
+    }
+    with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
+        200, json=stats_reply if request.url.path == "/mcp/stats" else health_reply
+    ))) as client:
+        assert collect(settings, store, client=client, now=clock())["ok"]
+    payload = build_payload(store, settings, clock())
+    assert payload["health_at"] == payload["as_of"] == timestamp(clock())
+    assert payload["health"] == {**health_reply, "distributor_quota": stats_reply["distributor_quota"]}
+    assert store.newest_health() == (timestamp(clock()), payload["health"])
+    assert all("distributor_quota" not in day for day in store.all_days())
+    assert "distributor_quota" not in store.snapshots_for(stats_reply["days"][0]["date"])[0][1]
+
+
+@pytest.mark.parametrize("public_quota", [False, True], ids=["current", "old"])
+@pytest.mark.parametrize("stats_quota", [False, True], ids=["missing", "empty"])
+def test_missing_stats_quota_does_not_reuse_old_budget(settings, store, clock, stats_reply, public_quota, stats_quota):
+    store.save_health({"distributor_quota": {"mouser": {"used_today": 80, "limit": 1000}}},
+                      "2026-11-20T19:00:00Z")
+    health = {"status": "healthy"}
+    if public_quota:
+        health["distributor_quota"] = {"mouser": {"used_today": 90, "limit": 1000,
+                                                 "paused_until": None, "resets_at": "2026-11-22 06:00 UTC"}}
+    if stats_quota:
+        stats_reply["distributor_quota"] = {}
+    with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(
+        200, json=stats_reply if request.url.path == "/mcp/stats" else health
+    ))) as client:
+        assert collect(settings, store, client=client, now=clock())["ok"]
+    # Stats wins when it has the field; a pre-0.10.9 server's same-poll /health field is kept.
+    expected = ({"status": "healthy", "distributor_quota": {}} if stats_quota
+                else health if public_quota else {"status": "healthy"})
+    assert build_payload(store, settings, clock())["health"] == expected
+
+
+def test_old_stored_health_quota_still_reaches_dashboard(settings, store, clock, health_reply):
+    store.save_health(health_reply, timestamp(clock()))
+    payload = build_payload(store, settings, clock())
+    assert payload["health"] == health_reply
+    assert payload["health"]["distributor_quota"]["mouser"]["used_today"] == 20
+
+
+@pytest.mark.parametrize("quota", [None, [], {"mouser": None}, {"mouser": []}],
+                         ids=["null", "list", "entry-null", "entry-list"])
+def test_invalid_stats_quota_rejected(quota):
+    with pytest.raises(ValueError, match="Invalid distributor_quota"):
+        _validate_stats({"days": [], "distributor_quota": quota})
 
 
 @pytest.mark.parametrize("age, requested", [(None, 365), (0, 3), (24 * 3600, 3), (24 * 3600 + 1, 365)])
@@ -125,7 +234,9 @@ def test_network_failure_does_not_echo_exception(settings, store, clock):
 
 @pytest.mark.parametrize("health_failure", ["status", "json", "timeout"])
 def test_health_failure_keeps_stats_success(settings, store, clock, stats_reply, health_failure):
-    store.save_health({"previous": True}, "2026-11-20T19:00:00Z")
+    previous = {"distributor_quota": {"mouser": {"used_today": 80, "limit": 1000}}}
+    store.save_health(previous, "2026-11-20T19:00:00Z")
+    stats_reply["distributor_quota"] = {"mouser": {"used_today": 90, "limit": 1000}}
 
     def respond(request):
         if request.url.path == "/mcp/stats":
@@ -139,7 +250,7 @@ def test_health_failure_keeps_stats_success(settings, store, clock, stats_reply,
     assert result["ok"] and result["error"] is None
     assert store.get_meta("last_fetch")["health_error"]
     assert settings.stats_token not in json.dumps(store.get_meta("last_fetch"))
-    assert store.newest_health()[1] == {"previous": True}
+    assert store.newest_health() == ("2026-11-20T19:00:00Z", previous)
     assert store.get_meta("last_success_at") == timestamp(clock())
 
 

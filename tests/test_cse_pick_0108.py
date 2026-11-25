@@ -167,8 +167,10 @@ async def test_quota_and_stored_files_for_matching_query(client):
     client._refused_since, client._quota_until = 1, 10
     reply = await client.get_kicad(query="ABS10")
     assert "daily model download limit" in reply["error"]
+    assert reply["part_id"] == 17352113 and reply["other_matches"] and reply["note"]
     client._kicad_cache.set("kicad:17352113", {"kicad_symbol": "stored"})
     assert (await client.get_kicad(query="ABS10"))["kicad_symbol"] == "stored"
+    assert client.search.await_count == 2
     client._download_kicad.assert_not_awaited()
 
 

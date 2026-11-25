@@ -50,6 +50,10 @@ _CSE_MODEL_URL = "https://rs.componentsearchengine.com/ga/model.php"
 _PAGE_SIZE = 10
 
 
+def _search_cache_key(query: str, offset: int) -> str:
+    return f"cse:{query_key(query)}:{offset}"
+
+
 def _body_text(content: bytes) -> str:
     return " ".join(re.sub(r"<[^>]*>", " ", html.unescape(content.decode("utf-8", errors="replace"))).split())
 
@@ -186,6 +190,17 @@ class CSEClient:
             self._http = httpx.AsyncClient(timeout=CSE_REQUEST_TIMEOUT)
         return self._http
 
+    async def _cached_search(self, query: str, offset: int = 0) -> dict[str, Any] | None:
+        cache_key = _search_cache_key(query, offset)
+        cached = self._cache.get(cache_key)
+        if cached is None and self._store:
+            cached = await asyncio.to_thread(self._store.get_search, query, offset)
+            if cached is not None:
+                self._cache.set(cache_key, cached)
+        if cached is not None:
+            stats.count_upstream("cse", "cached")
+        return cached
+
     async def search(self, query: str, offset: int = 0) -> dict[str, Any]:
         """Search CSE by MPN or keyword.
 
@@ -196,16 +211,9 @@ class CSEClient:
         Returns:
             Dict with results list and total count
         """
-        cache_key = f"cse:{query_key(query)}:{offset}"
-        cached = self._cache.get(cache_key)
+        cached = await self._cached_search(query, offset)
         if cached is not None:
-            stats.count_upstream("cse", "cached")
             return cached
-        stored = self._store.get_search(query, offset) if self._store else None
-        if stored is not None:
-            self._cache.set(cache_key, stored)
-            stats.count_upstream("cse", "cached")
-            return stored
 
         params = {
             "searchString": query,
@@ -258,9 +266,9 @@ class CSEClient:
             "total": total,
         }
 
-        self._cache.set(cache_key, result)
+        self._cache.set(_search_cache_key(query, offset), result)
         if self._store:
-            self._store.put_search(query, offset, result)
+            await asyncio.to_thread(self._store.put_search, query, offset, result)
         return result
 
     async def get_kicad(self, query: str | None = None, part_id: int | None = None,
@@ -319,7 +327,7 @@ class CSEClient:
         cache_key = f"kicad:{resolved_part_id}"
         cached = self._kicad_cache.get(cache_key)
         if cached is None and self._store:
-            cached = self._store.get_kicad(resolved_part_id)
+            cached = await asyncio.to_thread(self._store.get_kicad, resolved_part_id)
             if cached is not None:
                 self._kicad_cache.set(cache_key, cached)
         if cached is not None:
@@ -333,29 +341,44 @@ class CSEClient:
 
         # Only one probe goes out after a quota pause; other callers still get stored files above.
         if self._refused_since is not None:
-            if self._clock() < self._quota_until or self._quota_probe is not None and self._quota_probe.locked():
-                return self._quota_error(resolved_part_id, part_info)
+            if self._downloads_paused():
+                return await self._quota_error(resolved_part_id, part_info)
             if self._quota_probe is None:
                 self._quota_probe = asyncio.Lock()
             async with self._quota_probe:
                 return await self._download_kicad(resolved_part_id, part_info)
         return await self._download_kicad(resolved_part_id, part_info)
 
-    def _wanted(self, part_id: int | str, reason: str, part_info: dict[str, Any]) -> None:
-        if self._store:
-            self._store.mark_wanted(part_id, reason, part_info or self._store.part_info(part_id), now=self._clock())
+    def _downloads_paused(self) -> bool:
+        return (self._clock() < self._quota_until
+                or self._quota_probe is not None and self._quota_probe.locked())
 
-    def _quota_error(self, part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
+    async def _wanted(self, part_id: int | str, reason: str, part_info: dict[str, Any]) -> dict[str, Any]:
+        """Keep backfill requests only for parts identified by a CSE search, never arbitrary IDs."""
+        if self._store:
+            if not part_info:
+                part_info = await asyncio.to_thread(self._store.part_info, part_id)
+            if part_info:
+                await asyncio.to_thread(self._store.mark_wanted, part_id, reason, part_info, now=self._clock())
+        return part_info
+
+    async def _quota_error(self, part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
         stats.count_upstream("cse", "rate_limited")
-        self._wanted(part_id, "quota", part_info)
-        return {"error": "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work."}
+        part_info = await self._wanted(part_id, "quota", part_info)
+        retry = (f"Try again at {_utc_iso(self._quota_until)} (UTC), when this server next checks the quota."
+                 if self._clock() < self._quota_until else
+                 "This server is checking whether downloads are available again; try again shortly.")
+        return {"part_id": part_id, **part_info,
+                "error": "SamacSys's daily model download limit for this shared server is used up; "
+                         f"the KiCad model couldn't be downloaded. {retry} "
+                         "KiCad files pcbparts already has stored still work."}
 
     async def _download_kicad(self, resolved_part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
         # Check again inside the semaphore: a download ahead of this one may have refused quota.
         try:
             async with self._get_semaphore():
                 if self._clock() < self._quota_until:
-                    return self._quota_error(resolved_part_id, part_info)
+                    return await self._quota_error(resolved_part_id, part_info)
                 started = self._clock()
                 response = await _sent("cse", self._get_http().get(
                     _CSE_MODEL_URL,
@@ -394,16 +417,16 @@ class CSEClient:
                 self._quota_until = now + CSE_QUOTA_RETRY_SECONDS
                 if self._refused_since is None:
                     self._refused_since = now
-                recent = self._store.kicad_last_24h(now) if self._store else 0
+                recent = await asyncio.to_thread(self._store.kicad_last_24h, now) if self._store else 0
                 logger.warning("CSE daily download quota refused at %s: %s downloads stored in the last 24 h; next try at %s",
                                _utc_iso(now), recent, _utc_iso(self._quota_until))
-                return self._quota_error(resolved_part_id, part_info)
+                return await self._quota_error(resolved_part_id, part_info)
             if text.lower().startswith("error:"):
                 if re.search(r"no\s+part\s+data\s+(?:is\s+)?available", text, re.I):
                     return {"error": f"No ECAD model available for part {resolved_part_id}"}
-                self._wanted(resolved_part_id, "refused", part_info)
+                await self._wanted(resolved_part_id, "refused", part_info)
                 return {"error": f"CSE refused the model download for part {resolved_part_id}: {cleaned[:150]}"}
-            self._wanted(resolved_part_id, "invalid_zip", part_info)
+            await self._wanted(resolved_part_id, "invalid_zip", part_info)
             return {"error": "CSE returned invalid zip file"}
 
         if self._refused_since is not None:
@@ -417,7 +440,7 @@ class CSEClient:
         # Cache the extracted text (zip is discarded)
         self._kicad_cache.set(f"kicad:{resolved_part_id}", kicad_files)
         if self._store:
-            self._store.put_kicad(resolved_part_id, kicad_files, fetched_at=self._clock())
+            await asyncio.to_thread(self._store.put_kicad, resolved_part_id, kicad_files, fetched_at=self._clock())
 
         return {
             "part_id": resolved_part_id,
@@ -436,4 +459,4 @@ class CSEClient:
             await self._http.aclose()
             self._http = None
         if self._store is not None:
-            self._store.close()
+            await asyncio.to_thread(self._store.close)

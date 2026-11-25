@@ -710,7 +710,7 @@ class DigiKeySite:
         return max(1, math.ceil(self._pause.remaining)) if self._pause.active else 0
 
     def status(self) -> dict[str, Any]:
-        """For /health: when the pause ends (None when not paused). Why stays in the log."""
+        """For authenticated /mcp/stats: when the pause ends (None when not paused). Why stays in the log."""
         if not self._pause.active:
             return {"paused_until": None}
         until = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=self._pause.remaining)

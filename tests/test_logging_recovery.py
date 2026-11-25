@@ -211,13 +211,17 @@ async def test_wide_shapes_cap_every_list_and_count_the_rest(tmp_path):
     packages = ["P" * 100 + str(i) for i in range(100)]
     specs = ["S" * 100 + str(i) for i in range(100)]
     params = {f"arg{i:02}" for i in range(40)} | {"packages", "spec_filters"}
+    unknown = {"Arg_" + chr(ord("A") + i) for i in range(26)}
     log.catalog = call_log.ShapeCatalog(packages=frozenset(packages), attributes=frozenset(specs))
-    args = dict.fromkeys(params, True) | {"packages": packages, "spec_filters": [{"name": n} for n in specs]}
+    args = dict.fromkeys(params | unknown, True) | {"packages": packages, "spec_filters": [{"name": n} for n in specs]}
     record(log, outcome="bad_request", reason=None, args=args, params=params)
     shape = log._rows[0]["shape"]
     assert len(shape["packages"]) <= 10 and shape["packages_omitted"] == 90
     assert len(shape["spec_filters"]) <= 20 and shape["spec_filters_omitted"] == 80
-    assert len(shape["args"]) <= 20 and shape["args_omitted"] == len(params) - 20
+    expected = params | unknown
+    assert shape["args"] == sorted(expected)[:20]
+    assert shape["args_omitted"] == len(expected) - 20
+    assert all(len(name) <= 40 for key in ("args", "packages", "spec_filters") for name in shape[key])
     assert len(json.dumps(log._rows[0]).encode("utf-8")) < 2500
 
 

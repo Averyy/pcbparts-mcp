@@ -2,9 +2,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  AMOUNT, aggregate, buildView, countedFrom, daily, hourly, own, problemHours, totals,
+  AMOUNT, aggregate, buildView, countedFrom, daily, hourly, mouserDayStartHour, own, problemHours, totals,
 } from "../../src/pcbparts_dashboard/static/data.js";
-import { dayHourET, delta, resetHour, serverDay } from "../../src/pcbparts_dashboard/static/format.js";
+import { dayHourET, delta, parseQuotaTime, resetHour, serverDay } from "../../src/pcbparts_dashboard/static/format.js";
 
 const HOURS = Array.from({ length: 24 }, () => 100);
 const tool = (calls, extra = {}) => ({ calls, ok: calls, similar_only: 0, not_found: 0, bad_request: 0, rate_limited: 0, failed: 0, ...extra });
@@ -158,6 +158,33 @@ test("the server's day ends at 7 PM Eastern in winter and 8 PM in summer", () =>
   assert.equal(dayHourET(serverDay(winter).start), "Fri 7 PM");
   assert.equal(dayHourET(serverDay(winter).end), "Sat 7 PM");
   assert.equal(resetHour(new Date("2026-07-04T15:00:00Z")), "8 PM");
+});
+
+for (const [at, mouserStart, digikeyStart] of [
+  ["2026-11-23T23:59:59Z", "2026-11-23T06:00:00.000Z", "2026-11-23T00:00:00.000Z"],
+  ["2026-11-24T00:00:00Z", "2026-11-23T06:00:00.000Z", "2026-11-24T00:00:00.000Z"],
+  ["2026-11-24T05:59:59Z", "2026-11-23T06:00:00.000Z", "2026-11-24T00:00:00.000Z"],
+  ["2026-11-24T06:00:00Z", "2026-11-24T06:00:00.000Z", "2026-11-24T00:00:00.000Z"],
+]) test(`Mouser and DigiKey have separate budget days at ${at}`, () => {
+  const now = new Date(at);
+  const mouser = serverDay(now, mouserDayStartHour({}));
+  assert.equal(mouser.start.toISOString(), mouserStart);
+  assert.equal(mouser.end - mouser.start, 86400_000);
+  assert.equal(serverDay(now).start.toISOString(), digikeyStart);
+  assert.equal(resetHour(now, mouserDayStartHour({})), "1 AM");
+  assert.equal(resetHour(now), "7 PM");
+});
+
+for (const [resets_at, expected] of [
+  ["2026-11-24 00:00 UTC", 0], ["2026-07-05 05:00 UTC", 5], ["2026-11-24 09:00 UTC", 9],
+  ["2026-11-24 23:00 UTC", 23], [undefined, 6], [null, 6], ["invalid", 6], ["2026-11-24 99:00 UTC", 6],
+]) test(`Mouser reset hour from health: ${resets_at}`, () => {
+  assert.equal(mouserDayStartHour({ distributor_quota: { mouser: { resets_at } } }), expected);
+});
+
+test("quota timestamps parse in UTC independently of the browser timezone", () => {
+  assert.equal(parseQuotaTime("2026-11-24 09:00 UTC").toISOString(), "2026-11-24T09:00:00.000Z");
+  assert.equal(mouserDayStartHour(null), 6);
 });
 
 for (const minute of [15, 45]) test(`problem bins start at the cutoff's hour (${minute} minutes past)`, () => {

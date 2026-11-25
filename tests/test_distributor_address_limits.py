@@ -67,7 +67,8 @@ async def clients(clock):
         ranges = ranges or platform_ranges.PlatformRanges()
         address_daily = address_daily or AddressDailyQuota(
             limit, key=lambda ip: None if ip in ranges else server._address_key(ip), clock=clock)
-        quotas = [DailyQuota(name, shared_limit, clock=clock) for _ in range(2 if extra else 1)]
+        quotas = [DailyQuota(name, shared_limit, clock=clock, day_start_hour=6 if name == "Mouser" else 0)
+                  for _ in range(2 if extra else 1)]
         pool_type = MouserKeyPool if name == "Mouser" else QuotaPool
         pool = pool_type(quotas, per_minute=minute, address_daily=address_daily)
         fake = FakeDistributor(name)
@@ -135,6 +136,30 @@ async def test_distributors_share_one_count_and_mouser_batch_costs_one_request(c
     assert "error" not in await dk.get_part("TEST999", caller=OTHER)
 
 
+@pytest.mark.parametrize("failure", ["daily", "token"])
+async def test_digikey_second_attempt_neither_checks_nor_counts_address(clients, failure):
+    client, pool, fake = clients("DigiKey", limit=2, extra=failure == "daily")
+    # Force the second attempt through OAuth as well as the product request checks.
+    original = fake.__call__
+
+    def respond(request):
+        if "oauth2/token" not in str(request.url) and not fake.sent:
+            fake.sent.append("refused")
+            return (httpx.Response(429, headers={"x-ratelimit-remaining": "0"}) if failure == "daily"
+                    else httpx.Response(401))
+        return original(request)
+
+    await client._http.aclose()
+    client._http = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    pool.address_daily.record(ADDRESS)
+    assert "error" not in await client.get_part("LM358P", caller=ADDRESS)
+    assert len(fake.sent) == 2 and fake.tokens == 2
+    assert pool.address_daily._counts == {ADDRESS: 2}
+    assert sum(q._count for q in pool.quotas) == 2
+    assert "This address has used its 2" in (await client.get_part("NE555P", caller=ADDRESS))["error"]
+    assert len(fake.sent) == 2 and fake.tokens == 2
+
+
 async def test_one_distributor_alone_spends_the_shared_count(clients, clock):
     cap = shared_cap(clock, 1)
     mouser, _, mf = clients("Mouser", address_daily=cap)
@@ -176,6 +201,11 @@ async def test_utc_day_resets_and_zero_disables(clients, clock, name):
     clock.now = MIDNIGHT
     assert "error" not in await client.get_part("TEST456", caller=ADDRESS)
     assert pool.address_daily._counts == {ADDRESS: 1} and len(fake.sent) == 2
+    assert pool.quotas[0].status()["used_today"] == (2 if name == "Mouser" else 1)
+    clock.now = MIDNIGHT + 6 * 3600
+    assert "error" in await client.get_part("TEST789", caller=ADDRESS)  # address cap is still UTC-day based
+    assert client.retry_after(ADDRESS) == 18 * 3600
+    assert pool.quotas[0].status()["used_today"] == (0 if name == "Mouser" else 1)
     off, off_pool, off_fake = clients(name, limit=0)
     for number in ("TEST123", "TEST456", "TEST789"):
         assert "error" not in await off.get_part(number, caller=ADDRESS)
@@ -270,7 +300,7 @@ async def test_cap_applies_across_pool_credentials(clients, name):
     await client.get_part("TEST123", caller=ADDRESS)
     assert "error" in await client.get_part("TEST456", caller=ADDRESS)
     assert "error" not in await client.get_part("TEST456", caller=OTHER)
-    assert len(fake.sent) == 2 and [q._count for q in pool.quotas] == [1, 1]
+    assert len(fake.sent) == 2 and [q._count for q in pool.quotas] == ([2, 0] if name == "Mouser" else [1, 1])
 
 
 async def test_lifecycle_past_both_caps_and_stored_readings(clients, clock):
@@ -310,7 +340,15 @@ async def test_lifecycle_sends_to_neither_distributor_once_the_shared_count_is_s
         store.close()
 
 
-async def test_lifecycle_crowded_out_part_is_limited_when_address_cap_blocks_followup(clients, clock):
+async def test_lifecycle_crowded_followup_does_not_use_second_address_allowance(clients, clock, monkeypatch):
+    send = FakeDistributor.__call__
+
+    def first_reply_only(fake, request):
+        response = send(fake, request)
+        fake.reply = None
+        return response
+
+    monkeypatch.setattr(FakeDistributor, "__call__", first_reply_only)
     store = DistributorStore(clock=clock)
     try:
         mouser, pool, fake = clients("Mouser", limit=1, store=store)
@@ -318,10 +356,13 @@ async def test_lifecycle_crowded_out_part_is_limited_when_address_cap_blocks_fol
             {"ManufacturerPartNumber": f"TEST123{index:02}", "Manufacturer": "Test"} for index in range(50)]}})
         rows = await LifecycleLookup(store, mouser, None).answer(
             [Entry(number, mpn=number) for number in ("TEST123", "TEST456")], caller=ADDRESS)
-        assert rows[1]["status"] == "unknown" and rows[1]["retry_after"] == math.ceil(MIDNIGHT - clock())
-        assert "not_found" not in rows[1] and "lookup_failed" not in rows[1]
-        assert len(fake.sent) == 1 and pool.address_daily._counts == {ADDRESS: 1}
-        assert pool.held_back._counts == {ADDRESS: 1}
+        # The follow-up finds TEST456 despite the address cap.
+        assert rows[1]["status"] == "active" and "lookup_failed" not in rows[1]
+        assert "not_found" not in rows[1] and "retry_after" not in rows[1]
+        assert store.get_answer("mouser", "TEST456")[0]["matched"] is True
+        assert [body["SearchByPartRequest"]["mouserPartNumber"] for body in fake.sent] == ["TEST123|TEST456", "TEST456"]
+        assert pool.address_daily._counts == {ADDRESS: 1}
+        assert pool.held_back._counts == {}
     finally:
         store.close()
 
@@ -335,9 +376,14 @@ async def test_each_cause_logs_one_held_back_line(clients, clock, caplog, name, 
         pool.acquire()
     elif cause == "daily_count":
         for q in pool.quotas:
+            if name == "Mouser":
+                q._limit = 0  # only the explicit disable still gates Mouser by local configuration
             q._count = q._limit
     elif cause == "address_daily":
         pool.address_daily.record(ADDRESS)
+    elif cause == "distributor_daily" and name == "Mouser":
+        for index in range(len(pool.quotas)):
+            pool.quotas[index].pause_daily_unknown_reset()
     else:
         for q in pool.quotas:
             q.pause(clock() + 3600, {"distributor_daily": "daily", "distributor_minute": "burst",

@@ -2,9 +2,12 @@
 model and for KiCad files, a week for a search with a part that has no model yet or no parts."""
 
 import asyncio
+from contextlib import asynccontextmanager
 import io
+import json
 import logging
 import sys
+import threading
 from types import SimpleNamespace
 import time
 import zipfile
@@ -12,11 +15,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
+from fastmcp import Client
 
 from pcbparts_mcp.config import CSE_FOUND_TTL, CSE_NOT_FOUND_TTL
 from pcbparts_mcp.cse import CSEClient
 from pcbparts_mcp.cse_store import CSEStore, query_key
-from pcbparts_mcp import config, cse as cse_module, cse_archive, cse_store, stats
+from pcbparts_mcp import config, cse as cse_module, cse_archive, cse_store, server, stats
 
 DAY = 86400
 
@@ -246,7 +250,9 @@ async def test_lifetime_follows_models(tmp_path, parts, expected):
     assert store.get_search("Q", 0, now=now + expected + DAY) is None
 
 
-QUOTA = "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work."
+QUOTA = ("SamacSys's daily model download limit for this shared server is used up; "
+         "the KiCad model couldn't be downloaded. Try again at {} (UTC), when this server next checks the quota. "
+         "KiCad files pcbparts already has stored still work.")
 QUOTA_BODY = b"Error: Daily part download quota exceeded"
 
 
@@ -272,13 +278,112 @@ async def model_client(tmp_path, monkeypatch):
 
 
 class TestDownloadRefusals:
+    @pytest.mark.parametrize("path", ["paused", "queued", "upstream"])
+    @pytest.mark.parametrize("known", [False, True], ids=["unknown", "known"])
+    async def test_quota_store_work_runs_off_loop_and_looks_up_once(self, model_client, path, known):
+        client, now, answers, downloads = model_client
+        store = client._store
+        # A full scan is costly on a real store; exercise it without wall-clock assertions.
+        store._conn.executemany("INSERT INTO searches VALUES (?, 0, ?, 1, ?)", (
+            (f"search-{i}", json.dumps({"results": [cse_module._normalize_part(part(i))]}), now[0])
+            for i in range(1, 20_001)
+        ))
+        store._conn.commit()
+        if path != "upstream":
+            client._quota_until = now[0] + config.CSE_QUOTA_RETRY_SECONDS
+        if path == "paused":
+            client._refused_since = now[0]
+        if path == "upstream":
+            answers.append(QUOTA_BODY)
+        requested = 20_000 if known else -1
+        loop_thread = threading.get_ident()
+        statements = []
+        store._conn.set_trace_callback(lambda sql: statements.append((sql, threading.get_ident())))
+        try:
+            reply = await client.get_kicad(part_id=requested)
+        finally:
+            store._conn.set_trace_callback(None)
+
+        scans = [sql for sql, _ in statements if sql.startswith("SELECT result FROM searches")]
+        assert len(scans) == 1
+        assert statements and all(thread != loop_thread for _, thread in statements)
+        assert reply["part_id"] == requested and "daily model download limit" in reply["error"]
+        assert reply.get("mfr_part_number") == ("P20000" if known else None)
+        assert len(store.wanted()) == int(known)
+        assert downloads == ([str(requested)] if path == "upstream" else [])
+
+    async def test_quota_search_metadata_is_passed_through_without_lookup(self, model_client, monkeypatch):
+        client, now, answers, downloads = model_client
+        client._refused_since = now[0]
+        client._quota_until = now[0] + config.CSE_QUOTA_RETRY_SECONDS
+        monkeypatch.setattr(client._store, "part_info", lambda *_: pytest.fail("repeated metadata lookup"))
+        loop_thread = threading.get_ident()
+        statements = []
+        client._store._conn.set_trace_callback(lambda sql: statements.append((sql, threading.get_ident())))
+        try:
+            reply = await client.get_kicad(query="P1")
+        finally:
+            client._store._conn.set_trace_callback(None)
+        assert reply["mfr_part_number"] == "P1" and "daily model download limit" in reply["error"]
+        assert statements and all(thread != loop_thread for _, thread in statements)
+        assert client._store.wanted()[0]["part_number"] == "P1"
+        assert downloads == []
+
+    async def test_health_reads_cse_counts_off_loop(self, model_client, monkeypatch):
+        client, _, _, _ = model_client
+        monkeypatch.setattr(server, "_cse_client", client)
+        monkeypatch.setattr(server, "_cse_stored", (float("-inf"), None))
+        loop_thread = threading.get_ident()
+        threads = []
+        client._store._conn.set_trace_callback(lambda _: threads.append(threading.get_ident()))
+        try:
+            reply = await server.health(None)
+        finally:
+            client._store._conn.set_trace_callback(None)
+        assert json.loads(reply.body)["cse_stored"] == {"searches": 0, "kicad": 0, "wanted": 0}
+        assert threads and all(thread != loop_thread for thread in threads)
+
+    async def test_download_completed_during_metadata_lookup_is_not_wanted(self, model_client, monkeypatch):
+        client, now, _, _ = model_client
+        store = client._store
+        store.put_search("P1", 0, {"results": [cse_module._normalize_part(part(1))]})
+        client._refused_since = now[0]
+        client._quota_until = now[0] + config.CSE_QUOTA_RETRY_SECONDS
+        original = store.part_info
+
+        def completed_download(part_id):
+            info = original(part_id)
+            store.put_kicad(part_id, {"kicad_symbol": "completed"})
+            return info
+
+        monkeypatch.setattr(store, "part_info", completed_download)
+        await client.get_kicad(part_id=1)
+        assert store.get_kicad(1) == {"kicad_symbol": "completed"}
+        assert store.wanted() == []
+
+    @pytest.mark.parametrize("body", [QUOTA_BODY, b"Error: denied", b"invalid archive"],
+                             ids=["quota", "refused", "invalid"])
+    async def test_wanted_only_grows_for_search_known_parts(self, model_client, body):
+        client, now, answers, downloads = model_client
+        row = cse_module._normalize_part(part(1))
+        client._store.put_search("P1", 0, {"results": [row]})
+        answers.extend([body] * 66)
+        for requested in (-1, 1, *range(-32, -1), *range(2, 34), 1):
+            assert "error" in await client.get_kicad(part_id=requested)
+        wanted = client._store.wanted()
+        assert [(r["part_id"], r["part_number"], r["times_asked"]) for r in wanted] == [("1", "P1", 2)]
+        assert client.store_counts()["wanted"] == 1
+        client._store.put_kicad(1, {"kicad_symbol": "seeded"})
+        assert client._store.wanted() == []
+
     async def test_reported_quota_pause_renewal_and_recovery(self, model_client, caplog):
         client, now, answers, downloads = model_client
         caplog.set_level(logging.INFO, logger="pcbparts_mcp")
         answers.extend([QUOTA_BODY, QUOTA_BODY, kicad_zip()])
         client._store.put_kicad(90, {"kicad_symbol": "stored"}, fetched_at=now[0] - 100)
         client._store.put_kicad(91, {"kicad_symbol": "old"}, fetched_at=now[0] - DAY - 1)
-        assert (await client.get_kicad(query="P1"))["error"] == QUOTA
+        expected = QUOTA.format("2026-11-01T15:47:00Z")
+        assert (await client.get_kicad(query="P1"))["error"] == expected
         first_refused = now[0]
         assert downloads == ["1"]
         row = client._store.wanted()[0]
@@ -288,12 +393,12 @@ class TestDownloadRefusals:
         assert "CSE daily download quota refused at 2026-11-01T15:17:00Z: 1 downloads stored in the last 24 h; next try at 2026-11-01T15:47:00Z" in caplog.text
         assert "CSE model wanted: part 1 (P1): quota" in caplog.text
         assert (await client.get_kicad(part_id=90))["kicad_symbol"] == "stored"
-        assert (await client.get_kicad(query="P-1"))["error"] == QUOTA  # searches still run
-        assert (await client.get_kicad(part_id=1))["error"] == QUOTA
+        assert (await client.get_kicad(query="P-1"))["error"] == expected  # searches still run
+        assert (await client.get_kicad(part_id=1))["error"] == expected
         assert downloads == ["1"]
         assert client._store.wanted()[0]["times_asked"] == 3
         now[0] = first_refused + config.CSE_QUOTA_RETRY_SECONDS
-        assert (await client.get_kicad(part_id=1))["error"] == QUOTA
+        assert (await client.get_kicad(part_id=1))["error"] == QUOTA.format("2026-11-01T16:17:01Z")
         assert client._refused_since == first_refused
         now[0] += config.CSE_QUOTA_RETRY_SECONDS
         assert (await client.get_kicad(part_id=1))["kicad_symbol"] == "(kicad_symbol_lib)"
@@ -313,15 +418,19 @@ class TestDownloadRefusals:
         started, release = asyncio.Event(), asyncio.Event()
         original = client._http.get
 
-        async def delayed(*args, **kwargs):
-            started.set()
-            await release.wait()
-            return await original(*args, **kwargs)
+        async def delayed(url, **kwargs):
+            if "model.php" in url:
+                started.set()
+                await release.wait()
+            return await original(url, **kwargs)
 
         monkeypatch.setattr(client._http, "get", delayed)
         probe = asyncio.create_task(client.get_kicad(part_id=2))
         await started.wait()
-        assert (await client.get_kicad(part_id=3))["error"] == QUOTA
+        assert "checking whether downloads are available again; try again shortly" in (
+            await client.get_kicad(part_id=3))["error"]
+        assert "checking whether downloads are available again; try again shortly" in (
+            await client.get_kicad(query="P-1"))["error"]
         release.set()
         assert "error" not in await probe
         assert downloads == ["1", "2"]
@@ -340,6 +449,7 @@ class TestDownloadRefusals:
     ], ids=["refused", "invalid"])
     async def test_cleaned_refusal_or_invalid_reply(self, model_client, caplog, body, reason, error):
         client, now, answers, downloads = model_client
+        client._store.put_search("P1", 0, {"results": [cse_module._normalize_part(part(1))]})
         answers.append(body)
         assert (await client.get_kicad(part_id=1))["error"] == error
         assert client._store.wanted()[0]["reason"] == reason
@@ -359,9 +469,116 @@ class TestDownloadRefusals:
         client._store.put_search("stored", 0, {"results": [{"cse_part_id": "1", "mfr_part_number": "P1",
                                                           "manufacturer": "Maker", "has_model": True}]})
         answers.append(QUOTA_BODY)
-        await client.get_kicad(part_id=1)
+        reply = await client.get_kicad(part_id=1)
+        assert reply["part_id"] == 1 and reply["mfr_part_number"] == "P1" and reply["manufacturer"] == "Maker"
         assert client._store.wanted()[0]["part_number"] == "P1"
         assert client._store.wanted()[0]["manufacturer"] == "Maker"
+
+    @pytest.mark.parametrize("source", ["memory", "store"])
+    async def test_paused_live_search_returns_stored_files(self, model_client, monkeypatch, source):
+        client, now, answers, downloads = model_client
+        row = cse_module._normalize_part(part(1))
+        client._store.put_search("P1", 0, {"results": [row], "total": 1})
+        files = {"kicad_symbol": "stored symbol", "kicad_footprint": "stored footprint"}
+        if source == "memory":
+            client._kicad_cache.set("kicad:1", files)
+        else:
+            client._store.put_kicad(1, files)
+        client._refused_since = now[0]
+        client._quota_until = now[0] + config.CSE_QUOTA_RETRY_SECONDS
+        get = AsyncMock(wraps=client._http.get)
+        monkeypatch.setattr(client._http, "get", get)
+        assert client._cache.get("cse:p-1:0") is None
+        assert client._store.get_search("P-1", 0) is None
+        started = now[0]
+
+        reply = await client.get_kicad(query="P-1")
+
+        assert reply == {"part_id": 1, **row, **files}
+        get.assert_awaited_once_with(cse_module._CSE_API_URL, params={"searchString": "P-1", "country": "US"})
+        assert downloads == [] and now[0] == started
+
+    @pytest.mark.parametrize("parts,error", [
+        ([], "No parts found for 'P-1'"),
+        ([part(1, has_model=False)], "No ECAD model available for 'P-1'"),
+    ], ids=["empty", "no_models"])
+    async def test_paused_live_search_keeps_not_found_errors(self, model_client, monkeypatch, parts, error):
+        client, now, answers, downloads = model_client
+        client._refused_since = now[0]
+        client._quota_until = now[0] + config.CSE_QUOTA_RETRY_SECONDS
+        get = AsyncMock(return_value=httpx.Response(200, json={"status": "Success", "parts": parts}))
+        monkeypatch.setattr(client._http, "get", get)
+        started = now[0]
+
+        assert await client.get_kicad(query="P-1") == {"error": error}
+
+        get.assert_awaited_once_with(cse_module._CSE_API_URL, params={"searchString": "P-1", "country": "US"})
+        assert downloads == [] and now[0] == started
+        assert client._store.wanted() == []
+
+    async def test_quota_envelope_and_paused_downloads_do_not_wait(self, model_client, monkeypatch):
+        client, now, answers, downloads = model_client
+        answers.append(QUOTA_BODY)
+
+        @asynccontextmanager
+        async def lifespan(app):
+            yield {}
+
+        monkeypatch.setattr(server.mcp, "_lifespan", lifespan)
+        monkeypatch.setattr(server, "_cse_client", client)
+        async with Client(server.mcp) as mcp:
+            first = await mcp.call_tool("cse_get_kicad", {"query": "P1"})
+            expected = {"part_id": 1, **cse_module._normalize_part(part(1)),
+                        "error": QUOTA.format("2026-11-01T15:47:00Z")}
+            assert first.is_error is False
+            assert first.structured_content == json.loads(first.content[0].text) == expected
+
+            def unexpected(*args, **kwargs):
+                pytest.fail("paused download waited or contacted CSE")
+
+            monkeypatch.setattr(client, "_get_semaphore", unexpected)
+            monkeypatch.setattr(client, "_get_http", unexpected)
+            monkeypatch.setattr(cse_module, "asyncio", SimpleNamespace(sleep=unexpected, to_thread=asyncio.to_thread))
+            started = now[0]
+            for args in ({"query": "P1"}, {"part_id": 1}):
+                reply = await mcp.call_tool("cse_get_kicad", args)
+                content = json.loads(reply.content[0].text)
+                assert reply.is_error is False and reply.structured_content == content
+                assert content == expected
+            assert now[0] == started and downloads == ["1"]
+            assert client._store.wanted()[0]["times_asked"] == 3
+
+        day = stats.usage.summary()["days"][0]
+        assert day["tools"]["cse_get_kicad"]["rate_limited"] == 3
+        assert day["tools"]["cse_get_kicad"]["failed"] == 0
+        assert day["reasons"] == {} and day["latency"] == {}
+
+    @pytest.mark.parametrize("source", ["memory", "store"])
+    @pytest.mark.parametrize("files", [False, True], ids=["missing", "stored"])
+    async def test_paused_cache_hits_keep_details_and_files(self, model_client, monkeypatch, source, files):
+        client, now, answers, downloads = model_client
+        row = cse_module._normalize_part(part(1))
+        result = {"results": [row], "total": 1}
+        if source == "memory":
+            client._cache.set("cse:p1:0", result)
+            if files:
+                client._kicad_cache.set("kicad:1", {"kicad_symbol": "stored"})
+        else:
+            client._store.put_search("P1", 0, result)
+            if files:
+                client._store.put_kicad(1, {"kicad_symbol": "stored"})
+        client._refused_since = now[0]
+        client._quota_until = now[0] + 1800
+        monkeypatch.setattr(client, "_get_http", lambda: pytest.fail("paused download contacted CSE"))
+        started = now[0]
+        reply = await client.get_kicad(query=" p1 ", manufacturer="TI")
+        assert reply == {"part_id": 1, **row, **(
+            {"kicad_symbol": "stored", "kicad_footprint": None} if files else
+            {"error": QUOTA.format("2026-11-01T15:47:00Z")})}
+        assert now[0] == started and downloads == []
+        upstream = stats.usage.summary()["totals"]["upstream"]["cse"]
+        assert upstream["cached"] == (2 if files else 1)
+        assert upstream["rate_limited"] == (0 if files else 1)
 
     async def test_nonzip_http_failure_is_logged_without_changing_its_error(self, model_client, monkeypatch, caplog):
         client, now, answers, downloads = model_client

@@ -338,7 +338,7 @@ def test_header_version_since_uses_matching_cutoff_or_first_observation_and_surv
 
 def test_first_version_fetch_is_recovered_from_legacy_health_before_pruning(store):
     with store._connection:
-        store._connection.execute("INSERT INTO health VALUES (?, ?)",
+        store._connection.execute("INSERT INTO health(fetched_at, data) VALUES (?, ?)",
                                   ("2026-11-21T18:04:00Z", '{"version": "0.10.5"}'))
     store.save_health({"version": "0.10.5"}, "2027-02-01T19:00:00Z")
     store.prune(dt("2027-02-01T19:00:00Z"))

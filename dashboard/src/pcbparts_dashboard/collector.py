@@ -80,6 +80,11 @@ def _validate_field(value, path: tuple) -> None:
 def _validate_stats(reply: object) -> dict:
     if not isinstance(reply, dict) or not isinstance(reply.get("days"), list):
         raise ValueError("Missing days list")
+    if "distributor_quota" in reply:
+        quotas = reply["distributor_quota"]
+        if not isinstance(quotas, dict) or any(not isinstance(value, dict) for value in quotas.values()):
+            raise ValueError("Invalid distributor_quota")
+        _validate_field(quotas, ("distributor_quota",))
     for record in reply["days"]:
         if not isinstance(record, dict) or not isinstance(record.get("date"), str):
             raise ValueError("Invalid day record")
@@ -211,6 +216,10 @@ def collect(settings: Settings, store: Store, *, days=None, client=None, now=Non
             if health.status_code == 200:
                 try:
                     reply_health = json.loads(health_body)
+                    # Quota state comes from this poll's authenticated stats reply. A server before
+                    # 0.10.9 has none there, so that poll keeps its own /health field instead.
+                    if isinstance(reply_health, dict) and "distributor_quota" in reply:
+                        reply_health["distributor_quota"] = reply["distributor_quota"]
                     store.save_health(reply_health, at)
                     observe_version(store, settings, reply_health, moment)
                 except (ValueError, RecursionError):

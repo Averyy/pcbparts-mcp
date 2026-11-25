@@ -129,12 +129,12 @@ export function badRequestLabel(code) {
   return (ARG_PROBLEM[kind] || ((x) => `Bad value for ${x}`))(p);
 }
 
-/** Why our own limits held a Mouser or DigiKey lookup back. `reset`: "7 PM", when the server's day ends. */
-export function heldBackLabel(cause, who, reset) {
+/** Why a lookup was held back; address allowances and distributor budgets have separate resets. */
+export function heldBackLabel(cause, who, reset, budgetReset = reset) {
   const resets = reset ? ` (resets ${reset})` : "";
   return ({
     minute_cap: `our limit on ${who} requests a minute`,
-    daily_count: `our ${who} budget for the day ran out${resets}`,
+    daily_count: `our ${who} budget for the day ran out${budgetReset ? ` (resets ${budgetReset})` : ""}`,
     address_daily: `the calling address had used its daily allowance${resets}`,
     distributor_daily: `${who}'s own daily limit was reached`,
     distributor_minute: `${who}'s own per-minute limit was reached`,
@@ -159,7 +159,7 @@ export const refusalGroupLabel = (g) => ({
 export const UPSTREAM_LABEL = table({
   jlcpcb: "JLCPCB parts search", lcsc: "LCSC product data", easyeda_products: "EasyEDA footprint checks",
   easyeda_components: "EasyEDA symbols and footprints", easyeda_pads: "EasyEDA footprint pads",
-  cse: "SamacSys (CSE)", digikey: "DigiKey",
+  cse: "SamacSys (CSE)", mouser: "Mouser", digikey: "DigiKey",
 });
 export const upstreamLabel = (src) => UPSTREAM_LABEL[src] || fallback(src);
 

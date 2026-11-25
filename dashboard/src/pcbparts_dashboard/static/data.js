@@ -1,6 +1,12 @@
 // Turns the stored Eastern-day records (/api/data's edays) into the numbers one range shows.
 // Every day here is a calendar day in America/New_York; the backend re-cuts the server's UTC days.
-import { addDays, dayLabel, dayTimeET, etMidnight, partsET } from "./format.js";
+import { addDays, dayLabel, dayTimeET, etMidnight, parseQuotaTime, partsET } from "./format.js";
+
+/** Older health samples omit the reset: use the server's default Mouser day start. */
+export function mouserDayStartHour(health) {
+  const reset = parseQuotaTime(health?.distributor_quota?.mouser?.resets_at);
+  return reset && Number.isFinite(reset.getTime()) ? reset.getUTCHours() : 6;
+}
 
 export const OUTCOMES = ["ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed", "unsorted"];
 // the outcomes that are problems; counted only inside the problems window (since the deploy)
@@ -89,6 +95,14 @@ export function totals(agg) {
 
 export function sumArr(a) { return Array.isArray(a) ? a.reduce((x, y) => x + (y || 0), 0) : 0; }
 export const sumObj = (o) => Object.values(o || {}).reduce((a, b) => a + (typeof b === "number" ? b : 0), 0);
+
+/** Mouser's HTTP request counts start in 0.10.9, in upstream_status rather than upstream. */
+export function upstreamCounts(record, src) {
+  const counts = own(record?.upstream, src);
+  if (counts) return counts;
+  const status = src === "mouser" && own(record?.upstream_status, src);
+  return status ? { sent: sumObj(status) } : {};
+}
 
 /** The latency buckets of every tool added up. */
 export function allLatency(agg) {
@@ -215,8 +229,11 @@ export const AMOUNT = {
   toolApps: (r) => Object.values(r?.tool_apps || {}).reduce((a, apps) => a + Object.values(apps || {}).reduce((x, v) => x + (v?.calls || 0), 0), 0),
   terms: (r) => sumObj(r?.popular_terms),
   reasons: (r) => Object.values(r?.reasons || {}).reduce((a, labels) => a + sumObj(labels), 0),
-  upstream: (r) => Object.values(r?.upstream || {}).reduce((a, u) => a + (u?.sent || 0) + (u?.cached || 0), 0),
-  upstreamOf: (src) => (r) => (own(r?.upstream, src)?.sent || 0) + (own(r?.upstream, src)?.cached || 0),
+  upstream: (r) => [...new Set([...Object.keys(r?.upstream || {}), "mouser"])].reduce((a, src) => a + AMOUNT.upstreamOf(src)(r), 0),
+  upstreamOf: (src) => (r) => {
+    const u = upstreamCounts(r, src);
+    return (u.sent || 0) + (u.cached || 0);
+  },
   dbJobs: (r) => r?.db_waits?.jobs || 0,
   datasheets: (r) => r?.datasheet_links?.visits || 0,
   distributorApps: (r) => Object.values(r?.distributor_apps || {}).reduce((a, apps) => a + Object.values(apps || {}).reduce((x, v) => x + (v?.calls || 0), 0), 0),

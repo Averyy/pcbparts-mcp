@@ -26,8 +26,8 @@ from pcbparts_mcp.client import DatasheetLinkBusy, JLCPCBClient
 from pcbparts_mcp.cse import CSEClient
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.easyeda_store import FootprintAnswer
-from pcbparts_mcp.mouser import MouserClient
-from pcbparts_mcp.stats import PARTS_ASKED, REFUSAL_GROUPS, UPSTREAM_EVENTS, UPSTREAM_SOURCES, UsageStats
+from pcbparts_mcp.mouser import MouserClient, MouserError
+from pcbparts_mcp.stats import PARTS_ASKED, REFUSAL_GROUPS, UPSTREAM_EVENTS, UPSTREAM_SOURCES, UPSTREAM_STATUS_SOURCES, UsageStats
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 18, 20, 5, tzinfo=UTC).timestamp()
@@ -419,6 +419,68 @@ class TestCSE:
             await client.close()
 
 
+class TestMouserHTTP:
+    @pytest.mark.parametrize("result,label,sends", [
+        (httpx.Response(200, json={"SearchResults": {"Parts": []}}), "2xx", 1),
+        (httpx.Response(200, text="unreadable"), "2xx", 3),
+        (httpx.Response(403), "4xx", 1), (httpx.Response(429), "429", 1),
+        (httpx.Response(503), "5xx", 3), (httpx.ReadTimeout("private"), "timeout", 1),
+        (httpx.ConnectError("private"), "connection", 3), (asyncio.CancelledError(), "cancelled", 1),
+        (RuntimeError("unexpected"), "other_error", 1),
+    ], ids=["ok", "unreadable", "forbidden", "limit", "server", "timeout", "connection", "cancelled", "other"])
+    async def test_every_attempt_counts(self, clock, result, label, sends):
+        requests = []
+
+        def send(request):
+            requests.append(request)
+            if isinstance(result, BaseException):
+                raise result
+            return result
+
+        async def sleep(seconds):
+            clock.advance(seconds)
+
+        client = MouserClient("key", clock=clock, sleep=sleep)
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(send))
+        try:
+            if label in ("timeout", "connection", "5xx") or (label == "2xx" and sends == 3) or label == "4xx":
+                with pytest.raises(MouserError):
+                    await client.get_part("LM358P")
+            elif isinstance(result, BaseException):
+                with pytest.raises(type(result)):
+                    await client.get_part("LM358P")
+            else:
+                await client.get_part("LM358P")
+        finally:
+            await client.close()
+        day = stats.usage.summary()["days"][0]
+        assert day["upstream_status"] == {"mouser": {label: sends}}
+        assert day["distributors"]["mouser"]["sent"] == len(requests) == sends
+        assert day["distributors"]["mouser"].get("retries", 0) == sends - 1
+
+    def test_status_and_retries_survive_save_load_and_totals(self, tmp_path, clock, monkeypatch):
+        path = tmp_path / "usage.json"
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        monkeypatch.setattr(stats, "usage", usage)
+        for _ in range(2):
+            stats.count_upstream_status("mouser", httpx.Response(503))
+            stats.count_upstream_status("mouser", httpx.Response(200))
+            stats.count_distributor("mouser", "sent")
+            stats.count_distributor("mouser", "sent")
+            stats.count_distributor("mouser", "retries")
+            clock.advance(86400)
+        usage.save()
+        reloaded = UsageStats(clock=clock)
+        reloaded.open(path)
+        view = reloaded.summary()
+        assert view == usage.summary()
+        assert view["totals"]["upstream_status"]["mouser"] == {"5xx": 2, "2xx": 2}
+        assert view["totals"]["distributors"]["mouser"] == {"sent": 4, "cached": 0, "rate_limited": 0, "retries": 2}
+        assert "mouser retries (from 0.10.9" in view["about"]
+        assert "From 0.10.9 also mouser" in view["about"]
+
+
 class TestPartsAsked:
     async def test_mouser(self):
         body = {"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}}
@@ -592,3 +654,13 @@ class TestWiring:
         found = {node.args[0].value for _, _, node in self._calls({"record_parts_asked", "count_parts_asked"})
                  if isinstance(node.args[0], ast.Constant)}
         assert found == set(PARTS_ASKED)
+
+    def test_every_status_counter_names_a_known_source(self):
+        used = set()
+        for file, _, node in self._calls({"count_upstream_status", "record_upstream_status", "_sent"}):
+            source = node.args[0]
+            if file in ("client.py", "stats.py") and isinstance(source, ast.Name) and source.id == "source":
+                continue
+            assert isinstance(source, ast.Constant) and source.value in UPSTREAM_STATUS_SOURCES
+            used.add(source.value)
+        assert used == set(UPSTREAM_STATUS_SOURCES)

@@ -49,7 +49,8 @@ def test_malformed_nested_stats_leave_store_untouched(settings, store, clock, st
         {"date": "2026-11-21", "calls": 99999} | bad,
     ]}
     with httpx.Client(transport=httpx.MockTransport(
-        lambda _: httpx.Response(200, content=json.dumps(malformed))
+        lambda request: httpx.Response(200, content=json.dumps(malformed))
+        if request.url.path == "/mcp/stats" else httpx.Response(503)
     )) as client:
         result = collect(settings, store, client=client, now=clock)
     assert not result["ok"] and result["days_stored"] == 0
@@ -222,7 +223,8 @@ def test_gzip_bomb_is_bounded_before_inflation(settings, store, clock, monkeypat
     compressed = gzip.compress(b"x" * (16 * 1024 * 1024))
     stream = Chunks(compressed, len(compressed))
     with httpx.Client(transport=httpx.MockTransport(
-        lambda _: httpx.Response(503, stream=stream, headers={"Content-Encoding": "gzip"})
+        lambda request: httpx.Response(503, stream=stream, headers={"Content-Encoding": "gzip"})
+        if request.url.path == "/mcp/stats" else httpx.Response(503)
     )) as client:
         tracemalloc.start()
         try:

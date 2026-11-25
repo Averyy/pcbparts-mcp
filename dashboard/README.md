@@ -12,6 +12,15 @@ at the same Eastern wall-clock time) or whole Eastern days ending yesterday.
 All calendar days use `America/New_York`, including 23/25-hour DST days. What it tracks and why:
 `docs/research.md`. Running it on the PCB Parts server: `docs/deploy.md`.
 
+Mouser daily-limit refusals are informational: lookups retry hourly or just after
+the next daily reset. Mouser limit replies count as 429 regardless of HTTP status and are excluded from
+the HTTP error warning; their own notices remain. Mouser HTTP outcomes start in
+0.10.9, so all recorded 4xx errors still contribute to the warning. The services table
+keeps the recorded counts. Held-back lookups remain warnings.
+Other Mouser refusals and all DigiKey refusals remain warnings. From server 0.10.9,
+the services table includes Mouser HTTP outcomes, and its error notice includes
+recorded retries over the same problems window. Older days need neither field.
+
 ```sh
 uv sync --extra dev
 uv run pcbparts-dashboard serve
@@ -69,6 +78,17 @@ including records preserved by the merge rules. Imports use Eastern time from
 recognized filenames (including daylight saving time), or the file modification
 time, and do not update live-fetch success metadata or prune imported history.
 
+From server 0.10.9, quota counts, pauses and reset times come from authenticated `/mcp/stats`'s top-level
+`distributor_quota` (current state, independent of the requested days). On a successful
+health fetch the collector copies that poll's stats `distributor_quota` into the saved
+health sample, replacing any public quota field. `/health` itself has no quota state.
+The Mouser budget tile, pace chart and pause notes read this combined sample; older
+stored health samples with counts still work. If the stats reply omits quotas, the new
+health sample has no `distributor_quota` (a server before 0.10.9 keeps its own `/health`
+field for that poll); a failed stats fetch ends the poll before health. A failed health
+fetch keeps the previous sample and its timestamp, so fresh counts never make an old
+health sample appear current.
+
 `/api/data` returns `edays` (oldest first) and `compare_today` instead of the old
 `days` and `compare` fields, plus `timezone`, `as_of`, `problems_since`,
 `problems_version`, and `version_since: {version, since}` for the current health
@@ -103,16 +123,20 @@ the cutoff, before the first known fetch of the new version, is the exact proble
 baseline: the 18:04 UTC snapshot for the configured 18:00 UTC deploy. Hourly lists
 still start with the cutoff's hour and exclude events already in that baseline.
 `version_since.since` uses the problems cutoff when the version labels match,
-otherwise that version's first health fetch. Daily distributor budgets and
-per-address allowances follow the server's UTC day (reset at 7 PM EST / 8 PM EDT),
-not the Eastern reporting day. Details: `docs/eastern-days-spec.md`, its overriding
+otherwise that version's first health fetch. From server 0.10.9, Mouser's daily
+budget resets at 06:00 UTC (1 AM EST / 2 AM EDT); DigiKey's budget and per-address
+allowances still reset at 00:00 UTC (7 PM EST / 8 PM EDT). The frontend reads Mouser's UTC reset hour from
+`health.distributor_quota.mouser.resets_at` (copied from stats), falling back to 6 for older samples. Budget pace, health
+sample freshness and reset redraws use these boundaries independently of Eastern
+reporting days. Details: `docs/eastern-days-spec.md`, its overriding
 `docs/eastern-days-spec-amendments.md`, and `docs/backend-spec.md`.
 
 `secrets.local` and `data/` stay out of git. The frontend files are maintained
 separately in `src/pcbparts_dashboard/static/`.
 
 ```sh
-uv run pytest -q -p no:cacheprovider
+uv run --extra dev pytest -q -p no:cacheprovider
+node --test tests/frontend/
 ```
 
 The page's own arithmetic (`static/data.js`: range totals, comparisons) is checked by

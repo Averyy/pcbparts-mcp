@@ -365,7 +365,7 @@ class QuotaStore:
 
 
 class DailyQuota:
-    """Daily request quota counter that resets at UTC midnight.
+    """Daily request counter with a configurable UTC day start (midnight by default).
 
     With a QuotaStore the count, and any pause the API asked for (pause()), survive restarts;
     without one they're memory only and a restart starts the day from 0.
@@ -374,7 +374,7 @@ class DailyQuota:
 
     def __init__(self, name: str, daily_limit: int, store: QuotaStore | None = None,
                  clock: Callable[[], float] = time.time, per_minute: int | None = None, own_key: str = "",
-                 store_key: str | None = None):
+                 store_key: str | None = None, day_start_hour: int = 0):
         """per_minute: our cap per rolling minute, kept below the API's own. own_key: what a user
         needs to run the server with their own credentials, named in the limit errors."""
         self._name = name
@@ -382,6 +382,7 @@ class DailyQuota:
         self._limit = daily_limit
         self._store = store
         self._clock = clock
+        self._day_start_hour = day_start_hour
         self._per_minute = per_minute
         self._minute = SlidingWindowBudget(per_minute, 60, clock) if per_minute else None
         self._own_key = own_key
@@ -390,7 +391,7 @@ class DailyQuota:
         self._paused_until = 0.0  # unix time; the API said its own limit is used up until then
         # "daily" (until the reset the API named), "daily_unknown" (it didn't name one), "burst"
         # (its per-minute limit), "refused" (403) or "invalid_key" (Mouser rejected one of several
-        # keys: out until the next UTC day, like a spent one)
+        # keys: out until the next Mouser day), or "checking" (a 60-second Mouser check hold)
         self._pause_reason = ""
         self._api_remaining: int | None = None  # the API's own count of requests left today
         self._api_limit: int | None = None
@@ -398,21 +399,36 @@ class DailyQuota:
         self._shared_paused_until = 0.0
         self._shared_pause_reason = ""
         self._daily_refusals: list[dict[str, Any]] = []  # private history, kept across UTC days
+        self._mouser_state: dict[str, Any] = {}  # private current key index; unused by DigiKey
         self.callers = CallerTally(name, clock)  # who sent them, logged hourly
         if store is not None:
             self._load(store.get(self._store_key))
             self._save()  # at startup, so status() shows whether the file is really writable
 
     def _today(self) -> datetime.date:
-        return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date()
+        return datetime.datetime.fromtimestamp(self._clock() - self._day_start_hour * 3600,
+                                                datetime.timezone.utc).date()
+
+    def next_reset(self, timestamp: float | None = None) -> float:
+        """Next distributor day start; date labels name the UTC date that day began."""
+        now = self._clock() if timestamp is None else timestamp
+        offset = self._day_start_hour * 3600
+        return _next_utc_midnight(now - offset) + offset
 
     def now(self) -> float:
         return self._clock()
 
     def _load(self, state: dict) -> None:
         self._daily_refusals = self._clean_daily_refusals(state.get("daily_refusals"))
+        if isinstance(state.get("mouser"), dict):
+            self._mouser_state = {"current": state["mouser"].get("current", 0)}
         try:
-            if state.get("date") == self._date.isoformat():
+            dates = [self._date.isoformat()]
+            # Before the first reset after upgrade, old UTC-day labels can be one day ahead.
+            # Only today's UTC date is eligible: a genuinely future label must not keep a count.
+            if self._day_start_hour:
+                dates.append(datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date().isoformat())
+            if state.get("date") in dates:
                 self._count = int(state.get("count", 0))
                 remaining, limit = state.get("api_remaining"), state.get("api_limit")
                 self._api_remaining = None if remaining is None else int(remaining)
@@ -466,6 +482,7 @@ class DailyQuota:
                 "shared_paused_until": self._shared_paused_until,
                 "shared_pause_reason": self._shared_pause_reason,
                 "daily_refusals": self._daily_refusals,
+                **({"mouser": self._mouser_state} if self._mouser_state else {}),
             })
 
     def _maybe_reset(self) -> None:
@@ -496,7 +513,7 @@ class DailyQuota:
     def count_error(self) -> dict:
         """The error once our own count has used up the day."""
         return {"error": f"{self._name} daily quota exceeded ({self._limit} requests/day on this shared server). "
-                         f"It resets at {_utc_text(_next_utc_midnight(self._clock()))}.{self._advice()}"}
+                         f"It resets at {_utc_text(self.next_reset())}.{self._advice()}"}
 
     def _advice(self) -> str:
         if self._own_key:
@@ -514,8 +531,8 @@ class DailyQuota:
             return {"error": f"{self._name} daily quota exceeded ({limit}). "
                              f"It resets at {_utc_text(self._paused_until)}.{self._advice()}"}
         if self._pause_reason == "daily_unknown":
-            return {"error": f"{self._name} daily quota exceeded (counted by {self._name}). {self._name} doesn't say when "
-                             f"its count resets, so this server tries again at {_utc_text(self._paused_until)}.{self._advice()}"}
+            return {"error": f"{self._name} daily quota exceeded (counted by {self._name}). "
+                             f"This server tries again at {_utc_text(self._paused_until)}.{self._advice()}"}
         wait = math.ceil(self._paused_until - now)
         if self._pause_reason == "refused":
             return {"error": f"{self._name} refused this server's requests (HTTP 403). Try again in {wait} s.{self._advice()}"}
@@ -524,27 +541,28 @@ class DailyQuota:
     def pause(self, until: float, reason: str) -> None:
         """Send nothing until `until` (unix time): the API said its own limit is used up.
         reason is "daily", "daily_unknown", "burst" or "refused" (see __init__)."""
-        if until > self._paused_until:
+        if reason == "invalid_key" or until > self._paused_until:
             self._paused_until, self._pause_reason = until, reason
             self._save()
 
-    def pause_daily_unknown_reset(self) -> bool:
-        """The API refused for its daily limit without saying when it resets (Mouser): while our own
-        count is below the limit, try again in an hour, from the first refusal on, so a count that
-        resets at another time of day (or rolls over 24 hours) costs at most an hour (on 2026-11-17
-        Mouser refused after 110 of our 1,000). Once our own count is spent too, wait for the next
-        UTC midnight. A refusal while a daily pause is running answers a request sent before that
+    def pause_daily_unknown_reset(self, until: float | None = None, *, sent_at: float | None = None,
+                                  sent_count: int | None = None) -> bool:
+        """The API refused for its daily limit without a reset header: pause until the supplied
+        time, or for an hour. MouserKeyPool schedules its day-start retry and decides when to rotate
+        back to this key. A refusal while a daily pause is running answers a request sent before that
         pause began (concurrent batches): it changes nothing, so two refusals together can't
         stretch the pause. Return whether a pause began; keep its refusal episode for logs."""
         now = self._clock()
         if self._pause_reason in ("daily", "daily_unknown") and now < self._paused_until:
             return False
         self._maybe_reset()
-        until = now + 3600 if self._count < self._limit else _next_utc_midnight(now)
+        until = now + 3600 if until is None else until
         if until <= self._paused_until:
             return False  # pause() would leave a longer, existing pause alone
         if not self._daily_refusals or self._daily_refusals[-1]["resumed_at"] is not None:
-            self._daily_refusals.append({"at": now, "count": self._count, "last_refused_at": now,
+            self._daily_refusals.append({"at": now if sent_at is None else sent_at,
+                                         "count": self._count if sent_count is None else sent_count,
+                                         "last_refused_at": now,
                                          "retries": 0, "resumed_at": None})
             self._daily_refusals = self._daily_refusals[-30:]
         else:
@@ -606,7 +624,7 @@ class DailyQuota:
         now = self._clock()
         waits = [self._paused_until - now]
         if self._count >= self._limit:
-            waits.append(_next_utc_midnight(now) - now)
+            waits.append(self.next_reset(now) - now)
         if self._minute is not None:
             waits.append(self._minute.wait_seconds())
         wait = max(waits)
@@ -618,7 +636,7 @@ class DailyQuota:
         return max(0, self._limit - self._count)
 
     def status(self) -> dict[str, Any]:
-        """For /health: today's count and our limit, the API's own count of requests left (None
+        """For private stats: today's count and our limit, the API's own count of requests left (None
         when it doesn't report one), when a pause ends (None when not paused), and whether the
         counts survive a restart."""
         self._maybe_reset()
@@ -627,6 +645,7 @@ class DailyQuota:
             "limit": self._limit,
             "api_remaining": self._api_remaining,
             "paused_until": _utc_text(self._paused_until) if self._clock() < self._paused_until else None,
+            "resets_at": _utc_text(self.next_reset()),
             "kept_across_restarts": self._store is not None and self._store.ok,
         }
 
@@ -673,7 +692,7 @@ class QuotaPool:
 
     @staticmethod
     def _daily_reset_at(quota: DailyQuota) -> float:
-        reset = _next_utc_midnight(quota.now()) if not quota.remaining else 0.0
+        reset = quota.next_reset() if not quota.remaining else 0.0
         if quota._pause_reason in ("daily", "daily_unknown", "invalid_key") and quota.now() < quota._paused_until:
             reset = max(reset, quota._paused_until)
         return reset
@@ -686,7 +705,7 @@ class QuotaPool:
         return max(pauses, key=lambda item: item[0])
 
     def daily_error(self) -> dict:
-        resets = [self._daily_reset_at(q) or _next_utc_midnight(q.now()) for q in self.quotas]
+        resets = [self._daily_reset_at(q) or q.next_reset() for q in self.quotas]
         return {"error": f"{self._first._name} daily quota exceeded on this shared server. "
                          f"It resets at {_utc_text(min(resets))}.{self._first._advice()}"}
 
@@ -737,9 +756,10 @@ class QuotaPool:
         wait = max(waits)
         return math.ceil(wait) if wait > 0 else None
 
-    def acquire(self, caller: str | None = None) -> tuple[int | None, dict | None]:
+    def acquire(self, caller: str | None = None, *, check_address: bool = True) -> tuple[int | None, dict | None]:
+        """Charge every send, but check and count the address only for the first attempt."""
         self.last_refusal_cause = None
-        if error := self.address_error(caller):
+        if check_address and (error := self.address_error(caller)):
             self.last_refusal_cause = "address_daily"
             return None, error
         error = self.paused_error()
@@ -755,11 +775,13 @@ class QuotaPool:
         quota = self.quotas[index]
         quota._count += 1
         quota._save()
-        if self.address_daily is not None:
+        if check_address and self.address_daily is not None:
             self.address_daily.record(caller)
         self.callers.record(caller, index)
         if index and self._switched_day.get(index) != quota._date:
-            logger.info(f"{quota._name} requests moved to {self._unit} {index + 1} for {quota._date} UTC")
+            day = (f"the day starting {quota._date} {quota._day_start_hour:02d}:00 UTC"
+                   if self._unit == "key" else f"{quota._date} UTC")
+            logger.info(f"{quota._name} requests moved to {self._unit} {index + 1} for {day}")
             self._switched_day[index] = quota._date
         return index, None
 
@@ -788,6 +810,7 @@ class QuotaPool:
                 app._save()
 
     def status(self) -> dict[str, Any]:
+        """Private detail for the selected quota, with the pool's effective pause."""
         index = self._active_index()
         status = self.quotas[index if index is not None else -1].status()
         until, _ = self._penalty()
@@ -798,29 +821,106 @@ class QuotaPool:
 
 
 class MouserKeyPool(QuotaPool):
-    """Mouser's API keys (MOUSER_API_KEY, then the optional MOUSER_API_KEY_2, _3, ...) as one pool:
-    each key's day in order, one shared per-minute budget (Mouser doesn't say whether its own
-    per-minute limit is per key), and a per-minute pause on any key pauses them all. Mouser's daily
-    refusal pauses only the key that got it (MouserClient), so the next key carries on.
-
-    The limit errors are Mouser's as they were before pools. With one key they're that key's own,
-    word for word; with several, the key free soonest explains the wait: a refusal Mouser sent
-    (it doesn't say when its count resets), else the reset time only, as DigiKey's pool does,
-    since a count would be wrong or reveal the extra keys."""
+    """Sticky rotation using each key's pause as its next try; counts are telemetry unless zero."""
 
     def __init__(self, quotas: list[DailyQuota], per_minute: int | None = None,
                  address_daily: AddressDailyQuota | None = None):
         super().__init__(quotas, per_minute=per_minute, unit="key", address_daily=address_daily)
+        current = self._first._mouser_state.get("current", 0)
+        self._current = current if type(current) is int and 0 <= current < len(quotas) else 0
+        self._checks: dict[int, tuple[float, float | None, bool]] = {}
+        self._save_rotation()
+
+    def _save_rotation(self) -> None:
+        self._first._mouser_state = {"current": self._current}
+        self._first._save()
+
+    def _active_index(self) -> int | None:
+        for offset in range(len(self.quotas)):
+            index = (self._current + offset) % len(self.quotas)
+            quota = self.quotas[index]
+            quota._maybe_reset()
+            if quota._limit and quota.now() >= self._daily_reset_at(quota):
+                if index != self._current:
+                    self._current = index
+                    self._save_rotation()
+                return index
+        return None
+
+    def _daily_reset_at(self, quota: DailyQuota) -> float:
+        return quota._paused_until if quota._limit else quota.next_reset()
+
+    def checking(self) -> bool:
+        """Whether a daily-reset check still holds a key while awaiting its reply."""
+        return any(index in self._checks and q._pause_reason == "checking" and q.now() < q._paused_until
+                   for index, q in enumerate(self.quotas))
+
+    def pause_cause(self) -> str | None:
+        cause = super().pause_cause()
+        if (cause not in ("distributor_minute", "distributor_refused") and self._active_index() is None
+                and any(q._limit for q in self.quotas)):
+            return "distributor_daily"
+        return cause
 
     def daily_error(self) -> dict:
-        quota = min(self.quotas, key=self._daily_reset_at)  # the first of those free soonest
-        # Mouser's refusal says when this server asks again; one key's other API pause ("daily",
-        # from rate-limit headers) gives that key's own text too
-        one_key = len(self.quotas) == 1
-        explain = quota._pause_reason == "daily_unknown" or (one_key and quota._pause_reason == "daily")
-        if explain and (paused := quota.paused_error()):
-            return paused
-        return quota.count_error() if one_key else super().daily_error()
+        if not any(q._limit and q._pause_reason != "invalid_key" for q in self.quotas):
+            return self._first.count_error() if len(self.quotas) == 1 else super().daily_error()
+        until = min(self._daily_reset_at(q) for q in self.quotas if q._limit)
+        name = self._first._name
+        return {"error": f"{name} daily quota exceeded (counted by {name}). "
+                         f"This server tries again at {_utc_text(until)}.{self._first._advice()}"}
+
+    @staticmethod
+    def _last_refusal(quota: DailyQuota) -> float | None:
+        return quota._daily_refusals[-1]["last_refused_at"] if quota._daily_refusals else None
+
+    def sent(self, index: int) -> tuple[float, float | None, bool]:
+        quota = self.quotas[index]
+        # Snapshot the latest refusal; late replies cannot undo or repeat a newer refusal.
+        # An open refusal episode is a check too: a 0.10.8 file can hold one under a later
+        # per-minute pause reason.
+        open_episode = bool(quota._daily_refusals) and quota._daily_refusals[-1]["resumed_at"] is None
+        token = (quota.now(), self._last_refusal(quota),
+                 open_episode or quota._pause_reason in ("daily", "daily_unknown", "invalid_key", "checking"))
+        if token[2]:
+            self._checks[index] = token
+            quota._paused_until, quota._pause_reason = token[0] + 60, "checking"
+            quota._save()
+        return token
+
+    def finished(self, index: int, token: tuple[float, float | None, bool], *, accepted: bool = False) -> dict | None:
+        if self._checks.get(index) == token:
+            del self._checks[index]  # an older completion cannot remove a newer check
+        quota = self.quotas[index]
+        if token[1] != self._last_refusal(quota) or quota._pause_reason == "invalid_key":
+            return None  # a refusal recorded after this send owns the pause
+        if quota._pause_reason == "checking" and (accepted or quota._paused_until == token[0] + 60):
+            quota._paused_until, quota._pause_reason = quota.now(), "daily_unknown"
+            quota._save()
+        if accepted:
+            resumed = quota.clear_expired_pause()
+            if self._current != index:
+                self._current = index
+                self._save_rotation()
+            return resumed
+        return None
+
+    def refuse_daily(self, index: int, token: tuple[float, float | None, bool], sent_count: int) -> bool:
+        if self._checks.get(index) == token:
+            del self._checks[index]
+        quota = self.quotas[index]
+        if token[1] != self._last_refusal(quota) or quota._pause_reason == "invalid_key":
+            return False
+        day = quota.next_reset(token[0]) + 60
+        until = day if sent_count >= quota._limit // 2 else min(quota.next_reset(token[0] - 60) + 60, quota.now() + 3600)
+        if until <= quota.now():
+            until = quota.now() + 3600
+        quota._paused_until, quota._pause_reason = 0.0, ""
+        quota.pause_daily_unknown_reset(until, sent_at=token[0], sent_count=sent_count)
+        if self._current == index:
+            self._current = (index + 1) % len(self.quotas)
+        self._save_rotation()
+        return True
 
 
 class SlidingWindowBudget:
