@@ -173,6 +173,45 @@ def test_shape_catalog_whitelist():
     assert cat.shape("jlc_search", invalid, {}, {}, set(invalid)) == {"args": sorted(invalid)}
 
 
+@pytest.mark.parametrize("name,expected", [
+    ("Part_Numbers", "Part_Numbers"), ("parts", "parts"), ("PARTS", "PARTS"),
+    ("a", "a"), ("_", "_"), ("a" * 30, "a" * 30),
+    ("lm358p", "unknown_argument"), ("part1", "unknown_argument"),
+    ("part numbers", "unknown_argument"), ("part-numbers", "unknown_argument"),
+    ("part.numbers", "unknown_argument"), ("párts", "unknown_argument"),
+    ("a" * 31, "unknown_argument"), ("a" * 1000, "unknown_argument"),
+    ("", "unknown_argument"), ("parts\n", "unknown_argument"),
+    ("203.0.113.1", "unknown_argument"), ("2001:db8::1", "unknown_argument"),
+], ids=[f"name{i}" for i in range(18)])
+def test_unrecognized_argument_names(name, expected):
+    shape = catalog().shape("board_get", {name: "PRIVATE VALUE"}, {}, {}, set())
+    assert shape == {"args": [expected]}
+
+
+@pytest.mark.parametrize("name", ["partNumber", "MPNsList", "alice_smith", "Texas_Instruments", "q_" * 15])
+def test_unknown_argument_ascii_names_keep_original_case(name):
+    assert catalog().shape("board_get", {name: "PRIVATE VALUE"}, {}, {}, set()) == {"args": [name]}
+
+
+def test_declared_argument_names_keep_existing_limits():
+    params = {"part1", "Declared_Name", "a" * 40, "b" * 41}
+    shape = catalog().shape("board_get", dict.fromkeys(params, "PRIVATE VALUE"), {}, {}, params)
+    assert shape == {"args": ["Declared_Name", "a" * 40, "b" * 40, "part1"]}
+
+
+@pytest.mark.parametrize("count", [18, 19, 25])
+def test_unrecognized_argument_names_sorted_deduplicated_and_capped(count):
+    words = "search keyword term text list item page size count max min result num number type filter value code key sort order by id name part".split()
+    names = ["Name_" + word.capitalize() for word in reversed(words[:count])]
+    args = dict.fromkeys(names, False) | {"query": "PRIVATE VALUE", "lm358p": 0, "part1": [],
+                                        "unknown_argument": True, "unused": None}
+    shape = catalog().shape("jlc_search", args, {}, {}, {"query"})
+    expected = sorted([*names, "query", "unknown_argument"])
+    assert shape["args"] == expected[:20]
+    assert shape.get("args_omitted", 0) == max(0, len(expected) - 20)
+    assert ("args_omitted" in shape) == (len(expected) > 20)
+
+
 def test_batch_and_source_shapes(monkeypatch):
     cat = catalog()
     items = [" C123 ", "MPN", {"mpn": "C1815"}, {"lcsc": "c2", "mpn": "x"}, {"lcsc": "N/A", "mpn": "part"}]
@@ -452,6 +491,10 @@ async def test_http_platform_ranges_aliases_final_reason_and_terms(tmp_path, mon
     async def digikey_get_part(part_number: str):
         return {"number": part_number}
 
+    @mcp.tool
+    async def part_lifecycle(parts: list[str]):
+        raise AssertionError("invalid arguments reached the tool")
+
     tools = await mcp.list_tools(run_middleware=False)
     stats.usage.tools = {t.name for t in tools}
     stats.usage.tool_params = {t.name: set(t.parameters["properties"]) for t in tools}
@@ -477,8 +520,12 @@ async def test_http_platform_ranges_aliases_final_reason_and_terms(tmp_path, mon
                 assert response.json()["result"]["structuredContent"] == reply
             response = await rpc(client, "tools/call", {"name": "digikey_get_part", "arguments": {"mpn": "SECRET"}}, "203.0.113.1")
             assert response.json()["result"]["structuredContent"] == {"number": "SECRET"}
+            for tool, args in (("jlc_search", {"query": "SECRET", "Part_Numbers": ["LM358P"]}),
+                               ("part_lifecycle", {"Part_Numbers": ["LM358P"]})):
+                response = await rpc(client, "tools/call", {"name": tool, "arguments": args}, "203.0.113.1")
+                assert response.json()["result"]["isError"]
             await rpc(client, "tools/call", {"name": "jlc_search", "arguments": {"query": []}}, "203.0.113.1")
-            await rpc(client, "tools/call", {"name": "SECRET", "arguments": {"SECRET": "SECRET"}}, "203.0.113.1")
+            await rpc(client, "tools/call", {"name": "SECRET", "arguments": {"Part_Numbers": "SECRET", "lm358p": "SECRET"}}, "203.0.113.1")
     await log.flush()
     rows = read_rows(tmp_path)
     assert rows[0]["app"] == "other" and rows[0]["ms"] == 0
@@ -488,11 +535,19 @@ async def test_http_platform_ranges_aliases_final_reason_and_terms(tmp_path, mon
     assert stats.usage.summary()["days"][0]["reasons"] == {"jlc_search": {"no_results_words": 38}}
     assert stats.usage.summary()["days"][0]["popular_terms"] == {"capacitor": 38}
     assert len(stats.usage._terms["capacitor"][1]) == 10  # platform + one /48 + eight IPv4s
-    assert rows[-3]["shape"]["args"] == ["part_number"]
+    assert rows[-5]["shape"]["args"] == ["part_number"]
+    assert rows[-4]["outcome"] == "bad_request" and rows[-4]["shape"]["args"] == ["Part_Numbers", "query"]
+    assert rows[-4]["bad_request_reason"] == "arg:unknown_argument:unexpected_keyword_argument"
+    assert rows[-3]["outcome"] == "bad_request" and rows[-3]["shape"]["args"] == ["Part_Numbers"]
+    assert rows[-3]["bad_request_reason"] == "arg:parts:missing_argument"
     assert rows[-2]["bad_request_reason"] == "arg:query:string_type"
-    assert rows[-1]["tool"] == "unknown" and rows[-1]["shape"] == {"args": ["unknown_argument"]}
+    assert rows[-1]["tool"] == "unknown" and rows[-1]["shape"] == {"args": ["Part_Numbers", "unknown_argument"]}
     assert rows[-1]["bad_request_reason"] == "unknown_tool"
-    assert "SECRET" not in json.dumps(rows)
+    assert all(text not in json.dumps(rows) for text in ("SECRET", "LM358P", "lm358p", "203.0.113.1"))
+    assert stats.usage.summary()["days"][0]["bad_request_reasons"] == {
+        "jlc_search": {"arg:unknown_argument:unexpected_keyword_argument": 1, "arg:query:string_type": 1},
+        "part_lifecycle": {"arg:parts:missing_argument": 1}, "unknown": {"unknown_tool": 1}}
+    assert "Part_Numbers" not in json.dumps(stats.usage.summary())
     assert failed(tmp_path)["queries"] == [{"tool": "jlc_search", "reason": "no_results_words", "text": "capacitor", "count": 38}]
 
 
@@ -651,17 +706,21 @@ def test_usage_report(tmp_path, capsys):
 
     rows = [{"tool": "jlc_search", "outcome": "ok", "app": "app", "ms": i, "reason": None} for i in range(1, 101)]
     rows += [{"tool": "jlc_search", "outcome": "bad_request", "app": None, "ms": 1,
-              "bad_request_reason": "too_long"}, {"refused": "per_ip_rate_limit"}]
+              "bad_request_reason": "too_long"},
+             {"tool": "part_lifecycle", "outcome": "bad_request", "ms": 1,
+              "bad_request_reason": "arg:parts:missing_argument", "shape": {"args": ["Part_Numbers"]}},
+             {"refused": "per_ip_rate_limit"}]
     with gzip.open(tmp_path / "calls-2026-10-16.jsonl.gz", "wt", encoding="utf-8") as out:
         out.write("\n".join(json.dumps(row) for row in rows))
     (tmp_path / f"calls-{DATE}.jsonl").write_text(json.dumps({"tool": "board_search", "outcome": "not_found",
-        "app": "app", "ms": 10, "reason": "no_results"}) + "\n", encoding="utf-8")
+        "app": "app", "ms": 10, "reason": "no_results", "shape": {"args": ["Search_Term", "unknown_argument"]}}) + "\n", encoding="utf-8")
     (tmp_path / f"failed-{DATE}.json").write_text(json.dumps({"date": DATE, "dropped": 0, "queries": [
         {"tool": "board_search", "reason": "no_results", "text": "weird search", "count": 9}]}), encoding="utf-8")
     assert usage_report.main(["--dir", str(tmp_path), "--days", "2"], today=dt.date(2026, 10, 17)) == 0
     text = capsys.readouterr().out
     for expected in ("jlc_search / ok: 100", "app / jlc_search: 100", "jlc_search: 50 / 95 / 99",
-                     "jlc_search / too_long: 1", "board_search / no_results: 1", "per_ip_rate_limit: 1", '9 "weird search"'):
+                     "jlc_search / too_long: 1", "board_search / no_results: 1", "per_ip_rate_limit: 1", '9 "weird search"',
+                     "part_lifecycle / bad_request: 1", "part_lifecycle / arg:parts:missing_argument: 1"):
         assert expected in text
     assert usage_report.main(["--dir", str(tmp_path), "--date", DATE]) == 0
     assert "jlc_search" not in capsys.readouterr().out

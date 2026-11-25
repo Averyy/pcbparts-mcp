@@ -5,6 +5,7 @@ import datetime
 import json
 import logging
 import time
+from types import SimpleNamespace
 from urllib.parse import parse_qs
 
 from fastmcp import Client
@@ -19,7 +20,7 @@ UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 14, 21, 15, tzinfo=UTC).timestamp()
 MIDNIGHT = datetime.datetime(2026, 11, 15, tzinfo=UTC).timestamp()
 CREDS = ("first-client-id", "first-client-secret", "second-client-id", "second-client-secret")
-HEALTH_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "kept_across_restarts"}
+STATUS_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "resets_at", "kept_across_restarts"}
 DAILY_HEADERS = {"x-ratelimit-remaining": "0", "x-ratelimit-resettime": "2026-11-15T00:00:00Z"}
 
 
@@ -272,25 +273,33 @@ async def test_half_set_second_pair_logs_missing_name_and_runs_one_app(monkeypat
     assert all(secret not in caplog.text for secret in CREDS)
 
 
-async def test_health_shape_and_active_app_and_no_credentials(monkeypatch, clock, caplog):
+async def test_private_active_app_and_public_health_shape(monkeypatch, clock, caplog, stats_headers):
     configure(monkeypatch)
     with caplog.at_level(logging.INFO):
         async with Client(server.mcp):
             assert "DigiKey client initialized: 2 app(s) (requests today: 0, 0)" in caplog.messages
             quotas = pool(clock, limit=2)
             monkeypatch.setitem(server._distributor_quotas, "digikey", quotas)
+
+            async def quota_status():
+                assert "distributor_quota" not in json.loads((await server.health(None)).body)
+                response = await server.usage_stats(SimpleNamespace(headers=stats_headers, query_params={}))
+                status = json.loads(response.body)["distributor_quota"]["digikey"]
+                assert set(status) == STATUS_KEYS
+                return status
+
             quotas.quotas[0].check()
             quotas.quotas[0].note_api_usage(5, 1000)
-            status = json.loads((await server.health(None)).body)["distributor_quota"]["digikey"]
-            assert set(status) == HEALTH_KEYS
+            status = await quota_status()
             assert status == {"used_today": 1, "limit": 2, "api_remaining": 5,
-                              "paused_until": None, "kept_across_restarts": False}
+                              "paused_until": None, "resets_at": "2026-11-15 00:00 UTC",
+                              "kept_across_restarts": False}
             quotas.quotas[0].pause(MIDNIGHT, "daily")
             quotas.acquire()
-            status = json.loads((await server.health(None)).body)["distributor_quota"]["digikey"]
-            assert set(status) == HEALTH_KEYS and status["used_today"] == 1 and status["paused_until"] is None
+            status = await quota_status()
+            assert status["used_today"] == 1 and status["paused_until"] is None
             quotas.acquire()
-            status = json.loads((await server.health(None)).body)["distributor_quota"]["digikey"]
+            status = await quota_status()
             assert status["used_today"] == 2 and status["paused_until"] == "2026-11-15 00:00 UTC"
             public = json.dumps([status, stats.usage.summary(), quotas.acquire()[1]])
             assert all(secret not in public for secret in CREDS)

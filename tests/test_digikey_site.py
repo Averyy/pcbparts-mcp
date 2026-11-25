@@ -579,7 +579,7 @@ def mouser_client(store, parts):
         return httpx.Response(200, json={"Errors": [], "SearchResults": {"NumberOfResult": len(hits), "Parts": hits}})
 
     sent: list[list[str]] = []
-    client = MouserClient(api_key="k", quota=DailyQuota("Mouser", 1000), store=store)
+    client = MouserClient(api_key="k", quota=DailyQuota("Mouser", 1000, day_start_hour=6), store=store)
     client._client = httpx.AsyncClient(transport=httpx.MockTransport(answer))
     return client, sent
 
@@ -662,15 +662,43 @@ def test_switched_on_only_by_its_setting(monkeypatch, value, on):
     assert digikey_site.enabled() is on
 
 
-async def test_server_without_credentials_and_switched_on_builds_the_keyless_client(monkeypatch):
+@pytest.mark.parametrize("paused", [False, True], ids=["ready", "paused"])
+async def test_server_without_credentials_and_switched_on_builds_the_keyless_client(
+        monkeypatch, clock, stats_headers, paused):
+    import datetime
     from fastmcp import Client
+    from pcbparts_mcp import digikey_site
+
+    class FixedDateTime(datetime.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return cls(2026, 11, 24, 14, tzinfo=datetime.timezone.utc)
+
+    monkeypatch.setattr(digikey_site, "datetime", SimpleNamespace(
+        datetime=FixedDateTime, timedelta=datetime.timedelta, timezone=datetime.timezone))
     monkeypatch.setenv("DIGIKEY_LOOKUP", "site")
     monkeypatch.setattr(server, "_digikey_client", None)  # put back after: startup sets the global
+    monkeypatch.setattr(server, "_health_clock", lambda: 1795528800)  # 2026-11-24 14:00 UTC
     async with Client(server.mcp):
         assert server._digikey_client is not None and server._digikey_client.unmetered
         assert "digikey" not in server._distributor_quotas  # no daily quota
-        body = json.loads((await server.health(None)).body)
-        assert body["distributor_quota"]["digikey"] == {"paused_until": None}
+        server._digikey_client._site, _ = make_site(clock, pause=60)
+        if paused:
+            server._digikey_client._site._refused("test refusal")
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.get("/health")
+            assert response.status_code == 200
+            assert "distributor_quota" not in response.json()
+            for headers in ({}, {"Authorization": "Bearer wrong"}):
+                response = await client.get("/mcp/stats", headers=headers)
+                assert response.status_code == 401 and response.json() == {"error": "Unauthorized"}
+            response = await client.get("/mcp/stats", headers=stats_headers)
+            assert response.status_code == 200
+            assert response.json()["distributor_quota"] == {"digikey": {
+                "paused_until": "2026-11-24 14:01 UTC" if paused else None,
+                "resets_at": "2026-11-25 00:00 UTC",
+            }}
 
 
 async def test_server_without_credentials_by_default_has_no_digikey(monkeypatch):
@@ -681,7 +709,7 @@ async def test_server_without_credentials_by_default_has_no_digikey(monkeypatch)
         assert server._digikey_client is None
         reply = await server.digikey_get_part(part_number="LM358P")
         assert reply["error"].startswith("DigiKey API credentials not configured")
-        assert json.loads((await server.health(None)).body)["distributor_quota"] == {}
+        assert "distributor_quota" not in json.loads((await server.health(None)).body)
 
 
 async def test_server_with_credentials_uses_the_api(monkeypatch):

@@ -44,7 +44,7 @@ Python runs through `uv`, never pip.
 - **JLCPCB:** use `wafer.AsyncSession` configured as in `client.py`; raw httpx/aiohttp gets 403s. Always pair wafer's `timeout=` (a total budget) with `attempt_timeout=`. Sensor scrapers use `make_session()`/`attempt_cap()` from `scripts/scrapers/common.py`.
 - **EasyEDA `/api/products`:** at most one request per 15 s per IP, and bursts of 5. Integration tests share a waiting budget of 4 per rolling 75 s and footprint answers across clients; run in one process, alone on the IP. The first EasyEDA 403 skips further EasyEDA calls for that session: don't retry or re-run tests. Details: `docs/ref-easyeda-api.md`.
 - **EasyEDA seed scripts** (`scripts/build_easyeda_seed.py`, `scripts/build_easyeda_pads.py`): run on your own machine only, never on prod or in CI, and never while integration tests or the other seed script run.
-- **Mouser and DigiKey:** their daily limits are shared by everyone using pcbparts.dev. Never call them from tests or probes. Check `/health` (`distributor_quota`) before any test with the prod credentials. DigiKey suspends an app that goes over its per-second threshold.
+- **Mouser and DigiKey:** their daily limits are shared by everyone using pcbparts.dev. Never call them from tests or probes. Check `/mcp/stats` (`distributor_quota`, with `Authorization: Bearer <STATS_TOKEN>`) before any test with the prod credentials. DigiKey suspends an app that goes over its per-second threshold.
 - Don't run `scripts/load_test.py` against anything but a local container.
 
 ## Rules for limits and refusals

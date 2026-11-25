@@ -85,9 +85,10 @@ class TestDailyQuota:
 
     @pytest.mark.asyncio
     async def test_quota_error_flows_through_mouser_get_part(self):
-        """Quota errors flow through get_part when over limit."""
-        quota = DailyQuota("Mouser", 1)
-        c = MouserClient(api_key="test-key", quota=quota)
+        """Mouser's daily refusal holds back uncached lookups."""
+        clock = lambda: 1_800_000_000
+        quota = DailyQuota("Mouser", 1, clock=clock, day_start_hour=6)
+        c = MouserClient(api_key="test-key", quota=quota, clock=clock)
         c._get_client()
 
         mock_response = MagicMock()
@@ -106,19 +107,21 @@ class TestDailyQuota:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(c._client, "post", new_callable=AsyncMock, return_value=mock_response):
-            # First call succeeds (uses the 1 allowed request)
+            # First call succeeds; the local count alone does not gate Mouser.
             result = await c.get_part("595-LM358P")
             assert "error" not in result
 
-            # Second call blocked by quota (different part to avoid cache)
+            quota.pause_daily_unknown_reset()
+            # Second call blocked by Mouser's refusal (different part to avoid cache).
             result = await c.get_part("511-LM358P")
             assert "error" in result
             assert "daily quota exceeded" in result["error"]
+        await c.close()
 
     @pytest.mark.asyncio
     async def test_cache_hits_dont_count(self):
         """Cache hits should not consume quota."""
-        quota = DailyQuota("Mouser", 1)
+        quota = DailyQuota("Mouser", 1, day_start_hour=6)
         c = MouserClient(api_key="test-key", quota=quota)
         c._get_client()
 
@@ -362,7 +365,7 @@ class TestDigiKeyNormalizeProduct:
 class TestMouserClient:
     @pytest.fixture
     def client(self):
-        quota = DailyQuota("Mouser", 1000)
+        quota = DailyQuota("Mouser", 1000, day_start_hour=6)
         c = MouserClient(api_key="test-key", quota=quota)
         c._get_client()  # Eagerly init for patching in tests
         return c

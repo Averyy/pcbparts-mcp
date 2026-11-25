@@ -25,7 +25,12 @@
       "kept_across_restarts": true
     },
     "digikey": {
-      "paused_until": null
+      "used_today": 10,
+      "limit": 1000,
+      "api_remaining": 990,
+      "paused_until": null,
+      "resets_at": "2026-11-22 00:00 UTC",
+      "kept_across_restarts": true
     }
   },
   "database_pressure": {

@@ -114,6 +114,183 @@ function setup(p = payload()) {
     runTimers: () => { for (const [id, timer] of [...timers]) if (timer.at <= now && timers.delete(id)) timer.fn(); } };
 }
 
+test("Mouser HTTP outcomes and retry counts load without a UI schema change", () => {
+  const counts = { mouser: { "2xx": 10, "5xx": 3, connection: 1 } };
+  const p = payload({ problems_since: "2026-11-23T05:00:00Z", edays: [day("2026-11-23", {
+    complete: false, partial_end: true,
+    distributors: { mouser: { sent: 14, cached: 2, rate_limited: 0, retries: 4 } },
+    upstream_status: counts,
+    problems: { start: "2026-11-23T05:00:00Z", end: at, upstream_status: counts },
+  })] });
+  const app = setup(p);
+  app.render();
+  assert.equal(app.view().agg.distributors.mouser.retries, 4);
+  assert.equal(app.view().agg.upstream_status.mouser["5xx"], 3);
+  assert.match(app.el("upstreams").textContent, /Mouser lookups/);
+  assert.match(app.el("upstreams").textContent, /4 of 14/);
+});
+
+for (const [name, cause, level] of [
+  ["mouser", "daily", "info"], ["mouser", "minute", "warning"], ["mouser", "refused", "warning"],
+  ["digikey", "daily", "warning"], ["digikey", "minute", "warning"], ["digikey", "refused", "warning"],
+]) test(`${name} ${cause} refusals are ${level}`, () => {
+  const problems = { calls: 24, distributor_limits: { [name]: { refusals: { [cause]: 3 } } },
+    ...(name === "mouser" && cause === "daily" ? { upstream_status: { mouser: { "429": 3 } } } : {}) };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  app.render();
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.equal(items.length, 1);
+  assert.equal(items[0].level, level);
+  assert.match(items[0].what, /refused 3/);
+  const attention = app.el("attention");
+  assert.equal(attention.querySelector("li").dataset.level, level);
+  if (level === "info") {
+    assert.match(attention.textContent, /daily limit.*expected.*retry hourly or just after the next daily reset/i);
+    assert.match(attention.querySelector(".clear").textContent, /Nothing: 24 calls, none failed, none turned away by limits/);
+    assert.match(app.el("tiles").textContent, /Failed calls0/);
+    assert.match(app.el("tiles").textContent, /Turned away by limits0/);
+    assert.equal(app.el("led").hidden, true);
+  } else assert.equal(attention.querySelector(".clear"), null);
+});
+
+for (const [daily, errors, warnings] of [[3, 6, 6], [3, 5, 5], [7, 3, 3]]) {
+  test(`Mouser daily refusals ${daily} do not subtract from ${errors} HTTP 4xx errors`, () => {
+    const problems = { distributor_limits: { mouser: { refusals: { daily } } },
+      upstream_status: { mouser: { "2xx": 10, "4xx": errors } } };
+    const app = setup(payload({ edays: [day("2026-11-23", { complete: false,
+      upstream_status: problems.upstream_status, problems })] }));
+    app.render();
+    const items = app.attentionItems(app.view(), app.scope(app.view()));
+    const warning = items.find((it) => it.what.startsWith("Mouser:"));
+    if (warnings) {
+      assert.equal(warning.what, `Mouser: ${warnings} of ${10 + errors} requests got an error answer.`);
+      assert.match(warning.detail, new RegExp(`rejected our request ${warnings}`));
+    } else assert.equal(warning, undefined);
+    const row = app.el("upstreams").querySelector('td[title="mouser"]').parentElement;
+    assert.match(row.textContent, new RegExp(`${errors} of ${10 + errors}`));
+    assert.equal(app.view().problems.upstream_status.mouser["4xx"], errors);
+  });
+}
+
+for (const [otherStatus, st, bad, minute] of [
+  [200, { "429": 3, "4xx": 3, "2xx": 3 }, 3, 0],
+  [403, { "429": 3, "4xx": 6 }, 6, 0],
+  [429, { "429": 6, "4xx": 3 }, 3, 3],
+  [503, { "429": 3, "4xx": 3, "5xx": 3 }, 6, 0],
+]) test(`Mouser daily refusals, unrelated 403s and HTTP ${otherStatus} keep distinct warnings`, () => {
+  // Daily TooManyRequests bodies now count as 429 even when returned with HTTP 200/403/503.
+  const problems = { distributor_limits: { mouser: { refusals: { daily: 3, minute } } },
+    upstream_status: { mouser: st } };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false,
+    upstream_status: problems.upstream_status, problems })] }));
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  const errors = items.filter((it) => it.what.startsWith("Mouser:"));
+  assert.equal(errors.length, 1);
+  assert.equal(errors[0].what, `Mouser: ${bad} of 9 requests got an error answer.`);
+  assert.match(errors[0].detail, new RegExp(`rejected our request ${st["4xx"]}`));
+  if (otherStatus === 503) assert.match(errors[0].detail, /server error or no answer 3/);
+  assert.equal(items.filter((it) => /daily limit/.test(it.what)).length, 1);
+  assert.equal(items.filter((it) => /Mouser refused 3 of our requests/.test(it.what)).length, minute ? 1 : 0);
+  assert.equal(app.view().problems.upstream_status.mouser["429"], st["429"]);
+});
+
+for (const [daily, counted429, errors4xx, errors5xx, expected] of [
+  [3, 3, 0, 0, 0], [3, 3, 3, 0, 3], [3, 3, 0, 3, 3],
+  [5, 3, 5, 0, 5], [3, 6, 3, 0, 3], [3, 0, 6, 0, 6],
+]) test(`Mouser excludes only 429: ${daily} daily, ${counted429} at 429, ${errors4xx} at 4xx, ${errors5xx} at 5xx`, () => {
+  const problems = { distributor_limits: { mouser: { refusals: { daily } } },
+    upstream_status: { mouser: { "429": counted429, "4xx": errors4xx, "5xx": errors5xx } } };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const warning = app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.what.startsWith("Mouser:"));
+  if (expected) assert.equal(warning.what, `Mouser: ${expected} of ${counted429 + errors4xx + errors5xx} requests got an error answer.`);
+  else assert.equal(warning, undefined);
+});
+
+test("DigiKey 429 outcomes still contribute to HTTP warnings", () => {
+  const problems = { upstream_status: { digikey: { "429": 3 } } };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  assert.ok(app.attentionItems(app.view(), app.scope(app.view())).some((it) => it.what === "DigiKey: 3 of 3 requests got an error answer."));
+});
+
+test("mixed Mouser refusals split daily info from warnings and keep held-back lookups visible", () => {
+  const problems = { distributor_limits: {
+    mouser: { refusals: { daily: 7, minute: 2, refused: 1 }, held_back: { distributor_daily: 4 } },
+    digikey: { refusals: { daily: 5 } },
+  } };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  app.render();
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.equal(items.length, 4);
+  assert.ok(items.slice(0, -1).every((it) => it.level === "warning"));
+  assert.equal(items.at(-1).level, "info");
+  assert.match(items.at(-1).what, /Mouser refused 7 requests for its daily limit/);
+  const warning = items.find((it) => it.level === "warning" && it.what.startsWith("Mouser refused"));
+  assert.match(warning.what, /refused 3 of our requests/);
+  assert.match(warning.detail, /per-minute limit 2, refused 1/);
+  assert.doesNotMatch(warning.detail, /daily/);
+  assert.ok(items.some((it) => /4 Mouser lookups turned away by limits/.test(it.what)));
+  assert.match(app.el("tiles").textContent, /Turned away by limits4/);
+  assert.equal(app.el("attention").querySelector(".clear"), null);
+});
+
+test("held-back labels keep address and DigiKey resets separate from Mouser's budget", () => {
+  const distributors = { mouser: { sent: 0 }, digikey: { sent: 0 } };
+  const problems = { distributor_limits: {
+    mouser: { held_back: { daily_count: 2, address_daily: 1 } },
+    digikey: { held_back: { daily_count: 1 } },
+  } };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, distributors, problems })] }));
+  app.render();
+  for (const id of ["attention", "upstreams"]) {
+    assert.match(app.el(id).textContent, /Mouser budget for the day ran out \(resets 1 AM\)/);
+    assert.match(app.el(id).textContent, /address had used its daily allowance \(resets 7 PM\)/);
+    assert.match(app.el(id).textContent, /DigiKey budget for the day ran out \(resets 7 PM\)/);
+  }
+});
+
+test("Mouser HTTP errors and retries use the selected problems range and counting coverage", () => {
+  const usage = (retries) => ({ distributors: { mouser: { sent: 100, retries } }, upstream_status: { mouser: { "2xx": 90, "5xx": 10 } } });
+  const app = setup(payload({ problems_since: "2026-11-21T18:00:00Z", edays: [
+    day("2026-11-20", { upstream: { jlcpcb: { sent: 50 } } }),
+    day("2026-11-21", { ...usage(40), problems: { ...usage(2), start: "2026-11-21T18:00:00Z" } }),
+    day("2026-11-22", { ...usage(50), problems: usage(3) }),
+    day("2026-11-23", { ...usage(60), complete: false, problems: usage(60) }),
+  ] }));
+  app.state.range = "all";
+  app.render();
+  const view = app.view("all"), items = app.attentionItems(view, app.scope(view));
+  assert.equal(items.length, 1);
+  assert.equal(items[0].what, "Mouser: 20 of 200 requests got an error answer.");
+  assert.match(items[0].detail, /5 were retries\.$/);
+  const row = app.el("upstreams").querySelector("td[title=\"mouser\"]").parentElement;
+  assert.equal(row.children[0].textContent, "Mouser");
+  assert.equal(row.children[1].textContent, "200");
+  assert.match(row.textContent, /20 of 200/);
+  assert.match(app.el("upstreams").textContent, /Mouser since Sat 1:00 PM/);
+});
+
+for (const retries of [undefined, null, 0, 1]) test(`Mouser error text handles retries=${retries}`, () => {
+  const problems = { upstream_status: { mouser: { "5xx": 5 } },
+    ...(retries === undefined ? {} : { distributors: { mouser: { retries } } }) };
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  app.render();
+  const [item] = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.equal(item.what, "Mouser: 5 of 5 requests got an error answer.");
+  if (retries) assert.match(item.detail, /1 was a retry\.$/);
+  else assert.doesNotMatch(item.detail, /retr/);
+});
+
+test("pre-0.10.9 days need no Mouser HTTP outcomes or retry fields", () => {
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false,
+    distributors: { mouser: { sent: 12 } }, problems: { calls: 24 },
+  })] }));
+  app.render();
+  assert.equal(app.el("upstreams").querySelector("td[title=\"mouser\"]"), null);
+  assert.match(app.el("upstreams").textContent, /Mouser lookups/);
+  assert.match(app.el("attention").textContent, /Nothing: 24 calls/);
+  assert.doesNotMatch(app.el("attention").textContent, /retr/);
+});
+
 test("retained health is dated and a failed health fetch is visible despite successful stats", () => {
   const p = payload({ health_at: "2026-11-22T23:45:00Z", last_fetch: { ok: true, at, health_error: "health timed out" } });
   const app = setup(p);
@@ -133,7 +310,7 @@ test("quota from before the UTC reset is not presented as today's usage or pace"
   assert.doesNotMatch(quota, /At this pace|used since Mon/);
 });
 
-for (const trigger of ["failed reload", "HTTP failure", "failed refresh", "UTC rollover"]) test(`quota expires at midnight after ${trigger}`, async () => {
+for (const trigger of ["failed reload", "HTTP failure", "failed refresh", "Mouser rollover"]) test(`quota expires at 06:00 UTC after ${trigger}`, async () => {
   const checked = "2026-11-23T23:59:00Z";
   const app = setup(payload({ generated_at: checked, as_of: checked, health_at: checked,
     last_fetch: { ok: true, at: checked },
@@ -144,7 +321,13 @@ for (const trigger of ["failed reload", "HTTP failure", "failed refresh", "UTC r
   assert.match(app.el("upstreams").textContent, /At this pace/);
 
   app.setNow("2026-11-24T00:00:00Z");
-  if (trigger === "UTC rollover") app.runTimers();
+  app.runTimers(); app.flush();
+  assert.match(app.el("tiles").textContent, /Mouser daily budget/);
+  assert.match(app.el("upstreams").textContent, /At this pace/);
+  app.setNow("2026-11-24T05:59:59Z"); app.runTimers();
+  assert.match(app.el("tiles").textContent, /Mouser daily budget/);
+  app.setNow("2026-11-24T06:00:00Z");
+  if (trigger === "Mouser rollover") app.runTimers();
   else if (trigger === "failed refresh") await app.refresh();
   else {
     if (trigger === "HTTP failure") app.context.fetch = async () => ({ ok: false, status: 503 });
@@ -157,11 +340,94 @@ for (const trigger of ["failed reload", "HTTP failure", "failed refresh", "UTC r
   assert.match(app.el("upstreams").textContent, /Current budget unavailable/);
 });
 
+test("fresh Mouser quota at 06:00 UTC uses the new day", () => {
+  const checked = "2026-11-24T06:00:00Z";
+  const app = setup(payload({ generated_at: checked, as_of: checked, health_at: checked,
+    edays: [day("2026-11-24", { complete: false })] }));
+  app.renderKpis(app.view());
+  assert.match(app.el("tiles").textContent, /Mouser daily budget.*used since Tue 1 AM; resets Wed 1 AM/);
+  assert.match(app.mouserQuota(app.view()).textContent, /used since Tue 1 AM.*by Wed 1 AM/);
+});
+
+for (const legacy of [false, true]) for (const paused of [false, true])
+test(`${legacy ? "legacy health" : "collected private stats"} keeps budget, pace and pause notes (paused=${paused})`, () => {
+  const checked = "2026-11-23T18:00:00Z";
+  // The collector adds private counts to the public health entry before serving this payload.
+  const quota = { used_today: 80, limit: 1000, paused_until: paused ? "2026-11-23 19:00 UTC" : null,
+    ...(legacy ? {} : { api_remaining: null, kept_across_restarts: true, resets_at: "2026-11-24 06:00 UTC" }) };
+  const app = setup(payload({ generated_at: checked, as_of: checked, health_at: checked,
+    health: { status: "healthy", distributor_quota: { mouser: quota } },
+    edays: [day("2026-11-23", { complete: false, distributors: { mouser: { sent: 500 } } })] }));
+  app.render();
+  assert.match(app.el("tiles").textContent, /Mouser daily budget80of 1,000/);
+  assert.match(app.mouserQuota(app.view()).textContent, /80 of 1,000 used since Mon 1 AM.*At this pace about 160 by Tue 1 AM/);
+  assert.equal(app.el("led-text").textContent.includes("Mouser paused"), paused);
+});
+
+test("public health without private quota counts keeps pause notes without inventing a budget", () => {
+  const app = setup(payload({ health: { status: "healthy", distributor_quota: {
+    mouser: { paused_until: "2026-11-23 16:00 UTC", resets_at: "2026-11-24 06:00 UTC" },
+  } } }));
+  app.render();
+  assert.doesNotMatch(app.el("tiles").textContent, /Mouser daily budget/);
+  assert.equal(app.mouserQuota(app.view()).textContent, "");
+  assert.match(app.el("led-text").textContent, /Mouser paused/);
+});
+
+for (const [checked, dayDate, start, end] of [
+  ["2026-11-23T18:00:00Z", "2026-11-23", "Mon 1 AM", "Tue 1 AM"],
+  ["2026-07-04T18:00:00Z", "2026-07-04", "Sat 2 AM", "Sun 2 AM"],
+]) test(`Mouser budget and pace use the 06:00 UTC day at ${checked}`, () => {
+  const p = payload({ generated_at: checked, as_of: checked, health_at: checked,
+    edays: [day(dayDate, { complete: false })] });
+  const app = setup(p);
+  app.render();
+  assert.match(app.el("tiles").textContent, new RegExp(`used since ${start}; resets ${end}`));
+  assert.match(app.mouserQuota(app.view()).textContent,
+    new RegExp(`80 of 1,000 used since ${start}.*At this pace about 160 by ${end}`));
+  assert.match(app.el("footer-time").textContent, new RegExp(`Mouser's budget resets at ${end.slice(4)}`));
+});
+
 test("same-day retained quota is labelled with health_at, not the stats time", () => {
   const app = setup(payload({ health_at: "2026-11-23T14:00:00Z", last_fetch: { ok: true, at, health_error: "timeout" } }));
   app.renderKpis(app.view());
   assert.match(app.el("tiles").textContent, /9:00 AM/);
   assert.doesNotMatch(app.mouserQuota(app.view()).textContent, /At this pace/);
+});
+
+for (const [hour, label, pace] of [[0, "7 PM", "107"], [9, "4 AM", "213"], [23, "6 PM", "101"]])
+test(`configured Mouser hour ${hour} controls budget pace, reset labels and held-back explanations`, () => {
+  const checked = "2026-11-23T18:00:00Z";
+  const distributor_limits = {
+    mouser: { held_back: { daily_count: 3 } }, digikey: { held_back: { daily_count: 2 } },
+  };
+  const p = payload({ generated_at: checked, as_of: checked, health_at: checked,
+    health: { status: "healthy", distributor_quota: { mouser: { used_today: 80, limit: 1000,
+      resets_at: `2026-11-${hour > 18 ? "23" : "24"} ${String(hour).padStart(2, "0")}:00 UTC` } } },
+    edays: [day("2026-11-23", { complete: false, distributor_limits, problems: { distributor_limits },
+      distributors: { mouser: { sent: 80 }, digikey: { sent: 10 } } })] });
+  const app = setup(p);
+  app.render();
+  assert.match(app.el("tiles").textContent, new RegExp(`resets \\w+ ${label}`));
+  assert.match(app.mouserQuota(app.view()).textContent, new RegExp(`At this pace about ${pace} by \\w+ ${label}`));
+  assert.match(app.el("footer-time").textContent, new RegExp(`Mouser's budget resets at ${label}`));
+  for (const id of ["attention", "upstreams"]) {
+    assert.match(app.el(id).textContent, new RegExp(`Mouser budget for the day ran out \\(resets ${label}\\)`));
+    assert.match(app.el(id).textContent, /DigiKey budget for the day ran out \(resets 7 PM\)/);
+  }
+});
+
+test("configured Mouser reset controls retained sample freshness and scheduled redraws", () => {
+  const checked = "2026-11-24T05:59:00Z";
+  const p = payload({ generated_at: checked, as_of: checked, health_at: checked,
+    health: { distributor_quota: { mouser: { used_today: 80, limit: 1000, resets_at: "2026-11-24 09:00 UTC" } } } });
+  const app = setup(p);
+  app.render(); app.flush();
+  app.setNow("2026-11-24T06:00:00Z"); app.runTimers(); app.flush();
+  assert.match(app.el("tiles").textContent, /Mouser daily budget/);
+  app.setNow("2026-11-24T09:00:00Z"); app.runTimers(); app.flush();
+  assert.doesNotMatch(app.el("tiles").textContent, /Mouser daily budget/);
+  assert.match(app.mouserQuota(app.view()).textContent, /Current budget unavailable/);
 });
 
 test("a manual refresh network failure stays visible and restores the button", async () => {

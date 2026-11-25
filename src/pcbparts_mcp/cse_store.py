@@ -17,8 +17,10 @@ applies to rows already stored.
 import json
 import logging
 import sqlite3
+import threading
 import time
 from datetime import datetime, timezone
+from functools import wraps
 from pathlib import Path
 from typing import Any
 
@@ -63,12 +65,22 @@ def search_ttl(result: dict[str, Any]) -> float:
     return CSE_FOUND_TTL if parts and all(p.get("has_model") for p in parts) else CSE_NOT_FOUND_TTL
 
 
+def _serialized(method):
+    """Workers share one connection: don't interleave cursors, transactions or close()."""
+    @wraps(method)
+    def locked(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+    return locked
+
+
 class CSEStore:
     """SQLite file of CSE searches and KiCad files. Never raises: if the file can't be opened or
     written, it logs a warning and the client keeps working from memory, as before 0.6.6."""
 
     def __init__(self, path: str | Path):
         self.path = Path(path)
+        self._lock = threading.Lock()
         self._conn: sqlite3.Connection | None = None
         try:
             self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -91,6 +103,7 @@ class CSEStore:
     def enabled(self) -> bool:
         return self._conn is not None
 
+    @_serialized
     def get_search(self, query: str, offset: int, now: float | None = None) -> dict[str, Any] | None:
         """A stored search that hasn't outlived its TTL, or None."""
         if self._conn is None:
@@ -114,6 +127,7 @@ class CSEStore:
         except (json.JSONDecodeError, TypeError):
             return None
 
+    @_serialized
     def put_search(self, query: str, offset: int, result: dict[str, Any], fetched_at: float | None = None) -> bool:
         if self._conn is None:
             return False
@@ -129,6 +143,7 @@ class CSEStore:
             logger.warning(f"CSE store write failed for search {query!r}: {e}")
             return False
 
+    @_serialized
     def get_kicad(self, part_id: int | str) -> dict[str, str] | None:
         """A part's stored KiCad files ({"kicad_symbol", "kicad_footprint"}), however old, or None."""
         if self._conn is None:
@@ -147,6 +162,7 @@ class CSEStore:
         except (json.JSONDecodeError, TypeError):
             return None
 
+    @_serialized
     def put_kicad(self, part_id: int | str, files: dict[str, str], fetched_at: float | None = None) -> bool:
         if self._conn is None:
             return False
@@ -162,6 +178,7 @@ class CSEStore:
             logger.warning(f"CSE store write failed for part {part_id}: {e}")
             return False
 
+    @_serialized
     def part_info(self, part_id: int | str) -> dict[str, Any]:
         """Metadata from a stored search, when available (no upstream lookup)."""
         if self._conn is None:
@@ -183,6 +200,7 @@ class CSEStore:
             logger.warning("CSE store metadata read failed for part %s: %s", part_id, e)
         return {}
 
+    @_serialized
     def mark_wanted(self, part_id: int | str, reason: str, part_info: dict[str, Any],
                     now: float | None = None) -> bool:
         """Remember one undelivered model, with no caller information. True on a successful write."""
@@ -192,9 +210,11 @@ class CSEStore:
         part_number = part_info.get("mfr_part_number") or ""
         manufacturer = part_info.get("manufacturer") or ""
         try:
+            # A download/import may finish while the caller is looking up this part's metadata.
             added = self._conn.execute(
-                "INSERT OR IGNORE INTO wanted VALUES (?, ?, ?, ?, ?, ?, 0)",
-                (str(part_id), part_number, manufacturer, reason, now, now),
+                "INSERT OR IGNORE INTO wanted SELECT ?, ?, ?, ?, ?, ?, 0 "
+                "WHERE NOT EXISTS (SELECT 1 FROM kicad WHERE part_id = ?)",
+                (str(part_id), part_number, manufacturer, reason, now, now, str(part_id)),
             ).rowcount
             self._conn.execute(
                 "UPDATE wanted SET part_number = COALESCE(NULLIF(?, ''), part_number), "
@@ -211,6 +231,7 @@ class CSEStore:
             logger.warning("CSE store wanted write failed for part %s: %s", part_id, e)
             return False
 
+    @_serialized
     def wanted(self) -> list[dict[str, Any]]:
         """Wanted models, most recently asked first."""
         if self._conn is None:
@@ -223,6 +244,7 @@ class CSEStore:
             logger.warning("CSE store wanted read failed: %s", e)
             return []
 
+    @_serialized
     def kicad_last_24h(self, now: float | None = None) -> int:
         """KiCad rows fetched in the last 24 hours, for quota observations."""
         if self._conn is None:
@@ -236,6 +258,7 @@ class CSEStore:
             logger.warning("CSE store recent KiCad count failed: %s", e)
             return 0
 
+    @_serialized
     def prune(self, now: float | None = None) -> None:
         """Delete searches past their TTL (they'd be refetched anyway), so the file doesn't keep
         them. KiCad files stay: they have no TTL."""
@@ -251,6 +274,7 @@ class CSEStore:
         except sqlite3.Error as e:
             logger.warning(f"CSE store prune failed: {e}")
 
+    @_serialized
     def counts(self) -> dict[str, int]:
         """Stored searches and KiCad parts (for /health)."""
         if self._conn is None:
@@ -264,6 +288,7 @@ class CSEStore:
         except sqlite3.Error:
             return {"searches": 0, "kicad": 0, "wanted": 0}
 
+    @_serialized
     def close(self) -> None:
         if self._conn is not None:
             self._conn.close()

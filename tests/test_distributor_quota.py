@@ -19,6 +19,7 @@ from pcbparts_mcp.mouser import MouserAPIError, MouserClient
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 10, 16, 21, 15, tzinfo=UTC).timestamp()
 MIDNIGHT = datetime.datetime(2026, 10, 17, tzinfo=UTC).timestamp()
+MOUSER_RESET = MIDNIGHT + 6 * 3600
 
 # What prod got from DigiKey on 2026-10-16 at ~21:15Z
 DAILY_429_HEADERS = {
@@ -66,7 +67,8 @@ def clock():
 
 
 def quota(clock, path=None, limit=1000, name="DigiKey"):
-    return DailyQuota(name, limit, store=QuotaStore(path) if path else None, clock=clock)
+    return DailyQuota(name, limit, store=QuotaStore(path) if path else None, clock=clock,
+                      day_start_hour=6 if name == "Mouser" else 0)
 
 
 class FakeDigiKey:
@@ -187,10 +189,12 @@ class TestDailyRefusalEpisodes:
         assert quota(clock, path, name="Mouser")._daily_refusals == q._daily_refusals
         clock.now = MIDNIGHT
         restarted = quota(clock, path, name="Mouser")
-        assert restarted._count == 0 and restarted._daily_refusals == q._daily_refusals
+        assert restarted._count == 2 and restarted._daily_refusals == q._daily_refusals
+        clock.now = MOUSER_RESET
+        assert restarted.status()["used_today"] == 0
         restarted.check()
         resumed = restarted.clear_expired_pause()
-        assert resumed["at"] == NOW and resumed["resumed_at"] == MIDNIGHT and resumed["retries"] == 1
+        assert resumed["at"] == NOW and resumed["resumed_at"] == MOUSER_RESET and resumed["retries"] == 1
         assert quota(clock, path, name="Mouser")._daily_refusals == restarted._daily_refusals
 
     def test_only_thirty_most_recent_episodes_kept(self, tmp_path, clock):
@@ -326,6 +330,47 @@ class TestDistributorLimitStats:
 
 
 class TestCountsSurviveRestarts:
+    def test_mouser_day_rolls_at_six_but_digikey_at_midnight(self, tmp_path, clock):
+        path = tmp_path / "quota.json"
+        store = QuotaStore(path)
+        mouser = DailyQuota("Mouser", 2, store=store, clock=clock, day_start_hour=6)
+        digikey = DailyQuota("DigiKey", 2, store=store, clock=clock)
+        mouser.check()
+        digikey.check()
+        clock.now = MIDNIGHT
+        assert mouser.status()["used_today"] == 1
+        assert digikey.status()["used_today"] == 0
+        assert quota(clock, path, name="Mouser").status()["used_today"] == 1
+        clock.now = MOUSER_RESET - 1
+        assert mouser.check() is None
+        assert mouser.status()["used_today"] == 2 and mouser.retry_after() == 1
+        assert "resets at 2026-10-17 06:00 UTC" in mouser.count_error()["error"]
+        assert json.loads(path.read_text(encoding="utf-8"))["Mouser"]["date"] == "2026-10-16"
+        clock.now = MOUSER_RESET
+        assert mouser.status()["used_today"] == 0 and mouser.retry_after() is None
+        assert mouser.check() is None
+        saved = json.loads(path.read_text(encoding="utf-8"))["Mouser"]
+        assert saved["date"] == "2026-10-17" and saved["count"] == 1
+
+    @pytest.mark.parametrize("hour,label,expected", [
+        (5, "2026-10-16", 7), (5, "2026-10-17", 7), (5, "2026-10-15", 0),
+        (5, "2026-10-18", 0), (6, "2026-10-16", 0), (6, "2026-10-17", 7),
+        (6, "2026-10-18", 0), (5, "bad", 0), (5, [], 0),
+    ], ids=["same", "old_utc", "older", "future", "expired", "new_day", "future_day", "bad", "bad_list"])
+    def test_mouser_stored_date_migration(self, tmp_path, clock, hour, label, expected):
+        clock.now = MIDNIGHT + hour * 3600
+        path = tmp_path / "quota.json"
+        pause = MOUSER_RESET + 123
+        path.write_text(json.dumps({"Mouser": {"date": label, "count": 7,
+                                               "paused_until": pause, "pause_reason": "daily_unknown"}}),
+                        encoding="utf-8")
+        for _ in range(2):  # the migrated label is written back and survives another restart
+            q = quota(clock, path, name="Mouser")
+            assert q.status()["used_today"] == expected
+            assert q._paused_until == pause and q._pause_reason == "daily_unknown"
+            state = json.loads(path.read_text(encoding="utf-8"))["Mouser"]
+            assert state["date"] == ("2026-10-16" if hour < 6 else "2026-10-17")
+
     def test_count_survives_a_restart(self, tmp_path, clock):
         path = tmp_path / "quota.json"
         q = quota(clock, path)
@@ -350,14 +395,14 @@ class TestCountsSurviveRestarts:
     def test_mouser_and_digikey_share_one_file(self, tmp_path, clock):
         path = tmp_path / "quota.json"
         store = QuotaStore(path)
-        mouser = DailyQuota("Mouser", 1000, store=store, clock=clock)
+        mouser = DailyQuota("Mouser", 1000, store=store, clock=clock, day_start_hour=6)
         dk = DailyQuota("DigiKey", 1000, store=store, clock=clock)
         mouser.check()
         dk.check()
         dk.check()
         assert set(json.loads(path.read_text(encoding="utf-8"))) == {"Mouser", "DigiKey"}
         store = QuotaStore(path)
-        assert DailyQuota("Mouser", 1000, store=store, clock=clock).status()["used_today"] == 1
+        assert DailyQuota("Mouser", 1000, store=store, clock=clock, day_start_hour=6).status()["used_today"] == 1
         assert DailyQuota("DigiKey", 1000, store=store, clock=clock).status()["used_today"] == 2
 
     def test_written_at_startup(self, tmp_path, clock):
@@ -399,7 +444,7 @@ class TestCountsSurviveRestarts:
         q = quota(clock)
         q.check()
         assert q.status() == {"used_today": 1, "limit": 1000, "api_remaining": None,
-                              "paused_until": None, "kept_across_restarts": False}
+                              "paused_until": None, "resets_at": "2026-10-17 00:00 UTC", "kept_across_restarts": False}
 
 
 class TestPause:
@@ -508,9 +553,11 @@ class TestToolErrors:
         result = await server.digikey_get_part(part_number="LM358P")
         assert result["error"].startswith("DigiKey daily quota exceeded")
 
-    async def test_mouser_tool_shows_the_status_but_never_the_key(self, monkeypatch):
+    async def test_mouser_tool_shows_the_status_but_never_the_key(self, monkeypatch, clock):
         from pcbparts_mcp import server
-        client = MouserClient(api_key="secret-key-123")
+        async def sleep(seconds):
+            clock.advance(seconds)
+        client = MouserClient(api_key="secret-key-123", clock=clock, sleep=sleep)
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(500)))
         monkeypatch.setattr(server, "_mouser_client", client)
         result = await server.mouser_get_part(part_number="595-LM358P")
@@ -538,8 +585,82 @@ class TestToolErrors:
 
 
 class TestServerWiring:
-    async def test_health_shows_counts_kept_in_the_file(self, tmp_path, monkeypatch):
+    async def test_health_is_identical_across_distributor_configurations(self, monkeypatch):
+        from pcbparts_mcp import server
+        from pcbparts_mcp.cache import MouserKeyPool
+        from pcbparts_mcp.digikey_site import DigiKeySite
+
+        monkeypatch.setattr(server, "_health_clock", lambda: NOW)
+        monkeypatch.setattr(server, "_distributor_quotas", {})
+        monkeypatch.setattr(server, "_digikey_client", None)
+        monkeypatch.setattr(server, "_client", None)
+        monkeypatch.setattr(server, "_cse_client", None)
+        monkeypatch.setattr(server, "_distributor_store", None)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            baseline = (await client.get("/health")).json()
+            assert "distributor_quota" not in baseline
+            for name, size in (("mouser", 1), ("mouser", 3), ("digikey", 1), ("digikey", 2)):
+                quotas = [DailyQuota(name.title(), 1000, clock=lambda: NOW,
+                                     day_start_hour=6 if name == "mouser" else 0) for _ in range(size)]
+                pool = (MouserKeyPool if name == "mouser" else QuotaPool)(quotas)
+                monkeypatch.setattr(server, "_distributor_quotas", {name: pool})
+                assert (await client.get("/health")).json() == baseline
+                pool.acquire()
+                quotas[0].pause(MOUSER_RESET if name == "mouser" else MIDNIGHT, "daily")
+                assert (await client.get("/health")).json() == baseline
+                pool.share_penalty(MIDNIGHT, "daily")
+                assert (await client.get("/health")).json() == baseline
+            site = DigiKeySite(clock=lambda: NOW)
+            digikey = DigiKeyClient(client_id="", client_secret="", site=site, clock=lambda: NOW)
+            monkeypatch.setattr(server, "_distributor_quotas", {})
+            monkeypatch.setattr(server, "_digikey_client", digikey)
+            try:
+                assert (await client.get("/health")).json() == baseline
+                site._refused("test refusal")
+                assert (await client.get("/health")).json() == baseline
+            finally:
+                await digikey.close()
+
+    @pytest.mark.parametrize("name, size", [("mouser", 1), ("mouser", 3), ("digikey", 1), ("digikey", 2)],
+                             ids=["m1", "m3", "d1", "d2"])
+    @pytest.mark.parametrize("paused", [False, True], ids=["ready", "paused"])
+    async def test_quota_state_is_private(self, monkeypatch, stats_headers, name, size, paused):
+        from pcbparts_mcp import server
+        from pcbparts_mcp.cache import MouserKeyPool
+        quotas = [DailyQuota(name.title(), 1000, clock=lambda: NOW,
+                             day_start_hour=6 if name == "mouser" else 0) for _ in range(size)]
+        pool = (MouserKeyPool if name == "mouser" else QuotaPool)(quotas)
+        pool.acquire()
+        quotas[0].note_api_usage(999, 1000)
+        if paused:
+            pool.share_penalty(NOW + 60, "burst")
+        monkeypatch.setattr(server, "_distributor_quotas", {name: pool})
+        monkeypatch.setattr(server, "_digikey_client", None)
+        expected = {"paused_until": "2026-10-16 21:16 UTC" if paused else None,
+                    "resets_at": "2026-10-17 06:00 UTC" if name == "mouser" else "2026-10-17 00:00 UTC"}
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            health = await client.get("/health")
+            assert health.status_code == 200
+            assert "distributor_quota" not in health.json()
+            for headers in ({}, {"Authorization": "Bearer wrong"}):
+                refused = await client.get("/mcp/stats", headers=headers)
+                assert refused.status_code == 401 and refused.json() == {"error": "Unauthorized"}
+            for days in (1, 365):
+                response = await client.get(f"/mcp/stats?days={days}", headers=stats_headers)
+                assert response.status_code == 200
+                assert response.headers["cache-control"] == "private, no-store"
+                assert response.json()["distributor_quota"] == {name: {
+                    **expected, "used_today": 1, "limit": 1000, "api_remaining": 999,
+                    "kept_across_restarts": False,
+                }}
+                assert "distributor_quota" in response.json()["about"]
+                assert "distributor_quota" not in response.json()["totals"]
+
+    async def test_stats_shows_counts_kept_in_the_file(self, tmp_path, monkeypatch, stats_headers):
         import json as json_module
+        from types import SimpleNamespace
         from fastmcp import Client
         from pcbparts_mcp import server
         path = tmp_path / "quota.json"
@@ -548,19 +669,24 @@ class TestServerWiring:
         monkeypatch.setattr(server, "DIGIKEY_CLIENT_ID", "test-id")
         monkeypatch.setattr(server, "DIGIKEY_CLIENT_SECRET", "test-secret")
         async with Client(server.mcp):
-            body = json_module.loads((await server.health(None)).body)["distributor_quota"]
+            assert "distributor_quota" not in json_module.loads((await server.health(None)).body)
+            response = await server.usage_stats(SimpleNamespace(headers=stats_headers, query_params={}))
+            body = json_module.loads(response.body)["distributor_quota"]
             assert set(body) == {"mouser", "digikey"}
             for status in body.values():
                 assert status["used_today"] == 0 and status["kept_across_restarts"] is True
         assert set(json_module.loads(path.read_text(encoding="utf-8"))) == {"Mouser", "DigiKey"}
 
-    async def test_health_without_distributors(self):
+    async def test_health_without_distributors(self, stats_headers):
         import json as json_module
+        from types import SimpleNamespace
         from fastmcp import Client
         from pcbparts_mcp import server
         async with Client(server.mcp):
             # tests have no Mouser/DigiKey credentials, and conftest blanks DISTRIBUTOR_QUOTA_PATH
-            assert json_module.loads((await server.health(None)).body)["distributor_quota"] == {}
+            assert "distributor_quota" not in json_module.loads((await server.health(None)).body)
+            response = await server.usage_stats(SimpleNamespace(headers=stats_headers, query_params={}))
+            assert json_module.loads(response.body)["distributor_quota"] == {}
 
 
 MOUSER_OK = {
@@ -605,7 +731,7 @@ class TestOurOwnLimits:
         assert q.check() is None
 
     def test_per_minute_cap(self, clock):
-        q = DailyQuota("Mouser", 1000, clock=clock, per_minute=2, own_key="Mouser API key")
+        q = DailyQuota("Mouser", 1000, clock=clock, per_minute=2, own_key="Mouser API key", day_start_hour=6)
         assert q.check() is None and q.check() is None
         clock.advance(20)
         error = q.check()["error"]
@@ -648,13 +774,13 @@ class TestDigiKeyRefused:
 
 
 class TestMouserLimits:
-    async def test_daily_429_pauses_until_the_reset(self, clock):
+    async def test_daily_429_retries_hourly(self, clock):
         q = quota(clock, name="Mouser")
         fake = FakeMouser(httpx.Response(429, headers=DAILY_429_HEADERS))
         client = mouser(fake, q)
         first = await client.get_part("595-LM358P")
-        assert first["error"].startswith("Mouser daily quota exceeded (1000 requests/day, counted by Mouser). "
-                                         "It resets at 2026-10-17 00:00 UTC.")
+        assert first["error"].startswith("Mouser daily quota exceeded (counted by Mouser). "
+                                         "This server tries again at 2026-10-16 22:15 UTC.")
         assert (await client.get_part("511-LM358P")) == first
         assert fake.requests == 1
 
@@ -790,14 +916,13 @@ MOUSER_MINUTE_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum 
 
 class TestMouserRefusals:
     async def test_daily_403_pauses_an_hour_while_our_count_is_below_the_limit(self, tmp_path, clock):
-        """Decision 2026-11-18: Mouser's day isn't UTC-aligned (on 11-17 it refused after 110 of our
-        1,000), so its first daily refusal is retried hourly, not at midnight."""
+        """With every key refused, an hourly probe can precede the scheduled day-start retry."""
         path = tmp_path / "quota.json"
         fake = FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403))
         client = mouser(fake, quota(clock, path, name="Mouser"))
         error = (await client.get_part("595-LM358P"))["error"]
-        assert error.startswith("Mouser daily quota exceeded (counted by Mouser). Mouser doesn't say when its count "
-                                "resets, so this server tries again at 2026-10-16 22:15 UTC.")
+        assert error.startswith("Mouser daily quota exceeded (counted by Mouser). "
+                                 "This server tries again at 2026-10-16 22:15 UTC.")
         assert "your own" not in error  # no own_key text in this quota; the server passes one
         assert (await client.get_part("511-LM358P"))["error"] == error
         assert fake.requests == 1
@@ -812,7 +937,7 @@ class TestMouserRefusals:
                           httpx.Response(200, json=MOUSER_OK), httpx.Response(403, json=MOUSER_DAILY_403))
         client = mouser(fake, q)
         await client.get_part("595-LM358P")
-        clock.now = MIDNIGHT  # Mouser hasn't reset yet (its day may end later, or roll)
+        clock.now = MIDNIGHT  # Mouser hasn't reached its 06:00 reset yet
         assert "tries again at 2026-10-17 01:00 UTC" in (await client.get_part("595-LM358P"))["error"]
         clock.now = MIDNIGHT + 3600
         assert (await client.get_part("595-LM358P"))["total"] == 1
@@ -820,10 +945,10 @@ class TestMouserRefusals:
         assert "tries again at 2026-10-17 21:00 UTC" in (await client.get_part("511-LM358P"))["error"]
         assert fake.requests == 4
 
-    async def test_refused_with_our_own_count_spent_waits_for_midnight(self, clock):
+    async def test_refused_with_our_own_count_spent_waits_for_day_start(self, clock):
         q = quota(clock, name="Mouser", limit=1)
         client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), q)
-        assert "tries again at 2026-10-17 00:00 UTC" in (await client.get_part("595-LM358P"))["error"]
+        assert "tries again at 2026-10-17 06:01 UTC" in (await client.get_part("595-LM358P"))["error"]
 
     async def test_daily_refusal_in_a_429_keeps_the_hourly_retry(self, clock):
         """A daily refusal can come as HTTP 429 with the TooManyRequests body: the 429 mustn't also
@@ -882,7 +1007,7 @@ class TestMouserRefusals:
             "Mouser is limiting requests (Maximum calls per day exceeded.). Try again later."
 
     async def test_server_message_names_your_own_key(self, clock):
-        q = DailyQuota("Mouser", 1000, clock=clock, own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
+        q = DailyQuota("Mouser", 1000, clock=clock, own_key="Mouser API key (free at https://www.mouser.com/api-hub/)", day_start_hour=6)
         client = mouser(FakeMouser(httpx.Response(403, json=MOUSER_DAILY_403)), q)
         error = (await client.get_part("595-LM358P"))["error"]
         assert f"run pcbparts-mcp with your own Mouser API key (free at https://www.mouser.com/api-hub/): {SELF_HOSTING_URL}" in error

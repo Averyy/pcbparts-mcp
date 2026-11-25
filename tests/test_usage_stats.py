@@ -743,6 +743,15 @@ class TestServerWiring:
 
 
 class TestStatsAuth:
+    async def test_foreign_origin_is_refused_even_with_valid_token(self, stats_headers):
+        from pcbparts_mcp import server
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=server.create_app()),
+                                     base_url="http://localhost") as client:
+            response = await client.get("/mcp/stats", headers={**stats_headers, "Origin": "https://other.example"})
+        assert response.status_code == 403
+        assert "distributor_quota" not in response.text
+        assert "access-control-allow-origin" not in response.headers
+
     @pytest.mark.parametrize("authorization", [None, "Bearer wrong-token", "Basic test-stats-token",
                                                "test-stats-token", "Bearer", "Bearer ",
                                                "Bearer  test-stats-token", "Bearer test-stats-token ",
@@ -850,7 +859,6 @@ ERROR_REPLIES = {
     "Unsupported library_type: '{}'": "bad_request",
     "Unsupported pcba_type: '{}'": "bad_request",
     'Give a sort_spec only with sort_by="spec" or no sort_by (sort_by="{}" sorts by something else)': "bad_request",
-    'Give a sort_spec to use sort_order (stock and price sorts have one direction): sort_spec="Isat", sort_order="desc" lists the highest first': "bad_request",
     'Give a sort_spec with sort_by="spec": the spec to sort on, such as "RDS(on)", "Iq" or "Dropout@500mA"': "bad_request",
     "This catalog doesn't have PCBA types yet (they come with the next daily parts update); search without pcba_type and check pcba_type with jlc_get_part.": "failed",
     "Unsupported value for {}: '{}'": "bad_request",
@@ -869,7 +877,7 @@ ERROR_REPLIES = {
     "CSE model download too large ({} bytes, max {})": "failed",
     "CSE returned invalid zip file": "failed",
     "CSE refused the model download for part {}: {}": "failed",
-    "SamacSys's daily model download limit for this shared server is used up; try again later. KiCad files pcbparts already has stored still work.": "rate_limited",
+    "SamacSys's daily model download limit for this shared server is used up; the KiCad model couldn't be downloaded. {} KiCad files pcbparts already has stored still work.": "rate_limited",
     "CSE search failed. Check server logs for details.": "failed",
     "CSE get_kicad failed. Check server logs for details.": "failed",
     "Mouser API key not configured. Set MOUSER_API_KEY in environment.": "failed",
@@ -888,7 +896,7 @@ ERROR_REPLIES = {
     "{} daily quota exceeded ({}). It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded on this shared server. It resets at {}.{}": "rate_limited",
     "This address has used its {} Mouser and DigiKey lookups for today on this shared server; the count resets at 00:00 UTC. Answers pcbparts already has stored still work.{}": "rate_limited",
-    "{} daily quota exceeded (counted by {}). {} doesn't say when its count resets, so this server tries again at {}.{}": "rate_limited",
+    "{} daily quota exceeded (counted by {}). This server tries again at {}.{}": "rate_limited",
     "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
     "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",
     "{} refused this server's requests (HTTP 403). Try again in {} s.{}": "rate_limited",
@@ -1021,7 +1029,7 @@ class TestErrorSorting:
         for reason in ("daily", "daily_unknown", "refused", "burst"):
             quota.pause(clock() + 1000 * (len(messages) + 1), reason)
             messages.append(quota.paused_error()["error"])
-        minute = DailyQuota("Mouser", 10, clock=clock, per_minute=1)
+        minute = DailyQuota("Mouser", 10, clock=clock, per_minute=1, day_start_hour=6)
         minute.check()
         messages.append(minute.check()["error"])  # per-minute cap
         assert {_error_kind(m) for m in messages} == {"rate_limited"}, messages

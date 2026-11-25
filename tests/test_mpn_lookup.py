@@ -60,6 +60,10 @@ async def test_recorded_recovery(case):
 ])
 async def test_no_grade_or_other_manufacturer_substitution(mpn):
     reply = await server.jlc_get_part(mpn=mpn)
+    # A formerly missing exact part can enter the daily catalog; substitutes still must not.
+    if reply.get("results") and "match" not in reply:
+        assert all(p["model"].casefold() == mpn.casefold() for p in reply["results"])
+        return
     assert reply["results"] == []
     assert reply["error"] == f"No part found in the local snapshot for MPN '{mpn}'"
     assert "match" not in reply

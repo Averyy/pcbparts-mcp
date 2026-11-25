@@ -7,7 +7,7 @@ import {
 } from "./format.js";
 import {
   AMOUNT, NOT_NAMED_APPS, RANGES, aggregate, allLatency, buildView, callsByApp, completeDay, countedFrom, daily, hourly,
-  namedApps, own, problemHours as hourPoints, sumArr, sumObj, totals, trendDays,
+  mouserDayStartHour, namedApps, own, problemHours as hourPoints, sumArr, sumObj, totals, trendDays, upstreamCounts,
 } from "./data.js";
 import {
   DISTRIBUTOR_LABEL, STATUS_GROUPS, TOOL_SHORT, badRequestLabel, heldBackLabel, isFailureReason,
@@ -237,15 +237,15 @@ function nextUpdate() {
   return payload?.next_poll_at ? new Date(payload.next_poll_at) : null;
 }
 
-/** Health has its own fetch time; distributor budgets reset at midnight UTC. */
-function healthSample(view) {
+/** Health has its own fetch time; freshness follows the selected distributor's day. */
+function healthSample(view, startHourUTC = 0) {
   const at = parseIso(payload?.health_at);
   const known = at && Number.isFinite(at.getTime());
   const now = new Date(Math.max(view?.now?.getTime() || 0, Date.now()));
   return {
     at: known ? at : null,
     label: known ? `${dateTimeET(at)} ${tzAbbr(at)}` : "an unknown time",
-    currentDay: known && serverDay(at).start.getTime() === serverDay(now).start.getTime(),
+    currentDay: known && serverDay(at, startHourUTC).start.getTime() === serverDay(now, startHourUTC).start.getTime(),
     retained: !!payload?.last_fetch?.health_error || !known || at < parseIso(payload?.as_of),
   };
 }
@@ -376,20 +376,27 @@ function attentionItems(view, sc) {
     const n = held.reduce((x, [, v]) => x + v, 0);
     if (n) {
       const when = whenText(hourPoints(view, (r) => own(r.distributor_limits, name)?.held_back_hours), !view.single);
-      const why = held.slice(0, 3).map(([c, v]) => `${heldBackLabel(c, who, resetHour(view.asOf))}${held.length > 1 ? ` (${full(v)})` : ""}`);
+      const reset = resetHour(view.asOf, name === "mouser" ? mouserDayStartHour(payload?.health) : 0);
+      const why = held.slice(0, 3).map(([c, v]) => `${heldBackLabel(c, who, resetHour(view.asOf), reset)}${held.length > 1 ? ` (${full(v)})` : ""}`);
       if (held.length > 3) why.push(`${held.length - 3} other causes (${full(held.slice(3).reduce((x, [, v]) => x + v, 0))})`);
       items.push({ level: "warning", what: `${plural(n, `${who} lookup`)} turned away by limits${when ? ` (${when})` : ""}.`, detail: `Why: ${why.join("; ")}.` });
     }
-    const refused = Object.entries(lim?.refusals || {}).filter(([, v]) => v > 0);
+    const daily = name === "mouser" ? lim?.refusals?.daily : 0;
+    if (daily > 0) items.push({ level: "info", what: `Mouser refused ${plural(daily, "request")} for its daily limit (expected: lookups retry hourly or just after the next daily reset).` });
+    const refused = Object.entries(lim?.refusals || {}).filter(([cause, v]) => v > 0 && !(name === "mouser" && cause === "daily"));
     if (refused.length) items.push({ level: "warning", what: `${who} refused ${plural(refused.reduce((x, [, v]) => x + v, 0), "of our requests", "of our requests")}.`, detail: refused.map(([c, v]) => `${refusedLabel(c)} ${full(v)}`).join(", ") });
   }
   for (const [src, st] of Object.entries(p.upstream_status || {})) {
     const tot = sumObj(st);
-    const groups = STATUS_GROUPS.slice(2).map((g) => [g.label, g.keys.reduce((x, k) => x + (st[k] || 0), 0)]).filter(([, v]) => v > 0);
+    // Mouser HTTP outcomes start in 0.10.9: limit replies count as 429 and have their own notices.
+    const groups = STATUS_GROUPS.slice(2).map((g) => [g.label, g.keys.reduce((x, k) => x +
+      (src === "mouser" && k === "429" ? 0 : st[k] || 0), 0)]).filter(([, v]) => v > 0);
     const bad = groups.reduce((x, [, v]) => x + v, 0);
     const hard = (st["5xx"] || 0) + (st.timeout || 0) + (st.connection || 0) + (st.challenge || 0) + (st.other_error || 0);
     if ((bad >= 3 && tot && bad / tot >= 0.02) || hard >= 5) {
-      items.push({ level: "warning", what: `${upstreamLabel(src)}: ${full(bad)} of ${full(tot)} requests got an error answer.`, detail: groups.map(([l, v]) => `${l.toLowerCase()} ${full(v)}`).join(", ") + "." });
+      const retries = src === "mouser" ? p.distributors?.mouser?.retries : 0;
+      const retryText = retries > 0 ? `; ${full(retries)} ${retries === 1 ? "was a retry" : "were retries"}` : "";
+      items.push({ level: "warning", what: `${upstreamLabel(src)}: ${full(bad)} of ${full(tot)} requests got an error answer.`, detail: groups.map(([l, v]) => `${l.toLowerCase()} ${full(v)}`).join(", ") + retryText + "." });
     }
   }
   const dl = p.datasheet_links;
@@ -399,7 +406,8 @@ function attentionItems(view, sc) {
     if (o?.live_failed) items.push({ level: "warning", what: `${plural(o.live_failed, "live stock lookup")} in ${t} failed with nothing to fall back on.` });
   }
   if (p.db_waits?.longest_ms >= 10_000) items.push({ level: "warning", what: `A request waited ${ms(p.db_waits.longest_ms)} for the database.`, detail: `${full(p.db_waits.waited)} of ${full(p.db_waits.jobs)} database jobs had to wait.` });
-  return items;
+  // Expected events follow every problem, without changing the order of the problem lines.
+  return items.sort((a, b) => Number(a.level === "info") - Number(b.level === "info"));
 }
 
 function renderAttention(view) {
@@ -409,7 +417,8 @@ function renderAttention(view) {
   // the period the problem lines cover, said once beside the title whenever it isn't the whole range
   const sub = sc.before || !sc.from || !sc.bites ? "" : sc.label;
   const title = h("h2", {}, "Worth a look", sub ? h("small", { text: sub }) : null);
-  if (!items.length) {
+  box.replaceChildren(title);
+  if (!items.some((it) => it.level !== "info")) {
     let text;
     if (sc.before) text = `Nothing to check here: problems are counted since ${sc.ver ? `${sc.ver} went live (${sc.when})` : sc.when}, and this range ends before that.`;
     else {
@@ -418,11 +427,9 @@ function renderAttention(view) {
         ? `Nothing: ${plural(f.calls, "call")}, none failed, none turned away by limits.${f.rejected ? ` ${plural(f.rejected, "call")} had arguments the tool rejected, listed under Reasons.` : ""}`
         : "Nothing in this range.";
     }
-    box.replaceChildren(title, h("p", { class: "clear", text }));
-    return;
+    box.append(h("p", { class: "clear", text }));
   }
-  box.replaceChildren(
-    title,
+  if (items.length) box.append(
     h("ul", {}, items.map((it) => h("li", { "data-level": it.level },
       h("span", { class: "dot", "aria-hidden": "true" }),
       h("div", {}, h("span", { class: "what", text: it.what }), it.detail ? " " : null,
@@ -484,8 +491,8 @@ function renderKpis(view) {
     : { label, value: full(value ?? 0), note: notes(period, value ? note : "") };
 
   const q = payload.health?.distributor_quota?.mouser;
-  const sample = healthSample(view);
-  const budgetDay = serverDay(sample.at || view.now);
+  const sample = healthSample(view, mouserDayStartHour(payload?.health));
+  const budgetDay = serverDay(sample.at || view.now, mouserDayStartHour(payload?.health));
   const budgetTile = view.key === "today" && q?.limit && sample.currentDay
     ? { label: "Mouser daily budget", value: `${full(q.used_today ?? 0)}`, small: `of ${full(q.limit)}`, note: `${sample.retained ? "Retained value" : "Checked"} ${sample.label}; used since ${dayHourET(budgetDay.start)}; resets ${dayHourET(budgetDay.end)}` }
     : (() => {
@@ -1063,11 +1070,11 @@ function renderUpstreams(view) {
   const sc = scope(view);
   const a = view.agg, p = view.problems;
   const period = sc.bites ? ` ${sc.short}` : "";
-  sec.replaceChildren(cardHead(sec, "Services we call", "Requests the server sent to JLCPCB, LCSC, EasyEDA, SamacSys and DigiKey, and how they answered."));
+  sec.replaceChildren(cardHead(sec, "Services we call", "Requests the server sent to JLCPCB, LCSC, EasyEDA, SamacSys, Mouser and DigiKey, and how they answered."));
 
-  const sources = [...new Set([...Object.keys(a.upstream || {}), ...Object.keys(p?.upstream_status || {})])];
+  const sources = [...new Set([...Object.keys(a.upstream || {}), ...Object.keys(a.upstream_status || {}), ...Object.keys(p?.upstream_status || {})])];
   const info = sources.map((src) => {
-    const u = own(a.upstream, src) || {}, pu = own(p?.upstream, src) || {}, st = own(p?.upstream_status, src) || null;
+    const u = upstreamCounts(a, src), pu = own(p?.upstream, src) || {}, st = own(p?.upstream_status, src) || null;
     const tot = st ? sumObj(st) : 0;
     const errs = st ? STATUS_GROUPS.slice(2).map((g) => [g.label.toLowerCase(), g.keys.reduce((x, k) => x + (st[k] || 0), 0)]).filter(([, v]) => v > 0) : [];
     return { src, u, tot, errs, nErr: errs.reduce((x, [, v]) => x + v, 0), held: sc.before ? 0 : pu.rate_limited || 0, served: (u.sent || 0) + (u.cached || 0) };
@@ -1089,10 +1096,10 @@ function renderUpstreams(view) {
 
   const notes = h("div", { class: "chart-sub notes" });
   const cov = countedFrom(view, AMOUNT.upstream);
-  if (rows.length && cov.text) {
-    // a service whose own counting began later still (DigiKey's requests) is named with its date
+  if (rows.length) {
+    // A service whose own counting began later is named with its date.
     const later = sources.map((src) => [src, countedFrom(view, AMOUNT.upstreamOf(src))]).filter(([, c]) => c.start && c.start > cov.start && c.text);
-    notes.append(h("span", { text: `Requests are counted ${cov.text}${later.map(([src, c]) => `; ${upstreamLabel(src)} ${c.text}`).join("")}.` }));
+    if (cov.text || later.length) notes.append(h("span", { text: `Requests are counted ${cov.text || "throughout this range"}${later.map(([src, c]) => `; ${upstreamLabel(src)} ${c.text}`).join("")}.` }));
   }
   if (rows.length && !sc.before) {
     const none = [!hasErr && "no error answers", !hasHeld && "nothing held back by our own limits"].filter(Boolean);
@@ -1106,6 +1113,7 @@ function renderUpstreams(view) {
     const d = own(a.distributors, name);
     if (!d) continue;
     const who = DISTRIBUTOR_LABEL[name];
+    const budgetReset = resetHour(view.asOf, name === "mouser" ? mouserDayStartHour(payload?.health) : 0);
     const lim = own(p?.distributor_limits, name);
     const held = Object.entries(lim?.held_back || {}).filter(([, n]) => n > 0);
     const refused = Object.entries(lim?.refusals || {}).filter(([, n]) => n > 0);
@@ -1117,7 +1125,7 @@ function renderUpstreams(view) {
       http && d.sent && http >= d.sent ? ["Requests each one took, on average", (http / d.sent).toFixed(1)] : [null],
       ["Answered from saved answers instead", full(d.cached)],
       ["Not real part numbers, so not sent", d.skipped ? full(d.skipped) : null],
-      sc.before ? [null] : [`Turned away by limits${period}`, held.length ? held.map(([c, n]) => `${full(n)}: ${heldBackLabel(c, who, reset)}`).join("; ") : "0"],
+      sc.before ? [null] : [`Turned away by limits${period}`, held.length ? held.map(([c, n]) => `${full(n)}: ${heldBackLabel(c, who, reset, budgetReset)}`).join("; ") : "0"],
       refused.length ? [`${who} refused us${period}`, refused.map(([c, n]) => `${full(n)} (${refusedLabel(c)})`).join(", ")] : [null],
     ]));
     if (name === "mouser" && view.key === "today") box.append(mouserQuota(view));
@@ -1141,15 +1149,15 @@ function renderUpstreams(view) {
   sec.append(split);
 }
 
-/** Mouser's daily budget, which runs on the server's day (7 PM to 7 PM Eastern), not the range. */
+/** Mouser's daily budget follows its configured UTC start, independently of the reporting range. */
 function mouserQuota(view) {
   const q = payload.health?.distributor_quota?.mouser;
   if (!q?.limit) return h("div");
   const used = q.used_today || 0, limit = q.limit;
-  const sample = healthSample(view);
+  const sample = healthSample(view, mouserDayStartHour(payload?.health));
   if (!sample.currentDay || sample.retained) return h("div", { class: "chart-sub", text: `Last Mouser budget reading, ${sample.label}: ${full(used)} of ${full(limit)} used.${sample.currentDay ? " Health update failed or is behind the stats." : " Current budget unavailable; this reading predates the reset or has no timestamp."}` });
   const now = sample.at.getTime();
-  const day = serverDay(sample.at);
+  const day = serverDay(sample.at, mouserDayStartHour(payload?.health));
   const frac = Math.min(1, Math.max(0.05, (now - day.start.getTime()) / 86400_000));
   const pace = used / frac;
   const scale = Math.max(limit, pace) * 1.05;
@@ -1264,10 +1272,11 @@ function renderEvents(view) {
 
 function render({ rangeOnly = false } = {}) {
   if (!payload) return;
-  // Recheck quota freshness at the UTC reset even while a reload is stalled or offline.
+  // Recheck freshness at both UTC resets even while a reload is stalled or offline.
   clearTimeout(dayTimer);
   const now = new Date(Date.now());
-  dayTimer = setTimeout(render, serverDay(now).end.getTime() - now.getTime());
+  const resetAt = Math.min(serverDay(now).end.getTime(), serverDay(now, mouserDayStartHour(payload?.health)).end.getTime());
+  dayTimer = setTimeout(render, resetAt - now.getTime());
   const focused = document.activeElement;
   const focusId = focused?.id;
   const days = (payload.edays || []).filter((d) => !d.partial_start);
@@ -1318,7 +1327,7 @@ function render({ rangeOnly = false } = {}) {
   requestAnimationFrame(restoreFocus);
   if (rangeOnly) return;
   const reset = resetHour(view.asOf);
-  $("footer-time").textContent = `All times are Eastern. A day here runs midnight to midnight; the server's own day, which its Mouser and DigiKey budgets and per-address allowances follow, ends at ${reset}.`;
+  $("footer-time").textContent = `All times are Eastern. A day here runs midnight to midnight. Mouser's budget resets at ${resetHour(view.asOf, mouserDayStartHour(payload?.health))}; DigiKey's budget, per-address allowances and the server's daily stats reset at ${reset}.`;
   const lastEst = days.filter((d) => d.approx).pop()?.date;
   const est = lastEst
     ? ` Days up to ${dayLabel(lastEst)} were rebuilt from the server's own daily totals (${reset} to ${reset}): their calls per hour are exact, their other numbers close estimates.`

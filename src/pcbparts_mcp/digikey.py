@@ -484,7 +484,7 @@ class DigiKeyClient:
         return self._site is not None
 
     def site_status(self) -> dict[str, Any] | None:
-        """For /health without credentials: when a pause ends (None when not paused); else None."""
+        """For authenticated /mcp/stats without credentials: when a pause ends (None when not paused); else None."""
         return self._site.status() if self._site is not None else None
 
     def can_answer_now(self, caller: str | None = None) -> bool:
@@ -531,7 +531,7 @@ class DigiKeyClient:
         # reaches DigiKey, and nothing is counted that isn't sent. At most two requests a lookup:
         # one more after a daily refusal on app 1 (on app 2), or after an early-expired token.
         for attempt in range(2):
-            if self._quota and (error := self._quota.address_error(caller)):
+            if attempt == 0 and self._quota and (error := self._quota.address_error(caller)):
                 stats.count_distributor("digikey", "rate_limited")
                 stats.count_distributor_limit("digikey", "held_back", "address_daily")
                 self._quota.held_back.record(caller)
@@ -544,17 +544,17 @@ class DigiKeyClient:
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
-                app_index, token = await self._ready_app(caller)
+                app_index, token = await self._ready_app(caller if attempt == 0 else None)
             except DigiKeyRateLimited as e:  # a pause began during a token request
                 stats.count_distributor("digikey", "rate_limited")
                 stats.count_distributor_limit("digikey", "held_back",
-                                              ("address_daily" if self._quota.address_error(caller)
+                                              ("address_daily" if attempt == 0 and self._quota.address_error(caller)
                                                else self._quota.pause_cause()) if self._quota else "other")
                 if self._quota:
                     self._quota.held_back.record(caller)
                 return Lookup({"error": str(e)}, "limited", self._store.now())
             if self._quota:
-                app_index, quota_error = self._quota.acquire(caller)
+                app_index, quota_error = self._quota.acquire(caller, check_address=attempt == 0)
                 if quota_error:
                     stats.count_distributor("digikey", "rate_limited")
                     stats.count_distributor_limit("digikey", "held_back", self._quota.last_refusal_cause)

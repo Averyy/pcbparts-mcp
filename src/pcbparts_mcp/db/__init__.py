@@ -518,7 +518,7 @@ class ComponentDatabase:
         manufacturers: list[str] | None = None,
         mounting_type: str | None = None,
         match_all_terms: bool = True,
-        sort_by: Literal["stock", "price", "relevance"] = "stock",
+        sort_by: Literal["stock", "stock_asc", "price", "price_desc", "relevance"] = "stock",
         limit: int = 50,
         offset: int = 0,
         subcategory_ids: list[int] | None = None,

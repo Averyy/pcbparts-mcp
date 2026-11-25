@@ -111,11 +111,13 @@ async def setup(clock, monkeypatch):
     def create(mouser=None, digikey=None, mouser_limit=1000, digikey_limit=1000, store=None,
                mouser_per_minute=None):
         store = store or DistributorStore(clock=clock)
-        mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key", per_minute=mouser_per_minute)
+        mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key", per_minute=mouser_per_minute, day_start_hour=6)
         dq = QuotaPool([DailyQuota("DigiKey", digikey_limit, clock=clock, own_key="DigiKey API credentials")])
         m = d = None
         if mouser is not None:
-            m = MouserClient(api_key="k", quota=mq, store=store)
+            async def sleep(seconds):
+                clock.advance(seconds)
+            m = MouserClient(api_key="k", quota=mq, store=store, clock=clock, sleep=sleep)
             m._client = httpx.AsyncClient(transport=httpx.MockTransport(mouser))
         if digikey is not None:
             d = DigiKeyClient(client_id="id", client_secret="secret", quota=dq, store=store)
@@ -291,7 +293,7 @@ class TestMouserPerPart:
         m, _, store, mq, _ = setup(mouser=fake, mouser_limit=0)
         assert "daily quota exceeded" in (await m.get_part("LM358P"))["error"]
         assert store.get_answer("mouser", "LM358P") is None and fake.sent == []
-        assert m.retry_after() == MIDNIGHT - NOW
+        assert m.retry_after() == MIDNIGHT + 6 * 3600 - NOW
 
 
 # --- Mouser's 50-result cap ---
@@ -519,11 +521,23 @@ class TestLookups:
     async def test_mouser_failure_is_lookup_failed_without_digikey(self, setup):
         """A failed Mouser lookup says nothing about whether Mouser lists the part: DigiKey's smaller
         day isn't spent on it."""
-        mouser, digikey = FakeMouser(responses=[httpx.Response(503)]), FakeDigiKey(dk_product("LM358P", status="Obsolete"))
+        mouser = FakeMouser(responses=[httpx.Response(503) for _ in range(3)])
+        digikey = FakeDigiKey(dk_product("LM358P", status="Obsolete"))
         setup(mouser=mouser, digikey=digikey)
         reply = await lifecycle(["LM358P"])
         assert reply["results"][0] == {"input": "LM358P", "mpn": "LM358P", "status": "unknown", "lookup_failed": True}
         assert digikey.asked == [] and "retry_after" not in reply
+
+    async def test_mouser_transient_failure_recovers_and_keeps_lifecycle(self, setup):
+        mouser = FakeMouser(mouser_part("LM358P", lifecycle="End of Life"), responses=[httpx.Response(503)])
+        digikey = FakeDigiKey()
+        _, _, store, mq, _ = setup(mouser=mouser, digikey=digikey)
+        row = (await lifecycle(["LM358P"]))["results"][0]
+        assert row["source"] == "mouser" and row["status"] == "last_time_buy"
+        assert mouser.sent == ["LM358P", "LM358P"] and mq._count == 2
+        assert store.readings("LM358P") and digikey.asked == []
+        assert (await lifecycle(["LM358P"]))["results"][0] == row
+        assert len(mouser.sent) == 2
 
     async def test_our_minute_cap_is_retry_after_without_digikey(self, setup):
         mouser, digikey = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P")), FakeDigiKey(dk_product("NE555P"))
@@ -908,11 +922,11 @@ class TestMouserPartial:
         fake = FakeMouser(mouser_part("LM358P"), mouser_part("NE555P"))
         m, _, _, mq, _ = setup(mouser=fake)
         await m.get_part("LM358P")
-        mq._count = mq._limit
+        mq.pause_daily_unknown_reset()
         reply = await server.mouser_get_part(part_number="LM358P|NE555P|TL431")
         assert "error" not in reply
         assert [r["mfr_part_number"] for r in reply["results"]] == ["LM358P"]
-        assert reply["not_checked"] == ["NE555P", "TL431"] and reply["retry_after"] == MIDNIGHT - NOW
+        assert reply["not_checked"] == ["NE555P", "TL431"] and reply["retry_after"] == 3600
         assert "not_found" not in reply and fake.sent == ["LM358P"]
 
     async def test_nothing_kept_is_the_limit_error_as_before(self, setup):
@@ -1256,17 +1270,17 @@ class TestUnreadableMouserReply:
 
     @pytest.mark.parametrize("body", BODIES, ids=["null", "none", "parts_null", "no_parts", "list"])
     async def test_mouser_get_part(self, setup, body):
-        mouser = FakeMouser(mouser_part("LM358P"), responses=[httpx.Response(200, json=body)])
+        mouser = FakeMouser(mouser_part("LM358P"), responses=[httpx.Response(200, json=body) for _ in range(3)])
         _, _, store, _, _ = setup(mouser=mouser)
         reply = await server.mouser_get_part(part_number="LM358P")
         assert reply == {"error": "Mouser part lookup failed: Mouser API returned an unreadable response"}
         assert server._error_kind(reply["error"]) == "failed"
         assert store.get_answer("mouser", "LM358P") is None and store.readings("LM358P") == []
         assert (await server.mouser_get_part(part_number="LM358P"))["total"] == 1  # asked again
-        assert len(mouser.sent) == 2
+        assert len(mouser.sent) == 4
 
     async def test_a_batch_keeps_nothing(self, setup):
-        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0])])
+        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0]) for _ in range(3)])
         m, _, store, _, _ = setup(mouser=mouser)
         with pytest.raises(MouserError, match="unreadable"):
             await m.get_part("LM358P|NE555P")
@@ -1274,7 +1288,7 @@ class TestUnreadableMouserReply:
         assert store.readings("LM358P") == store.readings("NE555P") == []
 
     async def test_part_lifecycle(self, setup):
-        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0])])
+        mouser = FakeMouser(responses=[httpx.Response(200, json=self.BODIES[0]) for _ in range(3)])
         digikey = FakeDigiKey(dk_product("TIX0001"))
         _, _, store, _, _ = setup(mouser=mouser, digikey=digikey)
         row = (await lifecycle([{"mpn": "TIX0001", "manufacturer": "TI"}]))["results"][0]

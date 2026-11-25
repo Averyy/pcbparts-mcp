@@ -246,8 +246,9 @@ class TestSearch:
         values = [p["sort_value"] for p in tail["results"]]
         assert None in values and all(v is None for v in values[values.index(None):])
 
-    async def test_ties_go_to_library_tier_then_stock(self):
-        result = await search("10k resistor 0603", sort_spec="Tolerance", limit=100)
+    @pytest.mark.parametrize("order", [None, "asc", "desc"])
+    async def test_ties_go_to_library_tier_then_stock(self, order):
+        result = await search("10k resistor 0603", sort_spec="Tolerance", sort_order=order, limit=100)
         rows = result["results"]
         for a, b in zip(rows, rows[1:]):
             if a["sort_value"] == b["sort_value"]:
@@ -300,7 +301,7 @@ class TestSearch:
 class TestArguments:
     @pytest.mark.parametrize("kwargs,match", [
         ({"sort_by": "spec"}, r'^Give a sort_spec with sort_by="spec"'),
-        ({"sort_order": "desc"}, r"^Give a sort_spec to use sort_order"),
+        ({"sort_by": "spec", "sort_order": "desc"}, r'^Give a sort_spec with sort_by="spec"'),
         ({"sort_by": "price", "sort_spec": "Rds(on)"}, r'^Give a sort_spec only with sort_by="spec"'),
         ({"sort_spec": "Output Voltage"}, r"^Can't sort by Output Voltage: "),
         ({"sort_spec": "nonsense"}, r"^Unsupported sort_spec: 'nonsense'$"),

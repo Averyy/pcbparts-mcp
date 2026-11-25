@@ -4,6 +4,39 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.9 (2026-11-25)
+
+### Breaking
+
+- **`/health`**: no longer has `distributor_quota`; distributor pauses, reset times and daily counts are in the authenticated `/mcp/stats`.
+
+### Added
+
+- **`/mcp/stats`**: `distributor_quota` gives each distributor's daily count, limit, pause and next reset (`resets_at`).
+- **`jlc_search`**: `sort_order` works with stock and price sorts (`sort_by="stock", sort_order="desc"` was rejected).
+- **Self-hosting**: `MOUSER_DAY_START_HOUR` sets the UTC hour when Mouser's day starts (default `6`).
+
+### Changed
+
+- **Usage dashboard**: Mouser limit refusals no longer also trigger HTTP error warnings; its budget counts, pauses and reset times come from `/mcp/stats`.
+- **Mouser and DigiKey**: the per-address daily cap counts lookups; retries don't count.
+- **Mouser**: lookups go out until Mouser itself refuses the day; our own daily count no longer stops them (`DISTRIBUTOR_DAILY_LIMIT=0` still turns live lookups off).
+- **Mouser**: the daily count runs from 06:00 UTC; daily refusals retry at the next 06:01 UTC after spending at least half the limit, otherwise hourly but never later than the next 06:01 UTC.
+  Lookups wait up to 30 s for a reset check instead of being refused.
+- **Mouser**: the daily-limit error now says when the server tries again.
+- **Server log**: a Mouser daily refusal logs our count and the next try time.
+- **Mouser diagnostics**: temporary failures log once a minute; `/mcp/stats` counts HTTP outcomes and retries.
+- **Call log**: keeps unrecognized argument names only when they are 1–30 ASCII letters or underscores; never their values.
+- **Privacy policy**: describes the length and character rules for unrecognized argument names and the wanted list's stored-search requirement; those argument values are never kept.
+
+### Fixed
+
+- **DigiKey**: a lookup that needs a second request is no longer turned away by the per-address cap partway through.
+- **Mouser**: temporary failures (HTTP 5xx, unreadable replies, dropped connections) are retried up to twice before a lookup fails, with retries paused during an outage.
+- **`mouser_get_part`**: numbers a follow-up request couldn't ask are listed in `not_checked` (held back) or `lookup_failed` (failed), not `not_found`.
+- **SamacSys**: store reads and writes no longer block other requests.
+- **`cse_get_kicad`**: when SamacSys's daily download limit is used up, the error says the KiCad model couldn't be downloaded and when to try again (UTC), and keeps `part_id` and the part details already known.
+
 ## 0.10.8 (2026-11-22)
 
 ### Breaking

@@ -43,12 +43,13 @@ from .tool_outcomes import (
     _parts_outcome, _parts_empty_reason, _first_reason, _empty_reason,
     _why_empty_result, _call_reason,
 )
-from .cache import SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, MouserKeyPool, QuotaPool, QuotaStore
+from .cache import (SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, MouserKeyPool,
+                    QuotaPool, QuotaStore, _next_utc_midnight, _utc_text)
 from .config import (
     RATE_LIMIT_REQUESTS, PLATFORM_RATE_LIMIT, ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE,
     DB_STUCK_WAIT_SECONDS, CONFIG_WARNINGS,
     HTTP_HOST, HTTP_PORT, DATASHEET_LINK_BASE, LOG_PATH, LOG_KEEP_DAYS, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
-    MOUSER_API_KEY, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
+    MOUSER_API_KEY, MOUSER_DAY_START_HOUR, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
     DISTRIBUTOR_DAILY_LIMIT, DISTRIBUTOR_DAILY_PER_ADDRESS, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
@@ -98,7 +99,7 @@ _cse_client: CSEClient | None = None
 _distributor_store: DistributorStore | None = None
 _distributor_stored: tuple[float, dict[str, Any] | None] = (float("-inf"), None)  # (time.monotonic(), counts)
 _categories: list[dict[str, Any]] = []  # Live category cache
-_distributor_quotas: dict[str, QuotaPool] = {}  # "mouser"/"digikey" when configured, for /health
+_distributor_quotas: dict[str, QuotaPool] = {}  # "mouser"/"digikey" when configured
 _address_daily: AddressDailyQuota | None = None
 
 
@@ -234,12 +235,12 @@ async def lifespan(app):
                 + (f"kept in {DISTRIBUTOR_STORE_PATH}" if stored["kept_across_restarts"] else "(memory only)"))
 
     # Initialize Mouser client if API key is configured. Optional extra keys (MOUSER_API_KEY_2,
-    # _3, ...) are each used only after the previous key's day is spent (MouserKeyPool); the
+    # _3, ...) are each used once Mouser refuses the previous key (MouserKeyPool); the
     # warnings name ignored variables, never a key.
     for warning in MOUSER_KEY_WARNINGS:
         logger.warning(warning)
     if MOUSER_API_KEY:
-        key_quotas = [DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store,
+        key_quotas = [DailyQuota("Mouser", DISTRIBUTOR_DAILY_LIMIT, store=quota_store, day_start_hour=MOUSER_DAY_START_HOUR,
                                  store_key="Mouser" if index == 0 else f"Mouser#{index + 1}",
                                  own_key="Mouser API key (free at https://www.mouser.com/api-hub/)")
                       for index in range(1 + len(MOUSER_EXTRA_API_KEYS))]
@@ -302,7 +303,7 @@ async def lifespan(app):
 
     # CSE client always available (no API key needed)
     _cse_client = CSEClient(store_path=CSE_STORE_PATH or None)
-    cse_counts = _cse_client.store_counts()
+    cse_counts = await asyncio.to_thread(_cse_client.store_counts)
     logger.info("CSE client initialized: " + (
         f"{cse_counts['searches']:,} searches and {cse_counts['kicad']:,} KiCad parts stored in {CSE_STORE_PATH}"
         if cse_counts is not None else "no store (memory only)"))
@@ -1854,7 +1855,7 @@ def jlc_search(
         strict: Default false allows reported relaxation; true keeps requirements, errors on unsupported constraints.
         pcba_type: economic or standard_only; one standard_only part moves the whole order to Standard assembly.
         sort_spec: E.g. "Iq", "RDS(on)@4.5V", "Dropout@500mA", "Vf@1A"; implies spec sort; unlisted last.
-        sort_order: asc (default) or desc; needs sort_spec or a query naming the spec.
+        sort_order: asc or desc; default stock desc, price/spec asc (query may infer spec order).
         facets: Manufacturer/package/library counts; default false.
     """
     # Validate query length to prevent abuse
@@ -2170,10 +2171,13 @@ def jlc_search(
             # Query was fully parsed into structured filters, no text needed
             effective_query = None
 
-    if sort_order is not None and spec_sort is None:
-        return {"error": "Give a sort_spec to use sort_order (stock and price sorts have one direction): "
-                         "sort_spec=\"Isat\", sort_order=\"desc\" lists the highest first",
-                "valid_values": SORTABLE_LABELS, "results": [], "total": 0}
+    # Internal reverse modes keep the existing database search interface and all ranking layers.
+    effective_sort_by = sort_by or "stock"
+    if spec_sort is None:
+        if effective_sort_by == "stock" and sort_order == "asc":
+            effective_sort_by = "stock_asc"
+        elif effective_sort_by == "price" and sort_order == "desc":
+            effective_sort_by = "price_desc"
 
     search_args: dict[str, Any] = dict(
         subcategory_id=subcategory_id,
@@ -2191,7 +2195,7 @@ def jlc_search(
         manufacturers=parsed_manufacturers,
         mounting_type=effective_mounting_type,
         match_all_terms=match_all_terms,
-        sort_by=sort_by or "stock",
+        sort_by=effective_sort_by,
         limit=clamp_limit(limit, MAX_PAGE_SIZE),
         offset=min(max(0, offset or 0), MAX_SEARCH_OFFSET),
         # A pasted LCSC code (C2040) finds that part, not every code it starts.
@@ -4204,7 +4208,7 @@ def _easyeda_footprint_counts() -> dict[str, int | None] | None:
     return {"seeded": _easyeda_seeded, "stored": stored}
 
 
-def _cse_store_counts() -> dict[str, int] | None:
+async def _cse_store_counts() -> dict[str, int] | None:
     """Stored CSE searches and KiCad parts, refreshed at most every HEALTH_STORE_COUNT_TTL. None
     with no usable store (memory only) or before startup."""
     global _cse_stored
@@ -4213,7 +4217,7 @@ def _cse_store_counts() -> dict[str, int] | None:
     counted_at, counts = _cse_stored
     now = time.monotonic()
     if now - counted_at >= HEALTH_STORE_COUNT_TTL:
-        counts = _cse_client.store_counts()
+        counts = await asyncio.to_thread(_cse_client.store_counts)
         _cse_stored = (now, counts)
     return counts
 
@@ -4244,12 +4248,11 @@ def _snapshot_health() -> dict[str, Any]:
     return {"data_as_of": _snapshot_as_of, "age_hours": round(age, 1), "stale": age > SNAPSHOT_STALE_HOURS}
 
 
-def _distributor_quota_health() -> dict[str, Any]:
-    """/health's distributor_quota: each daily quota's state, and for DigiKey without credentials
-    only when a pause ends."""
+def _distributor_quota_status() -> dict[str, Any]:
+    """Current private quota detail, including DigiKey's pause when it has no daily quota."""
     reply = {name: quota.status() for name, quota in _distributor_quotas.items()}
     if "digikey" not in reply and _digikey_client is not None and (site := _digikey_client.site_status()):
-        reply["digikey"] = site
+        reply["digikey"] = {**site, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
     return reply
 
 
@@ -4278,9 +4281,8 @@ async def health(request):
         "service": "pcbparts-mcp",
         "version": __version__,
         "easyeda_footprints": _easyeda_footprint_counts(),
-        "cse_stored": _cse_store_counts(),
+        "cse_stored": await _cse_store_counts(),
         "distributor_stored": _distributor_store_counts(),
-        "distributor_quota": _distributor_quota_health(),
         "database_pressure": pressure,
         "platform_ranges": _platform_ranges_info,
         "price_tiers": _price_tiers_info,
@@ -4329,7 +4331,7 @@ async def datasheet_redirect(request):
 
 
 async def usage_stats(request):
-    """Private usage counts per UTC day, newest first; bearer auth, ?days=1..KEEP_DAYS (default 30)."""
+    """Private daily usage and current quotas; bearer auth, ?days=1..KEEP_DAYS (default 30)."""
     headers = {"Cache-Control": "private, no-store"}
     if not STATS_TOKEN or not hmac.compare_digest(
             request.headers.get("Authorization", "").encode("utf-8"), f"Bearer {STATS_TOKEN}".encode("utf-8")):
@@ -4339,7 +4341,9 @@ async def usage_stats(request):
         days = int(request.query_params.get("days", "30"))
     except ValueError:
         days = 30
-    return JSONResponse(stats.usage.summary(max(1, min(days, stats.KEEP_DAYS))), headers=headers)
+    reply = stats.usage.summary(max(1, min(days, stats.KEEP_DAYS)))
+    reply["distributor_quota"] = _distributor_quota_status()
+    return JSONResponse(reply, headers=headers)
 
 
 class BodySizeLimitMiddleware:

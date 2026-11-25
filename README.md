@@ -124,7 +124,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 - `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list, or on a server without price tiers), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 1,000 Mouser and DigiKey lookups combined a day; stored answers are free. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 1,000 Mouser and DigiKey lookups combined a day; retries don't count and stored answers are free. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -161,11 +161,12 @@ done
 
 Build recorded stock history with `uv run python scripts/build_history_db.py`. `JLCPCB_DATA_DIR` sets the data directory; `JLCPCB_HISTORY_DB_PATH` can override the history DB path. Only changes leaving stock at 1,000 or below are recorded; [llms.txt](https://pcbparts.dev/llms.txt) has the tool's limits.
 
-Mouser keys are free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
+A Mouser API key is free from Mouser's API hub, and DigiKey client credentials from DigiKey's developer portal. `cse_get_kicad` downloads need a SamacSys ComponentSearchEngine account; `cse_search` works without one.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `MOUSER_API_KEY` | — | Enables `mouser_get_part` and `part_lifecycle` |
+| `MOUSER_DAY_START_HOUR` | `6` | UTC hour when Mouser's daily count resets (`0`–`23`; invalid values warn and use `6`) |
 | `DIGIKEY_CLIENT_ID`, `DIGIKEY_CLIENT_SECRET` | — | Enable `digikey_get_part` and `part_lifecycle` |
 | `CSEARCH_USER`, `CSEARCH_PASS` | — | SamacSys login for `cse_get_kicad` |
 | `HTTP_HOST` | `0.0.0.0` | Bind address (`127.0.0.1` or `::1`: localhost only; `::`: all IPv6); keep `0.0.0.0` in Docker, whose compose file already publishes on 127.0.0.1 |
@@ -177,9 +178,9 @@ Mouser keys are free from Mouser's API hub, and DigiKey client credentials from 
 | `ANTHROPIC_IP_RANGES` | `160.79.104.0/21,153.61.208.0/20` | Anthropic's outbound ranges (empty: normal limit) |
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |
-| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | Daily requests to each of Mouser and DigiKey (`0`: kept answers only) |
+| `DISTRIBUTOR_DAILY_LIMIT` | `1000` | DigiKey daily cap and reported daily limit for Mouser (`0`: kept answers only; Mouser sends until its API refuses) |
 | `DISTRIBUTOR_DAILY_PER_ADDRESS` | `1000` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
-| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts and pauses |
+| `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts, pauses and recent daily-refusal episodes |
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
 | `STATS_TOKEN` | empty | Bearer token for `/mcp/stats`; blank or unset refuses every stats request |
 | `LOG_PATH` | set in Docker; else empty | Application log file, kept across deploys (empty: none) |
@@ -200,8 +201,8 @@ The `_PATH` settings keep that data across restarts; outside Docker they're unse
 
 - **Endpoint:** `https://pcbparts.dev/mcp`, Streamable HTTP (stateless), no auth
 - **Rate limit:** 300 requests a minute per IP or IPv6 /64; 1,000 for Anthropic's and OpenAI's published connector ranges
-- **Health:** `https://pcbparts.dev/health`: version, caches, distributor quotas and database status as JSON; HTTP 503 when a database call is stuck
-- **Usage stats:** `https://pcbparts.dev/mcp/stats`: private daily counts and qualifying popular search words, with no IPs. Requires `Authorization: Bearer <STATS_TOKEN>`; refuses every request when `STATS_TOKEN` is blank or unset. `?days=1..365` (default 30); the endpoint describes every field.
+- **Health:** `https://pcbparts.dev/health`: version, caches and database status as JSON; HTTP 503 when a database call is stuck
+- **Usage stats:** `https://pcbparts.dev/mcp/stats`: private daily counts, current distributor quotas and qualifying popular search words, with no IPs. Requires `Authorization: Bearer <STATS_TOKEN>`; refuses every request when `STATS_TOKEN` is blank or unset. `?days=1..365` (default 30); the endpoint describes every field.
 
 ## Privacy
 

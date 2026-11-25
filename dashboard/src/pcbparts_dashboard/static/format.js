@@ -65,6 +65,8 @@ function fmt(opts) {
 }
 
 export const parseIso = (s) => (s ? new Date(s) : null);
+/** Quota timestamps use YYYY-MM-DD HH:MM UTC; normalize before browser date parsing. */
+export const parseQuotaTime = (s) => parseIso(typeof s === "string" ? s.replace(" ", "T").replace(" UTC", ":00Z") : null);
 export const timeET = (d) => fmt({ hour: "numeric", minute: "2-digit" }).format(d);
 export const hourET = (d) => fmt({ hour: "numeric" }).format(d).replace(":00", "");
 export const dateET = (d) => fmt({ month: "short", day: "numeric" }).format(d);
@@ -106,16 +108,17 @@ export const dayTimeET = (d) => fmt({ weekday: "short", hour: "numeric", minute:
 export const dayHourET = (d) => `${fmt({ weekday: "short" }).format(d)} ${hourET(d)}`;
 
 /**
- * The server's own day (its Mouser and DigiKey budgets, per-address allowances) runs midnight to
- * midnight UTC: 7 PM to 7 PM Eastern in winter, 8 PM in summer. The day holding `now`: [start, end).
+ * The day holding `now`: [start, end), starting at a fixed UTC hour. Stats, DigiKey and
+ * per-address allowances use midnight; Mouser uses the hour reported by /health.
  */
-export function serverDay(now) {
+export function serverDay(now, startHourUTC = 0) {
   const start = new Date(now);
-  start.setUTCHours(0, 0, 0, 0);
+  start.setUTCHours(startHourUTC, 0, 0, 0);
+  if (start > now) start.setUTCDate(start.getUTCDate() - 1);
   return { start, end: new Date(start.getTime() + 86400_000) };
 }
-/** "7 PM": the Eastern hour the server's day ends at, on the day holding `now`. */
-export const resetHour = (now) => hourET(serverDay(now).end);
+/** The Eastern hour the selected server day ends at. */
+export const resetHour = (now, startHourUTC = 0) => hourET(serverDay(now, startHourUTC).end);
 
 export function ago(from, now) {
   const s = Math.max(0, Math.round((now - from) / 1000));

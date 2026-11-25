@@ -477,9 +477,10 @@ class LifecycleLookup:
             for number in chunk:
                 state = states[spelling_key(number)]
                 answer = answers.get(number) if answers is not None else None
-                # A limit held the number's request back (with the reply's error, or for that number
-                # alone), or Mouser's 50-result cap crowded it out of a reply and a limit kept it from
-                # being asked again (Mouser may list it); else it failed, or came back crowded again
+                # A limit held the number's request back (with the reply's error, for that number
+                # alone, or for the follow-up after Mouser's 50-result cap crowded it out: a dict
+                # problem), or it came back crowded again while a limit holds Mouser back (Mouser may
+                # list it); else it failed
                 if answers is None:
                     state.failed.add("mouser")
                 elif answer is None or isinstance(answer.problem, dict) or (

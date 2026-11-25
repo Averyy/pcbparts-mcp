@@ -15,11 +15,12 @@ CONFIG_WARNINGS: list[str] = []
 
 def number_setting(name: str, default: int | float, minimum: int | float,
                    environ: Mapping[str, str] = os.environ, warnings: list[str] = CONFIG_WARNINGS,
-                   maximum: int | float | None = None) -> int | float:
+                   maximum: int | float | None = None, clamp: bool = True) -> int | float:
     """The environment variable `name` as a number of default's type (int or float). Unset or blank:
     the default. Not a number (`1,000`, `1e3` for an int), not finite, or an integer past a float's
     range (about 1.8e308, either sign): the default, with a warning. Below minimum: minimum, and
-    above maximum (if given): maximum, with a warning."""
+    above maximum (if given): maximum, with a warning. With clamp=False, out-of-range values
+    use the default instead."""
     raw = (environ.get(name) or "").strip()
     if not raw:
         return default
@@ -38,11 +39,13 @@ def number_setting(name: str, default: int | float, minimum: int | float,
         warnings.append(f"{name}={raw!r} isn't a finite number; using {default}")
         return default
     if value < minimum:
-        warnings.append(f"{name}={raw!r} is below {minimum}; using {minimum}")
-        return minimum
+        fallback = minimum if clamp else default
+        warnings.append(f"{name}={raw!r} is below {minimum}; using {fallback}")
+        return fallback
     if maximum is not None and value > maximum:
-        warnings.append(f"{name}={raw!r} is above {maximum}; using {maximum}")
-        return maximum
+        fallback = maximum if clamp else default
+        warnings.append(f"{name}={raw!r} is above {maximum}; using {fallback}")
+        return fallback
     return value
 
 
@@ -234,10 +237,12 @@ JLCPCB_MAX_ROTATIONS = 10  # Max fingerprint rotations on 403
 
 # Mouser API
 MOUSER_API_KEY = os.getenv("MOUSER_API_KEY", "")
+# Observed daily reset: 06:00 UTC. Configurable because a daylight-saving shift is unconfirmed.
+MOUSER_DAY_START_HOUR = number_setting("MOUSER_DAY_START_HOUR", 6, 0, maximum=23, clamp=False)
 
 
 def mouser_extra_keys(environ: Mapping[str, str], first: str = "") -> tuple[list[str], list[str]]:
-    """Optional extra Mouser API keys, each used only after the previous key's day is spent
+    """Optional extra Mouser API keys, each used once Mouser refuses the previous key
     (MouserKeyPool): MOUSER_API_KEY_2, MOUSER_API_KEY_3, ... read in order until one is unset or
     blank. Returns the keys and a warning for each MOUSER_API_KEY_<n> that's set but not used:
     after that gap (MOUSER_API_KEY_3 without MOUSER_API_KEY_2), or repeating an earlier key. The

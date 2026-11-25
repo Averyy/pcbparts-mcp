@@ -2,11 +2,12 @@
 
 Uses the official MCP Python client for proper protocol handling.
 
-Usage: .venv/bin/python scripts/test_local_tools.py
+Usage: uv run python scripts/test_local_tools.py
 """
 
 import asyncio
 import json
+import os
 import sys
 import traceback
 
@@ -14,16 +15,20 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp import ClientSession
 
 BASE_URL = "http://localhost:18080/mcp"
-HEALTH_URL = "http://localhost:18080/health"
+STATS_URL = "http://localhost:18080/mcp/stats"
 
 
 async def _digikey_has_credentials() -> bool:
-    """Whether the container answers DigiKey from API credentials: /health lists DigiKey's daily
-    quota (a limit) only then."""
+    """Confirm DigiKey API credentials through the container's authenticated quota state."""
     import httpx
+    token = os.environ.get("STATS_TOKEN", "")
+    if not token:
+        return False
     async with httpx.AsyncClient(timeout=10) as http:
-        health = (await http.get(HEALTH_URL)).json()
-    return "limit" in ((health.get("distributor_quota") or {}).get("digikey") or {})
+        response = await http.get(STATS_URL, headers={"Authorization": f"Bearer {token}"})
+    if response.status_code != 200:
+        return False
+    return "limit" in ((response.json().get("distributor_quota") or {}).get("digikey") or {})
 PASS = 0
 FAIL = 0
 
@@ -387,8 +392,7 @@ async def main():
             # ============================================================
             print("\n--- digikey_get_part ---")
 
-            # Only when the container answers DigiKey with API credentials (/health then shows its
-            # daily quota): this script sends no DigiKey lookup any other way
+            # Only when authenticated stats confirm DigiKey API credentials in the container.
             if await _digikey_has_credentials():
                 await test_tool(session, "digikey get part", "digikey_get_part", {
                     "part_number": "LM358P",
@@ -396,7 +400,7 @@ async def main():
                     lambda r: None if r.get("results") is not None or r.get("digikey_pn") else f"unexpected: {list(r.keys())}",
                 ])
             else:
-                print("  skipped: the container has no DigiKey API credentials")
+                print("  skipped: authenticated stats did not confirm DigiKey API credentials")
 
             # ============================================================
             # 9. cse_search (ComponentSearchEngine)

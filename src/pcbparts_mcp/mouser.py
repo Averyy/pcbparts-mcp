@@ -12,10 +12,10 @@ can crowd the others out of a batch ("LM358|TPS54331DR" can come back as 50 LM35
 at that cap keeps no "not found" or "not listed" for any number, and the numbers it crowded out are
 asked once more without the number that filled it (_crowded_out).
 
-Each request picks its API key as it goes out (Mouser takes the key in the query string): the first
-key until its day is spent, then the next (MouserKeyPool). A daily refusal from Mouser moves the
+Each request picks its API key as it goes out (Mouser takes the key in the query string): stay on the
+current key until Mouser refuses its day, then the next in rotation (MouserKeyPool). A daily refusal moves the
 request on to the next key, and so does Mouser rejecting a key as invalid when there are several
-(that key then waits for the next UTC day, and the log names its number).
+(that key then waits for the next Mouser day, and the log names its number).
 
 Numbers neither distributor can list (search/mpn.py's not_sent_reason: a value such as "10k", a BOM
 placeholder, an LCSC code, non-ASCII) aren't sent: get_part lists them in not_found and not_sent.
@@ -29,14 +29,17 @@ import asyncio
 import logging
 import re
 import time
-from collections.abc import Sequence
+from collections import deque
+from collections.abc import Awaitable, Sequence
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any, Callable
 
 import httpx
 
 from . import stats
-from .cache import DailyQuota, MouserKeyPool, QuotaPool, _header_int, _next_utc_midnight
+from .cache import DailyQuota, MouserKeyPool, QuotaPool, _header_int, _utc_text
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
@@ -80,6 +83,18 @@ class MouserError(ValueError):
     """A Mouser request failed. The message is ours (no API key), so the tool can show it."""
 
 
+class _TransientFailure(MouserError):
+    """Internal retry signal carrying diagnostics, with the existing public failure message."""
+
+    def __init__(self, message: str, response: httpx.Response | None = None, *,
+                 exception_name: str | None = None, json_parsed: bool = False, json_keys: tuple = ()):
+        super().__init__(message)
+        self.response = response
+        self.exception_name = exception_name
+        self.json_parsed = json_parsed
+        self.json_keys = json_keys
+
+
 class MouserRateLimited(MouserError):
     """Mouser refused for its own daily or per-minute limit (1,000 a day, 30 a minute)."""
 
@@ -100,6 +115,12 @@ class MouserAPIError(Exception):
 class MouserKeyRejected(MouserAPIError):
     """Mouser rejected the only API key as invalid: nothing else can send, so the error is shown as
     Mouser gave it (a self-hoster's typo), and asking each number alone wouldn't help."""
+
+
+def _daily_limit(error: dict | None, headers: Any) -> bool:
+    text = " ".join(str(error.get(key) or "") for key in ("Message", "ResourceKey")).lower() if error else ""
+    # A bare 429 whose headers say none are left is the day too.
+    return "day" in text or (error is None and _header_int(headers or {}, "x-ratelimit-remaining") == 0)
 
 
 def _rejects_key(error: dict[str, Any]) -> bool:
@@ -253,10 +274,10 @@ class PartAnswer:
     """What Mouser returned for one part number: the results that can be its matches, whether any
     really matches it (else the reply's not_found names it), and when Mouser answered. checked is
     False for a number a reply cut at Mouser's cap may have crowded out (no results for it, or none
-    that is the part itself while another number filled the reply) that couldn't be asked again
-    (_fetch): Mouser may list it. Such answers are never kept, so a kept answer is always checked.
-    problem: why a number wasn't checked at all (_one_by_one): the limit error that held its request
-    back, or the error Mouser gave for it asked alone."""
+    that is the part itself while another number filled the reply), even after a follow-up (_fetch):
+    Mouser may list it. Such answers are never kept, so a kept answer is always checked.
+    problem: the limit error or exception that prevented a follow-up or one-by-one request from
+    answering this number. Without a problem, unmatched numbers still go in get_part's not_found."""
     results: list[dict[str, Any]]
     matched: bool
     fetched_at: float
@@ -269,6 +290,13 @@ class PartAnswer:
     @classmethod
     def from_json(cls, data: dict[str, Any], fetched_at: float) -> PartAnswer:
         return cls(list(data.get("results") or []), bool(data.get("matched")), fetched_at)
+
+
+@dataclass
+class _WaitBudget:
+    """Waiting spent by all requests in one lookup, capped at 30 seconds."""
+
+    waited: float = 0
 
 
 def _normalize_part(part: dict[str, Any]) -> dict[str, Any]:
@@ -338,13 +366,18 @@ class MouserClient:
 
     store: the answer and lifecycle store shared with DigiKeyClient and part_lifecycle (the server
     passes one); without one the client keeps its own in memory. extra_keys: more API keys
-    (MOUSER_API_KEY_2, ...), each used once the previous key's day is spent; quota then needs one
+    (MOUSER_API_KEY_2, ...), each used once Mouser refuses the previous key's day; quota then needs one
     DailyQuota per key (a MouserKeyPool). One DailyQuota is a pool of one key."""
 
     def __init__(self, api_key: str = MOUSER_API_KEY, quota: DailyQuota | QuotaPool | None = None,
                  store: DistributorStore | None = None, clock: Callable[[], float] = time.time,
-                 extra_keys: Sequence[str] = ()):
+                 extra_keys: Sequence[str] = (), sleep: Callable[[float], Awaitable[None]] = asyncio.sleep):
         self._keys = [api_key, *extra_keys]
+        self._clock, self._sleep = clock, sleep
+        self._outcomes: deque[list[int]] = deque(maxlen=31)  # ten-second buckets: start, transient, total
+        self._retry_guard = False
+        self._failure_minute: int | None = None
+        self._suppressed_failures = 0
         self._client: httpx.AsyncClient | None = None
         self._closed = False  # close(): nothing goes out afterwards
         self._quota = MouserKeyPool([quota]) if isinstance(quota, DailyQuota) else quota
@@ -357,7 +390,7 @@ class MouserClient:
 
     def _get_client(self) -> httpx.AsyncClient:
         if self._closed:  # shutting down: nothing goes out after close()
-            raise httpx.ConnectError("Mouser client closed")
+            raise MouserError("Mouser API request failed (network/connection error)")
         if self._client is None:
             self._client = httpx.AsyncClient(timeout=15.0)
         return self._client
@@ -375,36 +408,83 @@ class MouserClient:
 
         Note: Mouser API v2 requires apiKey as a query parameter (their design).
         """
+        client = self._get_client()  # a closed client is not an upstream attempt
+        rotation = self._quota if isinstance(self._quota, MouserKeyPool) else None
+        token = rotation.sent(key_index) if rotation is not None else None
+        try:
+            data = await self._send(client, path, body, key_index, token)
+        except _TransientFailure:
+            self._record_outcome(transient=True)
+            raise
+        except (MouserError, MouserAPIError):
+            self._record_outcome(transient=False)
+            raise
+        else:
+            self._record_outcome(transient=False)
+            return data
+        finally:
+            if rotation is not None and token is not None:
+                rotation.finished(key_index, token)
+
+    async def _send(self, client: httpx.AsyncClient, path: str, body: dict[str, Any], key_index: int,
+                    token: tuple[float, float | None, bool] | None) -> dict[str, Any]:
         url = f"{MOUSER_BASE_URL}{path}?apiKey={self._keys[key_index]}"
         key_quota = self._quota.quotas[key_index] if self._quota is not None else None
+        rotation = self._quota if isinstance(self._quota, MouserKeyPool) else None
+        sent_count = key_quota._count if key_quota is not None else None
         try:
-            client = self._get_client()  # built first, so the minute counts from the send
             if self._quota is not None:
                 self._quota.mark_sent()
             response = await client.post(url, json=body)
-        except httpx.HTTPError:
+        except (Exception, asyncio.CancelledError) as exc:
+            stats.count_upstream_status("mouser", exc)
             # Sanitize: httpx exceptions may include the full URL with API key
-            raise MouserError("Mouser API request failed (network/connection error)")
+            if isinstance(exc, httpx.HTTPError):
+                message = "Mouser API request failed (network/connection error)"
+                if isinstance(exc, httpx.TransportError) and not isinstance(exc, httpx.TimeoutException):
+                    raise _TransientFailure(message, exception_name=type(exc).__name__) from None
+                raise MouserError(message) from None
+            raise
+        json_parsed = True
         try:
             data = response.json()
-        except ValueError:
+        except (ValueError, RecursionError):  # RecursionError: absurdly nested JSON
             data = None
+            json_parsed = False
         errors = data.get("Errors") if isinstance(data, dict) else None
         errors = [e for e in errors if isinstance(e, dict)] if isinstance(errors, list) else []
 
         # Mouser reports its limits in the body, with HTTP 403 (seen by other projects in 2026):
         # {"Errors":[{"Code":"TooManyRequests","Message":"Maximum calls per day exceeded.",
         # "ResourceKey":"MaxCallPerDay"}]}, or "Maximum calls per minute exceeded." It sends no
-        # rate-limit headers and doesn't say when the daily count resets.
+        # rate-limit headers; the configured Mouser day supplies the expected reset time.
         limit = next((e for e in errors if e.get("Code") == "TooManyRequests"), None)
+        stats.count_upstream_status("mouser", response, status="429" if limit is not None else None)
+        if rotation is not None and token is not None:
+            # Readable request/part errors also confirm that the API accepted the check.
+            rejected = any(_rejects_key(e) for e in errors)
+            refused = limit is not None or response.status_code in (401, 403, 429) or rejected
+            results = data.get("SearchResults") if isinstance(data, dict) else None
+            readable = bool(errors) or (isinstance(results, dict) and isinstance(results.get("Parts"), list))
+            if not refused and response.status_code < 400 and readable:
+                resumed = rotation.finished(key_index, token, accepted=True)
+                if resumed:
+                    logger.info(f"Mouser key {key_index + 1} accepted again at {utc_text(resumed['resumed_at'])}; "
+                                f"daily refusal since {utc_text(resumed['at'])}, after {resumed['retries']} retries")
         if key_quota is not None:
-            # Only this key's: a daily count in the headers is that key's (a 429's per-minute
-            # pause goes to every key in _refused_for_limit). A refusal in the body is paused for
-            # by what it says (_refused_for_limit): its HTTP 429, if it comes with one, isn't a
-            # per-minute pause of its own, which would replace a daily pause's hourly retry.
-            key_quota.note_response(200 if limit is not None else response.status_code, response.headers)
-        if limit is not None or response.status_code == 429:
-            raise self._refused_for_limit(limit, key_index, response.headers)
+            if rotation is not None:
+                # Mouser currently sends no quota headers. If present, retain the counters as
+                # telemetry; refusal handling below owns the next try time.
+                remaining = _header_int(response.headers, "x-ratelimit-remaining")
+                if remaining is not None:
+                    key_quota.note_api_usage(remaining, _header_int(response.headers, "x-ratelimit-limit"))
+            else:
+                key_quota.note_response(200 if limit is not None else response.status_code, response.headers)
+        unexplained_check = (token is not None and token[2]
+                             and response.status_code in (401, 403) and limit is None and not rejected)
+        if limit is not None or response.status_code == 429 or unexplained_check:
+            raise self._refused_for_limit(limit, key_index, response.headers, token=token,
+                                          sent_count=sent_count, unexplained=unexplained_check)
         if errors:
             err = errors[0]
             code = self._redact(str(err.get("Code") or ""))
@@ -414,56 +494,136 @@ class MouserClient:
             raise MouserAPIError(code, message)
         # Catch HTTP errors to avoid leaking the API key (embedded in URL) into logs
         if response.status_code >= 400:
+            if 500 <= response.status_code < 600:
+                raise _TransientFailure(f"Mouser API returned HTTP {response.status_code}", response)
             raise MouserError(f"Mouser API returned HTTP {response.status_code}")
-        if not isinstance(data, dict):
-            raise MouserError("Mouser API returned an unreadable response")
-        if key_quota is not None:
+        # A reply without its parts list says nothing about the numbers: never keep a miss.
+        results = data.get("SearchResults") if isinstance(data, dict) else None
+        if not isinstance(results, dict) or not isinstance(results.get("Parts"), list):
+            raise _TransientFailure("Mouser API returned an unreadable response", response,
+                                    json_parsed=json_parsed, json_keys=tuple(data) if isinstance(data, dict) else ())
+        if key_quota is not None and rotation is None:
             if resumed := key_quota.clear_expired_pause():
                 logger.info(f"Mouser key {key_index + 1} accepted again at {utc_text(resumed['resumed_at'])}; "
                             f"daily refusal since {utc_text(resumed['at'])}, after {resumed['retries']} retries")
         return data
 
-    def _refused_for_limit(self, err: dict | None, key_index: int = 0, headers: Any = None) -> MouserRateLimited:
-        """Pause for the limit Mouser named and return the error to raise. A daily refusal pauses
-        only the key that got it (for an hour while our own count for it is below its limit, since
-        Mouser doesn't say when its count resets; else until 00:00 UTC); while another key can send, that's
-        MouserKeySpent, and the request goes out again on it. A per-minute refusal (a TooManyRequests
-        that isn't the daily one, or a bare 429: for its Retry-After, else a minute) pauses every key
-        through the pool's shared pause, apart from each key's own: a key already paused for its
-        day by another request in flight would otherwise keep only the longer pause, and the pool
-        would send the next request on another key at once."""
-        text = " ".join(str(err.get(key) or "") for key in ("Message", "ResourceKey")).lower() if err else ""
-        # A bare 429 whose headers say none are left is the day too (note_response paused for it)
-        daily = "day" in text or (err is None and _header_int(headers or {}, "x-ratelimit-remaining") == 0)
-        stats.count_distributor_limit("mouser", "refusals", "daily" if daily else "minute")
+    def _record_outcome(self, *, transient: bool) -> None:
+        start = int(self._clock() // 10) * 10
+        if not self._outcomes or self._outcomes[-1][0] != start:
+            self._outcomes.append([start, 0, 0])
+        self._outcomes[-1][1] += int(transient)
+        self._outcomes[-1][2] += 1
+        self._retries_disabled()
+
+    def _retries_disabled(self) -> bool:
+        """Bounded five-minute outcome window, retaining the overlapping ten-second bucket.
+
+        Check after outcomes and before retry sends, so an idle guard expires too. Cancelled
+        attempts have no outcome; HTTP/API refusals and non-retried errors count in the total.
+        """
+        cutoff = self._clock() - 300
+        while self._outcomes and self._outcomes[0][0] + 10 <= cutoff:
+            self._outcomes.popleft()
+        failures = sum(row[1] for row in self._outcomes)
+        attempts = sum(row[2] for row in self._outcomes)
+        disabled = failures >= 10 and failures * 10 >= attempts * 9
+        if disabled != self._retry_guard:
+            log = logger.warning if disabled else logger.info
+            log("Mouser retry guard %s: %d/%d transient failures over the last 5 minutes; retries %s",
+                "entered" if disabled else "cleared", failures, attempts, "disabled" if disabled else "enabled")
+            self._retry_guard = disabled
+        return disabled
+
+    def _retry_delay(self, failure: _TransientFailure, retries: int, waited: float) -> float | None:
+        if self._retries_disabled() or retries >= 2 or waited >= 30:
+            return None
+        delay = (3, 10)[retries]
+        response = failure.response
+        if response is not None and 500 <= response.status_code < 600:
+            value = response.headers.get("Retry-After", "").strip()
+            if value.isascii() and value.isdecimal():
+                if len(value.lstrip("0")) > 2:  # also avoids parsing an unbounded integer
+                    return None
+                delay = int(value.lstrip("0") or "0")
+            elif value:
+                try:
+                    date = parsedate_to_datetime(value)
+                    if date.tzinfo is None:
+                        date = date.replace(tzinfo=timezone.utc)
+                    delay = max(0, date.timestamp() - self._clock())
+                except (ValueError, TypeError, OverflowError):
+                    pass  # unusable Retry-After: use our normal delay
+        return delay if waited + delay <= 30 else None
+
+    def _log_transient(self, failure: _TransientFailure, attempt: int, key_index: int,
+                       delay: float | None) -> None:
+        """One diagnostic per UTC minute; later failures are counted for the next line."""
+        minute = int(self._clock() // 60)
+        if minute == self._failure_minute:
+            self._suppressed_failures += 1
+            return
+        more = ""
+        if self._suppressed_failures:
+            since = datetime.fromtimestamp(self._failure_minute * 60, timezone.utc).strftime("%H:%M")
+            more = f"; {self._suppressed_failures} more since {since} UTC"
+        self._failure_minute, self._suppressed_failures = minute, 0
+        response = failure.response
+        detail = failure.exception_name
+        if response is not None:
+            detail = f"HTTP {response.status_code}"
+        headers = response.headers if response is not None else {}
+        detail += (f" attempt={attempt} key={key_index + 1} retry={delay is not None} delay={delay}"
+                   f" Retry-After={self._redact(repr(headers.get('Retry-After')))}"
+                   f" Server={self._redact(repr(headers.get('Server')))}"
+                   f" Content-Type={self._redact(repr(headers.get('Content-Type')))}"
+                   f" body_length={len(response.content) if response is not None else 0}")
+        if response is not None and 500 <= response.status_code < 600:
+            body = " ".join(self._redact(response.text).split())[:200]
+            detail += f" body={body!r}"
+        elif response is not None:
+            detail += f" json={failure.json_parsed} top_keys={self._redact(repr(failure.json_keys))}"
+        logger.warning("Mouser transient failure: %s%s", detail, more)
+
+    def _refused_for_limit(self, err: dict | None, key_index: int = 0, headers: Any = None,
+                           token: tuple[float, float | None, bool] | None = None,
+                           sent_count: int | None = None, unexplained: bool = False) -> MouserRateLimited:
+        """Pause a daily refusal until its next try and rotate; minute refusals pause every key."""
+        daily = unexplained or _daily_limit(err, headers)
+        stats.count_distributor_limit("mouser", "refusals", "refused" if unexplained else "daily" if daily else "minute")
         if self._quota is not None:
             key_quota = self._quota.quotas[key_index]
-            if "day" in text:
-                if key_quota.pause_daily_unknown_reset():
-                    logger.warning(f"Mouser key {key_index + 1} daily refusal at {utc_text(key_quota.now())}: "
-                                   f"our count {key_quota._count}/{key_quota._limit}; "
-                                   f"tries again at {utc_text(key_quota._paused_until)}")
+            if daily:
+                if isinstance(self._quota, MouserKeyPool):
+                    assert token is not None and sent_count is not None
+                    if self._quota.refuse_daily(key_index, token, sent_count):
+                        logger.warning(f"Mouser key {key_index + 1} daily refusal at {utc_text(key_quota.now())}: "
+                                       f"our count {sent_count}/{key_quota._limit}; "
+                                       f"next try at {_utc_text(key_quota._paused_until)}")
+                else:
+                    key_quota.pause_daily_unknown_reset()
             elif err is not None or _header_int(headers or {}, "x-ratelimit-remaining") != 0:
                 wait = 60 if err is not None else (_header_int(headers or {}, "retry-after") or 60)
                 self._quota.share_penalty(key_quota.now() + wait, "burst")
-            # (a bare 429 that says the day is over already paused this key until its reset: note_response)
             paused = self._quota.paused_error()
             if paused:
                 return MouserRateLimited(paused["error"])
-            if own := key_quota.paused_error():  # only this key's day is over
+            if daily:  # only this key's day is over; retry even for a stale in-flight refusal
+                return MouserKeySpent(self._quota.daily_error()["error"])
+            if own := key_quota.paused_error():
                 return MouserKeySpent(own["error"])
         detail = self._redact(str((err.get("Message") if err else None) or "HTTP 429"))
         return MouserRateLimited(f"Mouser is limiting requests ({detail}). Try again later.")
 
     def _key_rejected(self, key_index: int, code: str, message: str) -> Exception:
         """Mouser rejected this key as invalid (a typo, or revoked). With several keys it waits for
-        the next UTC day, the log names its number (never the key), and the request goes out again
+        the next Mouser day, the log names its number (never the key), and the request goes out again
         on the next key (MouserKeySpent), or gets the pool's daily error when none is left. The
         only key's rejection is shown as Mouser gave it."""
         if len(self._keys) == 1:
             return MouserKeyRejected(code, message)
         key_quota = self._quota.quotas[key_index]
-        until = _next_utc_midnight(key_quota.now())
+        until = key_quota.next_reset()
         key_quota.pause(until, "invalid_key")
         logger.error(f"Mouser rejected API key {key_index + 1} as invalid ({message}); it isn't used again "
                      f"until {utc_text(until)}: check MOUSER_API_KEY" + (f"_{key_index + 1}" if key_index else ""))
@@ -483,7 +643,8 @@ class MouserClient:
             and not_sent. When a limit holds back the request for some numbers while others were
             kept, the kept answers come back with not_checked (the numbers not looked up) and
             retry_after; with nothing kept, the limit error. lookup_failed: numbers Mouser gave an
-            error for when asked alone (the others still answer).
+            error for when asked alone, or unmatched numbers whose follow-up after a capped reply
+            failed (the others still answer).
         """
         # Mouser's SearchByPartRequest takes up to 10 part numbers, each 3-40 characters. Checked
         # here so a malformed batch doesn't spend a request.
@@ -634,13 +795,16 @@ class MouserClient:
         """One request for these numbers (distinct by cache key), and when its reply was cut at
         Mouser's cap, one more for the numbers it crowded out (_crowded_out), within the limits:
         their answers then come from that reply. A limit refusal or failure of that second request
-        leaves the first reply's answers; numbers it had no results for are then not checked. When
+        retains the first reply's other answers and gives the crowded-out numbers with no match that
+        limit error or exception as their problem (not_checked or lookup_failed). An answered but still capped
+        follow-up leaves unmatched numbers in get_part's not_found, without keeping misses. When
         Mouser rejects a request of several numbers (an error for the request, not a limit), each
         number is asked alone instead (_one_by_one); a lone number it rejects gets the error as its
         answer's problem, as there, so the caller's kept answers still answer (it raised, and a
-        batch with the rest kept failed whole)."""
+        batch with the rest kept failed whole). All requests share one 30-second waiting budget."""
+        budget = _WaitBudget()
         try:
-            data, error = await self._request(numbers, caller)
+            data, error = await self._request(numbers, caller, budget=budget)
         except MouserKeyRejected:
             raise
         except MouserAPIError as e:
@@ -648,23 +812,28 @@ class MouserClient:
                 logger.warning(f"Mouser lookup of one number failed: {type(e).__name__}: {e}")
                 return {_cache_key(n): PartAnswer([], False, self._store.now(), False, e) for n in numbers}, [], None
             logger.warning(f"Mouser rejected a request of {len(numbers)} numbers ({e}); asking each alone")
-            return await self._one_by_one(numbers, caller)
+            return await self._one_by_one(numbers, caller, budget=budget)
         if error is not None:
             return {}, [], error
         answers, extras, again = self._keep(numbers, data, keep_batch=True)
         if again:
             try:
-                data, error = await self._request(again, caller)
+                data, error = await self._request(again, caller, budget=budget, check_address=False)
             except (MouserError, MouserAPIError) as e:  # the first reply still answers
                 logger.warning(f"Mouser: asking again for numbers a capped reply crowded out failed: {e}")
-                data = None
+                data, error = None, e
             if data is not None and error is None:
                 more, more_extras, _ = self._keep(again, data)
                 answers.update(more)
                 extras = extras + more_extras
+            elif error is not None:
+                # Only numbers with no match move: one with loose matches keeps its first-reply results.
+                for number in again:
+                    if not answers[_cache_key(number)].matched:
+                        answers[_cache_key(number)].problem = error
         return answers, extras, None
 
-    async def _one_by_one(self, numbers: list[str], caller: str | None
+    async def _one_by_one(self, numbers: list[str], caller: str | None, *, budget: _WaitBudget
                           ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], dict[str, Any] | None]:
         """Each number asked alone, within the limits, after Mouser rejected the request of all of
         them: the numbers it takes still answer, and an answer's problem says why one wasn't
@@ -680,7 +849,7 @@ class MouserClient:
                 answers[_cache_key(number)] = PartAnswer([], False, now, False, failures[-1])
                 continue
             try:
-                data, error = await self._request([number], caller)
+                data, error = await self._request([number], caller, budget=budget)
             except MouserKeyRejected:
                 raise
             except (MouserError, MouserAPIError) as e:
@@ -707,8 +876,10 @@ class MouserClient:
         task.add_done_callback(_consume_exception)
         return await asyncio.shield(task)
 
-    async def _request(self, numbers: list[str], caller: str | None) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
-        """Mouser's reply to one request for these numbers, or a limit error."""
+    async def _request(self, numbers: list[str], caller: str | None, *, budget: _WaitBudget | None = None,
+                       check_address: bool = True
+                       ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        """Mouser's reply or a limit error; a capped-reply follow-up shares the address allowance."""
         body = {
             "SearchByPartRequest": {
                 "mouserPartNumber": "|".join(numbers),
@@ -716,34 +887,73 @@ class MouserClient:
             }
         }
         # Each attempt reserves a request on the key it will use (after the store, so stored
-        # answers don't count) and sends it with no await in between, so concurrent lookups can't
-        # overdraw a key. One more attempt, on the next key, only after a daily refusal (the refused
-        # key stays out for the day): at most as many requests as there are keys.
-        for attempt in range(len(self._keys)):
+        # answers don't count) and sends it with no await in between. Rotation on a daily refusal
+        # keeps its own bound; only the first attempt checks and counts the address allowance.
+        rotations = retries = attempt = 0
+        if budget is None:
+            budget = _WaitBudget()
+        retry_pending = False
+        failure: _TransientFailure | None = None
+        while True:
+            self._get_client()  # fail before reserving or counting a send after close()
+            if retry_pending and self._retries_disabled():
+                raise MouserError(str(failure)) from None
             key_index = 0
             if self._quota:
-                key_index, quota_error = self._quota.acquire(caller)
+                key_index, quota_error = self._quota.acquire(caller, check_address=check_address and attempt == 0)
                 if quota_error:
+                    if (self._quota.last_refusal_cause == "distributor_daily"
+                            and isinstance(self._quota, MouserKeyPool) and budget.waited < 30):
+                        next_try = self._quota.retry_after()
+                        if self._quota.checking() or (next_try is not None and next_try <= 30 - budget.waited):
+                            delay = min(1, 30 - budget.waited)
+                            await self._sleep(delay)
+                            budget.waited += delay
+                            continue
+                    if attempt > 0 and self._quota.last_refusal_cause == "minute_cap":
+                        # Ignore the admitted caller's address cap when finding the next slot.
+                        delay = self._quota.retry_after()
+                        if delay is not None and budget.waited < 30 and budget.waited + delay <= 30:
+                            await self._sleep(delay)
+                            budget.waited += delay
+                            continue
                     stats.count_distributor("mouser", "rate_limited")
                     stats.count_distributor_limit("mouser", "held_back", self._quota.last_refusal_cause)
                     self._quota.held_back.record(caller)
                     return None, quota_error
             stats.count_distributor("mouser", "sent")
+            if retry_pending:
+                stats.count_distributor("mouser", "retries")
+                retry_pending = False
+            attempt += 1
             try:
                 data = await self._post("/search/partnumber", body, key_index)
+            except _TransientFailure as exc:
+                delay = self._retry_delay(exc, retries, budget.waited)
+                self._log_transient(exc, attempt, key_index, delay)
+                if delay is None:
+                    raise MouserError(str(exc)) from None
+                failure = exc
+                await self._sleep(delay)
+                budget.waited += delay
+                retries += 1
+                retry_pending = True
+                continue
             except MouserKeySpent as e:
-                if attempt + 1 < len(self._keys):
+                rotations += 1
+                if rotations < len(self._keys):
                     continue
                 return None, (self._quota.paused_error() if self._quota else None) or {"error": str(e)}
             except MouserRateLimited as e:
+                # A sent refusal can leave a nearby next try or another lookup's check:
+                # re-enter acquire so it can wait within this lookup's remaining budget.
+                if (isinstance(self._quota, MouserKeyPool) and budget.waited < 30
+                        and self._quota.pause_cause() == "distributor_daily"):
+                    next_try = self._quota.retry_after()
+                    if self._quota.checking() or (next_try is not None and next_try <= 30 - budget.waited):
+                        continue
                 return None, {"error": str(e)}
-            # A reply without its parts list ({"Errors": [], "SearchResults": null}) says nothing
-            # about the numbers: a failed lookup, never "not found" (nothing is kept or counted from it)
-            results = data.get("SearchResults")
-            if not isinstance(results, dict) or not isinstance(results.get("Parts"), list):
-                raise MouserError("Mouser API returned an unreadable response")
             return data, None
-        raise AssertionError("unreachable: the last attempt returns")
 
     def _keep(self, numbers: list[str], data: dict[str, Any], keep_batch: bool = False
               ) -> tuple[dict[str, PartAnswer], list[dict[str, Any]], list[str]]:
