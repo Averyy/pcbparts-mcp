@@ -134,7 +134,6 @@
 {"l":"C532717","m":"770068-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C532721","m":"770085-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C532736","m":"926716-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
-{"l":"C532748","m":"963120-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C532794","m":"1-1670730-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C532813","m":"1456987-3","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C532825","m":"2310537-2","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
@@ -309,6 +308,7 @@
 {"l":"C599106","m":"865650PLTXLF","f":"Amphenol ICC","p":"Plugin","t":"e","c":2143,"d":"Plugin Connector Housings ROHS","a":[],"x":0}
 {"l":"C698302","m":"21033012003","f":"Harting Tech","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C714827","m":"172076-2","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
+{"l":"C714843","m":"280232-8","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C715986","m":"334721206","f":"MOLEX","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C720040","m":"ZX20-B-SLDC","f":"HRS(Hirose)","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C840828","m":"1445390-3","f":"TE Connectivity","p":"Plugin","t":"e","c":2143,"d":"插件 Connector Housings ROHS","a":[],"x":0}
@@ -455,6 +455,7 @@
 {"l":"C5169705","m":"826884-2","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C5169768","m":"1375801-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C5169900","m":"535074-1","f":"TE Connectivity","p":"Plugin","t":"e","c":2143,"d":"Plugin Connector Housings ROHS","a":[],"x":0}
+{"l":"C5170170","m":"1-1971817-9","f":"TE Connectivity","p":"Plugin","t":"e","c":2143,"d":"Plugin Connector Housings ROHS","a":[],"x":0}
 {"l":"C5171099","m":"5499910-5","f":"TE Connectivity","p":"Plugin","t":"e","c":2143,"d":"Plugin Connector Housings ROHS","a":[],"x":0}
 {"l":"C5171230","m":"5205732-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C5171318","m":"926330-1","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
@@ -691,7 +692,6 @@
 {"l":"C20594972","m":"2385532-6","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C20848085","m":"0936010632","f":"MOLEX","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C20882969","m":"U77-A1118-200T","f":"Amphenol ICC","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
-{"l":"C20910591","m":"U77-A261M-2071","f":"Amphenol ICC","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C21268344","m":"1412566","f":"Phoenix Contact","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C22307344","m":"T1319160116-000","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C22314737","m":"19200031755","f":"Harting Tech","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
@@ -701,7 +701,6 @@
 {"l":"C22375245","m":"XDSFP-020-RTS19","f":"Lian Xin Technology","p":"Plugin","t":"e","c":2143,"d":"插件 Connector Housings ROHS","a":[],"x":0}
 {"l":"C22387881","m":"TPKTB-22,5-2ETYKFGN","f":"Toponelec","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C22408983","m":"2958147","f":"Phoenix Contact","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
-{"l":"C22418322","m":"1028-034-1205","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C22427321","m":"09320463101","f":"Harting Tech","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C22431817","m":"MHDTZK9-RA-K","f":"MH CONNECTORS","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C23245496","m":"43645-0307","f":"MOLEX","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
@@ -733,7 +732,6 @@
 {"l":"C38583760","m":"1-2400923-2","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}
 {"l":"C39947981","m":"10170159-106TALF","f":"Amphenol ICC","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C41713231","m":"ZG05HV-6S-HU","f":"HRS(Hirose)","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
-{"l":"C42245948","m":"2371404-4","f":"TE Connectivity","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C42317198","m":"ZG05HV-6S-HU(A)","f":"HRS(Hirose)","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C42349635","m":"04T-ZWPV-W-KNN","f":"JST","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0,"n":1}
 {"l":"C42718951","m":"36GIT-CL-1A-01-01L","f":"JST","p":"-","t":"e","c":2143,"d":"- Connector Housings ROHS","a":[],"x":0}

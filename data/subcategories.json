@@ -2034,11 +2034,6 @@
     "category_id": 52,
     "category_name": "Handling/Packaging/Storage"
   },
-  "3316": {
-    "name": "Stainless steel table",
-    "category_id": 52,
-    "category_name": "Handling/Packaging/Storage"
-  },
   "3626": {
     "name": "Aluminum Profile Heat Dissipation Accessories",
     "category_id": 47,
@@ -3623,6 +3618,11 @@
     "name": "Stepper Motor Driver",
     "category_id": 69,
     "category_name": "Motor Driver ICs"
+  },
+  "3531": {
+    "name": "Network Switch",
+    "category_id": 49,
+    "category_name": "Office Daily Use"
   },
   "1107": {
     "name": "Panel Switch/Panel Socket",
