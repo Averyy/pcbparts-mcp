@@ -348,11 +348,12 @@ def test_first_version_fetch_is_recovered_from_legacy_health_before_pruning(stor
 def test_rescale_never_invents_an_even_split():
     # Rules 3: a total with no recorded causes goes under "other", never evenly across causes.
     from pcbparts_dashboard.eastern import _apportion
-    causes = ("minute_cap", "daily_count", "address_daily", "other")
+    causes = ("minute_cap", "daily_count", "address_daily", "address_blocked", "other")
     record = {"distributor_limits": {"digikey": {"held_back": {c: 0 for c in causes}}}}
     paths = [("distributor_limits", "digikey", "held_back", c) for c in causes]
     _apportion(record, paths, 10)
-    assert record["distributor_limits"]["digikey"]["held_back"] == {"minute_cap": 0, "daily_count": 0, "address_daily": 0, "other": 10}
+    assert record["distributor_limits"]["digikey"]["held_back"] == {"minute_cap": 0, "daily_count": 0, "address_daily": 0,
+                                                                    "address_blocked": 0, "other": 10}
     no_other = {"x": {"a": 0, "b": 0}}
     _apportion(no_other, [("x", "a"), ("x", "b")], 7)
     assert no_other == {"x": {"a": 0, "b": 0}}  # no basis and no "other": left as recorded

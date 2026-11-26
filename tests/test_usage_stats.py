@@ -586,7 +586,7 @@ class TestServerWiring:
         from pcbparts_mcp import server
         async with Client(server.mcp) as client:
             await client.call_tool("get_design_rules", {"topic": "ldo"})
-            await client.call_tool("digikey_get_part", {"part_number": "LM358P"})  # no credentials: error reply
+            await client.call_tool("digikey_get_part", {"part_number": "LM358P"})  # unconfigured: error reply
             with pytest.raises(ToolError):
                 await client.call_tool("board_get", {"slug": 5, "nope": True})
             with pytest.raises(ToolError):
@@ -896,6 +896,7 @@ ERROR_REPLIES = {
     "{} daily quota exceeded ({}). It resets at {}.{}": "rate_limited",
     "{} daily quota exceeded on this shared server. It resets at {}.{}": "rate_limited",
     "This address has used its {} Mouser and DigiKey lookups for today on this shared server; the count resets at 00:00 UTC. Answers pcbparts already has stored still work.{}": "rate_limited",
+    "Live Mouser and DigiKey lookups are turned off for this address on this shared server. Answers pcbparts already has stored still work.{}": "rate_limited",
     "{} daily quota exceeded (counted by {}). This server tries again at {}.{}": "rate_limited",
     "{} lookups are limited to {} a minute on this shared server. Try again in {} s.{}": "rate_limited",
     "{} is limiting requests per minute. Try again in {} s.{}": "rate_limited",

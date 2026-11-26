@@ -261,7 +261,7 @@ class TestServerWiring:
 
         app = server.create_app()
         async with app.router.lifespan_context(app):
-            # After startup, which builds its own DigiKey client (without credentials in tests)
+            # Install the mock DigiKey client after startup has configured the providers.
             monkeypatch.setattr(server, "_digikey_client",
                                 digikey(FakeDigiKey(httpx.Response(200, json=PRODUCT)), DailyQuota("DigiKey", 1)))
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost") as c:

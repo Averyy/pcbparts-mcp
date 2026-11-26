@@ -205,8 +205,8 @@ DISTRIBUTOR_TOOLS = ("mouser_get_part", "digikey_get_part", "part_lifecycle")
 DISTRIBUTOR_APP_COUNTS = ("calls", "rate_limited")
 APP_LINK_MINUTES = 10
 # From 0.10.3: fixed, anonymous labels only, never an app/key number or a per-key count.
-DISTRIBUTOR_LIMIT_CAUSES = ("minute_cap", "daily_count", "address_daily", "distributor_daily", "distributor_minute",
-                            "distributor_refused", "other")
+DISTRIBUTOR_LIMIT_CAUSES = ("minute_cap", "daily_count", "address_daily", "address_blocked", "distributor_daily",
+                            "distributor_minute", "distributor_refused", "other")
 DISTRIBUTOR_LIMIT_REFUSALS = ("daily", "minute", "refused")
 DATASHEET_LINK_EVENTS = ("visits", "reused", "signed", "waited", "refused", "failed", "not_found")
 LIFECYCLE_INPUT_FORMS = ("bare_number", "with_manufacturer", "lcsc_code")
@@ -1088,7 +1088,8 @@ class UsageStats:
                       "address's last connection or tool call), else under unknown. "
                       "distributor_limits (from 0.10.3; null before): for mouser and digikey, held_back counts lookups "
                       "not sent, by cause: minute_cap and daily_count (this server's limits), address_daily (the "
-                      "address's daily cap), distributor_daily, distributor_minute and distributor_refused (pauses "
+                      "address's daily cap), address_blocked (from 0.10.10: the address is on the server's "
+                      "block list), distributor_daily, distributor_minute and distributor_refused (pauses "
                       "after the distributor refused), other; it adds up to distributors rate_limited. "
                       "held_back_hours: the same by UTC hour. refusals: sent requests the distributor refused "
                       "(daily, minute, refused). "

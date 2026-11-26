@@ -588,7 +588,7 @@ class TestServerWiring:
     async def test_health_is_identical_across_distributor_configurations(self, monkeypatch):
         from pcbparts_mcp import server
         from pcbparts_mcp.cache import MouserKeyPool
-        from pcbparts_mcp.digikey_site import DigiKeySite
+        from digikey_backup import FakeBackup
 
         monkeypatch.setattr(server, "_health_clock", lambda: NOW)
         monkeypatch.setattr(server, "_distributor_quotas", {})
@@ -611,13 +611,13 @@ class TestServerWiring:
                 assert (await client.get("/health")).json() == baseline
                 pool.share_penalty(MIDNIGHT, "daily")
                 assert (await client.get("/health")).json() == baseline
-            site = DigiKeySite(clock=lambda: NOW)
-            digikey = DigiKeyClient(client_id="", client_secret="", site=site, clock=lambda: NOW)
+            backup = FakeBackup()
+            digikey = DigiKeyClient(client_id="", client_secret="", backup=backup, clock=lambda: NOW)
             monkeypatch.setattr(server, "_distributor_quotas", {})
             monkeypatch.setattr(server, "_digikey_client", digikey)
             try:
                 assert (await client.get("/health")).json() == baseline
-                site._refused("test refusal")
+                backup.pause()
                 assert (await client.get("/health")).json() == baseline
             finally:
                 await digikey.close()

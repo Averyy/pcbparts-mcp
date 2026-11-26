@@ -4,6 +4,25 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.10 (2026-11-26)
+
+### Added
+
+- **Self-hosting**: `DISTRIBUTOR_BLOCKED_ADDRESSES` lists addresses or ranges that get stored Mouser and DigiKey answers only.
+- **`/mcp/stats`**: `distributor_limits` counts lookups the block list held back as `address_blocked`.
+
+### Changed
+
+- **Dependencies**: wafer 0.7.19.
+- **Deploy**: fails when the MCP server doesn't start.
+- **Mouser and DigiKey**: each address gets 300 live lookups a day (was 1,000); stored answers still work.
+- **Server log**: the per-address limit line also gives the address's first lookup time that day.
+
+### Fixed
+
+- **`/mcp/stats`**: a DigiKey lookup that was sent is no longer also counted as held back when its retry is refused.
+- **Sensor refresh**: malformed source links no longer interrupt checks for removed sensors.
+
 ## 0.10.9 (2026-11-25)
 
 ### Breaking

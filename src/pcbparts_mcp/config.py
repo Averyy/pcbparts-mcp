@@ -1,5 +1,6 @@
 """Configuration for PCB Parts MCP server."""
 
+import ipaddress
 import math
 import os
 import re
@@ -65,6 +66,43 @@ def datasheet_link_base_setting(environ: Mapping[str, str] = os.environ,
         pass
     warnings.append("DATASHEET_LINK_BASE must be an http(s) base URL or 'direct'; using the request host")
     return ""
+
+
+def address_networks_setting(name: str, environ: Mapping[str, str] = os.environ,
+                             warnings: list[str] = CONFIG_WARNINGS
+                             ) -> tuple[ipaddress.IPv4Network | ipaddress.IPv6Network, ...]:
+    """Comma-separated IPv4/IPv6 addresses or CIDR networks. A bare IPv6 address stands for its /64
+    (as the per-address cap counts IPv6 callers); an explicit prefix is kept, so /128 is one address.
+    An IPv4-mapped IPv6 entry (::ffff:a.b.c.d, prefix 96 or more) is its IPv4 network. Empty entries
+    are skipped. Warnings name an entry's position, never its text: an invalid entry is skipped,
+    and one with host bits set past its prefix blocks its whole network."""
+    networks = []
+    for position, entry in enumerate((environ.get(name) or "").split(","), 1):
+        if not (entry := entry.strip()):
+            continue
+        try:
+            network = ipaddress.ip_network(entry, strict=False)
+        except ValueError:
+            warnings.append(f"{name}: entry {position} isn't an IP address or network; skipped")
+            continue
+        if "/" in entry and _host_bits_set(entry):
+            warnings.append(f"{name}: entry {position} has host bits set past its prefix; "
+                            "blocking the whole network")
+        mapped = network.network_address.ipv4_mapped if network.version == 6 else None
+        if mapped is not None and network.prefixlen >= 96:
+            network = ipaddress.IPv4Network((mapped, network.prefixlen - 96))
+        elif network.version == 6 and "/" not in entry:
+            network = ipaddress.IPv6Network((network.network_address, 64), strict=False)
+        networks.append(network)
+    return tuple(networks)
+
+
+def _host_bits_set(entry: str) -> bool:
+    try:
+        ipaddress.ip_network(entry)
+    except ValueError:  # parsed without strict, so only host bits past the prefix fail here
+        return True
+    return False
 
 
 # Recorded stock events, built offline from the gzipped JSONL files in data/history/.
@@ -323,7 +361,10 @@ DIGIKEY_MAX_RESULTS = 10
 # a lookup that needs a request is refused as over the daily quota.
 DISTRIBUTOR_DAILY_LIMIT = number_setting("DISTRIBUTOR_DAILY_LIMIT", 1000, 0)
 # Sent lookups per address per UTC day, Mouser and DigiKey counted together. 0 disables this cap.
-DISTRIBUTOR_DAILY_PER_ADDRESS = number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 1000, 0)
+DISTRIBUTOR_DAILY_PER_ADDRESS = number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 300, 0)
+# Addresses and networks that never cause a live Mouser or DigiKey request (stored answers still
+# work), even when exempt from the cap or with the cap off. Set in the operator's env file only.
+DISTRIBUTOR_BLOCKED_ADDRESSES = address_networks_setting("DISTRIBUTOR_BLOCKED_ADDRESSES")
 # Our caps per rolling minute, below each API's own: Mouser allows 30 a minute, DigiKey 120 (and
 # suspends an app for ten minutes for going over its per-second threshold).
 MOUSER_PER_MINUTE = 25

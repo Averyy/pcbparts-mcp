@@ -51,7 +51,8 @@ from .config import (
     HTTP_HOST, HTTP_PORT, DATASHEET_LINK_BASE, LOG_PATH, LOG_KEEP_DAYS, DEFAULT_MIN_STOCK, MAX_PAGE_SIZE, MAX_SEARCH_OFFSET,
     MOUSER_API_KEY, MOUSER_DAY_START_HOUR, DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET,
     DIGIKEY_CLIENT_ID_2, DIGIKEY_CLIENT_SECRET_2, MOUSER_EXTRA_API_KEYS, MOUSER_KEY_WARNINGS,
-    DISTRIBUTOR_DAILY_LIMIT, DISTRIBUTOR_DAILY_PER_ADDRESS, DIGIKEY_PER_MINUTE, MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
+    DISTRIBUTOR_DAILY_LIMIT, DISTRIBUTOR_DAILY_PER_ADDRESS, DISTRIBUTOR_BLOCKED_ADDRESSES, DIGIKEY_PER_MINUTE,
+    MOUSER_PER_MINUTE, MAX_ALTERNATIVES,
     clamp_limit, MAX_LIST_PARAM_ITEMS, MAX_MEASURE_ITEMS, MAX_REQUEST_BODY_BYTES,
     ALLOWED_HOSTS, ALLOWED_ORIGINS, EASYEDA_STORE_PATH, DISTRIBUTOR_QUOTA_PATH, USAGE_STATS_PATH,
     CSE_STORE_PATH, DISTRIBUTOR_STORE_PATH, LIFECYCLE_MAX_PARTS, GET_PARTS_MAX_ITEMS, GET_PARTS_MAX_MATCHES,
@@ -60,7 +61,7 @@ from .config import (
 from .client import (DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient,
                      JLCPCBUnavailable)
 from .mouser import MouserAPIError, MouserClient, MouserError
-from . import digikey_site
+from .extensions import ExtensionContext, load_digikey_backup
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
 from .lifecycle import Entry, LifecycleLookup, Reading, STATUSES, makers_match, utc_text
@@ -110,9 +111,9 @@ def _save_address_counts() -> None:
 
 def _caller_tallies() -> list:
     """The hourly per-IP lines of Mouser/DigiKey requests sent and held back: the quota pools', and
-    the DigiKey client's own when it runs without credentials (no pool)."""
+    the DigiKey client's backup lookups, including when an API pool is also configured."""
     tallies = [tally for quota in _distributor_quotas.values() for tally in (quota.callers, quota.held_back)]
-    if "digikey" not in _distributor_quotas and _digikey_client is not None:
+    if _digikey_client is not None:
         tallies += [tally for tally in (getattr(_digikey_client, "callers", None),
                                         getattr(_digikey_client, "held_back", None)) if tally is not None]
     return tallies
@@ -218,9 +219,13 @@ async def lifespan(app):
     # Same published ranges as RateLimitMiddleware; local files only, never a runtime download.
     address_ranges = platform_ranges.load(ANTHROPIC_IP_RANGES, OPENAI_IP_RANGES_FILE).ranges
 
-    # One count for both distributors: an address's Mouser and DigiKey lookups share the day's cap
+    # One count for both distributors: an address's Mouser and DigiKey lookups share the day's cap.
+    # Blocked addresses get stored answers only; the log names how many ranges, never which.
     address_daily = _address_daily = AddressDailyQuota(
-        DISTRIBUTOR_DAILY_PER_ADDRESS, key=lambda ip: None if ip in address_ranges else _address_key(ip))
+        DISTRIBUTOR_DAILY_PER_ADDRESS, key=lambda ip: None if ip in address_ranges else _address_key(ip),
+        blocked=DISTRIBUTOR_BLOCKED_ADDRESSES)
+    if DISTRIBUTOR_BLOCKED_ADDRESSES:
+        logger.info(f"Mouser and DigiKey: live lookups blocked for {len(DISTRIBUTOR_BLOCKED_ADDRESSES)} address range(s)")
     if DISTRIBUTOR_QUOTA_PATH:
         carried = address_daily.load(Path(DISTRIBUTOR_QUOTA_PATH).with_name("distributor_address_counts.json"))
         if carried:
@@ -261,6 +266,9 @@ async def lifespan(app):
         logger.warning("Extra Mouser keys are set without MOUSER_API_KEY: Mouser lookups are off")
 
     # The DigiKey client: with credentials, the API and its daily quota per app
+    backup = load_digikey_backup(ExtensionContext(address_daily, _distributor_store, DISTRIBUTOR_STORE_PATH))
+    if backup is not None:
+        await backup.start()
     second_app = None
     if bool(DIGIKEY_CLIENT_ID_2) != bool(DIGIKEY_CLIENT_SECRET_2):
         missing = "DIGIKEY_CLIENT_SECRET_2" if DIGIKEY_CLIENT_ID_2 else "DIGIKEY_CLIENT_ID_2"
@@ -275,16 +283,19 @@ async def lifespan(app):
         digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE, address_daily=address_daily)
         _distributor_quotas["digikey"] = digikey_quota
         _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota,
-                                        second_app=second_app, store=_distributor_store)
+                                        second_app=second_app, store=_distributor_store, backup=backup,
+                                        address_daily=address_daily)
         counts = ", ".join(str(q.status()["used_today"]) for q in app_quotas)
         logger.info(f"DigiKey client initialized: {len(app_quotas)} app(s) (requests today: {counts})")
-    elif digikey_site.enabled():
+    elif backup is not None:
         if DIGIKEY_CLIENT_ID or DIGIKEY_CLIENT_SECRET:
             missing = "DIGIKEY_CLIENT_SECRET" if DIGIKEY_CLIENT_ID else "DIGIKEY_CLIENT_ID"
-            logger.error(f"{missing} is missing; DigiKey lookups go without API credentials")
-        _digikey_client = DigiKeyClient(store=_distributor_store, site=digikey_site.DigiKeySite(),
+            logger.error(f"{missing} is missing; using the configured DigiKey extension")
+        _digikey_client = DigiKeyClient(client_id="", client_secret="", store=_distributor_store, backup=backup,
                                         address_daily=address_daily)
-        logger.info("DigiKey client initialized without API credentials")
+        logger.info("DigiKey client initialized")
+    else:
+        _digikey_client = None
 
     if _distributor_quotas:
         logger.info(f"Distributor request counts: {f'kept in {quota_store.path}' if quota_store else 'memory only'}")
@@ -320,7 +331,7 @@ async def lifespan(app):
     if _mouser_client:
         await _mouser_client.close()
     if _digikey_client:
-        await _digikey_client.close()
+        await _digikey_client.stop()
     _save_address_counts()
     for tally in _caller_tallies():
         tally.flush()  # the hour so far, so a deploy doesn't lose it
@@ -342,6 +353,8 @@ async def lifespan(app):
     await run_db(COMPONENT_POOL, close_history_db)
     await run_db(SENSOR_POOL, close_sensor_db)
     await run_db(BOARD_POOL, close_boards_db)
+    if _digikey_client:
+        await _digikey_client.close()
 
 
 # A database pool that has had calls waiting and started none for DB_STUCK_WAIT_SECONDS, at this
@@ -425,8 +438,8 @@ async def _every_minute() -> None:
                     tally.flush_if_due()
                 address_days = {id(q.address_daily): q.address_daily for q in _distributor_quotas.values()
                                 if q.address_daily is not None}
-                if (keyless_day := getattr(_digikey_client, "_address_daily", None)) is not None:
-                    address_days[id(keyless_day)] = keyless_day  # DigiKey without credentials, no pool
+                if (backup_day := getattr(_digikey_client, "_address_daily", None)) is not None:
+                    address_days[id(backup_day)] = backup_day  # Also reset allowances without an API pool
                 for address_day in address_days.values():
                     address_day.reset_if_due()
                 _refused_callers.flush_if_due()
@@ -4251,8 +4264,8 @@ def _snapshot_health() -> dict[str, Any]:
 def _distributor_quota_status() -> dict[str, Any]:
     """Current private quota detail, including DigiKey's pause when it has no daily quota."""
     reply = {name: quota.status() for name, quota in _distributor_quotas.items()}
-    if "digikey" not in reply and _digikey_client is not None and (site := _digikey_client.site_status()):
-        reply["digikey"] = {**site, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
+    if "digikey" not in reply and _digikey_client is not None and (backup := _digikey_client.backup_status()):
+        reply["digikey"] = {**backup, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
     return reply
 
 

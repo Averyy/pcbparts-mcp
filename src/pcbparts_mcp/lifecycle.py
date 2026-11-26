@@ -367,7 +367,7 @@ class LifecycleLookup:
     without asking DigiKey: a minute's wait or a fault isn't a reason to spend DigiKey's smaller day.
     Mouser listing the part with a status it can't name (unknown) doesn't send it to DigiKey either.
 
-    When DigiKey's lookups spend no daily quota (DigiKeyClient.unmetered: no API credentials) the
+    When DigiKey's active path spends no daily quota and isn't paused (DigiKeyClient.unmetered) the
     order turns round: DigiKey first, for every part at once (DigiKeyClient.lifecycle), then Mouser
     for the parts DigiKey doesn't list for the maker, couldn't be asked about or failed on.
 
