@@ -124,7 +124,7 @@ A typical session goes `get_design_rules` or `board_search` → `jlc_search` →
 - `jlc_search`, `jlc_get_parts` and `jlc_get_part` read a daily snapshot of parts with at least 10 in stock (1-piece prices weekly). `jlc_stock_check` and `jlc_get_part(lcsc=..., live=true)` are live (as is `jlc_get_part` for a code the snapshot doesn't list, or on a server without price tiers), and `jlc_stock_check` reaches JLCPCB's whole 7M+ part catalog; [llms.txt](https://pcbparts.dev/llms.txt) has the details.
 - For Economic assembly, **basic** and **preferred** parts avoid the extended-type loading fee. Alternatives savings use a rounded legacy **$3 estimate** per extended type, not a current quote; Standard assembly fees differ. `jlc_search` ranks basic and preferred parts first, and `library_type="no_fee"` keeps only those.
 - Spec figures are JLCPCB's listings, and alternatives are checked against the catalog. Check the datasheet and pinout before you order.
-- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 1,000 Mouser and DigiKey lookups combined a day; retries don't count and stored answers are free. Self-host with your own keys to get your own limits.
+- The Mouser and DigiKey daily limits are shared by everyone on pcbparts.dev. Each address gets 300 Mouser and DigiKey lookups combined a day; retries don't count and stored answers are free. Self-host with your own keys to get your own limits.
 
 [docs/search-guide.md](docs/search-guide.md) covers how queries are read, spec filter syntax, package matching, sorting and the alternatives rules.
 
@@ -179,7 +179,8 @@ A Mouser API key is free from Mouser's API hub, and DigiKey client credentials f
 | `OPENAI_IP_RANGES_FILE` | `data/platform_ranges/openai-chatgpt-connectors.json` | OpenAI's [ChatGPT connectors list](https://openai.com/chatgpt-connectors.json), refreshed at image build (empty: normal limit) |
 | `MCP_ALLOWED_HOSTS` | `pcbparts.dev` | Accepted Host headers, comma-separated (localhost always works) |
 | `DISTRIBUTOR_DAILY_LIMIT` | `1000` | DigiKey daily cap and reported daily limit for Mouser (`0`: kept answers only; Mouser sends until its API refuses) |
-| `DISTRIBUTOR_DAILY_PER_ADDRESS` | `1000` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
+| `DISTRIBUTOR_DAILY_PER_ADDRESS` | `300` | Mouser and DigiKey lookups per address per UTC day, combined (`0`: off) |
+| `DISTRIBUTOR_BLOCKED_ADDRESSES` | empty | Comma-separated IPv4/IPv6 addresses or CIDR ranges that get stored Mouser and DigiKey answers only, never a live lookup. A bare IPv6 address blocks its /64 (`/128` for one address); invalid entries warn at startup and are skipped |
 | `DISTRIBUTOR_QUOTA_PATH` | `/app/cache/distributor_quota.json` in Docker | Mouser/DigiKey daily counts, pauses and recent daily-refusal episodes |
 | `USAGE_STATS_PATH` | `/app/cache/usage_stats.json` in Docker | `/mcp/stats` counts |
 | `STATS_TOKEN` | empty | Bearer token for `/mcp/stats`; blank or unset refuses every stats request |

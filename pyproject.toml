@@ -1,6 +1,6 @@
 [project]
 name = "pcbparts-mcp"
-version = "0.10.9"
+version = "0.10.10"
 description = "MCP server for searching electronic components for PCB design and assembly"
 requires-python = ">=3.12"
 # Dependencies are pinned to exact versions so a rebuild never silently pulls a new major/minor
@@ -13,7 +13,7 @@ dependencies = [
     "mcp==1.30.0",
     "fastmcp==3.4.3",
     # Anti-detection HTTP client (TLS fingerprinting, WAF solving, rotation)
-    "wafer-py==0.7.15",
+    "wafer-py==0.7.19",
     # wafer's HTTP/TLS backend. wafer allows any 0.13.x, so it's pinned here too: unpinned, a
     # rebuild pulled 0.12.3 into prod with nobody choosing it. Bump it together with wafer-py.
     "wreq==0.13.0",
@@ -40,6 +40,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pcbparts_mcp"]
+
+[tool.hatch.build.targets.sdist]
+# Source archives contain the inputs to the wheel, independent of local checkout files.
+only-include = ["src/pcbparts_mcp", "pyproject.toml", "uv.lock", "README.md", "LICENSE"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

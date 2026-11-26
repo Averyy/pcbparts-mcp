@@ -465,8 +465,8 @@ async def test_server_wires_default_caps_and_shutdown_flushes_tallies(clock, mon
             pools = list(server._distributor_quotas.values())
             assert len(pools) == 2 and pools[0].address_daily is pools[1].address_daily  # one count for both
             for name, pool in server._distributor_quotas.items():
-                assert pool.address_daily.limit == 1000
-                pool.address_daily.record(ADDRESS, 1000)
+                assert pool.address_daily.limit == 300
+                pool.address_daily.record(ADDRESS, 300)
                 assert pool.address_error(ADDRESS) is not None
                 assert pool.address_error(None) is None
                 assert pool.address_error("160.79.104.1") is None
@@ -502,14 +502,14 @@ def test_config_default_minimum_and_disabled():
     from pcbparts_mcp import config
     from pcbparts_mcp.config import number_setting
 
-    assert config.DISTRIBUTOR_DAILY_PER_ADDRESS == 1000  # the shipped default since 0.10.5 (200 before)
-    for raw, expected in (("", 1000), ("0", 0), ("-1", 0), ("bad", 1000)):
-        assert number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 1000, 0,
+    assert config.DISTRIBUTOR_DAILY_PER_ADDRESS == 300  # since 0.10.10 (1000 in 0.10.5-0.10.9, 200 before)
+    for raw, expected in (("", 300), ("0", 0), ("-1", 0), ("bad", 300)):
+        assert number_setting("DISTRIBUTOR_DAILY_PER_ADDRESS", 300, 0,
                               environ={"DISTRIBUTOR_DAILY_PER_ADDRESS": raw}, warnings=[]) == expected
 
 
 async def test_minute_task_drops_previous_day_addresses_without_any_quota_pool(clock, monkeypatch):
-    """DigiKey without credentials and no Mouser key: the address day belongs to no pool."""
+    """An extension provider's address day is maintained even when there are no quota pools."""
     from types import SimpleNamespace
     day = AddressDailyQuota(5, key=lambda ip: ip, clock=clock)
     day.record(ADDRESS)
@@ -592,4 +592,5 @@ def test_reaching_the_cap_logs_the_address_once(caplog):
         for _ in range(5):
             day.record("exempt")
     (line,) = _tally_lines(caplog)
-    assert line == "Mouser and DigiKey per-address limit: 192.0.2.1 reached its 3 lookups for 2026-10-14 at 17:46 UTC"
+    assert line == ("Mouser and DigiKey per-address limit: 192.0.2.1 reached its 3 lookups for 2026-10-14 "
+                    "at 17:46 UTC (first lookup 17:46 UTC, since a restart at 17:46 UTC)")

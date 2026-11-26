@@ -7,6 +7,26 @@ from pcbparts_mcp import call_log, stats
 from pcbparts_mcp.catalog_files import read_catalog, write_catalog
 
 
+@pytest.fixture(autouse=True)
+def _offline_wafer_transport(request, monkeypatch):
+    """Unit tests cannot create a live transport, including on session retirement."""
+    if request.node.get_closest_marker("integration") is not None:
+        return
+    import wreq
+    import wreq.blocking
+    from test_easyeda_critical_ch import _Transport
+
+    class OfflineTransport(_Transport):
+        def __init__(self, **kwargs):
+            super().__init__(None)
+
+        def request(self, *args, **kwargs):
+            pytest.fail("Unit tests must supply an offline wafer response")
+
+    monkeypatch.setattr(wreq, "Client", OfflineTransport)
+    monkeypatch.setattr(wreq.blocking, "Client", OfflineTransport)
+
+
 @pytest.fixture(scope="session")
 def easyeda_integration_pacer(request):
     """All integration clients share one IP budget and a permanent stop on the first 403."""
@@ -53,24 +73,6 @@ def stored_lifecycle(monkeypatch):
     yield store
     store.close()
     assert attempted == []
-
-
-class _OfflineDigiKeySession:
-    """Stands in for every DigiKeySite session a test doesn't give its own: a test never reaches
-    DigiKey. Each request fails as a connection failure would."""
-
-    async def get(self, url, **kwargs):
-        import wafer
-        raise wafer.ConnectionFailed(url, "no network in tests")
-
-
-@pytest.fixture(autouse=True)
-def _no_digikey_requests(monkeypatch):
-    """A server without DigiKey credentials looks parts up without them (digikey_site.py): in
-    tests those lookups fail offline instead of reaching DigiKey (tests never call DigiKey)."""
-    from pcbparts_mcp import digikey_site
-    monkeypatch.setattr(digikey_site, "_new_session", _OfflineDigiKeySession)
-    monkeypatch.delenv("DIGIKEY_LOOKUP", raising=False)  # off unless a test turns it on
 
 
 @pytest.fixture(autouse=True)

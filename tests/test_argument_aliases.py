@@ -18,6 +18,9 @@ class FakeDistributor:
     async def close(self):
         pass
 
+    async def stop(self):
+        pass
+
 
 @pytest.fixture
 async def called(monkeypatch):

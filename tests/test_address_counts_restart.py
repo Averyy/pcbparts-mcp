@@ -317,13 +317,14 @@ def test_private_permissions_from_first_byte_and_after_replace(clock, tmp_path, 
 
 
 @pytest.mark.parametrize("persist", [True, False], ids=["disk", "memory"])
-async def test_lifespan_loads_then_saves_after_clients_close(clock, tmp_path, monkeypatch, caplog, persist):
+async def test_lifespan_loads_then_saves_after_lookups_stop(clock, tmp_path, monkeypatch, caplog, persist):
     path = tmp_path / "distributor_address_counts.json"
     if persist:
         before = quota(clock)
         before.record(ADDRESS, 998)
         before.save(path)
     monkeypatch.setattr(server, "DISTRIBUTOR_QUOTA_PATH", str(tmp_path / "quota.json") if persist else "")
+    monkeypatch.setattr(server, "DISTRIBUTOR_DAILY_PER_ADDRESS", 1000)  # as quota(): the order is tested, not the default
     monkeypatch.setattr(server, "MOUSER_API_KEY", "test-key")
     monkeypatch.setattr(server, "DIGIKEY_CLIENT_ID", "test-id")
     monkeypatch.setattr(server, "DIGIKEY_CLIENT_SECRET", "test-secret")
@@ -345,18 +346,22 @@ async def test_lifespan_loads_then_saves_after_clients_close(clock, tmp_path, mo
             if not persist:
                 day.record(ADDRESS, 998)
 
-            def wrap_close(client, name):
-                close = client.close
+            def wrap_stop(client, name, method):
+                stop = getattr(client, method)
+                recorded = False
 
-                async def tracked_close():
-                    await close()
-                    day.record(ADDRESS)
-                    events.append(name)
+                async def tracked_stop():
+                    nonlocal recorded
+                    await stop()
+                    if not recorded:
+                        day.record(ADDRESS)
+                        events.append(name)
+                        recorded = True
 
-                monkeypatch.setattr(client, "close", tracked_close)
+                monkeypatch.setattr(client, method, tracked_stop)
 
-            wrap_close(server._mouser_client, "mouser")
-            wrap_close(server._digikey_client, "digikey")
+            wrap_stop(server._mouser_client, "mouser", "close")
+            wrap_stop(server._digikey_client, "digikey", "stop")
             save = day.save
 
             def tracked_save(destination):

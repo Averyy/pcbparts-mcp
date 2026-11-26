@@ -369,8 +369,12 @@ class TestClient:
         async def footprint(lcsc):
             return {"has_easyeda_footprint": False}
 
+        async def lcsc_product(lcsc):
+            return None  # this test's partial JLC reply must not trigger a live fallback
+
         monkeypatch.setattr(client, "_request", request)
         monkeypatch.setattr(client, "check_easyeda_footprint", footprint)
+        monkeypatch.setattr(client, "lcsc_product", lcsc_product)
 
         first = await client.get_part("C52139901")
         clock[0] += 600  # 10 minutes: cached, link still good

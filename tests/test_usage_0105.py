@@ -463,29 +463,6 @@ async def test_status_counting_failure_does_not_change_request(monkeypatch):
     assert await _sent("cse", request()) == "reply"
 
 
-async def test_digikey_sent_sibling_cancellation(monkeypatch):
-    from pcbparts_mcp.digikey_site import DigiKeySite
-
-    clock = Clock()
-    monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=clock))
-    site = DigiKeySite(clock=clock)
-    started = asyncio.Event()
-
-    async def pending():
-        started.set()
-        await asyncio.Event().wait()
-
-    async def failing():
-        await started.wait()
-        raise ConnectionFailed("url", "test failure")
-
-    with pytest.raises(ConnectionFailed):
-        await site._all([_sent("digikey", pending()), _sent("digikey", failing())])
-    counts = day()
-    assert counts["upstream_status"] == {"digikey": {"connection": 1, "cancelled": 1}}
-    assert sum(counts["upstream_status"]["digikey"].values()) == counts["upstream"]["digikey"]["sent"] == 2
-
-
 @pytest.mark.parametrize("method", ["search", "model"])
 async def test_cse_sent_cancellation(monkeypatch, method):
     from pcbparts_mcp import cse

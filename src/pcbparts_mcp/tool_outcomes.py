@@ -46,6 +46,7 @@ _ERROR_KINDS = [(kind, re.compile(pattern, re.S)) for kind, pattern in (
     # a limit turned the request away: ours, Mouser's, DigiKey's, JLCPCB's or EasyEDA's
     ("rate_limited", r"\w+ daily quota exceeded "),
     ("rate_limited", r"This address has used its \d+ Mouser and DigiKey lookups for today on this shared server;"),
+    ("rate_limited", r"Live Mouser and DigiKey lookups are turned off for this address on this shared server\."),
     ("rate_limited", r"\w+ lookups are limited to "),
     ("rate_limited", r"\w+ is limiting requests"),
     ("rate_limited", r"\w+ refused this server's requests"),

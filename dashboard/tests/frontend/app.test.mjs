@@ -237,7 +237,7 @@ test("held-back labels keep address and DigiKey resets separate from Mouser's bu
   const distributors = { mouser: { sent: 0 }, digikey: { sent: 0 } };
   const problems = { distributor_limits: {
     mouser: { held_back: { daily_count: 2, address_daily: 1 } },
-    digikey: { held_back: { daily_count: 1 } },
+    digikey: { held_back: { daily_count: 1, address_blocked: 1 } },
   } };
   const app = setup(payload({ edays: [day("2026-11-23", { complete: false, distributors, problems })] }));
   app.render();
@@ -245,6 +245,8 @@ test("held-back labels keep address and DigiKey resets separate from Mouser's bu
     assert.match(app.el(id).textContent, /Mouser budget for the day ran out \(resets 1 AM\)/);
     assert.match(app.el(id).textContent, /address had used its daily allowance \(resets 7 PM\)/);
     assert.match(app.el(id).textContent, /DigiKey budget for the day ran out \(resets 7 PM\)/);
+    assert.match(app.el(id).textContent, /address is on the server's block list/);
+    assert.doesNotMatch(app.el(id).textContent, /block list \(resets/);
   }
 });
 

@@ -202,7 +202,10 @@ jobs:
             # the usage dashboard is the compose profile "dashboard" (self-hosters' `up -d` skips it)
             export COMPOSE_PROFILES=dashboard
             docker compose pull pcbparts-mcp
-            docker compose up -d --remove-orphans pcbparts-mcp
+            if ! docker compose up -d --remove-orphans pcbparts-mcp; then
+              echo "MCP server failed to start; deployment failed."
+              exit 1
+            fi
 
             # The usage dashboard comes second and on its own: a failed pull or start there never
             # holds up the MCP server's deploy.

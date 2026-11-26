@@ -136,6 +136,7 @@ export function heldBackLabel(cause, who, reset, budgetReset = reset) {
     minute_cap: `our limit on ${who} requests a minute`,
     daily_count: `our ${who} budget for the day ran out${budgetReset ? ` (resets ${budgetReset})` : ""}`,
     address_daily: `the calling address had used its daily allowance${resets}`,
+    address_blocked: "the calling address is on the server's block list",
     distributor_daily: `${who}'s own daily limit was reached`,
     distributor_minute: `${who}'s own per-minute limit was reached`,
     distributor_refused: `${who} refused requests, so we paused`,

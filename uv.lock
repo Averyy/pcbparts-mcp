@@ -799,7 +799,7 @@ wheels = [
 
 [[package]]
 name = "pcbparts-mcp"
-version = "0.10.9"
+version = "0.10.10"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
@@ -834,7 +834,7 @@ requires-dist = [
     { name = "pyyaml", marker = "extra == 'dev'", specifier = "==6.0.3" },
     { name = "starlette", specifier = "==1.3.1" },
     { name = "uvicorn", extras = ["standard"], specifier = "==0.40.0" },
-    { name = "wafer-py", specifier = "==0.7.15" },
+    { name = "wafer-py", specifier = "==0.7.19" },
     { name = "wreq", specifier = "==0.13.0" },
 ]
 provides-extras = ["dev"]
@@ -1418,15 +1418,15 @@ wheels = [
 
 [[package]]
 name = "wafer-py"
-version = "0.7.15"
+version = "0.7.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cryptography" },
     { name = "wreq" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/68/fa/2dba0651658e86759bade2795e9a631da11bc590194326daa4b76388236e/wafer_py-0.7.15.tar.gz", hash = "sha256:b3f9d29321f2253ddcdff88c388858c78071b3c039c4c4b1d30b33769e97220c", size = 1936527, upload-time = "2026-11-16T15:21:03.926Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/89/078de42973686b65a6b8033fbc7f6e3d2c4a7dab2e2626652049fcfed2dc/wafer_py-0.7.19.tar.gz", hash = "sha256:fa4e08069ba9ea170e7898fb05b6531d3f7cffcd2d169d966e3f25fd97589cfb", size = 1998476, upload-time = "2026-11-25T19:48:27.536Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3c/3c/4974a613079e49a16ce3d274c7d570f5f7dc5e9d21f8f66ab9d58de9c323/wafer_py-0.7.15-py3-none-any.whl", hash = "sha256:c25bdf2f92597c9e3115ed9792ec92caec9fb703bf8d50a835489d6c9e5c0737", size = 675955, upload-time = "2026-11-16T15:21:01.43Z" },
+    { url = "https://files.pythonhosted.org/packages/20/da/4bcd672e4de0335e96c3f20eebf0cac1afb95302a66aefe88cbf79c9f9e9/wafer_py-0.7.19-py3-none-any.whl", hash = "sha256:7cc5839ab9b05fd734080e7f0c93d3c8c84b5afdfa332a38422b06ff2add2c21", size = 700696, upload-time = "2026-11-25T19:48:25.707Z" },
 ]
 
 [[package]]

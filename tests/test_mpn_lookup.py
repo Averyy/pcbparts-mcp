@@ -354,15 +354,12 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
 @pytest.mark.parametrize("digikey, suggested", [
     (None, False),  # no DigiKey client at all
     ("api", False),  # API credentials: the shared daily limit
-    ("keyless", True),  # no credentials: no daily limit to spend
-    ("keyless_paused", False),  # ... but paused after a refusal
-    ("keyless_capped", False),  # ... or the caller's address has used its day (0.10.5)
-], ids=["none", "api", "keyless", "keyless_paused", "keyless_capped"])
-async def test_miss_hint_suggests_digikey_only_without_a_daily_limit(monkeypatch, digikey, suggested):
-    """The hint used to end "or mouser_get_part / digikey_get_part for other distributors": on
-    2026-11-19 digikey_get_part was 17% of traffic and 87% of it refused (the shared limit was
-    spent), so 0.10.2 dropped it. From 0.10.4 it names digikey_get_part again when DigiKey lookups
-    spend no daily limit and aren't paused. Mouser, always limited, is never suggested."""
+    ("backup", True),  # an available extension provider
+    ("backup_paused", False),  # ... but paused after a refusal
+    ("backup_capped", False),  # ... or the caller's address has used its day (0.10.5)
+], ids=["none", "api", "backup", "backup_paused", "backup_capped"])
+async def test_miss_hint_suggests_an_available_digikey_provider(monkeypatch, digikey, suggested):
+    """The hint follows provider availability and the caller's address allowance."""
     from pcbparts_mcp.digikey import DigiKeyClient
     from pcbparts_mcp.distributor_store import DistributorStore
 
@@ -371,19 +368,21 @@ async def test_miss_hint_suggests_digikey_only_without_a_daily_limit(monkeypatch
     if digikey == "api":
         client = DigiKeyClient("id", "secret", store=store)
     elif digikey:
-        from pcbparts_mcp.digikey_site import DigiKeySite
+        from digikey_backup import FakeBackup
         from pcbparts_mcp.cache import AddressDailyQuota
         day = AddressDailyQuota(1, key=lambda ip: ip, clock=lambda: 1_795_003_200.0)  # fixed: no midnight
-        client = DigiKeyClient(store=store, site=DigiKeySite(), address_daily=day)
-        if digikey == "keyless_paused":
-            client._site._refused("HTTP 403")
-        if digikey == "keyless_capped":
+        client = DigiKeyClient("", "", store=store, backup=FakeBackup(), address_daily=day)
+        if digikey == "backup_paused":
+            client._backup.pause()
+        if digikey == "backup_capped":
             day.record("203.0.113.9")
     monkeypatch.setattr(server, "_caller_ip", lambda: "203.0.113.9")
     monkeypatch.setattr(server, "_digikey_client", client)
     try:
         reply = await server.jlc_get_part(mpn="ZZQ9981XK-NOT-A-PART")
     finally:
+        if client is not None:
+            await client.close()
         store.close()
     assert reply["error"].startswith("No part found in the local snapshot")
     clause = ", or digikey_get_part for other distributors."

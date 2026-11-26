@@ -588,7 +588,7 @@ def _links_gone(urls: list[str]) -> bool:
         for url in urls:
             try:
                 status = session.get(re.sub(r"\.git$", "", url), timeout=15, attempt_timeout=7).status_code
-            except wafer.WaferError:
+            except (wafer.WaferError, ValueError):  # malformed URL: no evidence the page is gone
                 return False
             if status not in (404, 410):
                 return False

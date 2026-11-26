@@ -8,9 +8,7 @@ unknown footprint for the part's whole 1h TTL. Nothing here touches the network.
 """
 
 import asyncio
-import threading
 import types
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
@@ -77,38 +75,19 @@ def client_with(respond) -> tuple[JLCPCBClient, FakeSession]:
 
 async def test_blocked_check_sends_exactly_one_request(monkeypatch):
     """A 403 from /api/products is a rate-limit block: retrying it (old: 3 requests) extends it."""
-    hits: list[str] = []
+    import wreq
+    from test_easyeda_critical_ch import _Reply, _Transport
 
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self):  # noqa: N802
-            hits.append(self.path)
-            body = b"<HTML><BODY><H1>403 ERROR</H1>The request could not be satisfied.</BODY></HTML>"
-            self.send_response(403)
-            self.send_header("Content-Type", "text/html")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-
-        def log_message(self, *args):
-            pass
-
-    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-    threading.Thread(target=server.serve_forever, daemon=True).start()
+    transport = _Transport(_Reply(403, {"content-type": "text/html"},
+                                  "<HTML><BODY><H1>403 ERROR</H1>The request could not be satisfied.</BODY></HTML>"))
+    monkeypatch.setattr(wreq, "Client", lambda **kwargs: transport)
+    client = JLCPCBClient()  # real wafer session over the offline transport, including any retirement
     try:
-        monkeypatch.setattr(
-            client_module, "EASYEDA_COMPONENT_URL",
-            f"http://127.0.0.1:{server.server_address[1]}/api/products/{{lcsc}}/components",
-        )
-        client = JLCPCBClient()  # real wafer sessions
-        try:
-            result = await client.check_easyeda_footprint("C8304")
-        finally:
-            await client.close()
+        result = await client.check_easyeda_footprint("C8304")
         assert result == {"has_easyeda_footprint": None, "easyeda_symbol_uuid": None, "easyeda_footprint_uuid": None}
-        assert len(hits) == 1
+        assert transport.sent == 1
     finally:
-        server.shutdown()
-        server.server_close()  # shutdown() only stops serve_forever; this closes the listening socket
+        await client.close()
 
 
 async def test_no_requests_while_blocked():
@@ -183,6 +162,11 @@ async def test_get_part_rechecks_unknown_footprint(monkeypatch, wall):
     answers = iter([RuntimeError("EasyEDA timed out"), FakeResponse(200, FOUND)])
     client, fake = client_with(lambda url: next(answers))
     monkeypatch.setattr(client, "_request", jlcpcb_request)
+
+    async def lcsc_product(lcsc):
+        return None  # only footprint caching is under test; no live LCSC fallback
+
+    monkeypatch.setattr(client, "lcsc_product", lcsc_product)
 
     first = await client.get_part("C8304")
     assert first["has_easyeda_footprint"] is None  # EasyEDA failed

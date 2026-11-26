@@ -4,6 +4,7 @@ import asyncio
 import collections
 import datetime
 import hmac
+import ipaddress
 import json
 import logging
 import math
@@ -11,7 +12,7 @@ import os
 import secrets
 import time
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Iterable
 
 from . import private_files
 
@@ -193,18 +194,26 @@ class AddressDailyQuota:
     (Mouser and DigiKey together on the server). key returns None for exempt callers.
     save/load carry busy addresses across a restart as hashes keyed with a per-day secret.
     Oldest addresses are dropped first when the bounded table fills. Check and record without
-    awaiting between them, only recording after the shared quota lets the request through."""
+    awaiting between them, only recording after the shared quota lets the request through.
+    blocked: networks whose callers are always capped (never counted), even when exempt or with
+    the cap off."""
 
     def __init__(self, limit: int, key: Callable[[str], str | None],
-                 clock: Callable[[], float] = time.time, max_addresses: int = 20_000):
+                 clock: Callable[[], float] = time.time, max_addresses: int = 20_000,
+                 blocked: Iterable[ipaddress.IPv4Network | ipaddress.IPv6Network] = ()):
         self.limit = limit
         self._key = key
         self._clock = clock
         self._max_addresses = max_addresses
+        self._blocked = tuple(blocked)
+        self._started = clock()  # a first lookup after a same-day restart may not be the day's first
         self._date = self._today()
         self._secret = secrets.token_bytes(32)
         self._counts: dict[str, int] = {}
         self._carried: dict[str, int] = {}
+        # key -> its first recorded lookup today, for the cap's log line; none for a count carried
+        # over a restart. Dropped with the key's count.
+        self._first: dict[str, float] = {}
 
     def _today(self) -> datetime.date:
         return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc).date()
@@ -215,6 +224,7 @@ class AddressDailyQuota:
         if today != self._date:
             self._counts.clear()
             self._carried.clear()
+            self._first.clear()
             self._secret = secrets.token_bytes(32)
             self._date = today
 
@@ -290,8 +300,28 @@ class AddressDailyQuota:
             logger.warning("Per-address counts: could not load or remove %s (%s)", path, type(exc).__name__)
         return carried
 
+    def blocked(self, caller: str | None) -> bool:
+        """Whether caller's IP (IPv4-mapped IPv6 as IPv4) is in a blocked network; a non-IP caller isn't."""
+        if not self._blocked or not isinstance(caller, str):
+            return False
+        try:
+            address = ipaddress.ip_address(caller.strip())
+        except ValueError:  # "unknown", a hostname, garbage
+            return False
+        addresses = [address]
+        if address.version == 6 and address.ipv4_mapped is not None:
+            addresses.append(address.ipv4_mapped)
+        return any(a in network for a in addresses for network in self._blocked)
+
+    def refusal_cause(self, caller: str | None) -> str:
+        """The held-back cause when caller is capped: its address is blocked, or has used its day."""
+        return "address_blocked" if self.blocked(caller) else "address_daily"
+
     def remaining(self, caller: str | None) -> int | None:
-        """Lookups caller may still cause today; None when it isn't limited (exempt, or no cap)."""
+        """Lookups caller may still cause today: 0 when blocked; None when it isn't limited (exempt,
+        or no cap)."""
+        if self.blocked(caller):
+            return 0
         key = self._caller_key(caller)
         return None if key is None else max(0, self.limit - self._counts.get(key, 0))
 
@@ -299,6 +329,8 @@ class AddressDailyQuota:
         return self.remaining(caller) == 0
 
     def record(self, caller: str | None, lookups: int = 1) -> None:
+        if self.blocked(caller):
+            return
         key = self._caller_key(caller)
         if key is None or lookups <= 0:
             return
@@ -311,15 +343,31 @@ class AddressDailyQuota:
                 del self._carried[carried]
             elif live is not None:
                 del self._counts[live]
+                self._first.pop(live, None)
+        if key not in self._counts:  # a count claimed from the carry-over file is already in _counts
+            self._first[key] = self._clock()
         before = self._counts.get(key, 0)
         self._counts[key] = before + lookups
         if before < self.limit <= before + lookups:  # once a day per address: the moment it's capped
             moment = datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
+            first = self._first.get(key)
+            if first is None:
+                started = "before a restart"
+            else:
+                started = f"{datetime.datetime.fromtimestamp(first, datetime.timezone.utc):%H:%M} UTC"
+                restart = datetime.datetime.fromtimestamp(self._started, datetime.timezone.utc)
+                if restart.date() == self._date and first >= self._started:
+                    started += f", since a restart at {restart:%H:%M} UTC"
+            # Ops commands read the address as the line's ninth field: keep the words before it
             logger.info(f"Mouser and DigiKey per-address limit: {key} reached its {self.limit} lookups "
-                        f"for {self._date.isoformat()} at {moment:%H:%M} UTC")
+                        f"for {self._date.isoformat()} at {moment:%H:%M} UTC (first lookup {started})")
 
-    def error(self, advice: str) -> dict:
-        """The reply once an address has used its day (advice: the distributor's own-key advice)."""
+    def error(self, advice: str, caller: str | None = None) -> dict:
+        """The reply once caller's address has used its day, or is blocked (advice: the
+        distributor's own-key advice)."""
+        if self.blocked(caller):
+            return {"error": "Live Mouser and DigiKey lookups are turned off for this address on this shared "
+                             f"server. Answers pcbparts already has stored still work.{advice}"}
         return {"error": f"This address has used its {self.limit} Mouser and DigiKey lookups "
                          "for today on this shared server; the count resets at 00:00 UTC. "
                          f"Answers pcbparts already has stored still work.{advice}"}
@@ -725,7 +773,7 @@ class QuotaPool:
 
     def address_error(self, caller: str | None) -> dict | None:
         if self.address_daily is not None and self.address_daily.capped(caller):
-            return self.address_daily.error(self._first._advice())
+            return self.address_daily.error(self._first._advice(), caller)
         return None
 
     def pause_cause(self) -> str | None:
@@ -760,7 +808,7 @@ class QuotaPool:
         """Charge every send, but check and count the address only for the first attempt."""
         self.last_refusal_cause = None
         if check_address and (error := self.address_error(caller)):
-            self.last_refusal_cause = "address_daily"
+            self.last_refusal_cause = self.address_daily.refusal_cause(caller)
             return None, error
         error = self.paused_error()
         if error:

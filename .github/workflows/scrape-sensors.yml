@@ -35,7 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "wafer-py==0.7.15" "wreq==0.13.0"
+          pip install "wafer-py==0.7.19" "wreq==0.13.0"
 
       - name: Run sensor scrapers
         env:
