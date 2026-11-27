@@ -264,7 +264,8 @@ class TestBOMWords:
         result = await search("JST_SH4_RA 6 pin", limit=100)
         assert result["total"] > 0
         for part in result["results"]:
-            assert part["specs"]["Number of Pins"] == "6P"
+            # The catalog writes six pins as "6P", and for a few parts as "6" (C56347841, 2026-11-27)
+            assert re.fullmatch(r"6\s*P?", part["specs"]["Number of Pins"], re.IGNORECASE)
             assert parse_length_mm(part["specs"]["Pitch"]) == 1
 
     @pytest.mark.parametrize("query", [
