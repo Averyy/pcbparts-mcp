@@ -17,6 +17,7 @@
 {"l":"C563877","m":"467650301","f":"MOLEX","p":"SMD","t":"e","c":3260,"d":"19P Female HDMI-D Surface Mount, Right Angle SMD HDMI Connectors ROHS","a":[["Connector Type","HDMI-D"],["Number of Pins","19P"],["Gender","Female"],["Mounting Type","Surface Mount, Right Angle"]],"x":0}
 {"l":"C563878","m":"467651001","f":"MOLEX","p":"SMD","t":"e","c":3260,"d":"19P HDMI-D Surface Mount, Right Angle SMD HDMI Connectors ROHS","a":[["Connector Type","HDMI-D"],["Number of Pins","19P"],["Gender","Female"],["Mounting Type","Surface Mount, Right Angle"]],"x":2}
 {"l":"C565291","m":"467651301","f":"MOLEX","p":"SMD","t":"e","c":3260,"d":"19P Female HDMI-D Surface Mount, Right Angle SMD HDMI Connectors ROHS","a":[["Connector Type","HDMI-D"],["Number of Pins","19P"],["Gender","Female"],["Mounting Type","Surface Mount, Right Angle"]],"x":0}
+{"l":"C573682","m":"2013978-2","f":"TE Connectivity","p":"Plugin","t":"e","c":3260,"d":"插件 HDMI Connectors ROHS","a":[["Number of Pins","19P"],["Gender","Female"],["Mounting Type","Side Entry"]],"x":0}
 {"l":"C591549","m":"1746679-1","f":"TE Connectivity","p":"Push-Pull","t":"e","c":3260,"d":"弯插 HDMI Connectors ROHS","a":[["Number of Pins","19P"],["Connector Type","HDMI-A"],["Gender","Female"],["Mounting Type","Right Angle"]],"x":0}
 {"l":"C592718","m":"1-1747981-4","f":"TE Connectivity","p":"-","t":"e","c":3260,"d":"- HDMI Connectors ROHS","a":[],"x":0}
 {"l":"C709361","m":"KH-HDMI-19P-Cu","f":"Shenzhen Kinghelm Elec","p":"SMD","t":"e","c":3260,"d":"19P 40V 500mA Female HDMI-A Surface Mount, Right Angle SMD HDMI Connectors ROHS","a":[["Operating Temperature","-"],["Voltage Rating","40V"],["Current Rating","500mA"],["Number of Pins","19P"],["Connector Type","HDMI-A"],["Gender","Female"],["Mounting Type","Surface Mount, Right Angle"]],"x":0}
@@ -304,6 +305,8 @@
 {"l":"C56451751","m":"U-H-19DD-W-6T","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56451752","m":"U-H-19DD-W-7","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56451753","m":"U-H-19DD-W-9","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C56451754","m":"U-H-19DD-W-5T","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C56451755","m":"U-H-19DD-W-3","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56451756","m":"U-H-19DD-W-8","f":"Korean Hroparts Elec","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56525501","m":"127028-000119402","f":"SYNWIN","p":"SMD","t":"e","c":3260,"d":"SMD HDMI Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C56525502","m":"C2607-1038-212","f":"SYNWIN","p":"Plugin","t":"e","c":3260,"d":"Plugin HDMI Connectors ROHS","a":[],"x":0,"n":1}

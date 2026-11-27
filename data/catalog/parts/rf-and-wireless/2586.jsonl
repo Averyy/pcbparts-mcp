@@ -89,7 +89,6 @@
 {"l":"C5441697","m":"KH-IPEX-SMAKWE-RG137-Q180MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"18cm 300V Gen 1 IPEX to SMA - RF Cables ROHS","a":[["IPEX Algebra","Gen 1"],["Voltage Rating","300V"],["Input/Output","IPEX to SMA"],["Line Length","18cm"]],"x":0}
 {"l":"C5441699","m":"KH-IPEX-SMAKWE-RG137-B60MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"300V 6cm Gen 1 IPEX to SMA - RF Cables ROHS","a":[["IPEX Algebra","Gen 1"],["Voltage Rating","300V"],["Input/Output","IPEX to SMA"],["Line Length","6cm"]],"x":0}
 {"l":"C5441701","m":"KH-IPEX-SMAKWE-RG137-B100MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"10cm 300V Gen 1 IPEX to SMA - RF Cables ROHS","a":[["IPEX Algebra","Gen 1"],["Voltage Rating","300V"],["Input/Output","IPEX to SMA"],["Line Length","10cm"]],"x":0}
-{"l":"C5441704","m":"KH-IPEX-SMAKWE-RG137-B180MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"18cm 300V Gen 1 IPEX to SMA - RF Cables ROHS","a":[["IPEX Algebra","Gen 1"],["Operating Temperature","-"],["Voltage Rating","300V"],["Input/Output","IPEX to SMA"],["Line Length","18cm"]],"x":0}
 {"l":"C5441709","m":"KH-FLSMA-IPEX113-120","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"12cm 300V Gen 1 SMA to IPEX - RF Cables ROHS","a":[["IPEX Algebra","Gen 1"],["Operating Temperature","-"],["Voltage Rating","300V"],["Frequency","-"],["Impedance","-"],["Input/Output","SMA to IPEX"],["SWR","-"],["Line Length","12cm"]],"x":0}
 {"l":"C7191298","m":"3C0000Q02-024","f":"HJ Tech","p":"-","t":"e","c":2586,"d":"2.03m - RF Cables ROHS","a":[["Line Length","2.03m"]],"x":0,"n":1}
 {"l":"C7191304","m":"3C0124M09-004","f":"HJ Tech","p":"-","t":"e","c":2586,"d":"4cm - RF Cables ROHS","a":[["Line Length","4cm"]],"x":0,"n":1}
@@ -616,7 +615,17 @@
 {"l":"C56359927","m":"KH-MMCXJW-MMCXJW-RG178-270MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56359928","m":"KH-MMCXJW-MMCXK-RG178-130MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56359929","m":"KH-MMCXJW-MMCXK-RG178-360MM","f":"Shenzhen Kinghelm Elec","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374316","m":"ACA-IPEX1 TO IPEX1 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374325","m":"ACA-RFSMA-K TO IPEX1 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56374432","m":"ACA-SMA-K TO IPEX1 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374434","m":"ACA-SMA-J TO IPEX4 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374437","m":"ACA-IPEX4 TO IPEX4 002","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374440","m":"ACA-IPEX4 TO IPEX4 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374441","m":"ACA-SMA-K TO IPEX1 007","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374442","m":"ACA-RP-SMA-K TO IPEX1 002","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56374443","m":"ACA-SMA-J TO SMA-J 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374444","m":"ACA-SMA-J TO SMA-K 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56374445","m":"ACA-RFSMA-J TO RFSMA-K 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
 {"l":"C56374446","m":"ACA-SMA-J TO RFSMA-J 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374450","m":"ACA-IPEX3 TO IPEX3 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}
+{"l":"C56374453","m":"ACA-IPEX37 TO IPEX37 001","f":"Aboosty","p":"-","t":"e","c":2586,"d":"- RF Cables ROHS","a":[],"x":0,"n":1}

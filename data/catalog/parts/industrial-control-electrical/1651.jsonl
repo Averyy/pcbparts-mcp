@@ -150,15 +150,11 @@
 {"l":"C3029553","m":"590","f":"Keystone","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3682998","m":"1747786-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683210","m":"1717478-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
-{"l":"C3683340","m":"1473969-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C3683414","m":"5787246-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C3683443","m":"1717445-6","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683444","m":"1-1612962-3","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683479","m":"5787526-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
-{"l":"C3683648","m":"1717445-5","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C3683742","m":"9-1612503-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
-{"l":"C3683817","m":"1-1827654-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
-{"l":"C3683907","m":"1747785-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3683910","m":"5787444-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0}
 {"l":"C3684033","m":"1827684-1","f":"TE Connectivity","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C5119250","m":"SMTM1632","f":"RENATA","p":"-","t":"e","c":1651,"d":"- ROHS","a":[],"x":0,"n":1}
@@ -306,7 +302,6 @@
 {"l":"C20606802","m":"MY-1220-03-K","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR1220 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR1220"],["Contact coating","Nickel Plated"]],"x":2}
 {"l":"C20606803","m":"MY-1225-01-J","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR1225 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR1225"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C20606805","m":"MY-1632-03-R","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"Battery buckle CR1632 Nickel plated Phosphor bronze - ROHS","a":[["Type","Battery buckle"],["Contact material","Phosphor Bronze"],["Applicable battery specifications","CR1632"],["Contact coating","Nickel Plated"]],"x":0}
-{"l":"C20606806","m":"BH-AA-B5BA034","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-10~80℃ Battery holder No. 5 Steel - ROHS","a":[["Operating Temperature","-10~80℃"],["Contact material","Steel"],["Type","Battery holder"],["Applicable battery specifications","No. 5"]],"x":0}
 {"l":"C20606808","m":"BH-14250-B1AJ002-150","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-10~80℃ Battery holder Nickel plated - ROHS","a":[["Operating Temperature","-10~80℃"],["Type","Battery holder"],["Contact coating","Nickel plated"]],"x":0}
 {"l":"C20606809","m":"BH-21700-A5BJ001","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ Battery holder Nickel plated Stainless steel - ROHS","a":[["Operating Temperature","-25~85℃"],["Type","Battery holder"],["Contact material","Stainless Steel"],["Contact coating","Nickel Plated"]],"x":0}
 {"l":"C48687355","m":"BH-18650-B6AA008","f":"MYOUNG","p":"-","t":"e","c":1651,"d":"-25~85℃ 18650 Battery base Gold plating - ROHS","a":[["Operating Temperature","-25~85℃"],["Type","Battery base"],["Applicable battery specifications","18650"],["Contact coating","Gold plating"]],"x":0,"n":1}

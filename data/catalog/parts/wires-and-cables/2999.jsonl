@@ -407,7 +407,6 @@
 {"l":"C53183524","m":"XHB2.54-5P-1-200(3)-24A-UL1007","f":"HanElectricity","p":"P=2.54mm","t":"e","c":2999,"d":"P=2.54mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53183529","m":"PH2.0-2P-1-100(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53183530","m":"PH2.0-2P-1-200(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
-{"l":"C53183532","m":"PH2.0-3P-1-100(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53183538","m":"PH2.0-5P-1-100(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53183540","m":"PH2.0-5P-1-300(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C53183543","m":"PH2.0-6P-1-300(3)-26A-UL1007","f":"HanElectricity","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
@@ -837,6 +836,7 @@
 {"l":"C55381008","m":"LY-100718-100-G","f":"DEALON","p":"-","t":"e","c":2999,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C55381009","m":"LY-100718-100-L","f":"DEALON","p":"-","t":"e","c":2999,"d":"- ROHS","a":[],"x":0,"n":1}
 {"l":"C55381010","m":"LY-100718-100-W","f":"DEALON","p":"-","t":"e","c":2999,"d":"- ROHS","a":[],"x":0,"n":1}
+{"l":"C55554511","m":"DT-XH2.54-2P 200mm 22AWG","f":"FG","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C55554537","m":"ST-SH1.0-3P 200mm 28AWG-B","f":"FG","p":"-","t":"e","c":2999,"d":"- Dupont wire / terminal block wire / electronic wire","a":[],"x":0,"n":1}
 {"l":"C55566239","m":"SAN-3-2Y UL1007 24AWG R-65mm BK-55mm terminal wire","f":"SHOU HAN","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}
 {"l":"C55566240","m":"SAN-3-2Y UL1007 24AWG R-55mm BK-65mm connection line","f":"SHOU HAN","p":"P=2mm","t":"e","c":2999,"d":"P=2mm Dupont wire / terminal block wire / electronic wire ROHS","a":[],"x":0,"n":1}

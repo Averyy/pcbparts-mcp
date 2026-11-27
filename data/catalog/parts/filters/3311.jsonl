@@ -20,4 +20,5 @@
 {"l":"C43532971","m":"RN212-1.5-02-3M3","f":"TE Connectivity","p":"Plugin","t":"e","c":3311,"d":"Plugin EMC Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C44050535","m":"FN9222B-10-06","f":"TE Connectivity","p":"Plugin","t":"e","c":3311,"d":"插件 EMC Filters ROHS","a":[["Leakage Current","0mA"],["Length","-"],["Current Rating","10A"],["Height","-"],["Filter Type","Single-Phase Filter"],["Mounting Type","Panel Mount"],["Width","-"],["Voltage - Input","250V@AC"]],"x":0,"n":1}
 {"l":"C44452410","m":"RN102-0.3-02-12M","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}
+{"l":"C44452414","m":"RN102-1.5-02-1M6","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}
 {"l":"C44452428","m":"RN114-4-02-1M5","f":"TE Connectivity","p":"-","t":"e","c":3311,"d":"- EMC Filters ROHS","a":[],"x":0,"n":1}
