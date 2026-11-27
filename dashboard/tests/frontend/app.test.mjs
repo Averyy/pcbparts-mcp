@@ -84,6 +84,13 @@ function payload(extra = {}) {
   return { generated_at: at, as_of: at, edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true })],
     last_fetch: { ok: true, at }, health_at: at, health: { status: "healthy", version: "0.10.5", distributor_quota: { mouser: { used_today: 80, limit: 1000 } } }, ...extra };
 }
+/** A day whose counters are its whole day's, with the same ones as its part since the deploy. */
+const whole = (problems, extra = {}) => ({ complete: false, ...problems, ...extra, problems });
+// a Mouser lookup that failed: Mouser's error answers then cost a lookup, and are worth a look
+const mouserLost = { tools: { jlc_search: { calls: 24, ok: 24 }, mouser_get_part: { calls: 1, failed: 1 } }, reasons: { mouser_get_part: { mouser_failed: 1 } } };
+const digikeyLost = { tools: { jlc_search: { calls: 24, ok: 24 }, digikey_get_part: { calls: 1, failed: 1 } }, reasons: { digikey_get_part: { digikey_failed: 1 } } };
+const notFailed = (items) => items.filter((it) => !it.key?.startsWith("failed:"));
+
 function setup(p = payload()) {
   const body = new Element("body");
   globalThis.document = { body, documentElement: new Element("html"), activeElement: body,
@@ -106,7 +113,7 @@ function setup(p = payload()) {
     setTimeout: (fn, delay = 0) => { const id = ++timerId; timers.set(id, { fn, at: now + delay }); return id; },
     clearTimeout: (id) => timers.delete(id),
     history: { replaceState() {} }, location: { hash: "" }, fetch: async () => { throw Error("offline"); } });
-  vm.runInContext(appCode + "\nthis.api = { render, renderHeader, renderKpis, renderTraffic, renderTools, toolDetail, mouserQuota, attentionItems, scope, heatmap, refresh, load, setRange, state, setPayload: (p) => { payload = p; }, getError: () => loadError };", context);
+  vm.runInContext(appCode + "\nthis.api = { render, renderHeader, renderKpis, renderTraffic, renderTools, renderAttention, renderEvents, renderCapacity, renderUpstreams, toolDetail, mouserQuota, attentionItems, scope, heatmap, refresh, load, setRange, state, dismissed, setPayload: (p) => { payload = p; }, getError: () => loadError, getView: () => currentView };", context);
   const api = context.api;
   api.setPayload(p);
   return { ...api, context, el: document.getElementById, flush: () => { while (frames.length) frames.shift()(); }, view: (key = "today") => data.buildView(p, key),
@@ -136,7 +143,7 @@ for (const [name, cause, level] of [
 ]) test(`${name} ${cause} refusals are ${level}`, () => {
   const problems = { calls: 24, distributor_limits: { [name]: { refusals: { [cause]: 3 } } },
     ...(name === "mouser" && cause === "daily" ? { upstream_status: { mouser: { "429": 3 } } } : {}) };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems))] }));
   app.render();
   const items = app.attentionItems(app.view(), app.scope(app.view()));
   assert.equal(items.length, 1);
@@ -157,14 +164,13 @@ for (const [daily, errors, warnings] of [[3, 6, 6], [3, 5, 5], [7, 3, 3]]) {
   test(`Mouser daily refusals ${daily} do not subtract from ${errors} HTTP 4xx errors`, () => {
     const problems = { distributor_limits: { mouser: { refusals: { daily } } },
       upstream_status: { mouser: { "2xx": 10, "4xx": errors } } };
-    const app = setup(payload({ edays: [day("2026-11-23", { complete: false,
-      upstream_status: problems.upstream_status, problems })] }));
+    const app = setup(payload({ edays: [day("2026-11-23", whole(problems, mouserLost))] }));
     app.render();
     const items = app.attentionItems(app.view(), app.scope(app.view()));
     const warning = items.find((it) => it.what.startsWith("Mouser:"));
     if (warnings) {
       assert.equal(warning.what, `Mouser: ${warnings} of ${10 + errors} requests got an error answer.`);
-      assert.match(warning.detail, new RegExp(`rejected our request ${warnings}`));
+      assert.match(warning.detail, new RegExp(`4xx answer ${warnings}; 1 lookup failed`));
     } else assert.equal(warning, undefined);
     const row = app.el("upstreams").querySelector('td[title="mouser"]').parentElement;
     assert.match(row.textContent, new RegExp(`${errors} of ${10 + errors}`));
@@ -181,16 +187,15 @@ for (const [otherStatus, st, bad, minute] of [
   // Daily TooManyRequests bodies now count as 429 even when returned with HTTP 200/403/503.
   const problems = { distributor_limits: { mouser: { refusals: { daily: 3, minute } } },
     upstream_status: { mouser: st } };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false,
-    upstream_status: problems.upstream_status, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems, mouserLost))] }));
   const items = app.attentionItems(app.view(), app.scope(app.view()));
   const errors = items.filter((it) => it.what.startsWith("Mouser:"));
   assert.equal(errors.length, 1);
   assert.equal(errors[0].what, `Mouser: ${bad} of 9 requests got an error answer.`);
-  assert.match(errors[0].detail, new RegExp(`rejected our request ${st["4xx"]}`));
-  if (otherStatus === 503) assert.match(errors[0].detail, /server error or no answer 3/);
+  assert.match(errors[0].detail, new RegExp(`4xx answer ${st["4xx"]}`));
+  if (otherStatus === 503) assert.match(errors[0].detail, /5xx answer 3/);
   assert.equal(items.filter((it) => /daily limit/.test(it.what)).length, 1);
-  assert.equal(items.filter((it) => /Mouser refused 3 of our requests/.test(it.what)).length, minute ? 1 : 0);
+  assert.equal(items.filter((it) => /Mouser refused 3 requests for its per-minute limit/.test(it.what)).length, minute ? 1 : 0);
   assert.equal(app.view().problems.upstream_status.mouser["429"], st["429"]);
 });
 
@@ -200,7 +205,7 @@ for (const [daily, counted429, errors4xx, errors5xx, expected] of [
 ]) test(`Mouser excludes only 429: ${daily} daily, ${counted429} at 429, ${errors4xx} at 4xx, ${errors5xx} at 5xx`, () => {
   const problems = { distributor_limits: { mouser: { refusals: { daily } } },
     upstream_status: { mouser: { "429": counted429, "4xx": errors4xx, "5xx": errors5xx } } };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems, mouserLost))] }));
   const warning = app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.what.startsWith("Mouser:"));
   if (expected) assert.equal(warning.what, `Mouser: ${expected} of ${counted429 + errors4xx + errors5xx} requests got an error answer.`);
   else assert.equal(warning, undefined);
@@ -208,7 +213,7 @@ for (const [daily, counted429, errors4xx, errors5xx, expected] of [
 
 test("DigiKey 429 outcomes still contribute to HTTP warnings", () => {
   const problems = { upstream_status: { digikey: { "429": 3 } } };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems, digikeyLost))] }));
   assert.ok(app.attentionItems(app.view(), app.scope(app.view())).some((it) => it.what === "DigiKey API: 3 of 3 requests got an error answer."));
 });
 
@@ -216,7 +221,7 @@ test("DigiKey HTTP warnings say plain DigiKey over unsplit days and count DigiKe
   const status = { digikey: { "2xx": 10, "5xx": 6 } };
   const warning = (distributors) => {
     const problems = { upstream_status: status, distributors };
-    const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems, distributors })] }));
+    const app = setup(payload({ edays: [day("2026-11-23", whole(problems, digikeyLost))] }));
     return app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.what.includes("requests got an error answer"));
   };
   // split (server 0.10.11): the API's requests, with its retries
@@ -249,14 +254,23 @@ test("DigiKey API and ext traffic are shown apart, with their HTTP outcomes", ()
   assert.equal(ext.children[1].textContent, "14");
   assert.match(ext.textContent, /3 of 14/);
   const text = app.el("upstreams").textContent;
-  assert.match(text, /Sent to DigiKey30/);
+  assert.match(text, /Lookups sent to DigiKey30/);
   assert.match(text, /Through the API18/);
   assert.match(text, /Through ext12/);
-  assert.match(text, /Requests each API lookup took, on average2\.0/); // the API's 36 requests over its 18 lookups
+  assert.match(text, /HTTP requests per API lookup2\.0/); // the API's 36 requests over its 18 lookups
   assert.doesNotMatch(text, /counted apart/);
-  const items = app.attentionItems(app.view(), app.scope(app.view()));
-  assert.ok(items.some((it) => it.what === "DigiKey ext: 3 of 14 requests got an error answer."));
+  // no DigiKey lookup failed: the error answers are quiet, in the table only
+  assert.match(ext.textContent, /3 of 14: 5xx answer; no lookup failed/);
+  assert.equal(ext.children.at(-1).className, "zero");
+  assert.ok(!app.attentionItems(app.view(), app.scope(app.view())).some((it) => it.what.includes("error answer")));
+  const lost = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, ...digikeyLost,
+    distributors: { digikey: { sent: 30, cached: 4, rate_limited: 0, ext_sent: 12 } },
+    upstream: { digikey: { sent: 36 }, digikey_ext: { sent: 14 } }, upstream_status: status })] }));
+  const items = lost.attentionItems(lost.view(), lost.scope(lost.view()));
+  assert.ok(items.some((it) => it.what === "DigiKey ext: 3 of 14 requests got an error answer." && /5xx answer 3; 1 lookup failed\.$/.test(it.detail)));
   assert.ok(!items.some((it) => it.what.startsWith("DigiKey API:")));
+  lost.render();
+  assert.equal(dkRow(lost, "digikey_ext").children.at(-1).className, "hot");
 });
 
 test("days before the split keep one DigiKey figure, with no invented split", () => {
@@ -274,18 +288,18 @@ test("days before the split keep one DigiKey figure, with no invented split", ()
   assert.equal(dkRow(app, "digikey_ext").children[0].textContent, "DigiKey ext");
   assert.match(text, /DigiKey's API and ext requests are counted apart from Nov 22\./);
   assert.doesNotMatch(text, /DigiKey ext from/);
-  assert.match(text, /Sent to DigiKey110/);
+  assert.match(text, /Lookups sent to DigiKey110/);
   assert.match(text, /Through the API \(from Nov 22\)18/);
   assert.match(text, /Through ext \(from Nov 22\)12/);
   // the older days' requests and lookups both include ext's; the split day's API ones go together
-  assert.match(text, /Requests each one took, on average1\.0/); // not "API lookup": older days are unsplit
+  assert.match(text, /HTTP requests per lookup1\.0/); // not "API lookup": older days are unsplit
 
   app.state.range = "yesterday"; // the split day alone: no older figure, no note
   app.render();
   text = app.el("upstreams").textContent;
   assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey API");
   assert.match(text, /Through the API18/);
-  assert.match(text, /Requests each API lookup took, on average1\.0/);
+  assert.match(text, /HTTP requests per API lookup1\.0/);
   assert.doesNotMatch(text, /counted apart|\(from /);
 
   const before = setup(payload({ edays: [day("2026-11-22", old), day("2026-11-23", { complete: false, partial_end: true })] }));
@@ -294,8 +308,8 @@ test("days before the split keep one DigiKey figure, with no invented split", ()
   text = before.el("upstreams").textContent;
   assert.equal(dkRow(before, "digikey").children[0].textContent, "DigiKey");
   assert.equal(dkRow(before, "digikey_ext"), null);
-  assert.match(text, /Sent to DigiKey40/);
-  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.match(text, /Lookups sent to DigiKey40/);
+  assert.match(text, /HTTP requests per lookup1\.0/);
   assert.doesNotMatch(text, /Through the|ext/);
 });
 
@@ -315,8 +329,8 @@ test("an unsplit day with ext requests alone keeps one lookup figure and pairs i
   assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey"); // it holds ext's requests before the deploy
   assert.equal(dkRow(app, "digikey").children[1].textContent, "200");
   assert.equal(dkRow(app, "digikey_ext").children[1].textContent, "100");
-  assert.match(text, /Sent to DigiKey300/);
-  assert.match(text, /Requests each one took, on average1\.0/); // 200 + 100 requests for 300 lookups
+  assert.match(text, /Lookups sent to DigiKey300/);
+  assert.match(text, /HTTP requests per lookup1\.0/); // 200 + 100 requests for 300 lookups
   assert.doesNotMatch(text, /Through the|API lookup/);
   assert.match(text, /DigiKey's API and ext requests are counted apart from Nov 22\./);
 });
@@ -330,13 +344,13 @@ for (const range of ["7d", "all"]) test(`an unsplit day with ext requests in the
   app.render();
   const text = app.el("upstreams").textContent;
   const older = range === "7d" ? 5 : 9;
-  assert.match(text, new RegExp(`Sent to DigiKey${older * 40 + 330}`));
+  assert.match(text, new RegExp(`Lookups sent to DigiKey${older * 40 + 330}`));
   assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey");
   assert.equal(dkRow(app, "digikey").children[1].textContent, String(older * 40 + 218));
   assert.equal(dkRow(app, "digikey_ext").children[1].textContent, "112");
   // older days 40/40, the deploy day (200 + 100)/300, the split day 18/18: 1.0, where adding the range's
   // requests and dividing by all but the split day's ext lookups gave less than one, so no figure
-  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.match(text, /HTTP requests per lookup1\.0/);
   assert.doesNotMatch(text, /API lookup/);
   assert.match(text, /Through the API \(from Nov 22\)18/);
   assert.match(text, /Through ext \(from Nov 22\)12/);
@@ -368,8 +382,8 @@ test("a range without ext lookups shows no ext row or figure", () => {
   const text = app.el("upstreams").textContent;
   assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey API");
   assert.equal(dkRow(app, "digikey_ext"), null);
-  assert.match(text, /Sent to DigiKey20/);
-  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.match(text, /Lookups sent to DigiKey20/);
+  assert.match(text, /HTTP requests per lookup1\.0/);
   assert.doesNotMatch(text, /Through the|ext/);
 });
 
@@ -378,18 +392,19 @@ test("mixed Mouser refusals split daily info from warnings and keep held-back lo
     mouser: { refusals: { daily: 7, minute: 2, refused: 1 }, held_back: { distributor_daily: 4 } },
     digikey: { refusals: { daily: 5 } },
   } };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems))] }));
   app.render();
   const items = app.attentionItems(app.view(), app.scope(app.view()));
-  assert.equal(items.length, 4);
+  // one notice per cause, so each can be dismissed on its own
+  assert.deepEqual([...items.map((it) => it.key)], ["held_back:mouser:distributor_daily", "refused:mouser:minute",
+    "refused:mouser:refused", "refused:digikey:daily", "refused:mouser:daily"]);
   assert.ok(items.slice(0, -1).every((it) => it.level === "warning"));
   assert.equal(items.at(-1).level, "info");
   assert.match(items.at(-1).what, /Mouser refused 7 requests for its daily limit/);
-  const warning = items.find((it) => it.level === "warning" && it.what.startsWith("Mouser refused"));
-  assert.match(warning.what, /refused 3 of our requests/);
-  assert.match(warning.detail, /per-minute limit 2, refused 1/);
-  assert.doesNotMatch(warning.detail, /daily/);
-  assert.ok(items.some((it) => /4 Mouser lookups turned away by limits/.test(it.what)));
+  assert.equal(items[1].what, "Mouser refused 2 requests for its per-minute limit.");
+  assert.equal(items[2].what, "Mouser refused 1 request with no reason given.");
+  assert.equal(items[3].what, "DigiKey refused 5 requests for its daily limit (429).");
+  assert.ok(items.some((it) => /4 Mouser lookups turned away by our limits/.test(it.what)));
   assert.match(app.el("tiles").textContent, /Turned away by limits4/);
   assert.equal(app.el("attention").querySelector(".clear"), null);
 });
@@ -400,8 +415,12 @@ test("held-back labels keep address and DigiKey resets separate from Mouser's bu
     mouser: { held_back: { daily_count: 2, address_daily: 1 } },
     digikey: { held_back: { daily_count: 1, address_blocked: 1 } },
   } };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, distributors, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems, { distributors }))] }));
   app.render();
+  // the block list's holds are information, not a warning
+  const blocked = app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.key === "held_back:address_blocked");
+  assert.equal(blocked.level, "info");
+  assert.equal(blocked.what, "The blocked address tried 1 lookup, none sent.");
   for (const id of ["attention", "upstreams"]) {
     assert.match(app.el(id).textContent, /Mouser budget for the day ran out \(resets 1 AM\)/);
     assert.match(app.el(id).textContent, /address had used its daily allowance \(resets 7 PM\)/);
@@ -413,18 +432,20 @@ test("held-back labels keep address and DigiKey resets separate from Mouser's bu
 
 test("Mouser HTTP errors and retries use the selected problems range and counting coverage", () => {
   const usage = (retries) => ({ distributors: { mouser: { sent: 100, retries } }, upstream_status: { mouser: { "2xx": 90, "5xx": 10 } } });
-  const app = setup(payload({ problems_since: "2026-11-21T18:00:00Z", edays: [
+  const app = setup(payload({ problems_since: "2026-11-21T18:00:00Z", problems_version: "0.10.5", edays: [
     day("2026-11-20", { upstream: { jlcpcb: { sent: 50 } } }),
-    day("2026-11-21", { ...usage(40), problems: { ...usage(2), start: "2026-11-21T18:00:00Z" } }),
-    day("2026-11-22", { ...usage(50), problems: usage(3) }),
+    day("2026-11-21", { ...usage(40), ...mouserLost, problems: { ...usage(2), start: "2026-11-21T18:00:00Z" } }),
+    day("2026-11-22", { ...usage(50), ...mouserLost, problems: usage(3) }),
     day("2026-11-23", { ...usage(60), complete: false, problems: usage(60) }),
   ] }));
   app.state.range = "all";
   app.render();
-  const view = app.view("all"), items = app.attentionItems(view, app.scope(view));
+  // the whole range counts, not only the part since the deploy; that part is said too
+  const view = app.view("all"), items = notFailed(app.attentionItems(view, app.scope(view)));
   assert.equal(items.length, 1);
   assert.equal(items[0].what, "Mouser: 20 of 200 requests got an error answer.");
-  assert.match(items[0].detail, /5 were retries\.$/);
+  assert.match(items[0].detail, /2 lookups failed; 90 were retries\.$/);
+  assert.equal(items[0].since, "20 since 0.10.5");
   const row = app.el("upstreams").querySelector("td[title=\"mouser\"]").parentElement;
   assert.equal(row.children[0].textContent, "Mouser");
   assert.equal(row.children[1].textContent, "200");
@@ -435,9 +456,9 @@ test("Mouser HTTP errors and retries use the selected problems range and countin
 for (const retries of [undefined, null, 0, 1]) test(`Mouser error text handles retries=${retries}`, () => {
   const problems = { upstream_status: { mouser: { "5xx": 5 } },
     ...(retries === undefined ? {} : { distributors: { mouser: { retries } } }) };
-  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
+  const app = setup(payload({ edays: [day("2026-11-23", whole(problems, mouserLost))] }));
   app.render();
-  const [item] = app.attentionItems(app.view(), app.scope(app.view()));
+  const [item] = notFailed(app.attentionItems(app.view(), app.scope(app.view())));
   assert.equal(item.what, "Mouser: 5 of 5 requests got an error answer.");
   if (retries) assert.match(item.detail, /1 was a retry\.$/);
   else assert.doesNotMatch(item.detail, /retr/);
@@ -535,6 +556,40 @@ test("public health without private quota counts keeps pause notes without inven
   assert.doesNotMatch(app.el("tiles").textContent, /Mouser daily budget/);
   assert.equal(app.mouserQuota(app.view()).textContent, "");
   assert.match(app.el("led-text").textContent, /Mouser paused/);
+});
+
+// expected: the header's DigiKey words, or null for none. Without ext's status the header can only
+// say the API is paused, which is true with or without an extension.
+for (const [name, digikey, expected] of [
+  ["API paused, extension active", { paused_until: "2026-11-28 00:00 UTC", ext: { paused_until: null, active: true } }, null],
+  ["API paused, extension not active (minute or 403 pause)", { paused_until: "2026-11-27 20:00 UTC", ext: { paused_until: null, active: false } }, "DigiKey paused"],
+  ["API and extension both paused", { paused_until: "2026-11-28 00:00 UTC", ext: { paused_until: "2026-11-27 20:00 UTC", active: true } }, "DigiKey paused"],
+  ["API paused, extension active but its pause hasn't ended", { paused_until: "2026-11-28 00:00 UTC", ext: { paused_until: "2026-11-23 15:30 UTC", active: true } }, "DigiKey paused"],
+  ["API paused, extension active and its pause has ended", { paused_until: "2026-11-28 00:00 UTC", ext: { paused_until: "2026-11-23 14:00 UTC", active: true } }, null],
+  ["API paused, no extension", { paused_until: "2026-11-28 00:00 UTC" }, "DigiKey API paused"],
+  ["API paused, extension status unreadable (no active flag)", { paused_until: "2026-11-28 00:00 UTC", ext: { paused_until: null } }, "DigiKey API paused"],
+  ["API pause has ended", { paused_until: "2026-11-23 14:59 UTC" }, null],
+  ["API not paused, extension paused", { paused_until: null, ext: { paused_until: "2026-11-27 20:00 UTC", active: false } }, null],
+  ["nothing paused", { paused_until: null, ext: { paused_until: null, active: false } }, null],
+]) test(`DigiKey header pause: ${name}`, () => {
+  const app = setup(payload({ health: { status: "healthy", distributor_quota: {
+    digikey, mouser: { paused_until: "2026-11-23 16:00 UTC" },
+  } } }));
+  app.render();
+  const text = app.el("led-text").textContent;
+  assert.equal(text.match(/DigiKey( API)? paused/)?.[0] ?? null, expected);
+  assert.match(text, /Mouser paused/);  // Mouser keeps its rule: any pause counts
+});
+
+test("a pause that ended before the clock reads now isn't shown, however old the sample", () => {
+  const app = setup(payload({ health: { status: "healthy", distributor_quota: {
+    mouser: { paused_until: "2026-11-23 14:00 UTC" }, digikey: { paused_until: "2026-11-23 16:00 UTC", ext: { active: false, paused_until: null } },
+  } } }));
+  app.render();
+  assert.equal(app.el("led-text").textContent, "DigiKey paused");
+  app.setNow("2026-11-23T16:00:01Z");
+  app.render();
+  assert.equal(app.el("led").hidden, true);
 });
 
 for (const [checked, dayDate, start, end] of [
@@ -713,7 +768,7 @@ test("heatmap and Table controls retain focus on a refreshed multi-day view", ()
 
 test("fresh quota still shows its own timestamp and budget pace", () => {
   const app = setup(); app.renderKpis(app.view());
-  assert.match(app.el("tiles").textContent, /Mouser daily budget80of 1,000Checked Nov 23, 10:00 AM/);
+  assert.match(app.el("tiles").textContent, /Mouser daily budget80of 1,000Key in use\. Checked Nov 23, 10:00 AM/);
   assert.match(app.mouserQuota(app.view()).textContent, /At this pace/);
 });
 
@@ -786,4 +841,513 @@ test("a table scrolled sideways keeps its position when a failed reload redraws 
   await app.load();
   app.flush();
   assert.equal(tools().scrollLeft, 120);
+});
+
+// ---------------------------------------------------------------- 0.10.12: whole-range history and dismissals
+
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+const refusals = (n, extra = {}) => ({ per_ip_refusals: { total: n, everyone_else: n }, ...extra });
+
+/** A backend double for /api/data and /api/dismissals; `calls` records what the page sent. */
+function backend(app, p, { refuse = null } = {}) {
+  const calls = [];
+  let stored = [];
+  app.context.fetch = async (url, opts = {}) => {
+    calls.push({ url, method: opts.method || "GET", headers: opts.headers || {}, body: opts.body ? JSON.parse(opts.body) : null });
+    if (url.startsWith("/api/dismissals")) {
+      if (refuse && opts.method) return { ok: false, status: 403, json: async () => ({ error: refuse }) };
+      if (opts.method === "POST") { const b = JSON.parse(opts.body); stored = [...stored.filter((d) => d.key !== b.key), { ...b, at }]; }
+      if (opts.method === "DELETE") { const key = decodeURIComponent(url.split("key=")[1]); stored = stored.filter((d) => d.key !== key); }
+      return { ok: true, status: 200, json: async () => ({ dismissals: stored }) };
+    }
+    if (url === "/api/data") return { ok: true, status: 200, json: async () => p.current };
+    throw Error(`unexpected ${url}`);
+  };
+  return calls;
+}
+
+test("a dismissed notice stays hidden until its count grows, and can be undone or restored", async () => {
+  const data = (n) => payload({ edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true, ...refusals(n) })] });
+  const p = { current: data(852) };
+  const app = setup(p.current);
+  const calls = backend(app, p);
+  await app.load();
+  const box = app.el("attention");
+  const notices = () => box.querySelectorAll("li").filter((li) => !li.parentElement.classList.contains("dismissed"));
+  assert.match(notices()[0].textContent, /852 requests turned away by our per-address limit/);
+  notices()[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  const post = calls.find((c) => c.method === "POST");
+  assert.deepEqual({ ...post.body }, { key: "per_ip_refusals", count: 852, day: "2026-11-23" });
+  assert.equal(post.headers["X-Dashboard-Request"], "1");
+  assert.equal(post.headers["Content-Type"], "application/json");
+  assert.equal(notices().length, 0);
+  assert.match(box.textContent, /Nothing new since the notice here was dismissed\./);
+  assert.match(box.querySelector("p.undo").textContent, /Dismissed: 852 requests/);
+  assert.equal(document.activeElement.id, "undo-dismiss");
+
+  // undo: a first dismissal is removed again
+  app.el("undo-dismiss").dispatch("click");
+  await tick();
+  assert.equal(calls.at(-1).method, "DELETE");
+  assert.equal(calls.at(-1).url, "/api/dismissals?key=per_ip_refusals");
+  assert.equal(notices().length, 1);
+
+  // dismissed again, then the next reload holds the same count: still hidden; a bigger one brings it back
+  notices()[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  await app.load();
+  assert.equal(notices().length, 0);
+  assert.equal(app.dismissed.get("per_ip_refusals").count, 852);
+  p.current = data(900);
+  await app.load();
+  assert.match(notices()[0].textContent, /900 requests/);
+
+  // "Show dismissed" lists what is hidden, with a way back
+  p.current = data(852);
+  await app.load();
+  app.el("show-dismissed").dispatch("click");
+  const hidden = box.querySelector("ul.dismissed").querySelectorAll("li");
+  assert.equal(hidden.length, 1);
+  assert.equal(hidden[0].querySelector("button.dismiss").textContent, "Restore");
+  hidden[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  assert.equal(calls.at(-1).method, "DELETE");
+  assert.equal(notices().length, 1);
+});
+
+test("a dismissal the server refuses is undone on the page and said", async () => {
+  const p = { current: payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, ...refusals(5) })] }) };
+  const app = setup(p.current);
+  backend(app, p, { refuse: "Missing X-Dashboard-Request header" });
+  await app.load();
+  app.el("attention").querySelector("button.dismiss").dispatch("click");
+  await tick();
+  assert.match(app.el("attention").querySelector("li").textContent, /5 requests turned away/);
+  assert.match(app.el("attention").textContent, /Couldn't save that \(Missing X-Dashboard-Request header\)/);
+  assert.equal(app.el("attention").querySelector("p.undo"), null);
+});
+
+test("every count-based notice has a stable key, and live state has none", () => {
+  const app = setup(payload({ kept_across_restarts: false, last_fetch: { ok: true, at, health_error: "timed out" }, edays: [day("2026-11-23", {
+    complete: false, partial_end: true, ...refusals(3),
+    tools: { cse_get_kicad: { calls: 10, ok: 7, failed: 3 } }, reasons: { cse_get_kicad: { cse_lookup_failed: 3 } },
+    distributor_limits: { digikey: { held_back: { distributor_refused: 2, address_blocked: 4 } } },
+    lcsc_lookups: { jlc_get_part: { fallback: 2 } }, datasheet_links: { visits: 9, refused: 1 },
+  })] }));
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.deepEqual([...items.map((it) => it.key ?? null)], ["failed:cse_get_kicad:cse_lookup_failed", null, null,
+    "per_ip_refusals", "held_back:digikey:distributor_refused", "datasheet:refused", "held_back:address_blocked", "lcsc:jlc_get_part:fallback"]);
+  assert.equal(items[0].what, "3 cse_get_kicad calls failed: SamacSys search failed.");
+  assert.match(items[2].what, /stats aren't kept across restarts/); // live state: it clears itself
+  // each keyed notice's count is the one the dismissal rule counts with
+  const counts = app.context.eventCounts(app.view().agg, app.view().recs);
+  for (const it of items.filter((x) => x.key && !x.key.startsWith("warning:"))) assert.equal(counts.get(it.key), it.count, it.key);
+  app.render();
+  assert.equal(app.el("attention").querySelectorAll("li")[2].querySelector("button.dismiss"), null);
+  assert.equal(items.at(-1).level, "info");
+  assert.match(items.at(-1).what, /2 live stock lookups in jlc_get_part answered from the daily snapshot/);
+});
+
+test("counts cover the whole range and say how many came since a deploy inside it", () => {
+  const since = "2026-11-23T12:00:00Z";
+  const app = setup(payload({ problems_since: since, problems_version: "0.10.12", edays: [day("2026-11-22"), day("2026-11-23", {
+    complete: false, partial_end: true, ...refusals(10), tools: { jlc_search: { calls: 24, ok: 20, failed: 4 } },
+    problems: { start: since, ...refusals(2), tools: { jlc_search: { calls: 10, ok: 9, failed: 1 } } },
+  })] }));
+  app.render();
+  const tiles = app.el("tiles").textContent;
+  assert.match(tiles, /Failed calls4[^]*1 since 0\.10\.12/);
+  assert.match(tiles, /Turned away by limits10[^]*2 since 0\.10\.12/);
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.equal(items.find((it) => it.key === "per_ip_refusals").since, "2 since 0.10.12");
+  assert.match(app.el("attention").textContent, /“since 0\.10\.12” counts start at 7:00 AM/);
+  // yesterday ends before the deploy: whole-range counts, no "since"
+  app.setRange("yesterday");
+  assert.doesNotMatch(app.el("tiles").textContent, /since 0\.10\.12/);
+});
+
+test("request refusals name their addresses when the server counts them", () => {
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true,
+    ...refusals(852, { addresses: { rate_limited: 1, cap_reached: 0, blocked_tried: 0 } }) })] }));
+  app.render();
+  assert.match(app.el("attention").textContent, /852 requests from 1 address turned away by our per-address limit/);
+  assert.match(app.el("capacity").textContent, /852 from 1 address: over the per-address limit for a minute/);
+  const older = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, ...refusals(852) })] }));
+  older.render();
+  assert.match(older.el("attention").textContent, /852 requests turned away/);
+  assert.doesNotMatch(older.el("attention").textContent, /from \d+ address|an address sent/);
+});
+
+for (const n of [1, 4]) test(`Mouser budgets: ${n} in the list, the key in use first, pace for the whole pool`, () => {
+  const budgets = Array.from({ length: n }, (_, i) => ({ used_today: i < n - 1 ? 1000 : 80, limit: 1000, api_remaining: null,
+    paused_until: null, in_use: i === n - 1 }));
+  const app = setup(payload({ health: { status: "healthy", distributor_quota: { mouser: {
+    used_today: 80, limit: 1000, resets_at: "2026-11-24 06:00 UTC", budgets } } } }));
+  app.render();
+  const tile = app.el("tiles").children[7];
+  assert.match(tile.textContent, new RegExp(`Mouser daily budget80of 1,000Key in use${n > 1 ? ` \\(budget ${n} of ${n}\\)` : ""}\\. Checked`));
+  const rows = tile.querySelectorAll("li");
+  assert.equal(rows.length, n > 1 ? n : 0);
+  if (n > 1) {
+    assert.match(rows[0].textContent, new RegExp(`budget 1 of ${n}1,000 of 1,000spent`));
+    assert.equal(rows.at(-1).dataset.state, "in-use");
+    assert.match(rows.at(-1).textContent, /in use/);
+  }
+  // 9 of Mouser's 24 hours have gone by: the pool's pace, never one budget's
+  const used = (n - 1) * 1000 + 80, limit = n * 1000;
+  assert.match(app.mouserQuota(app.view()).textContent, new RegExp(`${n > 1 ? "every budget together, " : ""}checked .*: ${format.full(used)} of ${format.full(limit)} used since Mon 1 AM\\. At this pace about ${format.compact(used / 0.375)}`));
+});
+
+for (const n of [1, 3]) test(`DigiKey now: ext answering, API answering or paused, with ${n} budget(s)`, () => {
+  const budget = (used, inUse) => ({ used_today: used, limit: 1000, api_remaining: 1000 - used, paused_until: null, in_use: inUse });
+  const state = (digikey, limits) => {
+    const app = setup(payload({ health: { status: "healthy", distributor_quota: { digikey } },
+      edays: [day("2026-11-23", { complete: false, partial_end: true, distributor_limits: { digikey: limits || {} } })] }));
+    app.render();
+    return app.el("tiles").children[8];
+  };
+  const spent = Array.from({ length: n }, (_, i) => budget(1000, i === n - 1));
+  let tile = state({ used_today: 1000, limit: 1000, paused_until: "2026-11-24 00:00 UTC", resets_at: "2026-11-24 00:00 UTC", budgets: spent,
+    ext: { active: true, paused_until: null, active_since: "2026-11-23 13:05 UTC" } },
+  { held_back: { address_daily: 4 }, ext_held_back: { address_daily: 1 }, refusals: { refused: 2 }, ext_refusals: { refused: 2 } });
+  assert.match(tile.textContent, /DigiKey nowext answeringSince 8:05 AM; API day spent, resets 7 PM\. Checked/);
+  assert.match(tile.textContent, /Today, turned away: API 3, ext 1; refused: API 0, ext 2/);
+  assert.equal(tile.querySelectorAll("li").length, n > 1 ? n : 0);
+  const fresh = Array.from({ length: n }, (_, i) => budget(i ? 0 : 400, i === 0));
+  tile = state({ used_today: 400, limit: 1000, paused_until: null, budgets: fresh, ext: { active: false, paused_until: null } });
+  assert.match(tile.textContent, new RegExp(`API answering${format.full(n * 1000 - 400)} of the day's ${format.full(n * 1000)} requests left; resets 7 PM`));
+  tile = state({ used_today: 10, limit: 1000, paused_until: "2026-11-23 15:10 UTC", budgets: fresh, ext: { active: false, paused_until: null } });
+  assert.match(tile.textContent, /Paused.*Until 10:10 AM; ext not in use/);
+  tile = state({ used_today: 10, limit: 1000, paused_until: "2026-11-23 15:10 UTC" });
+  assert.match(tile.textContent, /API paused.*Until 10:10 AM\./);
+});
+
+test("server starts: the deploy's exact time, restarts tagged, counted since midnight", () => {
+  const starts = [{ at: "2026-11-23T07:10:00Z", version: "0.10.11" }, { at: "2026-11-23T12:30:00Z", version: "0.10.12" }, { at: "2026-11-23T14:00:00Z", version: "0.10.12" }];
+  const app = setup(payload({
+    health: { status: "healthy", version: "0.10.12", snapshot: { data_as_of: "2026-11-23T06:52:00Z" } },
+    versions: [{ version: "0.10.11", from: "2026-11-20T10:00:00Z", exact: false, to: "2026-11-23T12:30:00Z" },
+      { version: "0.10.12", from: "2026-11-23T12:30:00Z", exact: true, to: null, calls: 2000, failed: 3, rejected: 5, turned_away: 0, latency: [10, 5, 1], approx: false }],
+    catalog_changes: [{ before: "2026-11-23T06:00:00Z", at: "2026-11-23T08:00:00Z", data_as_of: "2026-11-23T06:52:00Z" }],
+    edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true, restarts: 3, starts, starts_complete: true })],
+  }));
+  app.render();
+  assert.match(app.el("board-status").textContent, /Server 0\.10\.12 since Mon 7:30 AM/);
+  const today = app.el("events").querySelectorAll("li").find((li) => /Nov 23/.test(li.textContent)).textContent;
+  assert.match(today, /◆0\.10\.12 went live 7:30 AM/);
+  assert.match(today, /↻2:10 AM restart, catalog update/);
+  assert.match(today, /↻9:00 AM restart(?!,)/);
+  assert.match(app.el("capacity").textContent, /Server restarts since midnight3/);
+  // the version scorecard
+  const card = app.el("events").querySelector(".scorecard").textContent;
+  assert.match(card, /0\.10\.12Mon 7:30 AM, running/);
+  assert.match(card, /3 h2,0001\.550250 ms/); // calls, failed per 1,000, rejected, turned away, 95% within
+});
+
+test("without listed starts a deploy is placed between the dashboard's checks", () => {
+  const app = setup(payload({
+    health: { status: "healthy", version: "0.10.11" }, problems_since: "2026-11-23T11:00:00Z", problems_version: "0.10.11",
+    version_since: { version: "0.10.11", since: "2026-11-23T11:00:00Z", first_seen: "2026-11-23T12:00:00Z", configured: false },
+    versions: [{ version: "0.10.10", from: "2026-11-21T10:00:00Z", exact: false, to: "2026-11-23T12:00:00Z" },
+      { version: "0.10.11", from: "2026-11-23T12:00:00Z", exact: false, to: null }],
+    edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true, restarts: 2 })],
+  }));
+  app.render();
+  assert.match(app.el("board-status").textContent, /Server 0\.10\.11 started between Mon 6:00 AM and 7:00 AM/);
+  assert.match(app.el("events").textContent, /◆0\.10\.11 went live between 6:00 AM and 7:00 AM/);
+  assert.match(app.el("events").textContent, /↻2 restarts/);
+  assert.match(app.el("capacity").textContent, /Server restarts since midnight2/);
+});
+
+test("services: resends, quiet error answers, 3xx as an error, saved answers and slot waits", () => {
+  const app = setup(payload({ health: { status: "healthy", distributor_stored: { answers: 21714 } }, edays: [day("2026-11-23", {
+    complete: false, partial_end: true,
+    upstream: { jlcpcb: { sent: 100, retries: 3, cached: 0, waited: 12 }, digikey: { sent: 11 } },
+    upstream_status: { jlcpcb: { "2xx": 100 }, digikey: { "2xx": 10, "3xx": 1 } },
+    distributors: { mouser: { sent: 545, cached: 546, retries: 2, rate_limited: 0 }, digikey: { sent: 10, cached: 4, ext_sent: 0 } },
+    parts_asked: { mouser: { total: 9069 }, digikey: { total: 14 } },
+    distributor_apps: { mouser_get_part: { alpha: { calls: 10, rate_limited: 3 } } },
+  })] }));
+  app.render();
+  const text = app.el("upstreams").textContent;
+  assert.equal(app.el("upstreams").querySelectorAll("th")[2].textContent, "Resent");
+  assert.equal(dkRow(app, "jlcpcb").children[2].textContent, "3");
+  assert.match(dkRow(app, "digikey").textContent, /1 of 11: 3xx answer; no lookup failed/);
+  assert.match(text, /Requests sent to Mouser545/);
+  assert.match(text, /Part numbers asked9,069/);
+  assert.match(text, /Lookups answered wholly from saved answers546 \(at least 50% of lookups\)/);
+  assert.match(text, /Answered from saved answers4 \(29% of part numbers asked\)/);
+  assert.match(text, /The server keeps 21,714 saved Mouser and DigiKey answers/);
+  assert.match(text, /AppMouserTurned awayalpha103/); // turned away, per app
+  assert.match(app.el("capacity").textContent, /Requests that waited for a free request slotJLCPCB parts search 12/);
+  assert.doesNotMatch(text, /cache\b|Held back|rejected our request|Answered from our/);
+  const quiet = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, upstream: { jlcpcb: { sent: 5, retries: 0 } } })] }));
+  quiet.render();
+  assert.ok(!quiet.el("upstreams").querySelectorAll("th").some((th) => th.textContent === "Resent"));
+});
+
+test("headline tiles: biggest app by tool calls, sessions without a per-session ratio", () => {
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, apps: { alpha: 2, beta: 30, gamma: 5 },
+    tool_apps: { jlc_search: { alpha: { calls: 20, ok: 20 }, beta: { calls: 4, ok: 4 } } } })] }));
+  app.render();
+  const tiles = app.el("tiles").textContent;
+  assert.match(tiles, /Biggest appalpha83% of tool calls; 2 sessions/);
+  assert.match(tiles, /Sessions started37one each time an app connects/);
+  assert.doesNotMatch(tiles, /tool calls a session/);
+  // apps that connected without calling a tool are one row
+  const rows = app.el("clients").querySelectorAll("tr");
+  assert.ok(rows.some((tr) => tr.textContent.startsWith("1 app that called no tool5")));
+  assert.ok(!rows.some((tr) => tr.children[0]?.textContent === "gamma"));
+});
+
+test("the header shows the health time only when it differs from the update time", () => {
+  const same = setup(payload());
+  same.render();
+  assert.doesNotMatch(same.el("board-status").textContent, /Health values from/);
+  const older = setup(payload({ health_at: "2026-11-23T14:00:00Z" }));
+  older.render();
+  assert.match(older.el("board-status").textContent, /Health values from Nov 23, 9:00 AM/);
+});
+
+test("limits: datasheet links not found, the AI platform list's age, stats not kept", () => {
+  const app = setup(payload({ kept_across_restarts: false,
+    health: { status: "healthy", platform_ranges: { anthropic: 2, openai: 289, openai_list_created: "2026-11-06T18:26:55.215535" } },
+    edays: [day("2026-11-23", { complete: false, partial_end: true, datasheet_links: { visits: 631, not_found: 7, refused: 0, failed: 0 } })] }));
+  app.render();
+  const text = app.el("capacity").textContent;
+  assert.match(text, /Datasheet links opened631; 7 not found/);
+  assert.match(text, /Anthropic 2, OpenAI 289; OpenAI's list from Nov 6 \(16 days old\)/);
+  assert.match(text, /Stats kept across restartsNo/);
+  assert.match(app.el("attention").textContent, /The server's stats aren't kept across restarts/);
+});
+
+test("DigiKey refusals say the 403 and the pause, not the cause twice", () => {
+  const app = setup(payload({ edays: [day("2026-11-23", whole({ distributor_limits: { digikey: { refusals: { refused: 7 } } } },
+    { distributors: { digikey: { sent: 20, cached: 0 } } }))] }));
+  const [item] = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.equal(item.what, "DigiKey refused 7 requests (403); each refusal paused lookups for 10 minutes.");
+  app.render();
+  assert.match(app.el("upstreams").textContent, /DigiKey refused us7: refused \(403\), paused 10 minutes/);
+});
+
+// ---------------------------------------------------------------- review fixes: dismissals over time
+
+const liveNotices = (app) => app.el("attention").querySelectorAll("li").filter((li) => !li.parentElement.classList.contains("dismissed"));
+
+test("a dismissal hides what happened before it: the next day's events come back, the dismissed day's don't", async () => {
+  const p = { current: payload({ edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true, ...refusals(852) })] }) };
+  const app = setup(p.current);
+  backend(app, p);
+  await app.load();
+  liveNotices(app)[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  assert.equal(liveNotices(app).length, 0);
+  // the next day: 10 new refusals today
+  const at2 = "2026-11-24T15:00:00Z";
+  p.current = payload({ generated_at: at2, as_of: at2, health_at: at2, last_fetch: { ok: true, at: at2 }, edays: [day("2026-11-22"),
+    day("2026-11-23", refusals(852)), day("2026-11-24", { complete: false, partial_end: true, ...refusals(10) })] });
+  app.setNow(at2);
+  await app.load();
+  assert.match(liveNotices(app)[0].textContent, /^10 requests turned away/);
+  // yesterday's 852 were all there when it was dismissed: still hidden there
+  app.setRange("yesterday");
+  assert.equal(liveNotices(app).length, 0);
+  // a range holding both days shows it again, for the new ones
+  assert.ok(app.context.newSinceDismissed("per_ip_refusals", app.dismissed.get("per_ip_refusals"), app.context.buildView({ ...p.current }, "today")) === 10);
+});
+
+test("a dismissal made on a longer range counts from the data's own day, not from the range's count", async () => {
+  const days = ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22"].map((d) => day(d, refusals(100)));
+  const p = { current: payload({ edays: [...days, day("2026-11-23", { complete: false, partial_end: true, ...refusals(5) })] }) };
+  const app = setup(p.current);
+  backend(app, p);
+  app.state.range = "7d";
+  await app.load();
+  assert.match(liveNotices(app)[0].textContent, /^700 requests/);
+  liveNotices(app)[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  assert.equal(app.dismissed.get("per_ip_refusals").count, 5); // today's 5 were already there
+  assert.equal(app.dismissed.get("per_ip_refusals").day, "2026-11-23");
+  app.setRange("today");
+  assert.equal(liveNotices(app).length, 0);
+  p.current = payload({ edays: [...days, day("2026-11-23", { complete: false, partial_end: true, ...refusals(7) })] });
+  await app.load();
+  assert.match(liveNotices(app)[0].textContent, /^7 requests/); // 2 more since: back, with the range's count
+});
+
+test("restoring a notice, or hiding an emptied dismissed list, keeps the keyboard focus on the page", async () => {
+  const p = { current: payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, ...refusals(5) })] }) };
+  const app = setup(p.current);
+  backend(app, p);
+  await app.load();
+  liveNotices(app)[0].querySelector("button.dismiss").dispatch("click");
+  await tick();
+  app.el("show-dismissed").dispatch("click");
+  const restore = app.el("attention").querySelector("ul.dismissed").querySelector("button.dismiss");
+  restore.focus();
+  restore.dispatch("click");
+  await tick();
+  assert.equal(document.activeElement.id, "notice-per_ip_refusals");
+  assert.equal(document.activeElement.textContent, "Dismiss");
+  app.el("show-dismissed").dispatch("click"); // "Hide dismissed": with nothing dismissed, the button goes
+  assert.equal(app.el("show-dismissed"), null);
+  assert.equal(document.activeElement.id, "attention-head");
+});
+
+// ---------------------------------------------------------------- review fixes: addresses, paths, rollbacks
+
+test("addresses are unknown on a day that began on an older server", () => {
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true, restarts: 3,
+    starts: [{ at: "2026-11-23T14:00:00Z", version: "0.10.12" }], starts_complete: false,
+    per_ip_refusals: { total: 51, everyone_else: 51 }, addresses: { rate_limited: 1, cap_reached: 0, blocked_tried: 0 } })] }));
+  app.render();
+  assert.match(app.el("attention").querySelector("li").textContent, /^51 requests turned away/);
+  assert.doesNotMatch(app.el("capacity").textContent, /from 1 address/);
+});
+
+test("ext's part of a cause never goes past the cause", () => {
+  const app = setup(payload({ health: { status: "healthy" }, edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true,
+    distributor_limits: { digikey: { held_back: { address_daily: 200 }, ext_held_back: { address_daily: 202 } } } })] }));
+  app.render();
+  assert.match(app.el("tiles").children[8].textContent, /turned away: API 0, ext 200/);
+  const item = app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.key === "held_back:digikey:address_daily");
+  assert.equal(item.count, 200);
+  assert.match(item.detail, /All through ext\./);
+});
+
+test("a start after a rollback is a deploy, even when the start before it ran the same version", () => {
+  const starts = [{ at: "2026-11-23T06:00:00Z", version: "0.10.12" }, { at: "2026-11-23T13:00:00Z", version: "0.10.12" }];
+  const app = setup(payload({ health: { status: "healthy", version: "0.10.12" },
+    versions: [{ version: "0.10.11", from: "2026-11-20T10:00:00Z", exact: false, to: "2026-11-23T06:00:00Z" },
+      { version: "0.10.12", from: "2026-11-23T06:00:00Z", exact: true, to: "2026-11-23T10:00:30Z" },
+      { version: "0.10.11", from: "2026-11-23T10:00:30Z", after: "2026-11-23T09:00:30Z", exact: false, to: "2026-11-23T13:00:00Z" },
+      { version: "0.10.12", from: "2026-11-23T13:00:00Z", exact: true, to: null }],
+    edays: [day("2026-11-22"), day("2026-11-23", { complete: false, partial_end: true, restarts: 3, starts, starts_complete: false })] }));
+  app.render();
+  const today = app.el("events").querySelectorAll("li").find((li) => /Nov 23/.test(li.textContent)).textContent;
+  assert.match(today, /◆0\.10\.12 went live 1:00 AM/);
+  assert.match(today, /◆0\.10\.11 went live between 4:00 AM and 5:00 AM/);
+  assert.match(today, /◆0\.10\.12 went live 8:00 AM/);
+  assert.match(today, /↻1 more restart, times not kept/);
+});
+
+test("a pause of the whole pool pauses every budget, and in use is the server's word", () => {
+  const budgets = [0, 1, 2, 3].map((i) => ({ used_today: i === 3 ? 0 : 1000, limit: 1000, api_remaining: null,
+    paused_until: i === 1 ? "2026-11-23 17:00 UTC" : null, in_use: i === 3 }));
+  const app = setup(payload({ health: { status: "healthy", distributor_quota: { mouser: {
+    used_today: 0, limit: 1000, paused_until: "2026-11-23 16:00 UTC", resets_at: "2026-11-24 06:00 UTC", budgets } } } }));
+  app.render();
+  const rows = app.el("tiles").children[7].querySelectorAll("li");
+  assert.match(rows[0].textContent, /paused until 11:00 AM$/);
+  assert.match(rows[1].textContent, /paused until 12:00 PM$/); // its own pause runs later
+  assert.match(rows[3].textContent, /in use, paused until 11:00 AM$/);
+  assert.equal(rows[3].dataset.state, "in-use");
+  app.setNow("2026-11-23T16:30:00Z");
+  app.render();
+  const later = app.el("tiles").children[7].querySelectorAll("li");
+  assert.match(later[0].textContent, /spent$/);
+  assert.match(later[3].textContent, /in use$/);
+});
+
+// ---------------------------------------------------------------- Traffic: which tools failed, by hour
+
+function problemsDay(hourProblems, extra = {}) {
+  const failed = Array(24).fill(0), refused = Array(24).fill(0);
+  failed[8] = 12;
+  refused[8] = 4;
+  return day("2026-11-23", { complete: false, partial_end: true, failed_hours: failed, refused_hours: refused,
+    tools: { jlc_search: { calls: 24, ok: 22, bad_request: 2 }, cse_search: { calls: 7, failed: 7 }, cse_get_kicad: { calls: 5, failed: 5 } },
+    per_ip_refusals: { total: 4, everyone_else: 4 }, hour_problems: hourProblems, ...extra });
+}
+const hourEntry = (extra = {}) => ({ from: "2026-11-23T13:00:30Z", to: "2026-11-23T14:00:30Z",
+  failed: { cse_search: { cse_lookup_failed: 7 }, cse_get_kicad: { cse_invalid_zip: 3, cse_download_network: 2 } },
+  rejected: { jlc_search: { "arg:limit:int_parsing": 2 } }, ...extra });
+
+/** The tooltip of the problems chart at one hour, reached with the arrow keys. */
+function problemsTip(app, hour) {
+  const chart = app.el("traffic").querySelectorAll(".chart").find((c) => /tools that failed/.test(c.getAttribute("aria-label")));
+  chart.onkeydown({ key: "ArrowRight", preventDefault() {} });
+  for (let i = 23; i > hour; i--) chart.onkeydown({ key: "ArrowLeft", preventDefault() {} });
+  return app.el("tooltip");
+}
+
+test("the problems tooltip says which tools failed and why, and the rejected arguments", () => {
+  const hours = Array(24).fill(null);
+  hours[8] = hourEntry();
+  const app = setup(payload({ edays: [day("2026-11-22"), problemsDay(hours, { addresses: { rate_limited: 1, cap_reached: 0, blocked_tried: 0 }, starts: [], starts_complete: true })] }));
+  app.render();
+  const tip = problemsTip(app, 8);
+  const lines = tip.children.map((c) => c.textContent);
+  assert.deepEqual([...lines], ["Mon, Nov 23, 8:00 AM to 9:00 AM EST", "4Turned away", "from 1 address", "12Failed",
+    "cse_search 7 · SamacSys search failed", "cse_get_kicad 3 · SamacSys sent a broken file",
+    "cse_get_kicad 2 · SamacSys download lost its connection", "2Rejected arguments", "jlc_search 2 · \"limit\" wasn't a whole number"]);
+  assert.equal(tip.querySelectorAll(".tt-sub").length, 5);
+  // the table view says it too
+  assert.match(app.el("traffic").querySelector(".table-view").textContent, /failed: cse_search 7, cse_get_kicad 5; rejected: jlc_search 2/);
+});
+
+test("a breakdown over a missed check says it covers several hours; more lines than fit say how many", () => {
+  const hours = Array(24).fill(null);
+  const span = hourEntry({ from: "2026-11-23T11:00:30Z", to: "2026-11-23T14:00:30Z",
+    failed: { a_tool: { exception: 5 }, b_tool: { exception: 4 }, c_tool: { exception: 2 }, d_tool: { exception: 1 } } });
+  hours[6] = hours[7] = hours[8] = span;
+  const app = setup(payload({ edays: [day("2026-11-22"), problemsDay(hours)] }));
+  app.render();
+  const text = problemsTip(app, 8).textContent;
+  assert.match(text, /a_tool 5 · Server error \(a bug in our code\)b_tool 4 · Server error \(a bug in our code\)c_tool 2 · Server error \(a bug in our code\)\+1 more/);
+  assert.match(text, /by tool over 6 AM to 9 AM: a check was missed/);
+});
+
+test("a day rebuilt from daily totals shows totals only", () => {
+  const app = setup(payload({ edays: [day("2026-11-22"), problemsDay(null)] }));
+  app.render();
+  const text = problemsTip(app, 8).textContent;
+  assert.match(text, /12Failedno breakdown by tool for this day: rebuilt from daily totals/);
+  assert.doesNotMatch(text, /Rejected arguments|cse_search/);
+});
+
+test("a multi-day chart shows each day's own breakdown", () => {
+  const busy = { tools: { cse_search: { calls: 9, failed: 9 } }, reasons: { cse_search: { cse_lookup_failed: 9 } },
+    bad_request_reasons: { jlc_search: { too_long: 3 } } };
+  const days = ["2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22"].map((d) => day(d));
+  days[6] = day("2026-11-22", { ...busy, tools: { ...busy.tools, jlc_search: { calls: 24, ok: 21, bad_request: 3 } } });
+  const app = setup(payload({ edays: [...days.slice(0, 6), day("2026-11-15"), days[6], day("2026-11-23", { complete: false, partial_end: true })].sort((a, b) => (a.date < b.date ? -1 : 1)) }));
+  app.state.range = "all"; // eight days: one column a day
+  app.render();
+  const chart = app.el("traffic").querySelectorAll(".chart").find((c) => /tools that failed/.test(c.getAttribute("aria-label")));
+  chart.onkeydown({ key: "ArrowRight", preventDefault() {} });
+  assert.match(app.el("tooltip").textContent, /9Failedcse_search 9 · SamacSys search failed3Rejected argumentsjlc_search 3 · Query too long/);
+});
+
+test("a tap shows the breakdown and keeps it after the finger lifts", () => {
+  const hours = Array(24).fill(null);
+  hours[8] = hourEntry();
+  const app = setup(payload({ edays: [day("2026-11-22"), problemsDay(hours)] }));
+  app.render();
+  const chart = app.el("traffic").querySelectorAll(".chart").find((c) => /tools that failed/.test(c.getAttribute("aria-label")));
+  const hit = chart.querySelector("svg").children.at(-1);
+  // the double's chart is 600 wide: plot from 46 to 592, 24 columns of 22.75
+  hit.dispatch("pointerdown", { pointerType: "touch", clientX: 46 + 22.75 * 8.5, clientY: 50 });
+  hit.dispatch("pointerleave", { pointerType: "touch" });
+  assert.equal(app.el("tooltip").dataset.show, "true");
+  assert.match(app.el("tooltip").textContent, /cse_search 7/);
+  assert.equal(document.activeElement, chart);
+  hit.dispatch("pointerleave", { pointerType: "mouse" });
+  assert.equal(app.el("tooltip").dataset.show, "false");
+});
+
+test("a second tap moves the highlight: only the column shown is lit", () => {
+  setup();
+  const c = new Element("div");
+  document.body.append(c);
+  charts.columns(c, { points: [0, 1, 2, 3].map((i) => ({ title: `h${i}` })), series: [{ label: "Failed", color: "#f00", values: [1, 2, 3, 4] }] });
+  const svg = c.children[0], hit = svg.children.at(-1);
+  for (const x of [60, 400]) {
+    hit.dispatch("pointerdown", { pointerType: "touch", clientX: x, clientY: 50 });
+    hit.dispatch("pointerleave", { pointerType: "touch" });
+  }
+  const lit = svg.querySelectorAll("*").filter((e) => e !== hit && e.style.filter);
+  assert.equal(lit.length, 1);
+  assert.equal(document.getElementById("tooltip").querySelector(".tt-title").textContent, "h2");
 });

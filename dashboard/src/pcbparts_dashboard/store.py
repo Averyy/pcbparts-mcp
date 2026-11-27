@@ -9,6 +9,9 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+# Notices the page's reader has dismissed (key -> the notice's count then); the oldest go first past this.
+MAX_DISMISSALS = 500
+
 
 def utc_datetime(value: datetime | None = None) -> datetime:
     if value is None:
@@ -36,6 +39,8 @@ class Store:
         finally:
             os.close(descriptor)
         self.lock = threading.RLock()
+        # Writes that change nothing /api/data shows (dismissals): left out of revision()
+        self._ignored_changes = 0
         self._connection = sqlite3.connect(path, check_same_thread=False)
         with self.lock, self._connection:
             self._connection.execute("PRAGMA journal_mode=WAL")
@@ -58,7 +63,12 @@ class Store:
                 CREATE TABLE IF NOT EXISTS meta (
                     key TEXT PRIMARY KEY, value TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS dismissals (
+                    key TEXT PRIMARY KEY, count INTEGER NOT NULL, at TEXT NOT NULL, day TEXT
+                );
             """)
+            if "day" not in {row[1] for row in self._connection.execute("PRAGMA table_info(dismissals)")}:
+                self._connection.execute("ALTER TABLE dismissals ADD COLUMN day TEXT")
             columns = {row[1] for row in self._connection.execute("PRAGMA table_info(eastern_days)")}
             if "rules_version" not in columns:
                 self._connection.execute(
@@ -172,6 +182,12 @@ class Store:
             for key in ("latency_bounds_ms", "about"):
                 if key in reply:
                     self._set_meta(key, reply[key])
+            # Whether the server's stats file survives a restart: the newest reply's word, so an
+            # imported older file can't replace a later fetch's.
+            kept = reply.get("kept_across_restarts")
+            saved = self.get_meta("kept_across_restarts")
+            if isinstance(kept, bool) and not (isinstance(saved, dict) and str(saved.get("at")) > fetched_at):
+                self._set_meta("kept_across_restarts", {"value": kept, "at": fetched_at})
         return len(reply["days"])
 
     def all_days(self) -> list[dict]:
@@ -221,16 +237,23 @@ class Store:
     def eastern_index(self) -> dict[str, tuple]:
         """Eligibility metadata, without allocating every cached day's nested counters."""
         with self.lock:
+            # stale: saved before 0.10.12's dashboard placed starts and bounded addresses; the last
+            # field is NULL where the hourly breakdown was never worked out
             return {row[0]: row[1:] for row in self._connection.execute(
                 "SELECT date, rules_version, approx, json_extract(data, '$.end'), "
                 "json_extract(data, '$.problems.start'), json_extract(data, '$.problems.end'), "
-                "json_extract(data, '$.problems.approx') FROM eastern_days"
+                "json_extract(data, '$.problems.approx'), "
+                "json_type(data, '$.starts_complete') IS NULL AND (json_type(data, '$.starts') IS NOT NULL "
+                "OR json_type(data, '$.addresses') IS NOT NULL), json_type(data, '$.hour_problems') "
+                "FROM eastern_days"
             )}
 
     def revision(self) -> tuple[int, int]:
-        """Include writes through this connection and other processes (e.g. CLI imports)."""
+        """Include writes through this connection and other processes (e.g. CLI imports), except
+        dismissals, which /api/data doesn't carry."""
         with self.lock:
-            return self._connection.total_changes, self._connection.execute("PRAGMA data_version").fetchone()[0]
+            return (self._connection.total_changes - self._ignored_changes,
+                    self._connection.execute("PRAGMA data_version").fetchone()[0])
 
     def all_snapshots(self) -> dict[str, list[tuple[str, dict]]]:
         with self.lock:
@@ -292,6 +315,62 @@ class Store:
                 if first and (before is None or first < before):
                     matches.append(first)
             return (max(matches) if last else min(matches)) if matches else None
+
+    def catalog_changes(self) -> list[dict]:
+        """Each change of /health's snapshot.data_as_of between two stored health samples: the
+        server loads a new catalog only when it starts, so a restart between them loaded it."""
+        changes, previous, previous_at = [], None, None
+        with self.lock:
+            for at, data in self._connection.execute("SELECT fetched_at, data FROM health ORDER BY fetched_at"):
+                reply = json.loads(data)
+                snapshot = reply.get("snapshot") if isinstance(reply, dict) else None
+                value = snapshot.get("data_as_of") if isinstance(snapshot, dict) else None
+                if not isinstance(value, str) or not value:
+                    continue
+                if previous is not None and value != previous:
+                    changes.append({"before": previous_at, "at": at, "data_as_of": value})
+                previous, previous_at = value, at
+        return changes
+
+    def version_observations(self) -> list[tuple[str, str]]:
+        """(fetched_at, version) for every stored health sample with a version, oldest first."""
+        with self.lock:
+            rows = self._connection.execute("SELECT fetched_at, data FROM health ORDER BY fetched_at").fetchall()
+        result = []
+        for at, data in rows:
+            reply = json.loads(data)
+            version = reply.get("version") if isinstance(reply, dict) else None
+            if isinstance(version, str) and version:
+                result.append((at, version))
+        return result
+
+    def dismissals(self) -> list[dict]:
+        """day: the Eastern date of the data the notice was dismissed on; count: its count that day."""
+        with self.lock:
+            return [{"key": key, "count": count, "day": day, "at": at} for key, count, day, at in self._connection.execute(
+                "SELECT key, count, day, at FROM dismissals ORDER BY at, key")]
+
+    def _ignoring(self, write) -> None:
+        before = self._connection.total_changes
+        try:
+            with self._connection:
+                write()
+        finally:
+            self._ignored_changes += self._connection.total_changes - before
+
+    def dismiss(self, key: str, count: int, at: str, day: str | None = None) -> None:
+        def write():
+            self._connection.execute(
+                "INSERT OR REPLACE INTO dismissals(key, count, at, day) VALUES (?, ?, ?, ?)", (key, count, at, day))
+            self._connection.execute(
+                "DELETE FROM dismissals WHERE key NOT IN "
+                "(SELECT key FROM dismissals ORDER BY at DESC, key LIMIT ?)", (MAX_DISMISSALS,))
+        with self.lock:
+            self._ignoring(write)
+
+    def undismiss(self, key: str) -> None:
+        with self.lock:
+            self._ignoring(lambda: self._connection.execute("DELETE FROM dismissals WHERE key = ?", (key,)))
 
     def newest_health(self) -> tuple[str | None, Any]:
         with self.lock:

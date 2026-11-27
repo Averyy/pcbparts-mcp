@@ -5,10 +5,29 @@ retains daily detail indefinitely, and serves the frontend and `/api/data`.
 Python 3.12 or newer and `uv` are required.
 
 The page, top to bottom: "Worth a look" (failures, requests or lookups turned away by
-limits, service errors, counted from the latest deploy), headline numbers with a 14-day
-trend, then Traffic, Tools, Apps, Reasons, Services we call, Limits and queues, Popular
-search words, and Deploys, restarts and new apps. Ranges are Today (compared with yesterday
-at the same Eastern wall-clock time) or whole Eastern days ending yesterday.
+limits, service errors), headline numbers with a 14-day trend, then Traffic, Tools, Apps,
+Reasons, Services we call, Limits and queues, Popular search words, and Deploys, restarts
+and new apps (with a scorecard per server version). Ranges are Today (compared with yesterday
+at the same Eastern wall-clock time) or whole Eastern days ending yesterday. Every number
+covers the selected range; where the range crosses the latest deploy, problem counts also
+say how many came since that version.
+
+Notices in "Worth a look" can be dismissed. Dismissals live in the dashboard's own database
+(table `dismissals`), so they hold on every device: each notice has a stable key (its kind
+and subject, such as `per_ip_refusals`, `failed:cse_get_kicad:cse_lookup_failed` or
+`held_back:digikey:distributor_refused`), and a dismissal records the Eastern day of the data
+shown and the notice's count on that day. A dismissed notice comes back once something new
+happens after the dismissal, in the selected range: more of it later that day, or any of it on a
+later day; a notice with a new key always shows. "Show dismissed" lists the hidden ones, and
+each dismissal can be undone. Live state (a failed update, an unhealthy server, stats or
+budget counts not kept across restarts) can't be dismissed: it clears itself.
+
+The Traffic problems chart's tooltip lists, under Failed, which tools failed and why in that
+hour, and the rejected arguments by tool: from the differences between the dashboard's own
+hourly checks (`hour_problems` on each Eastern day). Across a missed check the breakdown covers
+the hours between checks and says so; a day rebuilt from daily totals has totals only. Days
+with more than seven in the range show each day's own breakdown. Pointer, touch and the arrow
+keys all reach the tooltip, and the Table view lists the same breakdown.
 All calendar days use `America/New_York`, including 23/25-hour DST days. What it tracks and why:
 `docs/research.md`. Running it on the PCB Parts server: `docs/deploy.md`.
 
@@ -23,6 +42,11 @@ recorded retries over the same problems window. Older days need neither field.
 From server 0.10.11, DigiKey's lookups and requests are shown split between its API
 and ext (`distributors.digikey.ext_sent` and the `digikey_ext` source).
 Older days keep their single DigiKey figure; the split is never estimated for them.
+From server 0.10.12 the page also reads each day's server starts (`starts`), distinct
+address counts (`addresses`), ext's own holds and refusals (`ext_held_back`,
+`ext_refusals`) and each budget in `distributor_quota.<name>.budgets`; days and samples
+without them read as before. A service's error answers are shown quietly when no lookup
+tied to that service failed (they were resent or answered another way).
 
 ```sh
 uv sync --extra dev
@@ -67,6 +91,14 @@ Automatic collection requests 365 days initially and when the last successful
 full fetch is more than 24 hours old; otherwise it requests 3 days.
 `POST /api/refresh` collects immediately, or requests 365 days with `?full=1`;
 a request a browser sends for another site gets 403.
+`GET /api/dismissals` lists dismissed notices; `POST /api/dismissals` with JSON
+`{"key", "count", "day"}` dismisses one, and `DELETE /api/dismissals?key=...` undoes it. Changes
+need the same password, a same-origin request and an `X-Dashboard-Request: 1` header.
+Without a password, requests whose `Host` isn't a loopback name (`localhost`, `127.x.x.x`,
+`[::1]`, any port) get 403, so a page that resolves its own name to this computer can't use it.
+Static URLs carry `?v=` and a hash of the static files (the page's own references and the
+modules' imports), so browsers load new code after a deploy; versioned files are cached for
+a year in the browser only (`private`), the page itself is checked every time.
 Polling and refreshes share a lock and a 60-second cooldown; busy or rate-limited
 refreshes return 429 with `retry_after` seconds. A poll inside the cooldown skips
 that slot. CLI collection is a separate one-shot operation.
@@ -110,7 +142,7 @@ and reason/refusal breakdowns consistent. `approx` means something was estimated
 be true). Approximation belongs in the page's footer.
 
 Complete days are saved in `eastern_days` before snapshot pruning. Saved estimates
-are replaced when exact inputs arrive. Rows carry `rules_version` (currently 2);
+are replaced when exact inputs arrive. Rows carry `rules_version` (currently 4);
 older rules are recomputed when final UTC records and source snapshots for both
 UTC days remain available, otherwise their saved counters and rule version remain.
 

@@ -262,7 +262,11 @@ async def model_client(tmp_path, monkeypatch):
     monkeypatch.setattr(cse_module, "CSE_PASS", "s3cr3t<value>")
     monkeypatch.setattr(cse_module, "CSE_RATE_LIMIT", 0)
     now, answers, downloads = [1793546220.0], [], []
-    client = CSEClient(str(tmp_path / "cse.db"), clock=lambda: now[0])
+
+    async def sleep(seconds):  # a retry's wait: the fake clock
+        now[0] += seconds
+
+    client = CSEClient(str(tmp_path / "cse.db"), clock=lambda: now[0], sleep=sleep)
 
     def answer(request):
         if "model.php" in request.url.path:
@@ -367,7 +371,7 @@ class TestDownloadRefusals:
         client, now, answers, downloads = model_client
         row = cse_module._normalize_part(part(1))
         client._store.put_search("P1", 0, {"results": [row]})
-        answers.extend([body] * 66)
+        answers.extend([body] * 132)  # an invalid archive is downloaded twice (until the retry guard is on)
         for requested in (-1, 1, *range(-32, -1), *range(2, 34), 1):
             assert "error" in await client.get_kicad(part_id=requested)
         wanted = client._store.wanted()
@@ -450,10 +454,13 @@ class TestDownloadRefusals:
     async def test_cleaned_refusal_or_invalid_reply(self, model_client, caplog, body, reason, error):
         client, now, answers, downloads = model_client
         client._store.put_search("P1", 0, {"results": [cse_module._normalize_part(part(1))]})
-        answers.append(body)
+        answers.extend([body, body])
         assert (await client.get_kicad(part_id=1))["error"] == error
         assert client._store.wanted()[0]["reason"] == reason
-        assert len([r for r in caplog.records if r.levelno == logging.WARNING]) == 1
+        # A refusal is final; an invalid reply is downloaded once more: each logged, and the retry
+        retried = reason == "invalid_zip"
+        assert len(downloads) == 1 + retried
+        assert len([r for r in caplog.records if r.levelno == logging.WARNING]) == (3 if retried else 1)
         assert "test-login" not in caplog.text and "s3cr3t" not in caplog.text and "other@example.org" not in caplog.text
         assert "<html>" not in caplog.text
 

@@ -14,7 +14,7 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from . import private_files
+from . import private_files, stats
 
 logger = logging.getLogger(__name__)
 
@@ -371,8 +371,21 @@ class AddressDailyQuota:
         return any(a in network for a in addresses for network in self._blocked)
 
     def refusal_cause(self, caller: str | None) -> str:
-        """The held-back cause when caller is capped: its address is blocked, or has used its day."""
-        return "address_blocked" if self.blocked(caller) else "address_daily"
+        """The held-back cause when caller is capped: its address is blocked, or has used its day.
+        Called as a live lookup is held back for it, so a blocked address is counted for
+        /mcp/stats here (addresses.blocked_tried: once a day, never the address itself)."""
+        if self.blocked(caller):
+            stats.count_address("blocked_tried", self._stats_address(caller))
+            return "address_blocked"
+        return "address_daily"
+
+    def _stats_address(self, caller: str) -> str:
+        """What a blocked address counts as in addresses.blocked_tried: its key (an IPv6 address by
+        its /64 on the server), else, when exempt, the address itself."""
+        address = ipaddress.ip_address(caller.strip())
+        if address.version == 6 and address.ipv4_mapped is not None:
+            address = address.ipv4_mapped
+        return self._key(caller) or str(address)
 
     def remaining(self, caller: str | None) -> int | None:
         """Lookups caller may still cause today: 0 when blocked; None when it isn't limited (exempt,
@@ -418,6 +431,7 @@ class AddressDailyQuota:
             # Ops commands read the address as the line's ninth field: keep the words before it
             logger.info(f"Mouser and DigiKey per-address limit: {key} reached its {self.limit} lookups "
                         f"for {self._date.isoformat()} at {moment:%H:%M} UTC (first lookup {started})")
+            stats.count_address("cap_reached", key)  # /mcp/stats gets a count; only this log line names it
 
     def error(self, advice: str, caller: str | None = None) -> dict:
         """The reply once caller's address has used its day, or is blocked (advice: the
@@ -914,14 +928,34 @@ class QuotaPool:
                 app._shared_paused_until, app._shared_pause_reason = until, reason
                 app._save()
 
-    def status(self) -> dict[str, Any]:
-        """Private detail for the selected quota, with the pool's effective pause."""
+    def _next_order(self) -> list[int]:
+        """The quotas in the order _active_index() tries them."""
+        return list(range(len(self.quotas)))
+
+    def _next_index(self) -> tuple[int, bool]:
+        """The quota the pool will use next, and whether it may be used now: the active one, else,
+        with every day spent, the one whose day or pause ends first (ties: the order
+        _active_index() tries them in, which then picks it)."""
         index = self._active_index()
-        status = self.quotas[index if index is not None else -1].status()
+        if index is not None:
+            return index, True
+        order = self._next_order()
+        usable = [i for i in order if self.quotas[i]._limit] or order
+        return min(usable, key=lambda i: self._daily_reset_at(self.quotas[i])), False
+
+    def status(self) -> dict[str, Any]:
+        """Private detail for the quota the pool uses next (_next_index), with the pool's effective
+        pause, and from 0.10.12 budgets: each quota's own state in pool order, in_use marking that
+        same quota, so the top-level fields always describe the budget in use."""
+        selected, active = self._next_index()
+        status = self.quotas[selected].status()
         until, _ = self._penalty()
-        if index is None:
-            until = max(until, min(self._daily_reset_at(q) for q in self.quotas))
+        if not active:
+            until = max(until, self._daily_reset_at(self.quotas[selected]))
         status["paused_until"] = _utc_text(until) if self._first.now() < until else None
+        status["budgets"] = [{**{key: own[key] for key in ("used_today", "limit", "api_remaining", "paused_until")},
+                              "in_use": number == selected}
+                             for number, own in enumerate(quota.status() for quota in self.quotas)]
         return status
 
 
@@ -954,6 +988,10 @@ class MouserKeyPool(QuotaPool):
 
     def _daily_reset_at(self, quota: DailyQuota) -> float:
         return quota._paused_until if quota._limit else quota.next_reset()
+
+    def _next_order(self) -> list[int]:
+        """Rotation order from the current key, as _active_index() tries them."""
+        return [(self._current + offset) % len(self.quotas) for offset in range(len(self.quotas))]
 
     def checking(self) -> bool:
         """Whether a daily-reset check still holds a key while awaiting its reply."""

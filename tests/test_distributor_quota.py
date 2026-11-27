@@ -661,6 +661,10 @@ class TestServerWiring:
                 assert response.json()["distributor_quota"] == {name: {
                     **expected, "used_today": 1, "limit": 1000, "api_remaining": 999,
                     "kept_across_restarts": False,
+                    # share_penalty pauses the pool (the top level), not any budget's own pause
+                    "budgets": [{"used_today": 1, "limit": 1000, "api_remaining": 999, "paused_until": None,
+                                 "in_use": True}] + [{"used_today": 0, "limit": 1000, "api_remaining": None,
+                                                      "paused_until": None, "in_use": False}] * (size - 1),
                 }}
                 assert "distributor_quota" in response.json()["about"]
                 assert "distributor_quota" not in response.json()["totals"]

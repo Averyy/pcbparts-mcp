@@ -10,6 +10,8 @@ export function showTip(x, y, title, rows) {
   el.replaceChildren();
   if (title) el.append(h("div", { class: "tt-title", text: title }));
   for (const r of rows) {
+    // a sub-row explains the row above it (which tools, why): one line, indented, under its value
+    if (r.sub) { el.append(h("div", { class: "tt-sub", text: r.label })); continue; }
     const key = r.color ? h("i", { class: "tt-key", style: { background: r.color } }) : h("i");
     el.append(h("div", { class: "tt-row" }, key, h("b", { text: r.value }), h("span", { text: r.label })));
   }
@@ -43,9 +45,11 @@ function cssVar(name) { return getComputedStyle(document.documentElement).getPro
 
 /**
  * Stacked columns. points: [{title, tick, partial}], series: [{label, color, values}],
- * compare: {label, color, values} drawn as a line, markers: [{index, label}].
+ * compare: {label, color, values} drawn as a line, markers: [{index, label}]. The tooltip lists each
+ * series, each followed by seriesRows(i, label) (its breakdown), then extraRows(i). Pointer, touch
+ * and arrow keys all reach it; it is announced (#tooltip is a live region).
  */
-export function columns(container, { points, series, compare, markers = [], height = 220, yFormat = compact, ariaLabel, extraRows, tooltipValue = full }) {
+export function columns(container, { points, series, compare, markers = [], height = 220, yFormat = compact, ariaLabel, extraRows, seriesRows, tooltipValue = full }) {
   if (ariaLabel && !container.id) container.id = "chart-" + encodeURIComponent(ariaLabel);
   container.replaceChildren();
   container.classList.add("chart");
@@ -142,6 +146,7 @@ export function columns(container, { points, series, compare, markers = [], heig
       const v = sr.values[i];
       if (v == null && series.length > 1) continue;
       rows.push({ color: sr.color, value: v == null ? "–" : tooltipValue(v), label: sr.label });
+      if (seriesRows) rows.push(...seriesRows(i, sr.label));
     }
     if (compare) rows.push({ color: compare.color, value: compare.values[i] == null ? "–" : tooltipValue(compare.values[i]), label: compare.label });
     if (extraRows) rows.push(...extraRows(i));
@@ -156,12 +161,23 @@ export function columns(container, { points, series, compare, markers = [], heig
     if (current >= 0) colEls[current].style.filter = "";
     current = -1; cross.setAttribute("opacity", 0); hideTip();
   };
-  hit.addEventListener("pointermove", (e) => {
+  const at = (e) => {
     const r = svg.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * W;
     show(Math.floor((x - m.l) / band), e.clientX, e.clientY);
+  };
+  hit.addEventListener("pointermove", at);
+  // A tap sends no pointermove, and its pointerleave follows at once: show the column tapped and keep
+  // it until the next tap or a tap elsewhere (which takes the focus away)
+  hit.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "touch") return;
+    // a tap on the column already shown shows it again; the one shown before loses its highlight
+    if (current >= 0) colEls[current].style.filter = "";
+    current = -1;
+    container.focus?.({ preventScroll: true });
+    at(e);
   });
-  hit.addEventListener("pointerleave", clear);
+  hit.addEventListener("pointerleave", (e) => { if (e?.pointerType !== "touch") clear(); });
   container.tabIndex = 0;
   container.setAttribute("aria-label", (ariaLabel || "Chart") + ". Use the arrow keys to read values.");
   container.onkeydown = (e) => {

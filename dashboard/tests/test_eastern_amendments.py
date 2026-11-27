@@ -289,7 +289,9 @@ def test_auto_cutoff_uses_last_old_health_fetch_and_its_exact_stats_snapshot(sto
         collect(settings, store, client=client, now=dt("2026-11-21T19:00:00Z"))
     payload = build_payload(store, settings, dt("2026-11-21T19:00:00Z"))
     assert payload["problems_since"] == "2026-11-21T18:04:00Z"
-    assert payload["version_since"] == {"version": "0.10.5", "since": payload["problems_since"]}
+    # the deploy lies between the last fetch of the old version and the first of the new one
+    assert payload["version_since"] == {"version": "0.10.5", "since": payload["problems_since"],
+                                        "first_seen": "2026-11-21T19:00:00Z", "configured": False}
     window = payload["edays"][-1]["problems"]
     assert window["calls"] == 50 and window["hours"] == [50]
     assert not window["approx"] and window["exact_calls"]
@@ -329,11 +331,14 @@ def test_header_version_since_uses_matching_cutoff_or_first_observation_and_surv
     store.save_health({"version": "0.10.5"}, first)
     store.save_health({"version": "0.10.5"}, latest)
     store.prune(dt(latest))
-    assert build_payload(store, settings, dt(latest))["version_since"] == {"version": "0.10.5", "since": first}
+    assert build_payload(store, settings, dt(latest))["version_since"] == {
+        "version": "0.10.5", "since": first, "first_seen": first, "configured": False}
     configured = replace(settings, problems_since="2026-11-21T18:00:00Z", problems_version="0.10.5")
-    assert build_payload(store, configured, dt(latest))["version_since"]["since"] == configured.problems_since
+    assert build_payload(store, configured, dt(latest))["version_since"] == {
+        "version": "0.10.5", "since": configured.problems_since, "first_seen": first, "configured": True}
     mismatch = replace(configured, problems_version="0.10.6")
-    assert build_payload(store, mismatch, dt(latest))["version_since"] == {"version": "0.10.5", "since": first}
+    assert build_payload(store, mismatch, dt(latest))["version_since"] == {
+        "version": "0.10.5", "since": first, "first_seen": first, "configured": False}
 
 
 def test_first_version_fetch_is_recovered_from_legacy_health_before_pruning(store):

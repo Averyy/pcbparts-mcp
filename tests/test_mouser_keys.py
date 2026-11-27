@@ -24,7 +24,8 @@ KEYS = ("mouser-key-one-1111", "mouser-key-two-2222", "mouser-key-three-3333")
 OWN_KEY = "Mouser API key (free at https://www.mouser.com/api-hub/)"
 ADVICE = (f" To skip the shared limits, run pcbparts-mcp with your own {OWN_KEY}: {SELF_HOSTING_URL}."
           " Meanwhile use jlc_search.")
-STATUS_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "resets_at", "kept_across_restarts"}
+STATUS_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "resets_at", "kept_across_restarts",
+               "budgets"}
 DAILY_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per day exceeded.",
                          "ResourceKey": "MaxCallPerDay"}]}
 MINUTE_403 = {"Errors": [{"Code": "TooManyRequests", "Message": "Maximum calls per minute exceeded."}]}
@@ -629,13 +630,19 @@ class TestServer:
             assert (await quota_status())["used_today"] == 3
             refuse(quotas, 0)
             quotas.acquire()
-            assert (await quota_status())["used_today"] == 1
+            status = await quota_status()
+            assert status["used_today"] == 1
+            # Each budget's own count and pause; the one the rotation uses now is in_use
+            assert [(b["used_today"], b["paused_until"] is not None, b["in_use"]) for b in status["budgets"]] == [
+                (3, True, False), (1, False, True), (0, False, False)]
             refuse(quotas, 1)
             assert (await quota_status())["used_today"] == 0
             quotas.acquire()
             refuse(quotas, 2)
             status = await quota_status()
-            assert status["used_today"] == 1 and status["paused_until"] == "2026-11-18 21:00 UTC"
+            # All refused at once: the rotation's current key is tried first, and the top level is it
+            assert status["used_today"] == 3 and status["paused_until"] == "2026-11-18 21:00 UTC"
+            assert [b["in_use"] for b in status["budgets"]] == [True, False, False]
             public = json.dumps([status, quotas.acquire()[1]])
             assert not any(text in public for text in ("Mouser#", "key 2", "key 3", "3000", "2000", *KEYS))
 

@@ -4,6 +4,22 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.12 (2026-11-27)
+
+### Added
+
+- **`/mcp/stats`**: each day's server start times; daily counts of addresses that were rate-limited, reached the daily cap or are blocked (counts only); a budget list per distributor.
+- **Usage dashboard**: notices can be dismissed, and come back on new activity.
+
+### Changed
+
+- **Usage dashboard**: problems and limits cover the whole selected range; deploy and restart times, budgets, limits per app, retries and saved answers shown in more detail.
+
+### Fixed
+
+- **`cse_search`, `cse_get_kicad`**: a server error, dropped connection or unreadable reply from SamacSys is retried once, except during an outage.
+- **Usage dashboard**: no longer shows DigiKey as paused while its lookups still work.
+
 ## 0.10.11 (2026-11-27)
 
 ### Changed

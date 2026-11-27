@@ -1209,6 +1209,9 @@ class RateLimitMiddleware:
         too_many_clients, the once-a-minute warning (those addresses are new, so a tally of them
         says nothing). Counting never breaks the reply."""
         _observe("refusal counts", stats.usage.record_refusal, self._refusal_group(client_ip, reason))
+        # Distinct refused addresses (any reason), by the key the limit counts them under: a count only
+        _observe("refused address counts",
+                 lambda: stats.usage.record_address("rate_limited", self._limit_key(client_ip)))
         _observe("refusal log", call_log.recorder.refusal, reason or "per_ip_rate_limit", self._is_platform(client_ip))
         try:
             if reason == "too_many_clients":
@@ -4274,6 +4277,8 @@ def _distributor_quota_status() -> dict[str, Any]:
     reply = {name: quota.status() for name, quota in _distributor_quotas.items()}
     if "digikey" not in reply and _digikey_client is not None and (ext := _digikey_client.ext_status()):
         reply["digikey"] = {**ext, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
+    if "digikey" in reply and _digikey_client is not None and (ext_pause := _digikey_client.ext_pause()):
+        reply["digikey"] = {**reply["digikey"], "ext": ext_pause}
     return reply
 
 

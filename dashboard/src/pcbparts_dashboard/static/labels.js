@@ -144,15 +144,18 @@ export function heldBackLabel(cause, who, reset, budgetReset = reset) {
   })[cause] || fallback(cause);
 }
 
-/** Requests the distributor itself refused. */
-export function refusedLabel(cause) {
-  return ({ daily: "daily limit", minute: "per-minute limit", refused: "refused" })[cause] || fallback(cause);
+/** Requests the distributor itself refused: DigiKey answers a 403 when we went too fast, and we pause 10 minutes. */
+export function refusedLabel(cause, name) {
+  if (name === "digikey") {
+    return ({ daily: "its daily limit (429)", minute: "its per-minute limit (429)", refused: "refused (403), paused 10 minutes" })[cause] || fallback(cause);
+  }
+  return ({ daily: "its daily limit", minute: "its per-minute limit", refused: "refused with no reason given" })[cause] || fallback(cause);
 }
 
-/** The per-address limiter's groups. */
+/** The per-address limiter's groups. Neutral: one group's requests can come from many addresses. */
 export const refusalGroupLabel = (g) => ({
-  everyone_else: "an address sent more requests in a minute than its limit",
-  platform_ranges: "an AI platform address sent more requests in a minute than its limit",
+  everyone_else: "over the per-address limit for a minute",
+  platform_ranges: "AI platform addresses over their per-minute limit",
   too_many_clients: "the server was tracking as many addresses as it can",
   server_busy: "the server was busy (0.10.0 only)",
 })[g] || fallback(g);
@@ -164,14 +167,39 @@ export const UPSTREAM_LABEL = table({
 });
 export const upstreamLabel = (src) => UPSTREAM_LABEL[src] || fallback(src);
 
-/** How a service answered our requests, grouped for a reader. The last three are the error answers. */
+/**
+ * How a service answered our requests, by the server's status classes (upstream_status). Only 2xx
+ * answers and our own cancellations are fine; a 3xx counts as an error (DigiKey resends a redirect).
+ */
 export const STATUS_GROUPS = [
-  { label: "Answered", keys: ["2xx", "3xx"], color: "--good" },
-  { label: "Cancelled by us", keys: ["cancelled"], color: "--silk-dim" },
-  { label: "Too many requests", keys: ["429"], color: "--warning" },
-  { label: "Rejected our request", keys: ["4xx", "too_large"], color: "--serious" },
-  { label: "Server error or no answer", keys: ["5xx", "timeout", "connection", "challenge", "other_error"], color: "--critical" },
+  { label: "2xx answer", keys: ["2xx"], ok: true },
+  { label: "cancelled by us", keys: ["cancelled"], ok: true },
+  { label: "3xx answer", keys: ["3xx"] },
+  { label: "429 answer", keys: ["429"] },
+  { label: "4xx answer", keys: ["4xx"] },
+  { label: "too large", keys: ["too_large"] },
+  { label: "5xx answer", keys: ["5xx"] },
+  { label: "timed out", keys: ["timeout"] },
+  { label: "connection failed", keys: ["connection"] },
+  { label: "challenge", keys: ["challenge"] },
+  { label: "other error", keys: ["other_error"] },
 ];
+export const ERROR_GROUPS = STATUS_GROUPS.filter((g) => !g.ok);
+/** Error classes where the service didn't answer properly at all. */
+export const HARD_ERRORS = ["5xx", "timeout", "connection", "challenge", "other_error"];
+
+/**
+ * Whether a failed call's reason shows that a service's error answers cost a lookup; null for a
+ * service with no failure reason of its own (its error answers are judged on their own).
+ */
+export function linkedFailure(src, reason) {
+  if (src === "digikey" || src === "digikey_ext") return reason === "digikey_failed" || reason === "lifecycle_lookup_failed";
+  if (src === "mouser") return reason === "mouser_failed";
+  if (src === "jlcpcb") return reason === "jlcpcb_unavailable" || reason === "jlcpcb_waf";
+  if (src.startsWith("easyeda_")) return reason === "easyeda_failed";
+  if (src === "cse") return reason.startsWith("cse_");
+  return null;
+}
 
 export const TOOL_SHORT = table({ mouser_get_part: "Mouser", digikey_get_part: "DigiKey", part_lifecycle: "Lifecycle" });
 export const DISTRIBUTOR_LABEL = table({ mouser: "Mouser", digikey: "DigiKey" });

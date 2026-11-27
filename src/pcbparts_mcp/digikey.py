@@ -14,7 +14,7 @@ import httpx
 from . import stats
 from .cache import (
     SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, Pacer, QuotaPool, RetryGuard, _header_int,
-    _next_utc_midnight, retry_after_seconds,
+    _next_utc_midnight, _utc_text, retry_after_seconds,
 )
 from .client import _sent
 from .config import (
@@ -266,6 +266,7 @@ class DigiKeyClient:
         self._ext = ext
         self._api_enabled = bool(client_id and client_secret)
         self._ext_active = ext is not None and not self._api_enabled
+        self._ext_status_logged = float("-inf")
         self._closed = False
         self._address_daily = address_daily if ext is not None else None
         self.callers = CallerTally("DigiKey ext") if ext is not None else None
@@ -277,6 +278,8 @@ class DigiKeyClient:
         self._http: httpx.AsyncClient | None = None
         self._owns_store = store is None
         self._store = DistributorStore(clock=clock) if store is None else store
+        # When lookups last moved to ext (_using_ext), for /mcp/stats; None while they're on the API
+        self._ext_active_since: float | None = self._store.now() if self._ext_active else None
         self._quota = QuotaPool([quota]) if isinstance(quota, DailyQuota) else quota
         if ext is not None and self._quota is not None:
             self._address_daily = self._quota.address_daily or address_daily
@@ -563,8 +566,14 @@ class DigiKeyClient:
         """Counts for ext lookups the per-address day stopped (none of them sent)."""
         for _ in range(lookups):
             stats.count_distributor("digikey", "rate_limited")
-            stats.count_distributor_limit("digikey", "held_back", self._address_daily.refusal_cause(caller))
+            stats.count_distributor_limit("digikey", "held_back", self._address_daily.refusal_cause(caller), path="ext")
             self.held_back.record(caller)
+
+    def _api_hold_path(self) -> str | None:
+        """The path a hold counted on the API's side of a lookup goes under in /mcp/stats
+        (distributor_limits.digikey.ext_held_back): ext once lookups are routed there (the API's day
+        was spent meanwhile and the caller's address stops it going on through ext), else the API."""
+        return "ext" if self._using_ext() else None
 
     @property
     def unmetered(self) -> bool:
@@ -579,12 +588,48 @@ class DigiKeyClient:
             self._quota is not None and self._quota.pause_cause() in {"distributor_daily", "daily_count"}))
         if active != self._ext_active:
             self._ext_active = active
+            self._ext_active_since = self._store.now() if active else None
             logger.info("DigiKey lookups moved to %s", "ext (API day spent)" if active else "the API")
         return active
 
+    def _read_ext_status(self) -> dict[str, Any] | None:
+        """The extension's pause for /mcp/stats, `{"paused_until": UTC text or None}`, or None when its
+        status() raises or gives anything else: a broken extension mustn't fail the stats reply.
+        Logged at most once a minute, with the exception type only, as extension_failed does (the
+        message could carry paths or other deployment details)."""
+        try:
+            status = self._ext.status()
+            paused_until = status.get("paused_until") if isinstance(status, dict) else ...
+            if paused_until is None or isinstance(paused_until, str):
+                return {"paused_until": paused_until}
+            raise TypeError("status() didn't give a dict with a text or null paused_until")
+        except Exception as exc:
+            now = self._store.now()
+            if now - self._ext_status_logged >= 60:
+                self._ext_status_logged = now
+                logger.error("Couldn't read the DigiKey extension's status (%s)", type(exc).__name__)
+            return None
+
     def ext_status(self) -> dict[str, Any] | None:
         """The extension's pause status for authenticated /mcp/stats when no API pool is configured."""
-        return self._ext.status() if self._ext is not None and not self._api_enabled else None
+        return self._read_ext_status() if self._ext is not None and not self._api_enabled else None
+
+    def ext_pause(self) -> dict[str, Any] | None:
+        """With an API pool and an installed extension, for /mcp/stats: `{"paused_until": the
+        extension's own pause (UTC text or None), "active": whether lookups are routed to it now,
+        "active_since": when they last moved there (UTC text; None when not active)}`. After a
+        restart that begins with the API's day spent, active_since is the first check's time.
+        None without an extension or an API pool, and when its status can't be read (the dashboard
+        then treats DigiKey as paused while the pool is)."""
+        if self._ext is None or not self._api_enabled:
+            return None
+        status = self._read_ext_status()
+        if status is None:
+            return None
+        active = self._using_ext()
+        since = self._ext_active_since
+        return {"paused_until": status["paused_until"], "active": active,
+                "active_since": _utc_text(since) if active and since is not None else None}
 
     def can_answer_now(self, caller: str | None = None) -> bool:
         """A lookup could go out on the active ext path (not paused, and caller's address hasn't
@@ -652,7 +697,8 @@ class DigiKeyClient:
             first = sends == 0
             if first and self._quota and (error := self._quota.address_error(caller)):
                 stats.count_distributor("digikey", "rate_limited")
-                stats.count_distributor_limit("digikey", "held_back", self._quota.address_daily.refusal_cause(caller))
+                stats.count_distributor_limit("digikey", "held_back", self._quota.address_daily.refusal_cause(caller),
+                                              path=self._api_hold_path())
                 self._quota.held_back.record(caller)
                 return Lookup(error, "limited", self._store.now())
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
@@ -672,7 +718,8 @@ class DigiKeyClient:
                     stats.count_distributor_limit("digikey", "held_back",
                                                   (self._quota.address_daily.refusal_cause(caller)
                                                    if first and self._quota.address_error(caller)
-                                                   else self._quota.pause_cause()) if self._quota else "other")
+                                                   else self._quota.pause_cause()) if self._quota else "other",
+                                                  path=self._api_hold_path())
                     if self._quota:
                         self._quota.held_back.record(caller)
                 return Lookup({"error": str(e)}, "limited", self._store.now())
@@ -686,7 +733,8 @@ class DigiKeyClient:
                     if not charged and (not self._using_ext()
                                         or self._quota.last_refusal_cause in ("address_daily", "address_blocked")):
                         stats.count_distributor("digikey", "rate_limited")
-                        stats.count_distributor_limit("digikey", "held_back", self._quota.last_refusal_cause)
+                        stats.count_distributor_limit("digikey", "held_back", self._quota.last_refusal_cause,
+                                                      path=self._api_hold_path())
                         self._quota.held_back.record(caller)
                     return Lookup(quota_error, "limited", self._store.now())
                 charged.add(product_number)
@@ -809,6 +857,7 @@ class DigiKeyClient:
         answer, without requested and matched_by)."""
         assert self._ext is not None
         sent: set[str] = set()  # gets the number once its first request goes out
+        path = stats.distributor_path.set("ext")  # what the extension counts in here is ext's
         try:
             answer = await self._ext.lookup(product_number, sent=sent,
                                             charge=self._charge(caller, address_charged=address_charged))
@@ -820,6 +869,8 @@ class DigiKeyClient:
             return Lookup(_ext_limited(e, self._ext_wait(e.retry_after)), "limited", self._store.now())
         except ExtFailed:  # its request went out (counted by _charge)
             raise DigiKeyError("DigiKey request failed (network/connection or server error)") from None
+        finally:
+            stats.distributor_path.reset(path)
         fetched_at = self._store.now()
         if not answer.results:
             self._store.put_answer("digikey", cache_key, {"not_found": True}, False, fetched_at)
@@ -884,7 +935,8 @@ class DigiKeyClient:
             return True
         for _ in range(lookups):
             stats.count_distributor("digikey", "rate_limited")
-            stats.count_distributor_limit("digikey", "held_back", "distributor_refused" if error.paused else "other")
+            stats.count_distributor_limit("digikey", "held_back", "distributor_refused" if error.paused else "other",
+                                          path="ext")
             self.held_back.record(caller)
         return False
 
@@ -942,8 +994,12 @@ class DigiKeyClient:
             capped = self._held_back_unsent(caller, error, 1)
             held[number] = (_next_utc_midnight(now) if capped else now + error.retry_after, capped)
 
-        batch = asyncio.ensure_future(self._ext.statuses(wanted, sent=sent, charge=self._charge(caller, refused),
-                                                          held=hold))
+        path = stats.distributor_path.set("ext")  # the batch's task copies it: what the extension counts there is ext's
+        try:
+            batch = asyncio.ensure_future(self._ext.statuses(wanted, sent=sent, charge=self._charge(caller, refused),
+                                                              held=hold))
+        finally:
+            stats.distributor_path.reset(path)
         self._tasks.add(batch)
         batch.add_done_callback(self._tasks.discard)
         try:

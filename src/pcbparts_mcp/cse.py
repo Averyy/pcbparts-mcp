@@ -15,12 +15,12 @@ import re
 import time
 import zipfile
 from datetime import datetime, timezone
-from typing import Any, Callable
+from typing import Any, Awaitable, Callable
 
 import httpx
 
 from . import stats
-from .cache import TTLCache
+from .cache import RetryGuard, TTLCache, retry_after_seconds
 from .client import _sent
 from .cse_archive import MAX_ZIP_SIZE as _MAX_ZIP_SIZE, extract_kicad
 from .cse_store import CSEStore, query_key
@@ -48,6 +48,24 @@ _CSE_MODEL_URL = "https://rs.componentsearchengine.com/ga/model.php"
 
 # Max results per page from the API
 _PAGE_SIZE = 10
+
+# A 5xx reply's Retry-After asking for longer than this means no retry (as DigiKey's)
+_RETRY_AFTER_MAX = 3.0
+
+
+def _transient_error(exc: httpx.HTTPError) -> bool:
+    """A dropped or refused connection may pass; a timeout isn't sent again (as Mouser's and
+    DigiKey's aren't): a slow SamacSys would cost a second wait as long as the first."""
+    return isinstance(exc, httpx.TransportError) and not isinstance(exc, httpx.TimeoutException)
+
+
+def _json_object(response: httpx.Response) -> dict[str, Any] | None:
+    """The reply's JSON object; None when the body isn't one (empty, not JSON, or another JSON value)."""
+    try:
+        data = response.json()
+    except (ValueError, RecursionError):  # JSONDecodeError, undecodable bytes, absurd nesting
+        return None
+    return data if isinstance(data, dict) else None
 
 
 def _search_cache_key(query: str, offset: int) -> str:
@@ -164,8 +182,14 @@ class CSEClient:
     No API key or authentication required.
     """
 
-    def __init__(self, store_path: str | None = None, *, clock: Callable[[], float] | None = None):
+    def __init__(self, store_path: str | None = None, *, clock: Callable[[], float] | None = None,
+                 sleep: Callable[[float], Awaitable[Any]] | None = None):
+        """sleep: the wait before a request goes out again (CSE_STATUS_RETRY_DELAY, or a 5xx's
+        Retry-After up to 3 s); tests pass a fake."""
         self._clock = clock or time.time
+        self._sleep = sleep or asyncio.sleep
+        # No retries during an outage, as Mouser and DigiKey: every sent request's outcome counts
+        self._guard = RetryGuard("CSE", self._clock, logger)
         self._quota_until = 0.0
         self._refused_since: float | None = None
         self._quota_probe: asyncio.Lock | None = None
@@ -225,24 +249,54 @@ class CSEClient:
         # A first request for a query can come back with another status (F0R0, R0F0), holding real
         # parts or unrelated ones ("blorptastic9": 10 random parts); asking again gave "Success" in
         # all 8 checks, 2026-11-09. Reporting that first answer as empty made parts look missing.
+        # A 5xx, a dropped connection or an unreadable reply is also asked once more, unless the
+        # retry guard is on (_retry_wait). Either way a search sends at most two requests.
+        statuses = 0  # answers with a status other than Success
+        retrying = False  # this send repeats a transient failure: upstream.cse.retries
         for attempt in range(2):
+            last = attempt == 1
             try:
                 async with self._get_semaphore():
+                    if retrying:
+                        stats.count_upstream("cse", "retries")
+                        retrying = False
                     response = await _sent("cse", self._get_http().get(_CSE_API_URL, params=params))
                     await asyncio.sleep(CSE_RATE_LIMIT)
-            except httpx.HTTPError:
-                raise ValueError("CSE API request failed (network/connection error)")
+            except httpx.HTTPError as exc:
+                transient = _transient_error(exc)
+                self._guard.record(transient=transient)
+                failure = "CSE API request failed (network/connection error)"
+                if transient and not last and await self._retry_wait(f"search: {type(exc).__name__}", None):
+                    retrying = True
+                    continue
+                raise ValueError(failure) from None
 
             if response.status_code >= 400:
-                raise ValueError(f"CSE API returned HTTP {response.status_code}")
-            data = response.json()
+                transient = response.status_code >= 500
+                self._guard.record(transient=transient)
+                failure = f"CSE API returned HTTP {response.status_code}"
+                if transient and not last and await self._retry_wait(f"search: HTTP {response.status_code}", response):
+                    retrying = True
+                    continue
+                raise ValueError(failure)
+            data = _json_object(response)
+            if data is None:  # not JSON, or not an object: a redirect page, a cut-off body
+                self._guard.record(transient=True)
+                failure = f"CSE API returned an unreadable reply (HTTP {response.status_code})"
+                if not last and await self._retry_wait(f"search: unreadable reply, HTTP {response.status_code}", None):
+                    retrying = True
+                    continue
+                raise ValueError(failure)
+            self._guard.record(transient=False)
             if data.get("status") == "Success":
                 break
             logger.warning(f"CSE API returned non-success status: {data.get('status')}")
-            if attempt == 0:
-                await asyncio.sleep(CSE_STATUS_RETRY_DELAY)
+            statuses += 1
+            if not last:  # SamacSys answered: asked again whatever the retry guard says, as before
+                await self._sleep(CSE_STATUS_RETRY_DELAY)
         else:
-            raise ValueError("CSE API gave no usable answer (status other than Success, twice)")
+            raise ValueError("CSE API gave no usable answer (status other than Success, twice)" if statuses == 2
+                             else "CSE API gave no usable answer (status other than Success)")
 
         raw_parts = data.get("parts", [])
 
@@ -373,61 +427,113 @@ class CSEClient:
                          f"the KiCad model couldn't be downloaded. {retry} "
                          "KiCad files pcbparts already has stored still work."}
 
+    def _retry_delay(self, response: httpx.Response | None) -> float | None:
+        """Seconds to wait before a failed request goes out again; None for no retry: the retry
+        guard is on (an outage), or a 5xx's Retry-After asks for longer than _RETRY_AFTER_MAX."""
+        if self._guard.disabled():
+            return None
+        if response is not None and response.status_code >= 500:
+            after = retry_after_seconds(response.headers, self._clock())
+            if after is not None:  # unusable: the usual delay
+                return after if after <= _RETRY_AFTER_MAX else None
+        return CSE_STATUS_RETRY_DELAY
+
+    async def _retry_wait(self, what: str, response: httpx.Response | None) -> bool:
+        """Whether a request that failed transiently goes out once more, after waiting (_retry_delay);
+        False without waiting when there's no retry, or after it when an outage began meanwhile."""
+        delay = self._retry_delay(response)
+        if delay is None:
+            return False
+        logger.warning("CSE request failed (%s); sending it again in %g s", what, delay)
+        await self._sleep(delay)
+        return not self._guard.disabled()
+
     async def _download_kicad(self, resolved_part_id: int | str, part_info: dict[str, Any]) -> dict[str, Any]:
-        # Check again inside the semaphore: a download ahead of this one may have refused quota.
-        try:
-            async with self._get_semaphore():
-                if self._clock() < self._quota_until:
+        # A 5xx (not one about the quota), a dropped connection or a reply that is neither a ZIP nor
+        # SamacSys's own "Error: ..." text is sent once more (_retry_wait): at most two requests.
+        retrying = False  # this send repeats a transient failure: upstream.cse.retries
+        for attempt in range(2):
+            last = attempt == 1
+            # Check again inside the semaphore: a download ahead of this one may have refused quota.
+            try:
+                async with self._get_semaphore():
+                    if self._clock() < self._quota_until:
+                        return await self._quota_error(resolved_part_id, part_info)
+                    if retrying:
+                        stats.count_upstream("cse", "retries")
+                        retrying = False
+                    started = self._clock()
+                    response = await _sent("cse", self._get_http().get(
+                        _CSE_MODEL_URL,
+                        params={"partID": str(resolved_part_id)},
+                        auth=(CSE_USER, CSE_PASS),
+                        timeout=30,
+                    ))
+                    elapsed = self._clock() - started
+                    await asyncio.sleep(CSE_RATE_LIMIT)
+            except httpx.HTTPError as exc:
+                transient = _transient_error(exc)
+                self._guard.record(transient=transient)
+                if transient and not last and await self._retry_wait(f"model download: {type(exc).__name__}", None):
+                    retrying = True
+                    continue
+                return {"error": "CSE model download failed (network/connection error)"}
+
+            # Log non-ZIP HTTP errors too, while retaining their existing authentication/HTTP replies.
+            nonzip_logged = False
+            if isinstance(response.content, bytes) and not zipfile.is_zipfile(io.BytesIO(response.content)):
+                _warn_nonzip(response, resolved_part_id, elapsed)
+                nonzip_logged = True
+            if response.status_code == 401:
+                self._guard.record(transient=False)
+                return {"error": "CSE authentication failed. Check CSEARCH_USER and CSEARCH_PASS."}
+            if response.status_code != 200:
+                # A quota refusal is never sent again, whatever its status
+                transient = (response.status_code >= 500 and not (
+                    isinstance(response.content, bytes) and "quota" in _body_text(response.content).lower()))
+                self._guard.record(transient=transient)
+                if transient and not last and await self._retry_wait(
+                        f"model download: HTTP {response.status_code}", response):
+                    retrying = True
+                    continue
+                return {"error": f"CSE model download failed (HTTP {response.status_code})"}
+
+            # Check response size to prevent zip bombs
+            content_length = len(response.content)
+            if content_length > _MAX_ZIP_SIZE:
+                self._guard.record(transient=False)
+                return {"error": f"CSE model download too large ({content_length} bytes, max {_MAX_ZIP_SIZE})"}
+
+            try:
+                kicad_files = extract_kicad(response.content)
+            except zipfile.BadZipFile:
+                text = _body_text(response.content)
+                cleaned = (_clean_body(response.content) if nonzip_logged else
+                           _warn_nonzip(response, resolved_part_id, elapsed))
+                if "quota" in text.lower():
+                    self._guard.record(transient=False)
+                    now = self._clock()
+                    self._quota_until = now + CSE_QUOTA_RETRY_SECONDS
+                    if self._refused_since is None:
+                        self._refused_since = now
+                    recent = await asyncio.to_thread(self._store.kicad_last_24h, now) if self._store else 0
+                    logger.warning("CSE daily download quota refused at %s: %s downloads stored in the last 24 h; next try at %s",
+                                   _utc_iso(now), recent, _utc_iso(self._quota_until))
                     return await self._quota_error(resolved_part_id, part_info)
-                started = self._clock()
-                response = await _sent("cse", self._get_http().get(
-                    _CSE_MODEL_URL,
-                    params={"partID": str(resolved_part_id)},
-                    auth=(CSE_USER, CSE_PASS),
-                    timeout=30,
-                ))
-                elapsed = self._clock() - started
-                await asyncio.sleep(CSE_RATE_LIMIT)
-        except httpx.HTTPError:
-            return {"error": "CSE model download failed (network/connection error)"}
-
-        # Log non-ZIP HTTP errors too, while retaining their existing authentication/HTTP replies.
-        nonzip_logged = False
-        if isinstance(response.content, bytes) and not zipfile.is_zipfile(io.BytesIO(response.content)):
-            _warn_nonzip(response, resolved_part_id, elapsed)
-            nonzip_logged = True
-        if response.status_code == 401:
-            return {"error": "CSE authentication failed. Check CSEARCH_USER and CSEARCH_PASS."}
-        if response.status_code != 200:
-            return {"error": f"CSE model download failed (HTTP {response.status_code})"}
-
-        # Check response size to prevent zip bombs
-        content_length = len(response.content)
-        if content_length > _MAX_ZIP_SIZE:
-            return {"error": f"CSE model download too large ({content_length} bytes, max {_MAX_ZIP_SIZE})"}
-
-        try:
-            kicad_files = extract_kicad(response.content)
-        except zipfile.BadZipFile:
-            text = _body_text(response.content)
-            cleaned = (_clean_body(response.content) if nonzip_logged else
-                       _warn_nonzip(response, resolved_part_id, elapsed))
-            if "quota" in text.lower():
-                now = self._clock()
-                self._quota_until = now + CSE_QUOTA_RETRY_SECONDS
-                if self._refused_since is None:
-                    self._refused_since = now
-                recent = await asyncio.to_thread(self._store.kicad_last_24h, now) if self._store else 0
-                logger.warning("CSE daily download quota refused at %s: %s downloads stored in the last 24 h; next try at %s",
-                               _utc_iso(now), recent, _utc_iso(self._quota_until))
-                return await self._quota_error(resolved_part_id, part_info)
-            if text.lower().startswith("error:"):
-                if re.search(r"no\s+part\s+data\s+(?:is\s+)?available", text, re.I):
-                    return {"error": f"No ECAD model available for part {resolved_part_id}"}
-                await self._wanted(resolved_part_id, "refused", part_info)
-                return {"error": f"CSE refused the model download for part {resolved_part_id}: {cleaned[:150]}"}
-            await self._wanted(resolved_part_id, "invalid_zip", part_info)
-            return {"error": "CSE returned invalid zip file"}
+                if text.lower().startswith("error:"):
+                    self._guard.record(transient=False)
+                    if re.search(r"no\s+part\s+data\s+(?:is\s+)?available", text, re.I):
+                        return {"error": f"No ECAD model available for part {resolved_part_id}"}
+                    await self._wanted(resolved_part_id, "refused", part_info)
+                    return {"error": f"CSE refused the model download for part {resolved_part_id}: {cleaned[:150]}"}
+                self._guard.record(transient=True)  # an HTML page or a cut-off archive
+                if not last and await self._retry_wait("model download: not a ZIP file", None):
+                    retrying = True
+                    continue
+                await self._wanted(resolved_part_id, "invalid_zip", part_info)
+                return {"error": "CSE returned invalid zip file"}
+            self._guard.record(transient=False)
+            break
 
         if self._refused_since is not None:
             logger.info("CSE downloads accepted again at %s; refused since %s",
