@@ -20,6 +20,9 @@ keeps the recorded counts. Held-back lookups remain warnings.
 Other Mouser refusals and all DigiKey refusals remain warnings. From server 0.10.9,
 the services table includes Mouser HTTP outcomes, and its error notice includes
 recorded retries over the same problems window. Older days need neither field.
+From server 0.10.11, DigiKey's lookups and requests are shown split between its API
+and ext (`distributors.digikey.ext_sent` and the `digikey_ext` source).
+Older days keep their single DigiKey figure; the split is never estimated for them.
 
 ```sh
 uv sync --extra dev

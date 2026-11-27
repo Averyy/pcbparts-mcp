@@ -28,6 +28,10 @@ FAILURE_REASONS = frozenset({
     "cse_download_refused", "lifecycle_lookup_failed", "exception", "unexpected_error",
 })
 OUTCOMES = ("ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed")
+# Lookups by path inside distributors.<d>.sent (from server 0.10.11: DigiKey's ext_sent; the API's
+# are sent - ext_sent). A record without it counted its lookups unsplit, so a window that takes sent
+# lookups from such a record keeps no split at all rather than one covering only part of its sent.
+SENT_PATHS = ("ext_sent",)
 
 
 def eastern_bounds(day: str | date) -> tuple[datetime, datetime]:
@@ -497,6 +501,29 @@ class EasternRecords:
             _rescale(part, paths, total, self._record(day))
         return approx
 
+    def _unsplit(self, part, day, lo_at, hi_at, baseline=None):
+        """(distributor, path) pairs one UTC day's part can't split: it sent lookups, and a real record
+        its endpoints come from, or one between them, has that distributor's counts without the path.
+        The subtracted part can't tell: a path in one endpoint only reads as a number there. The
+        synthetic midnight zero takes its fields from the day's newest record, so it says nothing."""
+        names = [name for name, counts in (part.get("distributors") or {}).items()
+                 if isinstance(counts, dict) and _number(counts.get("sent")) and counts["sent"] > 0]
+        if not names:
+            return set()
+        midnight = parse_timestamp(day + "T00:00:00Z")
+        points = self._known_points(day)
+        used = baseline is not None and lo_at == baseline[0]
+        first = lo_at if used else max((at for at, _ in points if at <= lo_at), default=midnight)
+        last = min((at for at, _ in points if at >= hi_at), default=max(at for at, _ in points))
+        records = [record for at, record in points if first <= at <= last and at != midnight]
+        if used:
+            records.append(baseline[1])
+        return {
+            (name, key) for name in names for key in SENT_PATHS
+            if any(isinstance(counts := _get(record, ("distributors", name)), dict) and not _number(counts.get(key))
+                   for record in records)
+        }
+
     def window(self, start: datetime, end: datetime, *, scale_end=False, baseline=None) -> dict:
         """Subtract endpoints; copy hourly bins (scale yesterday's last bin on request).
 
@@ -509,6 +536,7 @@ class EasternRecords:
         approx = False
         result = {}
         records = []
+        unsplit = set()
         for day, lo_at, hi_at in _parts(start, end):
             records.append(self._record(day))
             if day not in self.days:
@@ -529,11 +557,16 @@ class EasternRecords:
             part = _combine(_counters(lo), _counters(hi), subtract, fold=True)
             approx |= self._align_totals(part, day, max(start, parse_timestamp(day + "T00:00:00Z")), hi_at,
                                         scale_end=scale_end, baseline=baseline)
+            unsplit |= self._unsplit(part, day, lo_at, hi_at, baseline)
             result = _combine(result, part, lambda a, b, _: a + b)
         if start == end:
             record = self._record(start.date().isoformat())
             records.append(record)
             result = _counters(_zero(record))
+        for name, key in unsplit:
+            counts = _get(result, ("distributors", name))
+            if isinstance(counts, dict):
+                counts.pop(key, None)
         _averages(result)
         result.setdefault("calls", None)
         result["callers"] = None

@@ -2,10 +2,10 @@
 
 from types import SimpleNamespace
 
-from pcbparts_mcp.extensions import AddressCapReached, BackupUnavailable
+from pcbparts_mcp.extensions import AddressCapReached, ExtUnavailable
 
 
-class FakeBackup:
+class FakeExt:
     unmetered = True
 
     def __init__(self):
@@ -46,7 +46,7 @@ class FakeBackup:
 
     async def lookup(self, number, sent=None, charge=None):
         if not self.can_answer_now():
-            raise BackupUnavailable(self.retry_after(), paused=self.paused)
+            raise ExtUnavailable(self.retry_after(), paused=self.paused)
         self._charge(number, sent, charge)
         self.lookups.append(number)
         found = number != "TP4056"
@@ -57,7 +57,7 @@ class FakeBackup:
 
     async def statuses(self, numbers, sent=None, charge=None, held=None):
         if not self.can_answer_now():
-            raise BackupUnavailable(self.retry_after(), paused=self.paused)
+            raise ExtUnavailable(self.retry_after(), paused=self.paused)
         self.batches.append(list(numbers))
         answers = {}
         for number in numbers:

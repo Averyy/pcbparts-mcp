@@ -78,13 +78,12 @@ async def clients(clock):
                                   extra_keys=["extra"] if extra else ())
             client._client = http
         else:
-            client = DigiKeyClient("id", "secret", quota=pool, clock=clock, store=store,
-                                   second_app=("extra", "secret2") if extra else None)
-            client._http = http
-
-            async def sleep(seconds):
+            async def sleep(seconds):  # the pacer's and the transient retry's waits: the fake clock
                 clock.advance(seconds)
 
+            client = DigiKeyClient("id", "secret", quota=pool, clock=clock, store=store,
+                                   second_app=("extra", "secret2") if extra else None, sleep=sleep)
+            client._http = http
             client._pacer = Pacer(5, clock=clock, sleep=sleep)
         made.append(client)
         return client, pool, fake
@@ -261,7 +260,8 @@ async def test_address_capped_while_waiting_for_lookup_slot_sends_nothing(client
 @pytest.mark.parametrize("name", ["Mouser", "DigiKey"])
 async def test_cached_misses_still_served(clients, name):
     client, _, fake = clients(name, limit=1)
-    fake.reply = httpx.Response(200, json={"SearchResults": {"Parts": []}} if name == "Mouser" else {})
+    fake.reply = httpx.Response(200, json={"SearchResults": {"Parts": []}} if name == "Mouser"
+                                else {"Products": [], "ExactMatches": []})
     first = await client.get_part("TEST123", caller=ADDRESS)
     assert "not found" in first.get("error", "").lower() or first.get("not_found")
     assert await client.get_part("TEST123", caller=ADDRESS) == first

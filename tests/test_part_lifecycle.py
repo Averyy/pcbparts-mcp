@@ -114,13 +114,15 @@ async def setup(clock, monkeypatch):
         mq = DailyQuota("Mouser", mouser_limit, clock=clock, own_key="Mouser API key", per_minute=mouser_per_minute, day_start_hour=6)
         dq = QuotaPool([DailyQuota("DigiKey", digikey_limit, clock=clock, own_key="DigiKey API credentials")])
         m = d = None
+
+        async def sleep(seconds):  # Mouser's and DigiKey's retry waits: the fake clock, never real time
+            clock.advance(seconds)
+
         if mouser is not None:
-            async def sleep(seconds):
-                clock.advance(seconds)
             m = MouserClient(api_key="k", quota=mq, store=store, clock=clock, sleep=sleep)
             m._client = httpx.AsyncClient(transport=httpx.MockTransport(mouser))
         if digikey is not None:
-            d = DigiKeyClient(client_id="id", client_secret="secret", quota=dq, store=store)
+            d = DigiKeyClient(client_id="id", client_secret="secret", quota=dq, store=store, sleep=sleep)
             d._http = httpx.AsyncClient(transport=httpx.MockTransport(digikey))
             d._pacer = Pacer(1e6)
         monkeypatch.setattr(server, "_mouser_client", m)
@@ -567,7 +569,7 @@ class TestLookups:
 
     async def test_both_fail(self, setup):
         # Mouser not listing it sends it to DigiKey, whose lookup fails
-        setup(mouser=FakeMouser(), digikey=FakeDigiKey(responses=[httpx.Response(500)]))
+        setup(mouser=FakeMouser(), digikey=FakeDigiKey(responses=[httpx.Response(500)] * 2))  # retried once
         reply = await lifecycle(["LM358P"])
         assert reply["results"][0]["lookup_failed"] is True
         assert server._lifecycle_outcome(reply) == "failed"

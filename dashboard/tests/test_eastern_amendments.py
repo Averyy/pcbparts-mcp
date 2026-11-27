@@ -371,3 +371,72 @@ def test_old_rules_days_from_before_any_snapshot_are_recomputed_without_snapshot
     updated = EasternRecords(store, dt("2027-02-01T00:00:00Z")).eastern_day("2026-11-20")
     assert updated["calls"] == 240
     assert store.eastern_rules_versions()["2026-11-20"] == RULES_VERSION
+
+
+def test_digikey_ext_split_needs_every_utc_part_to_have_it(store):
+    # From server 0.10.11, distributors.digikey.ext_sent sits inside sent. A UTC day counted
+    # without it has one figure, so an Eastern day taking sent lookups from it has no split at all.
+    days = {
+        "2026-11-19": {"sent": 48, "cached": 2, "rate_limited": 0},  # before 0.10.11: unsplit
+        "2026-11-20": {"sent": 48, "cached": 0, "rate_limited": 0, "ext_sent": 24},
+        "2026-11-21": {"sent": 24, "cached": 0, "rate_limited": 0, "ext_sent": 0},
+    }
+    for day, final, digikey in zip(days, ("2026-11-20", "2026-11-21", "2026-11-22"), days.values()):
+        store.merge_day({"date": day, "calls": 240, "hours": [10] * 24,
+                         "distributors": {"digikey": digikey, "mouser": {"sent": 24}},
+                         "upstream": {"digikey": {"sent": 24}, "digikey_ext": {"sent": 24}}},
+                        final + "T00:00:30Z")
+    store.merge_day({"date": "2026-11-22", "calls": 0, "hours": [0] * 24}, "2026-11-23T00:00:30Z")
+    records = EasternRecords(store, dt("2026-11-23T00:00:30Z"))
+    straddling = records.eastern_day("2026-11-19")  # UTC 11-19 05:00 to 11-20 05:00
+    assert straddling["distributors"]["digikey"] == {"sent": 48, "cached": 2, "rate_limited": 0}
+    assert straddling["distributors"]["mouser"] == {"sent": 24}
+    split = records.eastern_day("2026-11-20")  # UTC 11-20 05:00 to 11-21 05:00: both parts split
+    assert split["distributors"]["digikey"] == {"sent": 43, "cached": 0, "rate_limited": 0, "ext_sent": 19}
+    assert split["upstream"]["digikey_ext"] == {"sent": 24}
+    last = records.eastern_day("2026-11-21")  # the UTC 11-22 part sent nothing: the split stands
+    assert last["distributors"]["digikey"] == {"sent": 19, "cached": 0, "rate_limited": 0, "ext_sent": 0}
+
+
+def test_digikey_split_is_decided_from_the_records_not_the_subtracted_part(store):
+    # 0.10.11 counted the day from midnight (ext_sent at 10:00), an earlier version ran from 12:00 and
+    # dropped the field, and 0.10.11 came back at 14:00 finding the day's counts without it.
+    day = "2026-11-20"
+    hours = [10] * 24
+
+    def record(calls, digikey):
+        return {"date": day, "calls": calls, "hours": hours[:calls // 10] + [0] * (24 - calls // 10),
+                "distributors": {"digikey": digikey}}
+
+    store.add_snapshot(record(100, {"sent": 10, "cached": 0, "rate_limited": 0, "ext_sent": 5}), day + "T10:00:30Z")
+    store.add_snapshot(record(130, {"sent": 20, "cached": 0, "rate_limited": 0}), day + "T13:00:30Z")
+    store.merge_day(record(240, {"sent": 40, "cached": 0, "rate_limited": 0}), "2026-11-21T00:00:30Z")
+    records = EasternRecords(store, dt("2026-11-21T01:00:00Z"))
+    # lo (05:00) is blended from midnight and the 10:00 record, so it has ext_sent; the final record
+    # doesn't: subtracting gave ext_sent 0 and a split that put every later ext lookup under the API
+    later = records.window(dt(day + "T05:00:00Z"), dt("2026-11-21T00:00:00Z"))
+    assert later["distributors"]["digikey"] == {"sent": 35, "cached": 0, "rate_limited": 0}
+    # the hours before the earlier version ran were counted split, by records that all have it
+    before = records.window(dt(day + "T00:00:00Z"), dt(day + "T10:00:00Z"))
+    assert before["distributors"]["digikey"] == {"sent": 10, "cached": 0, "rate_limited": 0, "ext_sent": 5}
+
+
+def test_digikey_split_after_a_problems_baseline_then_a_rollback_is_dropped(store):
+    # The problems window starts from an exact baseline snapshot (12:05, split); an earlier version
+    # then ran and dropped the field, so the records after it count the day's lookups unsplit.
+    day = "2026-11-20"
+
+    def record(calls, digikey):
+        return {"date": day, "calls": calls, "hours": [10] * (calls // 10) + [0] * (24 - calls // 10),
+                "distributors": {"digikey": digikey}}
+
+    store.add_snapshot(record(120, {"sent": 10, "cached": 0, "rate_limited": 0, "ext_sent": 5}), day + "T12:05:00Z")
+    store.add_snapshot(record(130, {"sent": 20, "cached": 0, "rate_limited": 0}), day + "T13:00:30Z")
+    store.merge_day(record(240, {"sent": 40, "cached": 0, "rate_limited": 0}), "2026-11-21T00:00:30Z")
+    records = EasternRecords(store, dt("2026-11-21T01:00:00Z"))
+    start, end = dt(day + "T12:00:00Z"), dt("2026-11-21T00:00:00Z")
+    baseline = records._problem_baseline(start, end)
+    assert baseline is not None and baseline[0] == dt(day + "T12:05:00Z")
+    # lo is the baseline record (ext_sent 5), hi the final record (none): subtracted, that read as 0
+    problems = records.window(start, end, baseline=baseline)
+    assert problems["distributors"]["digikey"] == {"sent": 30, "cached": 0, "rate_limited": 0}

@@ -27,19 +27,18 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 import re
 import time
-from collections import deque
 from collections.abc import Awaitable, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
 from typing import Any, Callable
 
 import httpx
 
 from . import stats
-from .cache import DailyQuota, MouserKeyPool, QuotaPool, _header_int, _utc_text
+from .cache import DailyQuota, MouserKeyPool, QuotaPool, RetryGuard, _header_int, _utc_text, retry_after_seconds
 from .config import (
     MOUSER_API_KEY,
     MOUSER_BASE_URL,
@@ -374,8 +373,7 @@ class MouserClient:
                  extra_keys: Sequence[str] = (), sleep: Callable[[float], Awaitable[None]] = asyncio.sleep):
         self._keys = [api_key, *extra_keys]
         self._clock, self._sleep = clock, sleep
-        self._outcomes: deque[list[int]] = deque(maxlen=31)  # ten-second buckets: start, transient, total
-        self._retry_guard = False
+        self._guard = RetryGuard("Mouser", clock, logger)  # retries off during an outage
         self._failure_minute: int | None = None
         self._suppressed_failures = 0
         self._client: httpx.AsyncClient | None = None
@@ -509,51 +507,22 @@ class MouserClient:
         return data
 
     def _record_outcome(self, *, transient: bool) -> None:
-        start = int(self._clock() // 10) * 10
-        if not self._outcomes or self._outcomes[-1][0] != start:
-            self._outcomes.append([start, 0, 0])
-        self._outcomes[-1][1] += int(transient)
-        self._outcomes[-1][2] += 1
-        self._retries_disabled()
+        self._guard.record(transient=transient)
 
     def _retries_disabled(self) -> bool:
-        """Bounded five-minute outcome window, retaining the overlapping ten-second bucket.
-
-        Check after outcomes and before retry sends, so an idle guard expires too. Cancelled
-        attempts have no outcome; HTTP/API refusals and non-retried errors count in the total.
-        """
-        cutoff = self._clock() - 300
-        while self._outcomes and self._outcomes[0][0] + 10 <= cutoff:
-            self._outcomes.popleft()
-        failures = sum(row[1] for row in self._outcomes)
-        attempts = sum(row[2] for row in self._outcomes)
-        disabled = failures >= 10 and failures * 10 >= attempts * 9
-        if disabled != self._retry_guard:
-            log = logger.warning if disabled else logger.info
-            log("Mouser retry guard %s: %d/%d transient failures over the last 5 minutes; retries %s",
-                "entered" if disabled else "cleared", failures, attempts, "disabled" if disabled else "enabled")
-            self._retry_guard = disabled
-        return disabled
+        """RetryGuard: off while 90% of at least 10 attempts in five minutes failed transiently."""
+        return self._guard.disabled()
 
     def _retry_delay(self, failure: _TransientFailure, retries: int, waited: float) -> float | None:
         if self._retries_disabled() or retries >= 2 or waited >= 30:
             return None
-        delay = (3, 10)[retries]
+        delay: float = (3, 10)[retries]
         response = failure.response
         if response is not None and 500 <= response.status_code < 600:
-            value = response.headers.get("Retry-After", "").strip()
-            if value.isascii() and value.isdecimal():
-                if len(value.lstrip("0")) > 2:  # also avoids parsing an unbounded integer
-                    return None
-                delay = int(value.lstrip("0") or "0")
-            elif value:
-                try:
-                    date = parsedate_to_datetime(value)
-                    if date.tzinfo is None:
-                        date = date.replace(tzinfo=timezone.utc)
-                    delay = max(0, date.timestamp() - self._clock())
-                except (ValueError, TypeError, OverflowError):
-                    pass  # unusable Retry-After: use our normal delay
+            after = retry_after_seconds(response.headers, self._clock())
+            if after is not None:  # unusable: our normal delay
+                # whole seconds stay whole, so the log reads delay=5 (and 0), as before
+                delay = int(after) if math.isfinite(after) and after == int(after) else after
         return delay if waited + delay <= 30 else None
 
     def _log_transient(self, failure: _TransientFailure, attempt: int, key_index: int,

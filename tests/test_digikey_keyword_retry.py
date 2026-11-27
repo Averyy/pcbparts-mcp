@@ -43,8 +43,13 @@ class FakeDigiKey:
 async def digikey():
     clients = []
 
+    async def no_wait(seconds):  # the transient retry's wait, never real time
+        waits.append(seconds)
+
+    waits = []
+
     def create(fake, quota=None):
-        client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota)
+        client = DigiKeyClient(client_id="id", client_secret="secret", quota=quota, sleep=no_wait)
         client._http = httpx.AsyncClient(transport=httpx.MockTransport(fake))
         clients.append(client)
         return client
@@ -200,7 +205,8 @@ async def test_quota_and_usage_count_one_request_and_no_retry_events(digikey):
     assert await client.get_part("209") == result
     assert quota.status()["used_today"] == 1
     assert quota.callers._counts == {"203.0.113.7": 1}
-    assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 0}
+    assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 0,
+                                                                          "ext_sent": 0}
     assert_keyword_request(fake)
 
 
@@ -213,7 +219,8 @@ async def test_quota_refusal_is_recorded_and_not_cached(digikey):
     assert client._store.get_answer("digikey", "209") is None
     assert await client.get_part("209") == result
     assert fake.requests == [] and quota.status()["used_today"] == 0
-    assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {"sent": 0, "cached": 0, "rate_limited": 2}
+    assert stats.usage.summary()["totals"]["distributors"]["digikey"] == {"sent": 0, "cached": 0, "rate_limited": 2,
+                                                                          "ext_sent": 0}
 
 
 async def test_rate_limit_is_not_cached_as_not_found(digikey):
@@ -227,9 +234,10 @@ async def test_rate_limit_is_not_cached_as_not_found(digikey):
 
 
 async def test_other_errors_propagate_without_caching(digikey):
-    fake = FakeDigiKey(httpx.Response(500))
+    fake = FakeDigiKey(httpx.Response(500), httpx.Response(500))  # a 5xx is sent once more (0.10.11)
     client = digikey(fake)
     with pytest.raises(DigiKeyError, match="DigiKey API returned HTTP 500"):
         await client.get_part("209")
     assert client._store.get_answer("digikey", "209") is None
-    assert_keyword_request(fake)
+    assert [(r.method, r.url.path) for r in fake.requests] == [("POST", "/products/v4/search/keyword")] * 2
+    assert all(json.loads(r.content) == {"Keywords": "209", "Limit": 10, "Offset": 0} for r in fake.requests)

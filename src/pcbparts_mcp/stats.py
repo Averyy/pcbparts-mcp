@@ -16,7 +16,9 @@ part_lifecycle input forms per entry (lifecycle_inputs). From 0.10.5 also bad_re
 (separate from reasons), tool_apps (every outcome per app and tool), latency histograms and
 bucket-bound percentiles (excluding bad_request and rate_limited), versions (starts per version),
 upstream_status (one HTTP/transport class per sent request), and popular_terms (query tokens seen
-from at least 10 distinct callers that UTC day, top 200); all null on days saved before.
+from at least 10 distinct callers that UTC day, top 200); all null on days saved before. From 0.10.11
+also DigiKey's lookups through ext (distributors.digikey.ext_sent, DISTRIBUTOR_PATH_EVENTS)
+and ext's requests (the digikey_ext upstream source, EXTENSION_UPSTREAM_SOURCES).
 tool_apps, latency and popular_terms keep only the last RECENT_DAYS days; older days are cleared on rollover, load,
 save and summary. Today's tool_apps keeps MAX_APPS names; past days keep the busiest MAX_TOOL_APPS - 1
 plus other, summing all outcomes from the remaining apps.
@@ -133,6 +135,16 @@ DISTRIBUTOR_SKIPPED = "skipped"
 # Historical DigiKey counts from before 0.9.3: an all-digit number missed the direct lookup and
 # went on to a keyword search, which found the part or didn't. Also counted in "sent".
 DISTRIBUTOR_RETRY_EVENTS = ("retry_found", "retry_missed")
+# From 0.10.11, per distributor: lookups sent through another path, counted together with their "sent"
+# (which stays the total), so DigiKey's API lookups are sent - ext_sent. ext_sent: DigiKey lookups
+# sent through ext (an optional deployment extension, extensions.DigiKeyExt), 0 without one.
+# Written when this version creates the day's counts for that distributor. A day whose counts it found
+# already there without the field (days before 0.10.11, the deploy day when DigiKey had counts before the
+# start) keeps its lookups in sent alone, as does a day whose stored value isn't a usable count (not an
+# int from 0 to sent): no partial split. Versions before 0.10.11 drop the field, and the digikey_ext
+# upstream and upstream_status counts, from every stored day when they load and save the file, so copy
+# USAGE_STATS_PATH before rolling back below 0.10.11 or every day loses its split and ext's requests.
+DISTRIBUTOR_PATH_EVENTS = {"digikey": ("ext_sent",)}
 # Why a call counted as not_found or failed: one label a call, so a tool's labels add up to its not_found +
 # failed. Only these can be stored, which keeps what users typed out of the counts and bounds the file.
 REASONS = frozenset({
@@ -159,9 +171,14 @@ WHY_EMPTY_RESULTS = ("complete", "incomplete", "budget_exhausted_or_busy", "diag
 # The services this server sends requests to: JLCPCB's parts search, LCSC's product data, EasyEDA's
 # /api/products (footprint checks), /api/components (symbols and footprints for pinouts) and
 # /api/components again for land checks' footprint pads (its own budget), SamacSys
-# ComponentSearchEngine (searches and model downloads), and from 0.10.4 the HTTP requests behind
-# DigiKey lookups (DISTRIBUTOR_EVENTS counts Mouser and DigiKey per lookup)
-UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", "easyeda_pads", "cse", "digikey")
+# ComponentSearchEngine (searches and model downloads), from 0.10.4 the HTTP requests behind
+# DigiKey lookups (DISTRIBUTOR_EVENTS counts Mouser and DigiKey per lookup), and from 0.10.11
+# EXTENSION_UPSTREAM_SOURCES: digikey_ext, the requests an optional deployment extension sends for
+# DigiKey lookups (extensions.DigiKeyExt), counted by the extension itself with client._sent() and
+# client._count_upstream(). Nothing in this repository sends them: without one the source is absent.
+EXTENSION_UPSTREAM_SOURCES = ("digikey_ext",)
+UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", "easyeda_pads", "cse", "digikey",
+                    *EXTENSION_UPSTREAM_SOURCES)
 # Mouser's sends are counted in distributors; adding it to UPSTREAM_SOURCES would double-count them.
 # Mouser's sends/retries remain in distributors; from 0.10.9 its HTTP outcomes are counted too.
 UPSTREAM_STATUS_SOURCES = (*UPSTREAM_SOURCES, "mouser")
@@ -343,7 +360,11 @@ def _clean_day(day: dict) -> dict[str, Any]:
             counts = {"rate_limited": counts.get("limited"), **counts}  # 0.6.3 called it "limited"
             clean["distributors"][str(name)] = {
                 **{key: _int(counts.get(key)) for key in DISTRIBUTOR_EVENTS},
-                **{key: _int(counts[key]) for key in (*DISTRIBUTOR_RETRY_EVENTS, DISTRIBUTOR_SKIPPED, "retries") if key in counts}}
+                **{key: _int(counts[key]) for key in (*DISTRIBUTOR_RETRY_EVENTS, DISTRIBUTOR_SKIPPED, "retries")
+                   if key in counts},
+                # a path count is kept only as stored: anything else leaves the day unsplit, never split at 0
+                **{key: counts[key] for key in DISTRIBUTOR_PATH_EVENTS.get(str(name), ())
+                   if type(counts.get(key)) is int and 0 <= counts[key] <= _int(counts.get("sent"))}}
     for name, counts in _dict(day.get("reasons")).items():
         if isinstance(counts, dict):
             clean["reasons"][str(name)] = {reason: _int(count) for reason, count in counts.items() if reason in REASONS}
@@ -751,12 +772,24 @@ class UsageStats:
         name = _capped(apps, clean_app_name(name))
         apps[name] = apps.get(name, 0) + 1
 
-    def record_distributor(self, name: str, event: str) -> None:
+    def record_distributor(self, name: str, event: str, path: str | None = None) -> None:
         """A Mouser/DigiKey lookup: "sent" to the API, "cached" (answered from the cache) or
         "rate_limited" (turned away by our limits or a pause the API asked for); or a part number
-        "skipped" (DISTRIBUTOR_SKIPPED). Mouser "retries" counts sent transient retries (also in sent)."""
-        counts = self._day()["distributors"].setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
+        "skipped" (DISTRIBUTOR_SKIPPED). Mouser "retries" (and DigiKey's from 0.10.11) counts sent
+        transient retries (also in sent).
+        path: the way a sent lookup went other than the API (DISTRIBUTOR_PATH_EVENTS: DigiKey's
+        "ext_sent"), counted with it on the same day, from one clock reading; only with "sent", and
+        never an event of its own. A day whose counts this version found without it keeps them unsplit."""
+        paths = DISTRIBUTOR_PATH_EVENTS.get(name, ())
+        if event in paths:
+            return
+        distributors = self._day()["distributors"]
+        counts = distributors.get(name)
+        if counts is None:
+            counts = distributors[name] = {**dict.fromkeys(DISTRIBUTOR_EVENTS, 0), **dict.fromkeys(paths, 0)}
         counts[event] = counts.get(event, 0) + 1
+        if event == "sent" and path in paths and path in counts:
+            counts[path] += 1
 
     def record_upstream(self, source: str, event: str, count: int = 1) -> None:
         """Requests to a service other than Mouser/DigiKey: source is one of UPSTREAM_SOURCES, event
@@ -926,6 +959,7 @@ class UsageStats:
         total_tools: dict[str, dict[str, int]] = {}
         total_apps: dict[str, int] = {}
         total_distributors: dict[str, dict[str, int]] = {}
+        unsplit: set[tuple[str, str]] = set()  # (distributor, path count) some listed day sent lookups without
         total_reasons: dict[str, dict[str, int]] = {}
         total_why_empty: dict[str, int] = {}
         total_upstream: dict[str, dict[str, int]] = {}
@@ -990,6 +1024,8 @@ class UsageStats:
                 total = total_distributors.setdefault(name, dict.fromkeys(DISTRIBUTOR_EVENTS, 0))
                 for key, value in c.items():
                     total[key] = total.get(key, 0) + value
+                if c.get("sent"):  # lookups sent without their path counts: the totals can't split them
+                    unsplit.update((name, key) for key in DISTRIBUTOR_PATH_EVENTS.get(name, ()) if key not in c)
             for name, c in day["reasons"].items():
                 total = total_reasons.setdefault(name, {})
                 for reason, count in c.items():
@@ -1022,6 +1058,8 @@ class UsageStats:
                 **{field: _recent_view(field, day[field])
                    for field in SINCE_0_10_5},
             })
+        for name, key in unsplit:  # a partial path count would put that day's other lookups under the API
+            total_distributors[name].pop(key, None)
         totals_tools = _tools_view(total_tools)
         return {
             "about": (f"Private counts per UTC day, default 30 days, up to {KEEP_DAYS}, newest first; totals adds up "
@@ -1049,15 +1087,26 @@ class UsageStats:
                       "package or stock limit to test). distributors retry_found and retry_missed: before 0.9.3, DigiKey all-digit "
                       "numbers that missed the direct lookup and went on to a keyword search, also counted in sent. "
                       "distributors mouser retries (from 0.10.9, on days with any): sent attempts after transient "
-                      "failures, also counted in sent; each send counts once, including retries. "
+                      "failures, also counted in sent; each send counts once, including retries. digikey retries "
+                      "(from 0.10.11, on days with any): the same for a DigiKey lookup's search sent again after a "
+                      "redirect, server error, unreadable reply or dropped connection. "
                       "distributors skipped (from 0.10.0, on days with any): part numbers not sent because no "
                       "distributor can list them (a value such as 10k, a BOM placeholder, an LCSC code, non-ASCII "
                       "text, not 3-40 characters); one a number. "
+                      "distributors digikey ext_sent (from 0.10.11): lookups sent through ext, an "
+                      "optional deployment extension (0 without one); also counted in sent, which stays the "
+                      "total, so API lookups are sent - ext_sent. Absent, and that day's lookups not split, "
+                      "on days before 0.10.11 and on a day whose DigiKey counts were already there without it "
+                      "when 0.10.11 or later loaded them (the deploy day, if DigiKey had counts before the "
+                      "start); a rollback below 0.10.11 drops it, and the digikey_ext request counts, from every stored day. Totals omit it when any "
+                      "listed day that sent DigiKey lookups lacks it. "
                       "From 0.10.0 (earlier days have none): upstream, for each service this server calls: jlcpcb "
                       "(parts search), lcsc (product data), easyeda_products (footprint checks), easyeda_components "
                       "(symbols and footprints for pinouts), easyeda_pads (footprint pads for land checks), cse "
-                      "(SamacSys searches and model downloads) and, from 0.10.4, digikey (DigiKey's HTTP requests; "
-                      "distributors counts lookups); "
+                      "(SamacSys searches and model downloads), from 0.10.4 digikey (DigiKey's HTTP requests; "
+                      "distributors counts lookups) and, from 0.10.11, digikey_ext (requests an optional "
+                      "deployment extension sends for DigiKey lookups, with their upstream_status; absent without "
+                      "one); "
                       "sent is HTTP requests sent, one each, not tool calls; retries the further attempts the HTTP "
                       "client made on its own for them, where it reports them (a timeout reports none); cached "
                       "answers given without a request (memory cache, on-disk store or seed); rate_limited requests "
@@ -1280,9 +1329,9 @@ def count_db_wait(seconds: float, components: bool, started_at: datetime.datetim
         logger.exception("Usage stats: couldn't count a database wait")
 
 
-def count_distributor(name: str, event: str) -> None:
+def count_distributor(name: str, event: str, path: str | None = None) -> None:
     try:
-        usage.record_distributor(name, event)
+        usage.record_distributor(name, event, path)
     except Exception:
         logger.exception("Usage stats: couldn't count a distributor lookup")
 

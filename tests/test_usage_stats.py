@@ -416,7 +416,8 @@ class TestUsageStats:
         usage = UsageStats(clock=Clock())
         for event in ("sent", "sent", "cached", "rate_limited"):
             usage.record_distributor("digikey", event)
-        assert usage.summary()["days"][0]["distributors"] == {"digikey": {"sent": 2, "cached": 1, "rate_limited": 1}}
+        assert usage.summary()["days"][0]["distributors"] == {"digikey": {"sent": 2, "cached": 1, "rate_limited": 1,
+                                                                           "ext_sent": 0}}
 
     def test_counts_survive_a_restart(self, tmp_path):
         path, clock = tmp_path / "usage.json", Clock()
@@ -568,7 +569,8 @@ class TestDistributorEvents:
         await client.get_part("LM358P")
         await client.get_part("LM358P")
         await client.get_part("NE555P")  # over the daily limit of 1
-        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 1}
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 1,
+                                                                         "ext_sent": 0}
 
     async def test_mouser_sent_and_cached(self):
         body = {"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}}

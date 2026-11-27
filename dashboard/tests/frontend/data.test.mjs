@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  AMOUNT, aggregate, buildView, countedFrom, daily, hourly, mouserDayStartHour, own, problemHours, totals,
+  AMOUNT, aggregate, buildView, countedFrom, daily, digikeyPaths, hourly, mouserDayStartHour, own, problemHours, totals,
 } from "../../src/pcbparts_dashboard/static/data.js";
 import { dayHourET, delta, parseQuotaTime, resetHour, serverDay } from "../../src/pcbparts_dashboard/static/format.js";
 
@@ -224,4 +224,31 @@ test("legacy unsorted error replies are included in outcome totals", () => {
   const t = totals(agg);
   assert.equal(t.unsorted, 3);
   assert.equal(Object.entries(t).filter(([k]) => k !== "calls").reduce((n, [, v]) => n + v, 0), t.calls);
+});
+
+test("DigiKey lookups split by path only on days that recorded ext_sent", () => {
+  const dk = (digikey) => ({ distributors: { digikey, mouser: { sent: 9 } } });
+  const days = [
+    day("2026-11-18", dk({ sent: 40, cached: 3 })),                     // before server 0.10.11: one figure
+    day("2026-11-19"),                                                  // no DigiKey lookups at all
+    day("2026-11-20", dk({ sent: 30, cached: 1, ext_sent: 12 })),
+    day("2026-11-21", dk({ sent: 20, cached: 0, ext_sent: 0 })),    // split, no ext lookups
+  ];
+  const pick = ({ api, ext, unsplit, split }) => ({ api, ext, unsplit, split });
+  assert.deepEqual(pick(digikeyPaths(days)), { api: 38, ext: 12, unsplit: 40, split: true });
+  assert.deepEqual(pick(digikeyPaths(days.slice(0, 2))), { api: 0, ext: 0, unsplit: 40, split: false });
+  assert.deepEqual(pick(digikeyPaths([days[3]])), { api: 20, ext: 0, unsplit: 0, split: true });
+  assert.deepEqual(pick(digikeyPaths([{ distributors: { digikey: { sent: 5, ext_sent: 9 } } }])),
+    { api: 0, ext: 9, unsplit: 0, split: true }); // never a negative API figure
+  // requests pair with their own day's lookups: a split day's API requests with its API lookups, an
+  // unsplit day's requests (with any ext ones) with all of its lookups
+  const up = (digikey, ext) => ({ upstream: { digikey: { sent: digikey }, ...(ext ? { digikey_ext: { sent: ext } } : {}) } });
+  const paired = digikeyPaths([{ ...days[0], ...up(50) }, { ...days[2], ...up(36, 30) }, { ...dk({ sent: 10 }), ...up(6, 9) }]);
+  assert.deepEqual([paired.requests, paired.lookups], [50 + 36 + 15, 40 + 18 + 10]);
+  // the sum keeps the total; the split counter covers only its own days
+  assert.deepEqual({ ...aggregate(days).distributors.digikey }, { sent: 90, cached: 4, ext_sent: 12 });
+  const view = (key) => buildView(payload(days, "2026-11-22T21:35:00Z"), key);
+  // a split with no ext lookups is still a split: counted from the first day that had one
+  assert.equal(countedFrom(view("7d"), AMOUNT.digikeyPaths).text, "from about Nov 20");
+  assert.equal(countedFrom(view("yesterday"), AMOUNT.digikeyPaths).text, "");
 });

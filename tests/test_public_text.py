@@ -32,12 +32,14 @@ ALLOWED = re.compile(
 # Source files also contain the existing API configuration identifiers. Guard extension
 # wording separately so that checking source text doesn't require renaming that interface.
 _PROVIDER_NEAR = (r"(?:browsers?|headless|Chrome|Xvfb|scrap\w*|website|site[-_ ]path|Cloudflare|bypass\w*|"
-                  r"challenge[-_ ]solv\w*|solv\w*\s+(?:the\s+)?challenges?|no\s+API\s+key)")
+                  r"challenge[-_ ]solv\w*|solv\w*\s+(?:the\s+)?challenges?|no\s+API\s+key|backups?)")
 PROVIDER_FORBIDDEN = re.compile(
     r"\b(?:keyless|credentials?[-_ ]free|no[-_ ]credentials(?:[-_ ]mode)?)\b|"
     r"(?<![a-z0-9])(?:without|no)[_\s]+(?:DigiKey[_\s]+)?(?:API[_\s]+)?credentials\b|"
     r"\bDigiKey(?:['’]s)?\s+without\s+an?\s+(?:API\s+)?key\b|"
     r"\bdigikey[_ ]site\b|\bDIGIKEY_LOOKUP(?:_\w+)?\b|\bBrowserSolver\b|\bpatchright\b|"
+    # Identifier and phrase forms the word-bounded patterns below miss (DigiKeyBackup, digikey-site, ...)
+    r"digi[-_ ]?key[-_'’]*s?[-_ ]?(?:backup|site|web)|\bBackup(?:Failed|Unavailable|Answer)\b|"
     r"digikey\.\w+/products/api\b|"
     # Matched across line breaks: a phrase wrapped onto the next line must not slip through.
     rf"\bDigiKey\b[^.]{{0,80}}\b{_PROVIDER_NEAR}|"
@@ -48,6 +50,8 @@ PROVIDER_FORBIDDEN = re.compile(
 PROVIDER_ALLOWED = {
     # This test checks the unrelated SamacSys login requirement.
     "tests/test_distributors.py": re.compile(r"\btest_get_kicad_no_credentials\b"),
+    # The dashboard's own login: a refresh without its credentials gets 401.
+    "dashboard/tests/test_server.py": re.compile(r"# Without credentials the answer is 401 either way"),
 }
 
 
@@ -83,7 +87,8 @@ def test_public_text_does_not_describe_multiple_mouser_credentials():
 def test_source_and_tests_keep_extension_wording_generic():
     # Include new, not-yet-staged source files too; ignored local files are not project inputs.
     listed = subprocess.check_output(
-        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "src/", "tests/"],
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "src/", "tests/",
+         "dashboard/src/", "dashboard/tests/"],
         cwd=ROOT).decode("utf-8").split("\0")
     paths = [ROOT / name for name in set(listed) if name]
     # Public documents, the landing site, workflows and container files too.
@@ -95,7 +100,7 @@ def test_source_and_tests_keep_extension_wording_generic():
     leaks = []
     for path in set(paths):
         if (not path.is_file() or path == Path(__file__).resolve()
-                or (path.suffix not in {".py", ".md", ".txt", ".json", ".yml", ".yaml", ".html", ".toml"}
+                or (path.suffix not in {".py", ".md", ".txt", ".json", ".yml", ".yaml", ".html", ".toml", ".js", ".mjs"}
                     and path.name not in {"Dockerfile"})):
             continue
         for number, text in provider_leaks_in(path.read_text(encoding="utf-8"), path.relative_to(ROOT).as_posix()):
@@ -112,13 +117,18 @@ def test_source_and_tests_keep_extension_wording_generic():
     "without DigiKey credentials", "with no DigiKey API credentials set", "credentials-free", "no-credentials mode",
     "scrape DigiKey", "the DigiKey scraper", "DigiKey's website", "https://www.digikey.com/products/api/v5",
     "DigiKey lookups\nthrough a headless browser", "DigiKey (no API key)",
+    "DigiKey backup", "DigiKey lookups moved to the backup", "the backup for DigiKey lookups",
+    "DigiKeyBackup", "load_digikey_backup", "digikey_backup", "DigiKeySite", "digikey-site", "DigiKey's site",
+    "DigiKey’s site", "the DigiKey web page", "DigiKey web lookups", "BackupFailed", "BackupUnavailable",
+    "BackupAnswer",
 ])
 def test_source_guard_catches_provider_disclosures(text):
     assert provider_leaks_in(text)
 
 
 @pytest.mark.parametrize("text", [
-    "DigiKey backup", "optional extension provider", "DigiKey API credentials not configured",
+    "DigiKey ext", "digikey_ext", "DigiKeyExt", "ExtUnavailable", "optional extension provider",
+    "DigiKey API credentials not configured", "DigiKey sets", "the DigiKey API's limits",
     "Cloudflare response from JLCPCB", "Open the dashboard in your browser", "DIGIKEY_LOCALE_SITE",
     "the daily JLCPCB scrape", "DigiKey API credentials (free at https://developer.digikey.com)",
     "Mouser and DigiKey answers are kept per part number. The scrape runs daily",
@@ -132,6 +142,10 @@ def test_source_guard_allowlist_is_specific_to_the_samacsys_test():
     assert not provider_leaks_in(text, "tests/test_distributors.py")
     assert provider_leaks_in(text, "tests/test_extensions.py")
     assert provider_leaks_in("DigiKey without credentials", "tests/test_distributors.py")
+    login = "# Without credentials the answer is 401 either way: the check never runs before auth."
+    assert not provider_leaks_in(login, "dashboard/tests/test_server.py")
+    assert provider_leaks_in(login, "dashboard/src/pcbparts_dashboard/server.py")
+    assert provider_leaks_in("DigiKey without credentials", "dashboard/tests/test_server.py")
 
 
 @pytest.mark.parametrize("text", [

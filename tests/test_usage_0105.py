@@ -432,7 +432,7 @@ async def test_real_mouser_miss_shape():
 ], ids=["ok", "redirect", "4xx", "429", "5xx", "http4", "http5", "rate", "wafer-time", "time",
         "conn", "empty", "waf", "block", "large", "other", "http-time", "http-conn", "cancel", "waf200", "waf403"])
 @pytest.mark.parametrize("source", stats.UPSTREAM_SOURCES,
-                         ids=["jlc", "lcsc", "products", "components", "pads", "cse", "dk"])
+                         ids=["jlc", "lcsc", "products", "components", "pads", "cse", "dk", "dkb"])
 async def test_upstream_classes(result, label, source, monkeypatch):
     monkeypatch.setattr(stats, "usage", stats.UsageStats(clock=Clock()))
 
