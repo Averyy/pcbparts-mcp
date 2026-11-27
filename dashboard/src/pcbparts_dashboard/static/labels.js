@@ -160,7 +160,7 @@ export const refusalGroupLabel = (g) => ({
 export const UPSTREAM_LABEL = table({
   jlcpcb: "JLCPCB parts search", lcsc: "LCSC product data", easyeda_products: "EasyEDA footprint checks",
   easyeda_components: "EasyEDA symbols and footprints", easyeda_pads: "EasyEDA footprint pads",
-  cse: "SamacSys (CSE)", mouser: "Mouser", digikey: "DigiKey",
+  cse: "SamacSys (CSE)", mouser: "Mouser", digikey: "DigiKey API", digikey_ext: "DigiKey ext",
 });
 export const upstreamLabel = (src) => UPSTREAM_LABEL[src] || fallback(src);
 

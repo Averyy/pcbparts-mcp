@@ -100,9 +100,13 @@ class FakeMouser:
 async def make(clock):
     made = []
 
+    async def no_sleep(seconds):
+        """Waits take no real time and leave the fake clock where it is, as a real sleep would."""
+
+
     def create(quotas, fake):
         n = len(quotas.quotas)
-        client = MouserClient(KEYS[0], quota=quotas, extra_keys=KEYS[1:n], clock=clock)
+        client = MouserClient(KEYS[0], quota=quotas, extra_keys=KEYS[1:n], clock=clock, sleep=no_sleep)
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(fake))
         made.append(client)
         return client

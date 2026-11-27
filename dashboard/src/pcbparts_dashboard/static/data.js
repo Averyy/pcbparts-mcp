@@ -104,6 +104,35 @@ export function upstreamCounts(record, src) {
   return status ? { sent: sumObj(status) } : {};
 }
 
+/**
+ * DigiKey lookups by path over some day records. From server 0.10.11 a day's sent (the total) has
+ * ext_sent inside it, so the API's are sent - ext_sent; a day without it (older, or re-cut from
+ * one) has only its single figure, which stays unsplit rather than being guessed at.
+ * requests/lookups pair the HTTP requests with the lookups they were for, day by day: a split day's
+ * digikey requests (the API's) with its API lookups; an unsplit day's with all of its lookups, adding
+ * its digikey_ext requests (on the deploy day ext's requests are already apart).
+ */
+export function digikeyPaths(recs) {
+  const out = { api: 0, ext: 0, unsplit: 0, split: false, requests: 0, lookups: 0 };
+  const sentOf = (r, src) => { const v = own(r?.upstream, src)?.sent; return typeof v === "number" ? v : 0; };
+  for (const r of recs || []) {
+    const d = own(r?.distributors, "digikey");
+    const sent = d && typeof d.sent === "number" ? d.sent : 0;
+    if (d && typeof d === "object" && typeof d.ext_sent === "number") {
+      out.split = true;
+      out.ext += d.ext_sent;
+      out.api += Math.max(0, sent - d.ext_sent);
+      out.requests += sentOf(r, "digikey");
+      out.lookups += Math.max(0, sent - d.ext_sent);
+    } else {
+      out.unsplit += sent;
+      out.requests += sentOf(r, "digikey") + sentOf(r, "digikey_ext");
+      out.lookups += sent;
+    }
+  }
+  return out;
+}
+
 /** The latency buckets of every tool added up. */
 export function allLatency(agg) {
   let counts = null;
@@ -238,6 +267,7 @@ export const AMOUNT = {
   datasheets: (r) => r?.datasheet_links?.visits || 0,
   distributorApps: (r) => Object.values(r?.distributor_apps || {}).reduce((a, apps) => a + Object.values(apps || {}).reduce((x, v) => x + (v?.calls || 0), 0), 0),
   restarts: (r) => (r?.restarts == null ? 0 : 1), // recorded at all, even at zero
+  digikeyPaths: (r) => (digikeyPaths([r]).split ? 1 : 0), // split by path at all, even with no ext lookups
 };
 
 /**

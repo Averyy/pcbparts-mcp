@@ -209,7 +209,168 @@ for (const [daily, counted429, errors4xx, errors5xx, expected] of [
 test("DigiKey 429 outcomes still contribute to HTTP warnings", () => {
   const problems = { upstream_status: { digikey: { "429": 3 } } };
   const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems })] }));
-  assert.ok(app.attentionItems(app.view(), app.scope(app.view())).some((it) => it.what === "DigiKey: 3 of 3 requests got an error answer."));
+  assert.ok(app.attentionItems(app.view(), app.scope(app.view())).some((it) => it.what === "DigiKey API: 3 of 3 requests got an error answer."));
+});
+
+test("DigiKey HTTP warnings say plain DigiKey over unsplit days and count DigiKey's retries", () => {
+  const status = { digikey: { "2xx": 10, "5xx": 6 } };
+  const warning = (distributors) => {
+    const problems = { upstream_status: status, distributors };
+    const app = setup(payload({ edays: [day("2026-11-23", { complete: false, problems, distributors })] }));
+    return app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.what.includes("requests got an error answer"));
+  };
+  // split (server 0.10.11): the API's requests, with its retries
+  let item = warning({ digikey: { sent: 12, retries: 2, ext_sent: 0 } });
+  assert.equal(item.what, "DigiKey API: 6 of 16 requests got an error answer.");
+  assert.match(item.detail, /; 2 were retries\.$/);
+  item = warning({ digikey: { sent: 12, retries: 1, ext_sent: 0 } });
+  assert.match(item.detail, /; 1 was a retry\.$/);
+  // a problems window with unsplit lookups: one DigiKey figure, as in the services table
+  item = warning({ digikey: { sent: 12 } });
+  assert.equal(item.what, "DigiKey: 6 of 16 requests got an error answer.");
+  assert.doesNotMatch(item.detail, /retr/);
+});
+
+const dkRow = (app, src) => app.el("upstreams").querySelector(`td[title="${src}"]`)?.parentElement || null;
+
+test("DigiKey API and ext traffic are shown apart, with their HTTP outcomes", () => {
+  const status = { digikey: { "2xx": 36 }, digikey_ext: { "2xx": 11, "5xx": 3 } };
+  const app = setup(payload({ problems_since: "2026-11-23T05:00:00Z", edays: [day("2026-11-23", {
+    complete: false, partial_end: true,
+    distributors: { digikey: { sent: 30, cached: 4, rate_limited: 0, ext_sent: 12 } },
+    upstream: { digikey: { sent: 36 }, digikey_ext: { sent: 14 } }, upstream_status: status,
+    problems: { start: "2026-11-23T05:00:00Z", end: at, upstream_status: status },
+  })] }));
+  app.render();
+  const api = dkRow(app, "digikey"), ext = dkRow(app, "digikey_ext");
+  assert.equal(api.children[0].textContent, "DigiKey API");
+  assert.equal(api.children[1].textContent, "36");
+  assert.equal(ext.children[0].textContent, "DigiKey ext");
+  assert.equal(ext.children[1].textContent, "14");
+  assert.match(ext.textContent, /3 of 14/);
+  const text = app.el("upstreams").textContent;
+  assert.match(text, /Sent to DigiKey30/);
+  assert.match(text, /Through the API18/);
+  assert.match(text, /Through ext12/);
+  assert.match(text, /Requests each API lookup took, on average2\.0/); // the API's 36 requests over its 18 lookups
+  assert.doesNotMatch(text, /counted apart/);
+  const items = app.attentionItems(app.view(), app.scope(app.view()));
+  assert.ok(items.some((it) => it.what === "DigiKey ext: 3 of 14 requests got an error answer."));
+  assert.ok(!items.some((it) => it.what.startsWith("DigiKey API:")));
+});
+
+test("days before the split keep one DigiKey figure, with no invented split", () => {
+  const old = { distributors: { digikey: { sent: 40, cached: 2 } }, upstream: { digikey: { sent: 40 } } };
+  const split = { distributors: { digikey: { sent: 30, cached: 0, ext_sent: 12 } },
+    upstream: { digikey: { sent: 18 }, digikey_ext: { sent: 12 } } };
+  const edays = [day("2026-11-20", old), day("2026-11-21", old), day("2026-11-22", split),
+    day("2026-11-23", { complete: false, partial_end: true })];
+  const app = setup(payload({ edays }));
+  app.state.range = "all";
+  app.render();
+  let text = app.el("upstreams").textContent;
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey"); // older days hold both paths' requests
+  assert.equal(dkRow(app, "digikey").children[1].textContent, "98");
+  assert.equal(dkRow(app, "digikey_ext").children[0].textContent, "DigiKey ext");
+  assert.match(text, /DigiKey's API and ext requests are counted apart from Nov 22\./);
+  assert.doesNotMatch(text, /DigiKey ext from/);
+  assert.match(text, /Sent to DigiKey110/);
+  assert.match(text, /Through the API \(from Nov 22\)18/);
+  assert.match(text, /Through ext \(from Nov 22\)12/);
+  // the older days' requests and lookups both include ext's; the split day's API ones go together
+  assert.match(text, /Requests each one took, on average1\.0/); // not "API lookup": older days are unsplit
+
+  app.state.range = "yesterday"; // the split day alone: no older figure, no note
+  app.render();
+  text = app.el("upstreams").textContent;
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey API");
+  assert.match(text, /Through the API18/);
+  assert.match(text, /Requests each API lookup took, on average1\.0/);
+  assert.doesNotMatch(text, /counted apart|\(from /);
+
+  const before = setup(payload({ edays: [day("2026-11-22", old), day("2026-11-23", { complete: false, partial_end: true })] }));
+  before.state.range = "yesterday"; // only older days: exactly as before the split existed
+  before.render();
+  text = before.el("upstreams").textContent;
+  assert.equal(dkRow(before, "digikey").children[0].textContent, "DigiKey");
+  assert.equal(dkRow(before, "digikey_ext"), null);
+  assert.match(text, /Sent to DigiKey40/);
+  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.doesNotMatch(text, /Through the|ext/);
+});
+
+// The deploy day is unsplit (its lookups are only in sent), but its ext requests after the deploy
+// already count under digikey_ext: that day's requests and lookups must still pair up.
+const unsplitDeploy = { distributors: { digikey: { sent: 300, cached: 5 } },
+  upstream: { digikey: { sent: 200 }, digikey_ext: { sent: 100 } } };
+const olderDay = { distributors: { digikey: { sent: 40, cached: 2 } }, upstream: { digikey: { sent: 40 } } };
+const splitDay = { distributors: { digikey: { sent: 30, cached: 0, ext_sent: 12 } },
+  upstream: { digikey: { sent: 18 }, digikey_ext: { sent: 12 } } };
+
+test("an unsplit day with ext requests alone keeps one lookup figure and pairs its requests", () => {
+  const app = setup(payload({ edays: [day("2026-11-22", unsplitDeploy), day("2026-11-23", { complete: false, partial_end: true })] }));
+  app.state.range = "yesterday";
+  app.render();
+  const text = app.el("upstreams").textContent;
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey"); // it holds ext's requests before the deploy
+  assert.equal(dkRow(app, "digikey").children[1].textContent, "200");
+  assert.equal(dkRow(app, "digikey_ext").children[1].textContent, "100");
+  assert.match(text, /Sent to DigiKey300/);
+  assert.match(text, /Requests each one took, on average1\.0/); // 200 + 100 requests for 300 lookups
+  assert.doesNotMatch(text, /Through the|API lookup/);
+  assert.match(text, /DigiKey's API and ext requests are counted apart from Nov 22\./);
+});
+
+for (const range of ["7d", "all"]) test(`an unsplit day with ext requests in the ${range} range keeps requests per lookup`, () => {
+  const edays = [...["2026-11-12", "2026-11-13", "2026-11-14", "2026-11-15", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"]
+    .map((d) => day(d, olderDay)), day("2026-11-21", unsplitDeploy), day("2026-11-22", splitDay),
+    day("2026-11-23", { complete: false, partial_end: true })];
+  const app = setup(payload({ edays }));
+  app.state.range = range;
+  app.render();
+  const text = app.el("upstreams").textContent;
+  const older = range === "7d" ? 5 : 9;
+  assert.match(text, new RegExp(`Sent to DigiKey${older * 40 + 330}`));
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey");
+  assert.equal(dkRow(app, "digikey").children[1].textContent, String(older * 40 + 218));
+  assert.equal(dkRow(app, "digikey_ext").children[1].textContent, "112");
+  // older days 40/40, the deploy day (200 + 100)/300, the split day 18/18: 1.0, where adding the range's
+  // requests and dividing by all but the split day's ext lookups gave less than one, so no figure
+  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.doesNotMatch(text, /API lookup/);
+  assert.match(text, /Through the API \(from Nov 22\)18/);
+  assert.match(text, /Through ext \(from Nov 22\)12/);
+  // the ext row has requests from the deploy day, so the services note starts there
+  assert.match(text, /DigiKey's API and ext requests are counted apart from Nov 21\./);
+});
+
+test("an ext row with nothing sent or answered from the cache still renders, without a dated note", () => {
+  // its only counts are requests held back, so no day has any of its requests to date the split from
+  const app = setup(payload({ edays: [day("2026-11-22", { distributors: { digikey: { sent: 20 } },
+    upstream: { digikey: { sent: 20 }, digikey_ext: { rate_limited: 3 } } }),
+  day("2026-11-23", { complete: false, partial_end: true })] }));
+  app.state.range = "yesterday";
+  app.render();
+  const text = app.el("upstreams").textContent;
+  assert.equal(dkRow(app, "digikey_ext").children[1].textContent, "–"); // nothing sent
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey");
+  assert.doesNotMatch(text, /counted apart/);
+  assert.match(text, /DigiKey lookups/); // the rest of the section still rendered
+});
+
+test("a range without ext lookups shows no ext row or figure", () => {
+  // ext's source can come through a re-cut day at zero
+  const app = setup(payload({ edays: [day("2026-11-23", { complete: false, partial_end: true,
+    distributors: { digikey: { sent: 20, cached: 1, ext_sent: 0 } },
+    upstream: { digikey: { sent: 20 }, digikey_ext: { sent: 0, cached: 0 } },
+    upstream_status: { digikey: { "2xx": 20 }, digikey_ext: {} } })] }));
+  app.render();
+  const text = app.el("upstreams").textContent;
+  assert.equal(dkRow(app, "digikey").children[0].textContent, "DigiKey API");
+  assert.equal(dkRow(app, "digikey_ext"), null);
+  assert.match(text, /Sent to DigiKey20/);
+  assert.match(text, /Requests each one took, on average1\.0/);
+  assert.doesNotMatch(text, /Through the|ext/);
 });
 
 test("mixed Mouser refusals split daily info from warnings and keep held-back lookups visible", () => {

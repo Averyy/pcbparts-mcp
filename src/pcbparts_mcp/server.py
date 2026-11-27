@@ -61,7 +61,7 @@ from .config import (
 from .client import (DATASHEET_SIGNINGS_PER_MINUTE, DatasheetLinkBusy, EasyEDAComponentNotFound, JLCPCBClient,
                      JLCPCBUnavailable)
 from .mouser import MouserAPIError, MouserClient, MouserError
-from .extensions import ExtensionContext, load_digikey_backup
+from .extensions import ExtensionContext, extension_failed, load_digikey_ext
 from .digikey import DigiKeyClient, DigiKeyError
 from .distributor_store import DistributorStore
 from .lifecycle import Entry, LifecycleLookup, Reading, STATUSES, makers_match, utc_text
@@ -111,7 +111,7 @@ def _save_address_counts() -> None:
 
 def _caller_tallies() -> list:
     """The hourly per-IP lines of Mouser/DigiKey requests sent and held back: the quota pools', and
-    the DigiKey client's backup lookups, including when an API pool is also configured."""
+    the DigiKey client's ext lookups, including when an API pool is also configured."""
     tallies = [tally for quota in _distributor_quotas.values() for tally in (quota.callers, quota.held_back)]
     if _digikey_client is not None:
         tallies += [tally for tally in (getattr(_digikey_client, "callers", None),
@@ -266,9 +266,17 @@ async def lifespan(app):
         logger.warning("Extra Mouser keys are set without MOUSER_API_KEY: Mouser lookups are off")
 
     # The DigiKey client: with credentials, the API and its daily quota per app
-    backup = load_digikey_backup(ExtensionContext(address_daily, _distributor_store, DISTRIBUTOR_STORE_PATH))
-    if backup is not None:
-        await backup.start()
+    ext = load_digikey_ext(ExtensionContext(address_daily, _distributor_store, DISTRIBUTOR_STORE_PATH))
+    if ext is not None:
+        try:
+            await ext.start()
+        except Exception as exc:  # a broken extension never takes the server down: API only
+            extension_failed(exc)
+            try:
+                await ext.close()
+            except Exception:
+                pass
+            ext = None
     second_app = None
     if bool(DIGIKEY_CLIENT_ID_2) != bool(DIGIKEY_CLIENT_SECRET_2):
         missing = "DIGIKEY_CLIENT_SECRET_2" if DIGIKEY_CLIENT_ID_2 else "DIGIKEY_CLIENT_ID_2"
@@ -283,15 +291,15 @@ async def lifespan(app):
         digikey_quota = QuotaPool(app_quotas, per_minute=DIGIKEY_PER_MINUTE, address_daily=address_daily)
         _distributor_quotas["digikey"] = digikey_quota
         _digikey_client = DigiKeyClient(DIGIKEY_CLIENT_ID, DIGIKEY_CLIENT_SECRET, quota=digikey_quota,
-                                        second_app=second_app, store=_distributor_store, backup=backup,
+                                        second_app=second_app, store=_distributor_store, ext=ext,
                                         address_daily=address_daily)
         counts = ", ".join(str(q.status()["used_today"]) for q in app_quotas)
         logger.info(f"DigiKey client initialized: {len(app_quotas)} app(s) (requests today: {counts})")
-    elif backup is not None:
+    elif ext is not None:
         if DIGIKEY_CLIENT_ID or DIGIKEY_CLIENT_SECRET:
             missing = "DIGIKEY_CLIENT_SECRET" if DIGIKEY_CLIENT_ID else "DIGIKEY_CLIENT_ID"
             logger.error(f"{missing} is missing; using the configured DigiKey extension")
-        _digikey_client = DigiKeyClient(client_id="", client_secret="", store=_distributor_store, backup=backup,
+        _digikey_client = DigiKeyClient(client_id="", client_secret="", store=_distributor_store, ext=ext,
                                         address_daily=address_daily)
         logger.info("DigiKey client initialized")
     else:
@@ -438,8 +446,8 @@ async def _every_minute() -> None:
                     tally.flush_if_due()
                 address_days = {id(q.address_daily): q.address_daily for q in _distributor_quotas.values()
                                 if q.address_daily is not None}
-                if (backup_day := getattr(_digikey_client, "_address_daily", None)) is not None:
-                    address_days[id(backup_day)] = backup_day  # Also reset allowances without an API pool
+                if (ext_day := getattr(_digikey_client, "_address_daily", None)) is not None:
+                    address_days[id(ext_day)] = ext_day  # Also reset allowances without an API pool
                 for address_day in address_days.values():
                     address_day.reset_if_due()
                 _refused_callers.flush_if_due()
@@ -4264,8 +4272,8 @@ def _snapshot_health() -> dict[str, Any]:
 def _distributor_quota_status() -> dict[str, Any]:
     """Current private quota detail, including DigiKey's pause when it has no daily quota."""
     reply = {name: quota.status() for name, quota in _distributor_quotas.items()}
-    if "digikey" not in reply and _digikey_client is not None and (backup := _digikey_client.backup_status()):
-        reply["digikey"] = {**backup, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
+    if "digikey" not in reply and _digikey_client is not None and (ext := _digikey_client.ext_status()):
+        reply["digikey"] = {**ext, "resets_at": _utc_text(_next_utc_midnight(_health_clock()))}
     return reply
 
 

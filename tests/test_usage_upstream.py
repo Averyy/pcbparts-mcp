@@ -27,7 +27,10 @@ from pcbparts_mcp.cse import CSEClient
 from pcbparts_mcp.digikey import DigiKeyClient
 from pcbparts_mcp.easyeda_store import FootprintAnswer
 from pcbparts_mcp.mouser import MouserClient, MouserError
-from pcbparts_mcp.stats import PARTS_ASKED, REFUSAL_GROUPS, UPSTREAM_EVENTS, UPSTREAM_SOURCES, UPSTREAM_STATUS_SOURCES, UsageStats
+from pcbparts_mcp.stats import (
+    EXTENSION_UPSTREAM_SOURCES, PARTS_ASKED, REFUSAL_GROUPS, UPSTREAM_EVENTS, UPSTREAM_SOURCES, UPSTREAM_STATUS_SOURCES,
+    UsageStats,
+)
 
 UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 18, 20, 5, tzinfo=UTC).timestamp()
@@ -481,6 +484,162 @@ class TestMouserHTTP:
         assert "From 0.10.9 also mouser" in view["about"]
 
 
+class TestDigiKeyExtCounts:
+    """From 0.10.11: ext's HTTP requests under the digikey_ext source, and its lookups in
+    distributors.digikey.ext_sent (also in sent, which stays the total)."""
+
+    async def test_the_ext_source_is_counted_through_the_client_helpers(self, monkeypatch):
+        usage = UsageStats(clock=Clock())
+        monkeypatch.setattr(stats, "usage", usage)
+        assert "digikey_ext" in UPSTREAM_SOURCES and "digikey_ext" in UPSTREAM_STATUS_SOURCES
+
+        async def reply(status):
+            return Reply(status, retries=1)
+
+        await client_module._sent("digikey_ext", reply(200))
+        await client_module._sent("digikey_ext", reply(503))
+        client_module._count_upstream("digikey_ext", "cached")
+        client_module._count_upstream("digikey_ext", "rate_limited")
+        await client_module._sent("digikey", reply(200))  # the API's stay apart
+        day = usage.summary()["days"][0]
+        assert day["upstream"] == {"digikey": counts(sent=1, retries=1),
+                                   "digikey_ext": counts(sent=2, retries=2, cached=1, rate_limited=1)}
+        assert list(day["upstream"]) == ["digikey", "digikey_ext"]  # in UPSTREAM_SOURCES order
+        assert day["upstream_status"] == {"digikey_ext": {"2xx": 1, "5xx": 1}, "digikey": {"2xx": 1}}
+
+    def test_ext_sent_is_part_of_sent_and_survives_save_load_and_totals(self, tmp_path):
+        clock = Clock()
+        path = tmp_path / "usage.json"
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        for _ in range(2):
+            usage.record_distributor("digikey", "sent")  # through the API
+            usage.record_distributor("digikey", "sent", path="ext_sent")  # through ext
+            usage.record_distributor("digikey", "cached")
+            usage.record_distributor("digikey", "ext_sent")  # a path alone counts nothing
+            usage.record_distributor("mouser", "sent", path="ext_sent")  # not one of Mouser's paths
+            usage.record_upstream("digikey_ext", "sent")
+            clock.advance(86400)
+        usage.record_distributor("digikey", "cached")  # a day without ext lookups still says so
+        usage.save()
+        reloaded = UsageStats(clock=clock)
+        reloaded.open(path)
+        view = reloaded.summary()
+        assert view == usage.summary()
+        assert [d["distributors"]["digikey"] for d in view["days"]] == [
+            {"sent": 0, "cached": 1, "rate_limited": 0, "ext_sent": 0},
+            *[{"sent": 2, "cached": 1, "rate_limited": 0, "ext_sent": 1}] * 2]
+        assert view["days"][1]["distributors"]["mouser"] == {"sent": 1, "cached": 0, "rate_limited": 0}
+        assert view["totals"]["distributors"]["digikey"] == {"sent": 4, "cached": 3, "rate_limited": 0, "ext_sent": 2}
+        assert view["totals"]["upstream"]["digikey_ext"] == counts(sent=2)
+        about = view["about"]
+        for text in ("digikey_ext (requests an optional deployment extension sends for DigiKey lookups",
+                     "absent without one", "distributors digikey ext_sent (from 0.10.11)",
+                     "API lookups are sent - ext_sent", "already there without it",
+                     "Totals omit it when any listed day that sent DigiKey lookups lacks it",
+                     "a rollback below 0.10.11 drops it, and the digikey_ext request counts, from every stored day"):
+            assert text in about, text
+        assert "digikey_ext" not in UsageStats(clock=clock).summary()["totals"]["upstream"]  # absent, not 0
+
+    def test_sent_and_ext_sent_land_on_one_day_at_midnight(self):
+        """Both come from one clock reading, so a lookup sent as the UTC day ends can't count its
+        sent on one day and its path on the next."""
+        midnight = datetime.datetime(2026, 11, 19, tzinfo=UTC).timestamp()
+        clock = Clock(midnight - 0.5)
+        usage = UsageStats(clock=clock)
+        usage.record_distributor("digikey", "cached")  # the day's counts, from 0.10.11 on
+
+        def reading():
+            now = clock()
+            clock.advance(1)  # each read of the clock passes midnight
+            return now
+
+        usage._clock = reading
+        usage.record_distributor("digikey", "sent", path="ext_sent")
+        usage._clock = clock
+        days = {d["date"]: d["distributors"] for d in usage.summary()["days"]}
+        assert days["2026-11-18"]["digikey"] == {"sent": 1, "cached": 1, "rate_limited": 0, "ext_sent": 1}
+        assert "digikey" not in days.get("2026-11-19", {})
+
+    def test_a_day_counted_before_0_10_11_stays_unsplit(self, tmp_path):
+        clock = Clock()
+        path = tmp_path / "usage.json"
+        today = datetime.datetime.fromtimestamp(clock(), UTC).date().isoformat()
+        path.write_text(json.dumps({"days": {today: {
+            "tools": {}, "apps": {}, "callers": 0,
+            "distributors": {"digikey": {"sent": 5, "cached": 1, "rate_limited": 0}},
+        }}}), encoding="utf-8")
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        usage.record_distributor("digikey", "sent", path="ext_sent")  # its earlier sent lookups can't be split
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 6, "cached": 1, "rate_limited": 0}
+        clock.advance(86400)  # the next day is counted by this version from its start
+        usage.record_distributor("digikey", "sent", path="ext_sent")
+        usage.record_distributor("digikey", "sent")
+        view = usage.summary()
+        assert view["days"][0]["distributors"]["digikey"] == {"sent": 2, "cached": 0, "rate_limited": 0, "ext_sent": 1}
+        assert view["days"][1]["distributors"]["digikey"] == {"sent": 6, "cached": 1, "rate_limited": 0}
+        # the unsplit day sent lookups: totals can't split them, so they keep the single figure
+        assert view["totals"]["distributors"]["digikey"] == {"sent": 8, "cached": 1, "rate_limited": 0}
+        assert usage.summary(days=1)["totals"]["distributors"]["digikey"]["ext_sent"] == 1
+
+    def test_an_unsplit_day_without_sent_lookups_keeps_the_totals_split(self, tmp_path):
+        clock = Clock()
+        path = tmp_path / "usage.json"
+        today = datetime.datetime.fromtimestamp(clock(), UTC).date().isoformat()
+        path.write_text(json.dumps({"days": {today: {
+            "tools": {}, "apps": {}, "callers": 0,
+            "distributors": {"digikey": {"sent": 0, "cached": 3, "rate_limited": 1}},
+        }}}), encoding="utf-8")
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        clock.advance(86400)
+        usage.record_distributor("digikey", "sent", path="ext_sent")
+        assert usage.summary()["totals"]["distributors"]["digikey"] == {
+            "sent": 1, "cached": 3, "rate_limited": 1, "ext_sent": 1}
+
+    @pytest.mark.parametrize("stored", ["many", True, None, -1, 2.5, 3, 2**60],
+                             ids=["text", "bool", "null", "neg", "float", "over-sent", "huge"])
+    def test_a_malformed_ext_sent_leaves_the_day_unsplit(self, tmp_path, stored):
+        clock = Clock()
+        path = tmp_path / "usage.json"
+        today = datetime.datetime.fromtimestamp(clock(), UTC).date().isoformat()
+        path.write_text(json.dumps({"days": {today: {
+            "tools": {}, "apps": {}, "callers": 0,
+            "distributors": {"digikey": {"sent": 2, "ext_sent": stored}, "mouser": {"sent": 1, "ext_sent": 3}},
+            "upstream": {"digikey_ext": {"sent": 2, "cached": True}},
+        }}}), encoding="utf-8")
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        day = usage.summary()["days"][0]
+        assert day["distributors"] == {"digikey": {"sent": 2, "cached": 0, "rate_limited": 0},
+                                       "mouser": {"sent": 1, "cached": 0, "rate_limited": 0}}
+        assert day["upstream"] == {"digikey_ext": counts(sent=2)}
+        usage.record_distributor("digikey", "sent", path="ext_sent")  # and it stays unsplit
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {"sent": 3, "cached": 0, "rate_limited": 0}
+
+    def test_a_path_counts_only_with_sent(self):
+        usage = UsageStats(clock=Clock())
+        for event in ("cached", "rate_limited", "skipped"):
+            usage.record_distributor("digikey", event, path="ext_sent")
+        usage.record_distributor("digikey", "sent", path="ext_sent")
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {
+            "sent": 1, "cached": 1, "rate_limited": 1, "skipped": 1, "ext_sent": 1}
+
+    def test_a_stored_ext_sent_is_kept(self, tmp_path):
+        clock = Clock()
+        path = tmp_path / "usage.json"
+        today = datetime.datetime.fromtimestamp(clock(), UTC).date().isoformat()
+        path.write_text(json.dumps({"days": {today: {
+            "tools": {}, "apps": {}, "callers": 0, "distributors": {"digikey": {"sent": 4, "ext_sent": 0}},
+        }}}), encoding="utf-8")
+        usage = UsageStats(clock=clock)
+        usage.open(path)
+        usage.record_distributor("digikey", "sent", path="ext_sent")
+        assert usage.summary()["days"][0]["distributors"]["digikey"] == {
+            "sent": 5, "cached": 0, "rate_limited": 0, "ext_sent": 1}
+
+
 class TestPartsAsked:
     async def test_mouser(self):
         body = {"Errors": [], "SearchResults": {"NumberOfResult": 0, "Parts": []}}
@@ -513,7 +672,7 @@ class TestPartsAsked:
         await client.close()
         day = stats.usage.summary()["days"][0]
         assert day["parts_asked"] == {"digikey": {"total": 3, "distinct": 1}}
-        assert day["distributors"]["digikey"] == {"sent": 2, "cached": 1, "rate_limited": 0}
+        assert day["distributors"]["digikey"] == {"sent": 2, "cached": 1, "rate_limited": 0, "ext_sent": 0}
 
 
 async def _ok(request):
@@ -648,7 +807,8 @@ class TestWiring:
             if name != "_sent" and not (isinstance(node.args[1], ast.Constant) and node.args[1].value in UPSTREAM_EVENTS):
                 bad.append(f"{file}: {ast.unparse(node)}")
         assert bad == []
-        assert used == set(UPSTREAM_SOURCES)  # and every source is counted somewhere
+        # and every source is counted somewhere, except the ones only an optional extension sends
+        assert used == set(UPSTREAM_SOURCES) - set(EXTENSION_UPSTREAM_SOURCES)
 
     def test_parts_asked_names_a_distributor(self):
         found = {node.args[0].value for _, _, node in self._calls({"record_parts_asked", "count_parts_asked"})
@@ -663,4 +823,4 @@ class TestWiring:
                 continue
             assert isinstance(source, ast.Constant) and source.value in UPSTREAM_STATUS_SOURCES
             used.add(source.value)
-        assert used == set(UPSTREAM_STATUS_SOURCES)
+        assert used == set(UPSTREAM_STATUS_SOURCES) - set(EXTENSION_UPSTREAM_SOURCES)

@@ -6,7 +6,7 @@ import {
   latencyText, ms, parseIso, partsET, percent, percentile, resetHour, serverDay, timeET, tzAbbr, weekdayDateET,
 } from "./format.js";
 import {
-  AMOUNT, NOT_NAMED_APPS, RANGES, aggregate, allLatency, buildView, callsByApp, completeDay, countedFrom, daily, hourly,
+  AMOUNT, NOT_NAMED_APPS, RANGES, aggregate, allLatency, buildView, callsByApp, completeDay, countedFrom, daily, digikeyPaths, hourly,
   mouserDayStartHour, namedApps, own, problemHours as hourPoints, sumArr, sumObj, totals, trendDays, upstreamCounts,
 } from "./data.js";
 import {
@@ -386,6 +386,8 @@ function attentionItems(view, sc) {
     const refused = Object.entries(lim?.refusals || {}).filter(([cause, v]) => v > 0 && !(name === "mouser" && cause === "daily"));
     if (refused.length) items.push({ level: "warning", what: `${who} refused ${plural(refused.reduce((x, [, v]) => x + v, 0), "of our requests", "of our requests")}.`, detail: refused.map(([c, v]) => `${refusedLabel(c)} ${full(v)}`).join(", ") });
   }
+  // as in renderUpstreams: days without DigiKey's split (before server 0.10.11) hold both paths' requests
+  const dkUnsplit = digikeyPaths(view.recs.map((r) => r.problems).filter(Boolean)).unsplit > 0;
   for (const [src, st] of Object.entries(p.upstream_status || {})) {
     const tot = sumObj(st);
     // Mouser HTTP outcomes start in 0.10.9: limit replies count as 429 and have their own notices.
@@ -394,9 +396,11 @@ function attentionItems(view, sc) {
     const bad = groups.reduce((x, [, v]) => x + v, 0);
     const hard = (st["5xx"] || 0) + (st.timeout || 0) + (st.connection || 0) + (st.challenge || 0) + (st.other_error || 0);
     if ((bad >= 3 && tot && bad / tot >= 0.02) || hard >= 5) {
-      const retries = src === "mouser" ? p.distributors?.mouser?.retries : 0;
+      // Mouser's transient retries, and DigiKey's API ones from server 0.10.11, are among the requests
+      const retries = src === "mouser" || src === "digikey" ? own(p.distributors, src)?.retries : 0;
       const retryText = retries > 0 ? `; ${full(retries)} ${retries === 1 ? "was a retry" : "were retries"}` : "";
-      items.push({ level: "warning", what: `${upstreamLabel(src)}: ${full(bad)} of ${full(tot)} requests got an error answer.`, detail: groups.map(([l, v]) => `${l.toLowerCase()} ${full(v)}`).join(", ") + retryText + "." });
+      const label = src === "digikey" && dkUnsplit ? DISTRIBUTOR_LABEL.digikey : upstreamLabel(src);
+      items.push({ level: "warning", what: `${label}: ${full(bad)} of ${full(tot)} requests got an error answer.`, detail: groups.map(([l, v]) => `${l.toLowerCase()} ${full(v)}`).join(", ") + retryText + "." });
     }
   }
   const dl = p.datasheet_links;
@@ -1072,17 +1076,21 @@ function renderUpstreams(view) {
   const period = sc.bites ? ` ${sc.short}` : "";
   sec.replaceChildren(cardHead(sec, "Services we call", "Requests the server sent to JLCPCB, LCSC, EasyEDA, SamacSys, Mouser and DigiKey, and how they answered."));
 
-  const sources = [...new Set([...Object.keys(a.upstream || {}), ...Object.keys(a.upstream_status || {}), ...Object.keys(p?.upstream_status || {})])];
-  const info = sources.map((src) => {
+  const allSources = [...new Set([...Object.keys(a.upstream || {}), ...Object.keys(a.upstream_status || {}), ...Object.keys(p?.upstream_status || {})])];
+  // DigiKey's API and ext requests are counted apart from server 0.10.11; older days have one DigiKey figure
+  const dk = digikeyPaths(view.recs);
+  const label = (src) => (src === "digikey" && dk.unsplit ? DISTRIBUTOR_LABEL.digikey : upstreamLabel(src));
+  const info = allSources.map((src) => {
     const u = upstreamCounts(a, src), pu = own(p?.upstream, src) || {}, st = own(p?.upstream_status, src) || null;
     const tot = st ? sumObj(st) : 0;
     const errs = st ? STATUS_GROUPS.slice(2).map((g) => [g.label.toLowerCase(), g.keys.reduce((x, k) => x + (st[k] || 0), 0)]).filter(([, v]) => v > 0) : [];
     return { src, u, tot, errs, nErr: errs.reduce((x, [, v]) => x + v, 0), held: sc.before ? 0 : pu.rate_limited || 0, served: (u.sent || 0) + (u.cached || 0) };
-  });
+  }).filter((r) => r.src !== "digikey_ext" || sumObj(r.u) + r.tot + r.held > 0); // ext only has a row when it was used
+  const sources = info.map((r) => r.src);
   // columns with nothing in them for this range stay out; a sentence under the table says so instead
   const hasHeld = info.some((r) => r.held), hasErr = !sc.before && info.some((r) => r.nErr);
   const rows = info.map((r) => h("tr", {},
-    h("td", { class: "name", text: upstreamLabel(r.src), title: r.src }),
+    h("td", { class: "name", text: label(r.src), title: r.src }),
     h("td", { text: full(r.u.sent) }),
     h("td", {}, r.u.cached ? full(r.u.cached) : "", r.u.cached && r.served ? h("span", { class: "pct", text: percent(r.u.cached / r.served) }) : null),
     hasHeld ? h("td", { text: r.held ? full(r.held) : "" }) : null,
@@ -1097,9 +1105,16 @@ function renderUpstreams(view) {
   const notes = h("div", { class: "chart-sub notes" });
   const cov = countedFrom(view, AMOUNT.upstream);
   if (rows.length) {
-    // A service whose own counting began later is named with its date.
-    const later = sources.map((src) => [src, countedFrom(view, AMOUNT.upstreamOf(src))]).filter(([, c]) => c.start && c.start > cov.start && c.text);
-    if (cov.text || later.length) notes.append(h("span", { text: `Requests are counted ${cov.text || "throughout this range"}${later.map(([src, c]) => `; ${upstreamLabel(src)} ${c.text}`).join("")}.` }));
+    // A service whose own counting began later is named with its date. Ext is used only at times,
+    // so its first request says nothing about when counting began: the note below covers it.
+    const later = sources.filter((src) => src !== "digikey_ext").map((src) => [src, countedFrom(view, AMOUNT.upstreamOf(src))]).filter(([, c]) => c.start && c.start > cov.start && c.text);
+    if (cov.text || later.length) notes.append(h("span", { text: `Requests are counted ${cov.text || "throughout this range"}${later.map(([src, c]) => `; ${label(src)} ${c.text}`).join("")}.` }));
+    // dated from the ext row's own first day, so the note never contradicts the rows' numbers
+    const apartFrom = dk.unsplit && sources.includes("digikey") && sources.includes("digikey_ext")
+      ? countedFrom(view, AMOUNT.upstreamOf("digikey_ext")) : null;
+    // no start: the ext row has only requests held back or outcomes, so no day to date it from
+    const apart = apartFrom?.text || (apartFrom?.start ? `from ${dayLabel(apartFrom.start)}` : "");
+    if (apart) notes.append(h("span", { text: `DigiKey's API and ext requests are counted apart ${apart}.` }));
   }
   if (rows.length && !sc.before) {
     const none = [!hasErr && "no error answers", !hasHeld && "nothing held back by our own limits"].filter(Boolean);
@@ -1118,11 +1133,20 @@ function renderUpstreams(view) {
     const held = Object.entries(lim?.held_back || {}).filter(([, n]) => n > 0);
     const refused = Object.entries(lim?.refusals || {}).filter(([, n]) => n > 0);
     const box = h("div", {}, h("h3", {}, `${who} lookups`, h("small", { text: "this range" })));
-    // requests per lookup only where both were counted over the same days
-    const http = name === "digikey" && !countedFrom(view, AMOUNT.upstreamOf("digikey")).text ? own(a.upstream, "digikey")?.sent : null;
+    // DigiKey's lookups by path, from the days that split them (server 0.10.11); none shown without ext lookups
+    const paths = name === "digikey" ? digikeyPaths(view.recs) : null;
+    const viaExt = paths?.ext > 0;
+    const pathsFrom = viaExt ? countedFrom(view, AMOUNT.digikeyPaths).text : "";
+    const pathNote = pathsFrom ? ` (${pathsFrom})` : "";
+    // requests per lookup only where both were counted over the same days, paired day by day
+    // (digikeyPaths): per API lookup only when no lookup in the range is unsplit
+    const http = name === "digikey" && !countedFrom(view, AMOUNT.upstreamOf("digikey")).text ? paths.requests : null;
+    const lookups = paths?.lookups || 0;
     box.append(kv([
       ["Sent to " + who, full(d.sent)],
-      http && d.sent && http >= d.sent ? ["Requests each one took, on average", (http / d.sent).toFixed(1)] : [null],
+      viaExt ? [`Through the API${pathNote}`, full(paths.api)] : [null],
+      viaExt ? [`Through ext${pathNote}`, full(paths.ext)] : [null],
+      http && lookups > 0 && http >= lookups ? [viaExt && !paths.unsplit ? "Requests each API lookup took, on average" : "Requests each one took, on average", (http / lookups).toFixed(1)] : [null],
       ["Answered from saved answers instead", full(d.cached)],
       ["Not real part numbers, so not sent", d.skipped ? full(d.skipped) : null],
       sc.before ? [null] : [`Turned away by limits${period}`, held.length ? held.map(([c, n]) => `${full(n)}: ${heldBackLabel(c, who, reset, budgetReset)}`).join("; ") : "0"],

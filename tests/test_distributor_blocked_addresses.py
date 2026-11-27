@@ -15,7 +15,7 @@ from pcbparts_mcp.distributor_store import DistributorStore
 from pcbparts_mcp.file_logging import _DailyFileHandler
 from pcbparts_mcp.lifecycle import Entry, LifecycleLookup, Reading
 
-from digikey_backup import FakeBackup
+from digikey_ext import FakeExt
 from test_distributor_address_limits import clients, clock  # noqa: F401, F811 (fixtures)
 from test_distributor_quota import Clock
 
@@ -215,20 +215,20 @@ async def test_part_lifecycle_gives_stored_readings_only(clients, clock):
 
 async def test_digikey_extension_path_sends_nothing(clock):
     store = DistributorStore(clock=clock)
-    backup = FakeBackup()
+    ext = FakeExt()
     day = blocked_day(clock)
-    client = DigiKeyClient("", "", backup=backup, store=store, address_daily=day, clock=clock)
+    client = DigiKeyClient("", "", ext=ext, store=store, address_daily=day, clock=clock)
     try:
         reply = await client.get_part("PART-A", caller=BLOCKED)
         assert reply["error"].startswith(BLOCKED_TEXT + " To skip the shared limits")
         answers = await client.lifecycle(["PART-B", "PART-C"], BLOCKED)
         assert {a.kind for a in answers.values()} == {"limited"}
         assert not client.can_answer_now(BLOCKED) and client.can_answer_now(OPEN)
-        assert backup.lookups == [] and backup.batches == []
+        assert ext.lookups == [] and ext.batches == []
         assert held_back("digikey")["address_blocked"] == 3
         assert client.held_back._counts == {BLOCKED: 3}
         assert "error" not in await client.get_part("PART-A", caller=OPEN)
-        assert backup.lookups == ["PART-A"] and day._counts == {OPEN: 1}
+        assert ext.lookups == ["PART-A"] and day._counts == {OPEN: 1}
     finally:
         await client.close()
         store.close()

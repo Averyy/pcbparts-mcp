@@ -354,10 +354,10 @@ def test_maker_suffix_needs_its_own_manufacturer(catalog):
 @pytest.mark.parametrize("digikey, suggested", [
     (None, False),  # no DigiKey client at all
     ("api", False),  # API credentials: the shared daily limit
-    ("backup", True),  # an available extension provider
-    ("backup_paused", False),  # ... but paused after a refusal
-    ("backup_capped", False),  # ... or the caller's address has used its day (0.10.5)
-], ids=["none", "api", "backup", "backup_paused", "backup_capped"])
+    ("ext", True),  # an available extension provider
+    ("ext_paused", False),  # ... but paused after a refusal
+    ("ext_capped", False),  # ... or the caller's address has used its day (0.10.5)
+], ids=["none", "api", "ext", "ext_paused", "ext_capped"])
 async def test_miss_hint_suggests_an_available_digikey_provider(monkeypatch, digikey, suggested):
     """The hint follows provider availability and the caller's address allowance."""
     from pcbparts_mcp.digikey import DigiKeyClient
@@ -368,13 +368,13 @@ async def test_miss_hint_suggests_an_available_digikey_provider(monkeypatch, dig
     if digikey == "api":
         client = DigiKeyClient("id", "secret", store=store)
     elif digikey:
-        from digikey_backup import FakeBackup
+        from digikey_ext import FakeExt
         from pcbparts_mcp.cache import AddressDailyQuota
         day = AddressDailyQuota(1, key=lambda ip: ip, clock=lambda: 1_795_003_200.0)  # fixed: no midnight
-        client = DigiKeyClient("", "", store=store, backup=FakeBackup(), address_daily=day)
-        if digikey == "backup_paused":
-            client._backup.pause()
-        if digikey == "backup_capped":
+        client = DigiKeyClient("", "", store=store, ext=FakeExt(), address_daily=day)
+        if digikey == "ext_paused":
+            client._ext.pause()
+        if digikey == "ext_capped":
             day.record("203.0.113.9")
     monkeypatch.setattr(server, "_caller_ip", lambda: "203.0.113.9")
     monkeypatch.setattr(server, "_digikey_client", client)

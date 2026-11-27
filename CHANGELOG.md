@@ -4,6 +4,16 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.11 (2026-11-27)
+
+### Changed
+
+- **Usage dashboard**: DigiKey's counts shown in more detail.
+
+### Fixed
+
+- **`digikey_get_part`**: redirects, server errors, unreadable replies and dropped connections from DigiKey's API are retried once; a redirect or unreadable reply now gets a clear error and is never stored as not found.
+
 ## 0.10.10 (2026-11-26)
 
 ### Added

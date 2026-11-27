@@ -87,8 +87,12 @@ class FakeDigiKey:
         return self.responses.pop(0)
 
 
+async def _no_wait(seconds):  # the transient retry's wait, never real time
+    pass
+
+
 def digikey(fake: FakeDigiKey, q: DailyQuota | None, clock=None) -> DigiKeyClient:
-    client = DigiKeyClient(client_id="id", client_secret="secret", quota=q)
+    client = DigiKeyClient(client_id="id", client_secret="secret", quota=q, sleep=_no_wait)
     client._http = httpx.AsyncClient(transport=httpx.MockTransport(fake))
     if clock is not None:
         async def sleep(seconds):
@@ -534,15 +538,18 @@ class TestDigiKeyLimits:
         assert (await client.get_part("TEST123"))["error"] == "DigiKey is limiting requests (HTTP 429). Try again later."
 
     async def test_other_errors_raise_with_the_status(self, clock):
-        client = digikey(FakeDigiKey(httpx.Response(503)), quota(clock))
+        fake = FakeDigiKey(httpx.Response(503), httpx.Response(503))  # a 5xx is sent once more (0.10.11)
+        client = digikey(fake, quota(clock))
         with pytest.raises(DigiKeyError, match="DigiKey API returned HTTP 503"):
             await client.get_part("TEST123")
+        assert fake.product_requests == 2
 
 
 class TestToolErrors:
     async def test_digikey_tool_shows_what_went_wrong(self, clock, monkeypatch):
         from pcbparts_mcp import server
-        monkeypatch.setattr(server, "_digikey_client", digikey(FakeDigiKey(httpx.Response(503)), quota(clock)))
+        fake = FakeDigiKey(httpx.Response(503), httpx.Response(503))  # sent once more, then reported
+        monkeypatch.setattr(server, "_digikey_client", digikey(fake, quota(clock)))
         result = await server.digikey_get_part(part_number="TEST123")
         assert result == {"error": "DigiKey part lookup failed: DigiKey API returned HTTP 503"}
 
@@ -588,7 +595,7 @@ class TestServerWiring:
     async def test_health_is_identical_across_distributor_configurations(self, monkeypatch):
         from pcbparts_mcp import server
         from pcbparts_mcp.cache import MouserKeyPool
-        from digikey_backup import FakeBackup
+        from digikey_ext import FakeExt
 
         monkeypatch.setattr(server, "_health_clock", lambda: NOW)
         monkeypatch.setattr(server, "_distributor_quotas", {})
@@ -611,13 +618,13 @@ class TestServerWiring:
                 assert (await client.get("/health")).json() == baseline
                 pool.share_penalty(MIDNIGHT, "daily")
                 assert (await client.get("/health")).json() == baseline
-            backup = FakeBackup()
-            digikey = DigiKeyClient(client_id="", client_secret="", backup=backup, clock=lambda: NOW)
+            ext = FakeExt()
+            digikey = DigiKeyClient(client_id="", client_secret="", ext=ext, clock=lambda: NOW)
             monkeypatch.setattr(server, "_distributor_quotas", {})
             monkeypatch.setattr(server, "_digikey_client", digikey)
             try:
                 assert (await client.get("/health")).json() == baseline
-                backup.pause()
+                ext.pause()
                 assert (await client.get("/health")).json() == baseline
             finally:
                 await digikey.close()

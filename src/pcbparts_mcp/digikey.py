@@ -7,13 +7,14 @@ import logging
 import math
 import time
 from dataclasses import dataclass, field
-from typing import Any, Callable, NamedTuple
+from typing import Any, Awaitable, Callable, NamedTuple
 
 import httpx
 
 from . import stats
 from .cache import (
-    SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, Pacer, QuotaPool, _header_int, _next_utc_midnight,
+    SELF_HOSTING_URL, AddressDailyQuota, CallerTally, DailyQuota, Pacer, QuotaPool, RetryGuard, _header_int,
+    _next_utc_midnight, retry_after_seconds,
 )
 from .client import _sent
 from .config import (
@@ -26,7 +27,7 @@ from .config import (
     DIGIKEY_LOCALE_LANGUAGE,
     DIGIKEY_LOCALE_CURRENCY,
 )
-from .extensions import AddressCapReached, BackupFailed, BackupUnavailable, Charge, DigiKeyBackup
+from .extensions import AddressCapReached, ExtFailed, ExtUnavailable, Charge, DigiKeyExt
 from .distributor_store import DistributorStore
 from .lifecycle import Reading, digikey_status, last_buy_date, utc_text
 from .search.mpn import NOT_SENT_HINTS, distributor_match, not_sent_reason, same_jst_part
@@ -50,6 +51,26 @@ class DigiKeyRateLimited(DigiKeyError):
 
 class DigiKeyNotFound(DigiKeyError):
     """DigiKey answered 404: it has no product with that number."""
+
+
+class DigiKeyTransient(DigiKeyError):
+    """A request that may work if sent again: a redirect, a server error (5xx), an unreadable reply
+    or a dropped connection (not a timeout). A lookup's request is sent once more (_fetch_api).
+    retry_after: a 5xx reply's Retry-After in seconds (cache.retry_after_seconds), else None."""
+
+    def __init__(self, message: str, retry_after: float | None = None):
+        super().__init__(message)
+        self.retry_after = retry_after
+
+
+# Seconds a lookup waits before sending its request again after a DigiKeyTransient failure; a
+# Retry-After asking for longer means no retry
+RETRY_WAIT_SECONDS = 3.0
+# A lookup's search requests at most: its first, and one each for a transient failure, a token
+# renewal and the second app after the first app's daily refusal, whichever come first
+MAX_SEARCH_SENDS = 3
+# Keys a keyword search reply has (its no-results reply too); a 2xx JSON object with neither isn't one
+_SEARCH_KEYS = ("Products", "ExactMatches")
 
 
 class DigiKeyDailyLimited(DigiKeyRateLimited):
@@ -218,7 +239,7 @@ def _normalize_product(product: dict[str, Any], product_number: str = "") -> dic
 
 
 class DigiKeyClient:
-    """DigiKey answers from the OAuth2 API, or the enabled backup path when its day is spent."""
+    """DigiKey answers from the OAuth2 API, or the enabled ext path when its day is spent."""
 
     def __init__(
         self,
@@ -229,22 +250,27 @@ class DigiKeyClient:
         second_app: tuple[str, str] | None = None,
         store: DistributorStore | None = None,
         clock: Callable[[], float] = time.time,
-        backup: DigiKeyBackup | None = None,
+        ext: DigiKeyExt | None = None,
         address_daily: AddressDailyQuota | None = None,
+        sleep: Callable[[float], Awaitable[Any]] = asyncio.sleep,
     ):
         """store: the answer and lifecycle store shared with MouserClient and part_lifecycle (the
-        server passes one); without one the client keeps its own in memory. backup: the server passes
+        server passes one); without one the client keeps its own in memory. ext: the server passes
         an optional deployment extension; credentials use the API until its pool's day is spent.
         address_daily: the per-address day shared with Mouser and the API pool; callers and
-        held_back: the backup path's hourly per-IP log lines."""
-        self._backup = backup
+        held_back: the ext path's hourly per-IP log lines. sleep: the wait before a lookup's
+        request goes out again after a transient failure (RETRY_WAIT_SECONDS); tests pass a fake."""
+        self._sleep = sleep
+        self._clock = clock
+        self._guard = RetryGuard("DigiKey", clock, logger)  # no retries during an outage, as Mouser
+        self._ext = ext
         self._api_enabled = bool(client_id and client_secret)
-        self._backup_active = backup is not None and not self._api_enabled
+        self._ext_active = ext is not None and not self._api_enabled
         self._closed = False
-        self._address_daily = address_daily if backup is not None else None
-        self.callers = CallerTally("DigiKey backup") if backup is not None else None
-        self.held_back = CallerTally("DigiKey backup", top=None, what="calls held back") if backup is not None else None
-        self._inflight: dict[str, asyncio.Task] = {}  # cache key -> its running backup lookup
+        self._address_daily = address_daily if ext is not None else None
+        self.callers = CallerTally("DigiKey ext") if ext is not None else None
+        self.held_back = CallerTally("DigiKey ext", top=None, what="calls held back") if ext is not None else None
+        self._inflight: dict[str, asyncio.Task] = {}  # cache key -> its running ext lookup
         self._apps = [DigiKeyApp(client_id, client_secret)]
         if second_app:
             self._apps.append(DigiKeyApp(*second_app))
@@ -252,7 +278,7 @@ class DigiKeyClient:
         self._owns_store = store is None
         self._store = DistributorStore(clock=clock) if store is None else store
         self._quota = QuotaPool([quota]) if isinstance(quota, DailyQuota) else quota
-        if backup is not None and self._quota is not None:
+        if ext is not None and self._quota is not None:
             self._address_daily = self._quota.address_daily or address_daily
             self._quota.address_daily = self._address_daily
         if self._quota and len(self._quota.quotas) != len(self._apps):
@@ -326,17 +352,28 @@ class DigiKeyClient:
                     raise DigiKeyRateLimited(paused["error"])
                 if self._quota.active_index() != app_index:  # only this app's day is used up
                     raise DigiKeyAppSpent(f"DigiKey token request refused (HTTP {response.status_code})")
-            if response.status_code >= 400:
+            # Anything but 2xx is a failure, a redirect included (this client doesn't follow them)
+            if not 200 <= response.status_code < 300:
                 raise DigiKeyError(f"DigiKey token request failed (HTTP {response.status_code})")
-            data = response.json()
+            data = _json_object(response)
 
             # Check for OAuth error responses (some providers return 200 with error)
-            if "error" in data:
+            if data is not None and "error" in data:
                 error_desc = data.get("error_description", data["error"])
                 raise DigiKeyError(self._redact(f"DigiKey OAuth error: {error_desc}"))
+            token = data.get("access_token") if data is not None else None
+            if not isinstance(token, str) or not token:
+                raise DigiKeyError("DigiKey token request returned an unreadable reply")
 
-            app.access_token = data["access_token"]
-            expires_in = data.get("expires_in", 599)
+            app.access_token = token
+            expires_in = data.get("expires_in")
+            try:
+                usable = (not isinstance(expires_in, bool) and isinstance(expires_in, (int, float))
+                          and math.isfinite(expires_in))
+            except OverflowError:  # an integer too large for a float
+                usable = False
+            if not usable:
+                expires_in = 599
             app.token_expires_at = time.time() + expires_in
 
             logger.debug(f"DigiKey token refreshed, expires in {expires_in}s")
@@ -407,8 +444,9 @@ class DigiKeyClient:
                 return index, self._apps[index].access_token
 
     async def _request(self, method: str, path: str, *, app_index: int, token: str, **kwargs: Any) -> dict[str, Any]:
-        """Send one request with the token _ready_app() checked. The caller took its pacer slot and
-        reserved the request on the quota just before, with no await since (see get_part)."""
+        """Send one keyword search with the token _ready_app() checked. The caller took its pacer
+        slot and reserved the request on the quota just before, with no await since (see get_part).
+        Each sent request's outcome goes to the retry guard: transient (DigiKeyTransient) or not."""
         headers = self._auth_headers(token, app_index)
         url = f"{DIGIKEY_BASE_URL}{path}"
 
@@ -418,8 +456,26 @@ class DigiKeyClient:
             if self._quota:
                 self._quota.mark_sent()  # and so does the rolling minute
             response = await _sent("digikey", http.request(method, url, headers=headers, **kwargs))
-        except httpx.HTTPError:
-            raise DigiKeyError("DigiKey API request failed (network/connection error)")
+        except httpx.HTTPError as e:
+            message = "DigiKey API request failed (network/connection error)"
+            # A dropped connection may pass; a timeout isn't sent again (as Mouser's aren't): a slow
+            # DigiKey would cost a second wait as long as the first
+            transient = isinstance(e, httpx.TransportError) and not isinstance(e, httpx.TimeoutException)
+            self._guard.record(transient=transient)
+            raise (DigiKeyTransient if transient else DigiKeyError)(message) from None
+        try:
+            data = self._read_reply(response, app_index, token)
+        except DigiKeyTransient:
+            self._guard.record(transient=True)
+            raise
+        except DigiKeyError:
+            self._guard.record(transient=False)
+            raise
+        self._guard.record(transient=False)
+        return data
+
+    def _read_reply(self, response: httpx.Response, app_index: int, token: str) -> dict[str, Any]:
+        """A keyword search reply's JSON object, or the error it stands for."""
         self._note_limits(response, app_index)
 
         # The token expired early: drop it (unless another lookup already replaced it). get_part
@@ -438,9 +494,29 @@ class DigiKeyClient:
                 raise DigiKeyRateLimited(paused["error"] if paused else "DigiKey is limiting requests (HTTP 429). Try again later.")
         if response.status_code == 404:
             raise DigiKeyNotFound("DigiKey has no product with that number")
-        if response.status_code >= 400:
-            raise DigiKeyError(f"DigiKey API returned HTTP {response.status_code}")
-        return response.json()
+        # Anything else but 2xx is a failure. A redirect (this client doesn't follow them) or a
+        # server error may pass, so the lookup tries once more; other 4xx answers won't change.
+        if not 200 <= response.status_code < 300:
+            message = f"DigiKey API returned HTTP {response.status_code}"
+            if 400 <= response.status_code < 500:
+                raise DigiKeyError(message)
+            after = retry_after_seconds(response.headers, self._clock()) if response.status_code >= 500 else None
+            raise DigiKeyTransient(message, retry_after=after)
+        data = _json_object(response)
+        # A reply without the search's result lists says nothing about the number: never kept as a miss
+        if data is None or not any(key in data for key in _SEARCH_KEYS) or any(
+                not isinstance(data.get(key), (list, type(None))) for key in _SEARCH_KEYS):
+            raise DigiKeyTransient("DigiKey API returned an unreadable reply")
+        return data
+
+    def _retry_delay(self, error: DigiKeyTransient) -> float | None:
+        """Seconds to wait before a lookup's search goes out again; None for no retry: the retry
+        guard is on (an outage), or a 5xx's Retry-After asks for longer than RETRY_WAIT_SECONDS."""
+        if self._closed or self._guard.disabled():
+            return None
+        if error.retry_after is not None:
+            return error.retry_after if error.retry_after <= RETRY_WAIT_SECONDS else None
+        return RETRY_WAIT_SECONDS
 
     async def get_part(self, product_number: str, caller: str | None = None) -> dict[str, Any]:
         """Look up a part by DigiKey PN or manufacturer PN.
@@ -456,13 +532,13 @@ class DigiKeyClient:
 
     def retry_after(self, caller: str | None = None) -> int:
         """Seconds until DigiKey may be asked again (60 when the limits don't say)."""
-        if self._using_backup():
+        if self._using_ext():
             return (self._seconds_to_utc_midnight() if self._address_capped(caller)
-                    else self._backup_wait(self._backup.retry_after()))
+                    else self._ext_wait(self._ext.retry_after()))
         return (self._quota.retry_after(caller) if self._quota else None) or 60
 
-    def _backup_wait(self, wait: int) -> int:
-        """The API may become available before the backup's wait ends."""
+    def _ext_wait(self, wait: int) -> int:
+        """The API may become available before ext's wait ends."""
         if self._api_enabled and self._quota is not None:
             return min(wait, self._quota.retry_after() or 1)
         return wait
@@ -484,7 +560,7 @@ class DigiKeyClient:
         return self._address_daily is not None and self._address_daily.capped(caller)
 
     def _hold_back_for_address(self, caller: str | None, lookups: int = 1) -> None:
-        """Counts for backup lookups the per-address day stopped (none of them sent)."""
+        """Counts for ext lookups the per-address day stopped (none of them sent)."""
         for _ in range(lookups):
             stats.count_distributor("digikey", "rate_limited")
             stats.count_distributor_limit("digikey", "held_back", self._address_daily.refusal_cause(caller))
@@ -493,25 +569,25 @@ class DigiKeyClient:
     @property
     def unmetered(self) -> bool:
         """The active path spends no API quota and isn't paused: part_lifecycle asks it first."""
-        return self._using_backup() and self._backup.unmetered and self._backup.can_answer_now()
+        return self._using_ext() and self._ext.unmetered and self._ext.can_answer_now()
 
-    def _using_backup(self) -> bool:
+    def _using_ext(self) -> bool:
         """Only the pool's spent day permits fallback; minute/403 penalties keep precedence.
         Re-evaluating the pool also resets its counts at 00:00 UTC. Log each transition once,
-        including when restored quota state starts this process on the backup path."""
-        active = self._backup is not None and (not self._api_enabled or (
+        including when restored quota state starts this process on the ext path."""
+        active = self._ext is not None and (not self._api_enabled or (
             self._quota is not None and self._quota.pause_cause() in {"distributor_daily", "daily_count"}))
-        if active != self._backup_active:
-            self._backup_active = active
-            logger.info("DigiKey lookups moved to %s", "the backup (API day spent)" if active else "the API")
+        if active != self._ext_active:
+            self._ext_active = active
+            logger.info("DigiKey lookups moved to %s", "ext (API day spent)" if active else "the API")
         return active
 
-    def backup_status(self) -> dict[str, Any] | None:
+    def ext_status(self) -> dict[str, Any] | None:
         """The extension's pause status for authenticated /mcp/stats when no API pool is configured."""
-        return self._backup.status() if self._backup is not None and not self._api_enabled else None
+        return self._ext.status() if self._ext is not None and not self._api_enabled else None
 
     def can_answer_now(self, caller: str | None = None) -> bool:
-        """A lookup could go out on the active backup path (not paused, and caller's address hasn't
+        """A lookup could go out on the active ext path (not paused, and caller's address hasn't
         used its day): for the miss hint, which mustn't send a caller to a refusal."""
         return self.unmetered and not self._address_capped(caller)
 
@@ -536,8 +612,8 @@ class DigiKeyClient:
             if answer.get("not_found"):
                 return Lookup(_not_found_reply(product_number), "not_found", fetched_at)
             return Lookup(_answering(answer, product_number), "found", fetched_at)
-        if self._using_backup():
-            return await self._lookup_backup(product_number, cache_key, caller)
+        if self._using_ext():
+            return await self._lookup_ext(product_number, cache_key, caller)
         # Its own task: a caller giving up mid-request doesn't waste it, the answer is still kept
         task = asyncio.create_task(self._fetch(product_number, caller, cache_key))
         self._tasks.add(task)
@@ -547,14 +623,14 @@ class DigiKeyClient:
 
     async def _fetch(self, product_number: str, caller: str | None, cache_key: str) -> Lookup:
         """An API refusal can spend the last app's day while this lookup is running. Continue
-        through the backup only for that cause, carrying its first send's address charge with it."""
-        if self._using_backup():  # the day may have ended while this task was queued
-            return await self._lookup_backup(product_number, cache_key, caller)
+        through ext only for that cause, carrying its first send's address charge with it."""
+        if self._using_ext():  # the day may have ended while this task was queued
+            return await self._lookup_ext(product_number, cache_key, caller)
         charged: set[str] = set()
         result = await self._fetch_api(product_number, caller, cache_key, charged)
-        if (result.kind == "limited" and self._using_backup()
+        if (result.kind == "limited" and self._using_ext()
                 and (charged or not self._address_capped(caller))):
-            return await self._lookup_backup(product_number, cache_key, caller, address_charged=bool(charged))
+            return await self._lookup_ext(product_number, cache_key, caller, address_charged=bool(charged))
         return result
 
     async def _fetch_api(self, product_number: str, caller: str | None, cache_key: str,
@@ -563,17 +639,25 @@ class DigiKeyClient:
         # Cache hits cost no quota. Each attempt gets the app's token and its pacer slot, then checks
         # every limit and pause, counts the request and sends it with that token, with no await from
         # the check to the send: a pause or a spent day noticed meanwhile stops it before anything
-        # reaches DigiKey, and nothing is counted that isn't sent. At most two requests a lookup:
-        # one more after a daily refusal on app 1 (on app 2), or after an early-expired token.
-        for attempt in range(2):
-            if attempt == 0 and self._quota and (error := self._quota.address_error(caller)):
+        # reaches DigiKey, and nothing is counted that isn't sent. A lookup sends at most
+        # MAX_SEARCH_SENDS requests: one more after each of an early-expired token (once), a
+        # transient failure (once, after _retry_delay()) and a daily refusal on app 1 while app 2
+        # has its day (once). Later sends are requests like the first (pacer, pauses, the day's
+        # count, the minute cap) but aren't charged to the caller's address again, and don't go out
+        # once the pool is paused or its day is spent.
+        sends = 0
+        renewed = retried = switched = False
+        retrying: DigiKeyTransient | None = None  # the failure a pending retry follows
+        while True:
+            first = sends == 0
+            if first and self._quota and (error := self._quota.address_error(caller)):
                 stats.count_distributor("digikey", "rate_limited")
                 stats.count_distributor_limit("digikey", "held_back", self._quota.address_daily.refusal_cause(caller))
                 self._quota.held_back.record(caller)
                 return Lookup(error, "limited", self._store.now())
             if self._quota and (paused := self._quota.paused_error()):  # fail fast, no queueing
                 # a daily fallback isn't a held-back lookup, nor is one whose first request went out
-                if not self._using_backup() and not charged:
+                if not self._using_ext() and not charged:
                     stats.count_distributor("digikey", "rate_limited")
                     stats.count_distributor_limit("digikey", "held_back", self._quota.pause_cause())
                     self._quota.held_back.record(caller)
@@ -581,38 +665,56 @@ class DigiKeyClient:
             # No await from here to the send: acquire() picks the app _ready_app() just checked, and
             # refuses (counting nothing) whenever _ready_app() found nothing may be sent
             try:
-                app_index, token = await self._ready_app(caller if attempt == 0 else None)
+                app_index, token = await self._ready_app(caller if first else None)
             except DigiKeyRateLimited as e:  # a pause began during a token request
-                if not charged and (not self._using_backup() or self._address_capped(caller)):
+                if not charged and (not self._using_ext() or self._address_capped(caller)):
                     stats.count_distributor("digikey", "rate_limited")
                     stats.count_distributor_limit("digikey", "held_back",
                                                   (self._quota.address_daily.refusal_cause(caller)
-                                                   if attempt == 0 and self._quota.address_error(caller)
+                                                   if first and self._quota.address_error(caller)
                                                    else self._quota.pause_cause()) if self._quota else "other")
                     if self._quota:
                         self._quota.held_back.record(caller)
                 return Lookup({"error": str(e)}, "limited", self._store.now())
+            if self._closed:  # stopped or closed meanwhile: nothing is charged for a request that can't go out
+                raise DigiKeyError("DigiKey API request failed (network/connection error)")
+            if retrying is not None and self._guard.disabled():  # an outage began during the wait
+                raise retrying
             if self._quota:
-                app_index, quota_error = self._quota.acquire(caller, check_address=attempt == 0)
+                app_index, quota_error = self._quota.acquire(caller, check_address=first)
                 if quota_error:
-                    if not charged and (not self._using_backup()
+                    if not charged and (not self._using_ext()
                                         or self._quota.last_refusal_cause in ("address_daily", "address_blocked")):
                         stats.count_distributor("digikey", "rate_limited")
                         stats.count_distributor_limit("digikey", "held_back", self._quota.last_refusal_cause)
                         self._quota.held_back.record(caller)
                     return Lookup(quota_error, "limited", self._store.now())
                 charged.add(product_number)
+            sends += 1
             stats.count_distributor("digikey", "sent")
+            if retrying is not None:  # also in sent, as Mouser's transient retries are
+                stats.count_distributor("digikey", "retries")
+                retrying = None
+            more = sends < MAX_SEARCH_SENDS
             try:
                 data = await self._request("POST", "/search/keyword", app_index=app_index, token=token, json={
                     "Keywords": product_number, "Limit": 10, "Offset": 0,
                 })
             except DigiKeyTokenRejected:
-                if attempt == 0:
+                if more and not renewed:
+                    renewed = True
+                    continue
+                raise
+            except DigiKeyTransient as e:
+                if more and not retried and (delay := self._retry_delay(e)) is not None:
+                    logger.warning("DigiKey lookup request failed (%s); sending it again in %g s", e, delay)
+                    retried, retrying = True, e
+                    await self._sleep(delay)
                     continue
                 raise
             except DigiKeyDailyLimited as e:
-                if attempt == 0 and app_index == 0 and len(self._apps) == 2:
+                if more and not switched and app_index == 0 and len(self._apps) == 2:
+                    switched = True
                     continue
                 return Lookup({"error": str(e)}, "limited", self._store.now())
             except DigiKeyRateLimited as e:
@@ -657,9 +759,9 @@ class DigiKeyClient:
         self._store.put_readings(readings, also_as=product_number)
         return Lookup(_answering(result, product_number), "found", fetched_at)
 
-    async def _lookup_backup(self, product_number: str, cache_key: str, caller: str | None = None,
+    async def _lookup_ext(self, product_number: str, cache_key: str, caller: str | None = None,
                            *, address_charged: bool = False) -> Lookup:
-        """lookup() through the backup, for a number the store doesn't have. One lookup a number
+        """lookup() through ext, for a number the store doesn't have. One lookup a number
         at a time: a second caller for it waits for the first's answer (counted as cached, free).
         The caller that starts a lookup is charged one of its address's day as its first request
         goes out (_charge), so a lookup that sends nothing costs nothing."""
@@ -670,7 +772,7 @@ class DigiKeyClient:
                 if not address_charged and self._address_capped(caller):  # no need to queue it
                     self._hold_back_for_address(caller)
                     return self._address_limited(caller)
-                task = asyncio.create_task(self._fetch_backup(product_number, cache_key, caller,
+                task = asyncio.create_task(self._fetch_ext(product_number, cache_key, caller,
                                                             address_charged=address_charged))
                 self._inflight[cache_key] = task
                 self._tasks.add(task)
@@ -701,22 +803,22 @@ class DigiKeyClient:
             return Lookup(_not_found_reply(product_number), "not_found", result.fetched_at)
         return result
 
-    async def _fetch_backup(self, product_number: str, cache_key: str, caller: str | None = None,
+    async def _fetch_ext(self, product_number: str, cache_key: str, caller: str | None = None,
                           *, address_charged: bool = False) -> Lookup:
-        """One lookup through the backup, kept in the store as an API answer is (found: the stored
+        """One lookup through ext, kept in the store as an API answer is (found: the stored
         answer, without requested and matched_by)."""
-        assert self._backup is not None
+        assert self._ext is not None
         sent: set[str] = set()  # gets the number once its first request goes out
         try:
-            answer = await self._backup.lookup(product_number, sent=sent,
+            answer = await self._ext.lookup(product_number, sent=sent,
                                             charge=self._charge(caller, address_charged=address_charged))
         except AddressCapReached:  # its address's day ran out while it waited for a slot (counted by _charge)
             return self._address_capped_lookup(caller)
-        except BackupUnavailable as e:  # a request out was counted as sent by _charge; else held back here
+        except ExtUnavailable as e:  # a request out was counted as sent by _charge; else held back here
             if not sent and self._held_back_unsent(caller, e, 1, address_charged=address_charged):
                 return self._address_capped_lookup(caller)
-            return Lookup(_backup_limited(e, self._backup_wait(e.retry_after)), "limited", self._store.now())
-        except BackupFailed:  # its request went out (counted by _charge)
+            return Lookup(_ext_limited(e, self._ext_wait(e.retry_after)), "limited", self._store.now())
+        except ExtFailed:  # its request went out (counted by _charge)
             raise DigiKeyError("DigiKey request failed (network/connection or server error)") from None
         fetched_at = self._store.now()
         if not answer.results:
@@ -726,11 +828,11 @@ class DigiKeyClient:
         result = {"results": answer.results, "total": len(answer.results), "observed_at": utc_text(fetched_at)}
         # Store the same result shape as an API answer
         self._store.put_answer("digikey", cache_key, result, True, fetched_at)
-        self._store.put_readings(self._backup_readings(answer.statuses, fetched_at), also_as=product_number)
+        self._store.put_readings(self._ext_readings(answer.statuses, fetched_at), also_as=product_number)
         return Lookup(result, "found", fetched_at)
 
     @staticmethod
-    def _backup_readings(statuses: list[tuple[str, str, str | None, str | None]], fetched_at: float) -> list[Reading]:
+    def _ext_readings(statuses: list[tuple[str, str, str | None, str | None]], fetched_at: float) -> list[Reading]:
         """Each part's lifecycle reading from status text and an optional last-buy date."""
         readings = []
         for mpn, maker, status_text, buy_by in statuses:
@@ -741,10 +843,10 @@ class DigiKeyClient:
 
     def _charge(self, caller: str | None, refused: dict[str, float] | None = None,
                 *, address_charged: bool = False) -> Charge:
-        """For DigiKeyBackup: called just before a number's first request, with no await between it
+        """For DigiKeyExt: called just before a number's first request, with no await between it
         and the send, so the check and the count can't be split by another lookup. False (nothing
         sent) once caller's address has used its day; exempt callers are never counted. Both outcomes
-        are counted here, as they happen (sent in /mcp/stats and the hourly "requests sent" line;
+        are counted here, as they happen (sent and ext_sent in /mcp/stats and the hourly "requests sent" line;
         a refusal as held back), so a lookup cancelled or stopped later, or still running at
         shutdown, neither loses nor repeats a count. refused: gets
         each number refused and when its address's day resets (00:00 UTC after the refusal), so a
@@ -764,16 +866,17 @@ class DigiKeyClient:
                 return True
             if day is not None:
                 day.record(caller)
-            stats.count_distributor("digikey", "sent")
+            # sent and ext_sent together, on one day; API lookups = sent - ext_sent
+            stats.count_distributor("digikey", "sent", path="ext_sent")
             self.callers.record(caller)
             return True
         return charge
 
-    def _held_back_unsent(self, caller: str | None, error: BackupUnavailable, lookups: int,
+    def _held_back_unsent(self, caller: str | None, error: ExtUnavailable, lookups: int,
                           *, address_charged: bool = False) -> bool:
-        """Counts for lookups a BackupUnavailable stopped before their first request: as the address's
+        """Counts for lookups a ExtUnavailable stopped before their first request: as the address's
         day when caller has used it (it couldn't have sent anyway; the API path checks it first),
-        else as the backup's limit. True for the address's day."""
+        else as ext's limit. True for the address's day."""
         if lookups <= 0 or address_charged:
             return False
         if self._address_capped(caller):
@@ -789,16 +892,16 @@ class DigiKeyClient:
         return Lookup(self._address_daily.error(_OWN_CREDENTIALS_ADVICE, caller), "limited", self._store.now())
 
     def _address_capped_lookup(self, caller: str | None) -> Lookup:
-        """_fetch_backup's answer when its starter's address had used its day: that caller's alone, so
-        _lookup_backup lets a caller that joined it ask again with its own."""
+        """_fetch_ext's answer when its starter's address had used its day: that caller's alone, so
+        _lookup_ext lets a caller that joined it ask again with its own."""
         return Lookup(self._address_daily.error(_OWN_CREDENTIALS_ADVICE, caller), "address_capped", self._store.now())
 
     async def lifecycle(self, numbers: list[str], caller: str | None = None) -> dict[str, LifecycleAnswer]:
-        """part_lifecycle's DigiKey readings while the backup path is active, for numbers that may be sent
+        """part_lifecycle's DigiKey readings while the ext path is active, for numbers that may be sent
         (search/mpn.py's not_sent_reason): stored answers first, then one batch for the rest
-        (statuses only, no prices; DigiKeyBackup.statuses), each one of caller's address's day; past
+        (statuses only, no prices; DigiKeyExt.statuses), each one of caller's address's day; past
         it, "limited" until 00:00 UTC. While the API is active part_lifecycle uses lookup() for each."""
-        assert self._backup is not None
+        assert self._ext is not None
         numbers = list(dict.fromkeys(n.strip() for n in numbers if n.strip()))
         stats.count_parts_asked("digikey", numbers)
         answers: dict[str, LifecycleAnswer] = {}
@@ -834,27 +937,27 @@ class DigiKeyClient:
         # those that found no slot (counted then)
         held: dict[str, tuple[float, bool]] = {}
 
-        def hold(number: str, error: BackupUnavailable) -> None:
+        def hold(number: str, error: ExtUnavailable) -> None:
             now = self._store.now()
             capped = self._held_back_unsent(caller, error, 1)
             held[number] = (_next_utc_midnight(now) if capped else now + error.retry_after, capped)
 
-        batch = asyncio.ensure_future(self._backup.statuses(wanted, sent=sent, charge=self._charge(caller, refused),
+        batch = asyncio.ensure_future(self._ext.statuses(wanted, sent=sent, charge=self._charge(caller, refused),
                                                           held=hold))
         self._tasks.add(batch)
         batch.add_done_callback(self._tasks.discard)
         try:
             found = await batch
-        except BackupUnavailable as e:  # the numbers sent were counted by _charge; the rest held back here
+        except ExtUnavailable as e:  # the numbers sent were counted by _charge; the rest held back here
             unsent = [n for n in wanted if n not in sent and n not in refused and n not in held]
-            backup_wait = self._backup_wait(e.retry_after)  # the API may come back before the backup
-            wait = self._seconds_to_utc_midnight() if self._held_back_unsent(caller, e, len(unsent)) else backup_wait
+            ext_wait = self._ext_wait(e.retry_after)  # the API may come back before ext
+            wait = self._seconds_to_utc_midnight() if self._held_back_unsent(caller, e, len(unsent)) else ext_wait
             now = self._store.now()
             return {**answers, **{n: LifecycleAnswer("limited", [], now, self._seconds_until(refused[n]) if n in refused
-                                                     else self._backup_wait(self._held_wait(held[n], e.retry_after))
-                                                     if n in held else wait if n in unsent else backup_wait)
+                                                     else self._ext_wait(self._held_wait(held[n], e.retry_after))
+                                                     if n in held else wait if n in unsent else ext_wait)
                                   for n in wanted}}
-        except BackupFailed:  # every number tried failed (each sent); one never sent was refused: all counted by _charge
+        except ExtFailed:  # every number tried failed (each sent); one never sent was refused: all counted by _charge
             now = self._store.now()
             return {**answers, **{n: LifecycleAnswer("limited", [], now, self._seconds_until(refused[n])) if n in refused
                                   else LifecycleAnswer("failed", [], now) for n in wanted}}
@@ -866,20 +969,20 @@ class DigiKeyClient:
                 answers[number] = LifecycleAnswer("limited", [], fetched_at, self._seconds_until(reset) if reset
                                                   else self._seconds_to_utc_midnight())
                 continue
-            if isinstance(value, BackupUnavailable):  # no request slot in time for this one
+            if isinstance(value, ExtUnavailable):  # no request slot in time for this one
                 if number in held:  # never sent: counted as it gave up; no sooner than a pause begun since
-                    answers[number] = LifecycleAnswer("limited", [], fetched_at, self._backup_wait(
-                        self._held_wait(held[number], self._backup.paused_for())))
+                    answers[number] = LifecycleAnswer("limited", [], fetched_at, self._ext_wait(
+                        self._held_wait(held[number], self._ext.paused_for())))
                     continue
                 if number not in sent and self._held_back_unsent(caller, value, 1):  # sent: counted by _charge
                     answers[number] = LifecycleAnswer("limited", [], fetched_at, self._seconds_to_utc_midnight())
                     continue
-                answers[number] = LifecycleAnswer("limited", [], fetched_at, self._backup_wait(value.retry_after))
+                answers[number] = LifecycleAnswer("limited", [], fetched_at, self._ext_wait(value.retry_after))
                 continue
-            if not isinstance(value, list):  # its own lookup failed (BackupFailed)
+            if not isinstance(value, list):  # its own lookup failed (ExtFailed)
                 answers[number] = LifecycleAnswer("failed", [], fetched_at)
                 continue
-            readings = self._backup_readings(value, fetched_at)
+            readings = self._ext_readings(value, fetched_at)
             if readings:
                 self._store.put_readings(readings, also_as=number)
                 answers[number] = LifecycleAnswer("found", readings, fetched_at)
@@ -900,19 +1003,29 @@ class DigiKeyClient:
             self._tasks.difference_update(tasks)
 
     async def close(self) -> None:
-        """Stop lookups and close owned resources, with the backup last."""
+        """Stop lookups and close owned resources, with ext last."""
         await self.stop()
         if self._http:
             await self._http.aclose()
             self._http = None
         if self._owns_store:
             self._store.close()
-        if self._backup is not None:
-            await self._backup.close()
+        if self._ext is not None:
+            await self._ext.close()
 
 
-def _backup_limited(error: BackupUnavailable, wait: int | None = None) -> dict[str, Any]:
-    """The limit reply when a lookup through the backup can't be made now."""
+def _json_object(response: httpx.Response) -> dict[str, Any] | None:
+    """The reply's JSON object; None when the body isn't one (empty, not JSON, or another JSON
+    value). The body itself never goes into a message or the log."""
+    try:
+        data = response.json()
+    except ValueError:  # JSONDecodeError and undecodable bytes
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _ext_limited(error: ExtUnavailable, wait: int | None = None) -> dict[str, Any]:
+    """The limit reply when a lookup through ext can't be made now."""
     wait = error.retry_after if wait is None else wait
     if error.paused:
         return {"error": f"DigiKey lookups are paused on this shared server. Try again in {wait} s. "

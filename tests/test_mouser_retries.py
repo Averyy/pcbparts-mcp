@@ -4,6 +4,7 @@ import asyncio
 import datetime
 import json
 import logging
+import re
 
 import httpx
 import pytest
@@ -88,7 +89,7 @@ async def test_three_failures_keep_the_error(make, clock):
     ("Tue, 24 Nov 2026 12:00:11 GMT", [11]), ("Tue, 24 Nov 2026 12:00:31 GMT", []),
     ("Tue, 24 Nov 2026 11:59:59 GMT", [0]), ("invalid", [3]),
 ], ids=["seconds", "zero", "max", "over", "date", "date_over", "past", "invalid"])
-async def test_retry_after(make, clock, header, waits):
+async def test_retry_after(make, clock, header, waits, caplog):
     client, requests = make(httpx.Response(503, headers={"Retry-After": header}), answer())
     if waits:
         assert (await client.get_part("LM358P"))["total"] == 0
@@ -96,6 +97,10 @@ async def test_retry_after(make, clock, header, waits):
         with pytest.raises(MouserError, match="Mouser API returned HTTP 503"):
             await client.get_part("LM358P")
     assert clock.waits == waits and len(requests) == len(waits) + 1
+    assert all(type(wait) is int for wait in clock.waits)  # whole seconds stay whole
+    line, = diagnostics(caplog)
+    # the log reads delay=7 (and 0) for whole seconds, not 7.0
+    assert re.search(rf"retry={bool(waits)} delay={waits[0] if waits else None}(?![.\d])", line), line
 
 
 @pytest.mark.parametrize("delays,waits", [([20, 20], [20]), ([20, 10], [20, 10]), ([30, None], [30])],
@@ -141,7 +146,7 @@ async def test_closed_client_fails_without_retry_or_send_counts(make, clock, mon
     counts = stats.usage.summary()["days"][0]
     assert "mouser" not in counts["upstream_status"]
     assert "mouser" not in counts["distributors"]
-    assert not client._outcomes
+    assert not client._guard.outcomes
     if quota is not None:
         assert quota.status()["used_today"] == 0
 

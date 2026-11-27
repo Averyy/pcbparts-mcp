@@ -89,6 +89,63 @@ def _header_int(headers: Any, name: str) -> int | None:
     return int(value) if isinstance(value, str) and value.strip().isdigit() else None
 
 
+def retry_after_seconds(headers: Any, now: float) -> float | None:
+    """A reply's Retry-After as seconds from now: whole seconds, or an HTTP date (UTC when it gives
+    no zone; 0 once past). math.inf for more than two digits of seconds (also avoids parsing an
+    unbounded integer); None when absent or unusable, so the caller keeps its own delay."""
+    value = (headers.get("Retry-After") or "").strip()
+    if not value:
+        return None
+    if value.isascii() and value.isdecimal():
+        digits = value.lstrip("0")
+        return math.inf if len(digits) > 2 else float(int(digits or "0"))
+    from email.utils import parsedate_to_datetime
+    try:
+        date = parsedate_to_datetime(value)
+        if date.tzinfo is None:
+            date = date.replace(tzinfo=datetime.timezone.utc)
+        return max(0.0, date.timestamp() - now)
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+class RetryGuard:
+    """Stops a client's transient retries during an outage: at least 10 of the attempts in the last
+    five minutes failed transiently, and 90% or more of them did. A bounded window of ten-second
+    buckets (start, transient, total), keeping the one overlapping the cutoff. Record every sent
+    attempt's outcome (cancelled ones have none; refusals and errors that aren't retried count in the
+    total), and check after outcomes and before a retry's send, so an idle guard expires too."""
+
+    def __init__(self, name: str, clock: Callable[[], float] = time.time, log: logging.Logger = logger):
+        self._name, self._clock, self._log = name, clock, log
+        self.outcomes: collections.deque[list[int]] = collections.deque(maxlen=31)
+        self._active = False
+
+    def record(self, *, transient: bool) -> None:
+        start = int(self._clock() // 10) * 10
+        if not self.outcomes or self.outcomes[-1][0] != start:
+            self.outcomes.append([start, 0, 0])
+        self.outcomes[-1][1] += int(transient)
+        self.outcomes[-1][2] += 1
+        self.disabled()
+
+    def disabled(self) -> bool:
+        """Whether retries are off now; logs each change once."""
+        cutoff = self._clock() - 300
+        while self.outcomes and self.outcomes[0][0] + 10 <= cutoff:
+            self.outcomes.popleft()
+        failures = sum(row[1] for row in self.outcomes)
+        attempts = sum(row[2] for row in self.outcomes)
+        disabled = failures >= 10 and failures * 10 >= attempts * 9
+        if disabled != self._active:
+            log = self._log.warning if disabled else self._log.info
+            log("%s retry guard %s: %d/%d transient failures over the last 5 minutes; retries %s",
+                self._name, "entered" if disabled else "cleared", failures, attempts,
+                "disabled" if disabled else "enabled")
+            self._active = disabled
+        return disabled
+
+
 def _daily_reset(headers: Any, now: float) -> float:
     """When the API's daily limit resets: X-RateLimit-ResetTime (GMT), else Retry-After, else the
     next UTC midnight (DigiKey's reset was 00:00Z on 2026-10-16)."""
