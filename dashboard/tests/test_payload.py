@@ -9,10 +9,11 @@ def test_empty_payload_shape(store, settings, clock):
     assert build_payload(store, settings, clock()) == {
         "generated_at": timestamp(clock()), "poll_minutes": 60, "next_poll_at": None,
         "last_fetch": None, "last_success_at": None, "warnings": [],
-        "latency_bounds_ms": [], "about": None, "edays": [],
+        "latency_bounds_ms": [], "about": None, "kept_across_restarts": None, "edays": [],
         "compare_today": None, "health": None, "health_at": None,
         "as_of": None, "timezone": "America/New_York",
         "problems_since": None, "problems_version": None, "version_since": None,
+        "versions": [], "catalog_changes": [],
     }
 
 

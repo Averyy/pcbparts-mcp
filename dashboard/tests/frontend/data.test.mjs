@@ -56,11 +56,14 @@ test("today is compared with the backend's yesterday-by-this-time record", () =>
   assert.equal(buildView(payload(days), "today").prevAgg, null); // no record, no comparison
 });
 
-test("problems come only from the part of each day after the deploy", () => {
+test("problems cover the whole range; the part since the deploy is kept apart", () => {
   const since = "2026-11-21T18:00:00Z";
   const wholeDay = { jlc_search: tool(2400, { ok: 2300, bad_request: 60, failed: 40 }) };
+  const refused = Array(24).fill(0);
+  refused[7] = 40; // 7 AM EST, before the 1 PM EST deploy
+  refused[14] = 3; // 2 PM EST, after it
   const today = day("2026-11-21", {
-    tools: wholeDay, per_ip_refusals: { total: 43 },
+    tools: wholeDay, per_ip_refusals: { total: 43 }, refused_hours: refused,
     problems: problems(since, [0, 3, 0, 0], { per_ip_refusals: { total: 3 } }),
   });
   const view = buildView(payload([day("2026-11-20", { tools: wholeDay }), today], "2026-11-21T21:35:00Z", { problems_since: since, problems_version: "0.10.5" }), "today");
@@ -68,30 +71,34 @@ test("problems come only from the part of each day after the deploy", () => {
   assert.equal(totals(view.problems).bad_request, 20);
   assert.equal(totals(view.problems).failed, 0);
   assert.equal(view.problems.per_ip_refusals.total, 3);
-  // a range that ends before the deploy has no problem numbers at all
+  // a range that ends before the deploy has no part since it
   assert.equal(buildView(payload([day("2026-11-20", { tools: wholeDay }), today], "2026-11-21T21:35:00Z", { problems_since: since }), "yesterday").problems, null);
-  // the charts take failed and turned away from the same part: the 43 from before the deploy stay out
+  // the charts take the whole day's hours: the 40 from before the deploy count too
   const hrs = hourly(view, view.dates);
-  assert.equal(hrs.reduce((a, p) => a + (p.refused || 0), 0), 3);
+  assert.equal(hrs.reduce((a, p) => a + (p.refused || 0), 0), 43);
   assert.equal(hrs.find((p) => p.refused === 3).ts, Date.parse("2026-11-21T19:00:00Z"));
-  assert.equal(hrs[12].refused, null); // noon, before the deploy: not counted, not zero
-  assert.equal(daily(view)[0].refused, 3);
+  assert.equal(hrs[7].refused, 40);
+  assert.equal(hrs[20].refused, null); // after the data's time: not recorded yet, not zero
+  assert.equal(daily(view)[0].refused, 43);
 });
 
 test("the hours a problem happened in come from each day, at their own time", () => {
-  const since = "2026-11-21T18:00:00Z";
-  const d21 = day("2026-11-21", { problems: problems(since, [0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]) });
-  const d22 = day("2026-11-22", { approx: false, problems: problems("2026-11-22T05:00:00Z", [...Array(23).fill(0), 2]) });
-  const view = buildView(payload([d21, d22, day("2026-11-23")], "2026-11-23T15:00:00Z", { problems_since: since }), "7d");
+  const r21 = Array(24).fill(0), r22 = Array(24).fill(0);
+  r21[14] = 4;
+  r22[23] = 2;
+  const d21 = day("2026-11-21", { refused_hours: r21 });
+  const d22 = day("2026-11-22", { approx: false, refused_hours: r22 });
+  const view = buildView(payload([d21, d22, day("2026-11-23")], "2026-11-23T15:00:00Z"), "7d");
   const hit = problemHours(view, "refused_hours").filter((p) => p.v > 0);
   assert.deepEqual(hit.map((p) => [new Date(p.ts).toISOString(), p.v]), [["2026-11-21T19:00:00.000Z", 4], ["2026-11-23T04:00:00.000Z", 2]]);
   // the summed record has no hourly lists to read them from
-  assert.equal(view.problems.refused_hours, undefined);
-  assert.equal(view.problems.start, undefined);
+  assert.equal(view.agg.refused_hours, undefined);
   // a nested list, picked by a function
-  const held = day("2026-11-21", { problems: problems(since, [0, 0, 0, 0], { distributor_limits: { mouser: { held_back: { minute_cap: 5 }, held_back_hours: [0, 0, 5, 0] } } }) });
-  const v2 = buildView(payload([held], "2026-11-21T21:35:00Z", { problems_since: since }), "today");
-  assert.deepEqual(problemHours(v2, (p) => p.distributor_limits?.mouser?.held_back_hours).filter((p) => p.v).map((p) => new Date(p.ts).toISOString()), ["2026-11-21T20:00:00.000Z"]);
+  const heldHours = Array(24).fill(0);
+  heldHours[15] = 5;
+  const held = day("2026-11-21", { distributor_limits: { mouser: { held_back: { minute_cap: 5 }, held_back_hours: heldHours } } });
+  const v2 = buildView(payload([held], "2026-11-21T21:35:00Z"), "today");
+  assert.deepEqual(problemHours(v2, (r) => r.distributor_limits?.mouser?.held_back_hours).filter((p) => p.v).map((p) => new Date(p.ts).toISOString()), ["2026-11-21T20:00:00.000Z"]);
 });
 
 test("a counter that began after the range's first day says from when", () => {
@@ -185,18 +192,6 @@ for (const [resets_at, expected] of [
 test("quota timestamps parse in UTC independently of the browser timezone", () => {
   assert.equal(parseQuotaTime("2026-11-24 09:00 UTC").toISOString(), "2026-11-24T09:00:00.000Z");
   assert.equal(mouserDayStartHour(null), 6);
-});
-
-for (const minute of [15, 45]) test(`problem bins start at the cutoff's hour (${minute} minutes past)`, () => {
-  const since = `2026-11-21T18:${minute}:00Z`;
-  const p = problems(since, [7, 2], { failed_hours: [3, 1], per_ip_refusals: { total: 9 } });
-  const view = buildView(payload([day("2026-11-21", { problems: p })], "2026-11-21T20:00:00Z", { problems_since: since }), "today");
-  const hrs = hourly(view, view.dates);
-  assert.deepEqual(hrs.filter((p) => p.refused != null).map((p) => [new Date(p.ts).toISOString(), p.refused, p.failed]), [
-    ["2026-11-21T18:00:00.000Z", 7, 3], ["2026-11-21T19:00:00.000Z", 2, 1],
-  ]);
-  assert.equal(hrs.reduce((n, p) => n + (p.refused || 0), 0), 9);
-  assert.deepEqual(problemHours(view, "refused_hours").map((p) => p.ts), hrs.filter((p) => p.refused != null).map((p) => p.ts));
 });
 
 for (const flags of [{ complete: false, partial_end: true }, { complete: false }, { complete: true, partial_start: true }]) {

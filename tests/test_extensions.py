@@ -1,8 +1,10 @@
 """Optional provider routing and startup; in-memory answers and HTTP mock transports only."""
 
 import asyncio
+import datetime
 import importlib.util
 import logging
+import re
 import json
 import sys
 from types import SimpleNamespace
@@ -220,6 +222,82 @@ async def test_daily_refusal_then_ext_counts_only_unsent_lookups_as_held(hybrid,
     assert h.day.remaining(CALLER) == 0
 
 
+async def test_stats_quota_has_ext_pause_beside_the_api_pool(hybrid, monkeypatch, stats_headers):
+    h = hybrid(apps=1, limit=1)
+    monkeypatch.setattr(server, "_distributor_quotas", {"digikey": h.pool})
+    monkeypatch.setattr(server, "_digikey_client", h.client)
+
+    async def reply():
+        response = await server.usage_stats(SimpleNamespace(headers=stats_headers, query_params={}))
+        return json.loads(response.body)["distributor_quota"]["digikey"]
+
+    status = await reply()
+    assert status["ext"] == {"paused_until": None, "active": False, "active_since": None}  # the API still has its day
+    assert {k: v for k, v in status.items() if k != "ext"} == h.pool.status()
+    h.pool.acquire()  # the API's day is spent: lookups go to ext, noticed at this check
+    assert (await reply())["ext"] == {"paused_until": None, "active": True, "active_since": "2026-11-14 21:15 UTC"}
+    h.ext.paused = True
+    h.clock.advance(600)  # since stays the move's time
+    assert (await reply())["ext"] == {"paused_until": "2026-11-15 00:00 UTC", "active": True,
+                                      "active_since": "2026-11-14 21:15 UTC"}
+    monkeypatch.setattr(h.client, "_ext", None)  # no extension installed: the reply is the pool's own
+    assert await reply() == h.pool.status()
+
+
+@pytest.mark.parametrize("spent_day", [False, True], ids=["penalty", "spent_day_and_penalty"])
+@pytest.mark.parametrize("reason", ["refused", "burst"])
+async def test_ext_is_not_active_during_a_minute_or_403_pause(hybrid, spent_day, reason):
+    h = hybrid(apps=1, limit=1)
+    if spent_day:
+        h.pool.acquire()
+    h.pool.share_penalty(h.clock.now + 600, reason)  # the pool's pause: lookups stay on the API
+    assert h.pool.status()["paused_until"] is not None
+    assert h.client.ext_pause() == {"paused_until": None, "active": False, "active_since": None}
+
+
+@pytest.mark.parametrize("broken", ["raises", "not_a_dict", "not_json"])
+async def test_a_broken_ext_status_leaves_ext_out_of_stats(hybrid, monkeypatch, caplog, broken):
+    h = hybrid(apps=1, limit=1)
+
+    def status():
+        if broken == "raises":
+            raise RuntimeError("/srv/deployment/extension.py detail")
+        if broken == "not_json":
+            return {"paused_until": datetime.datetime(2026, 11, 27, 12, 0)}  # not text: would fail the reply
+        return ["paused"]
+
+    monkeypatch.setattr(h.ext, "status", status)
+    monkeypatch.setattr(server, "_distributor_quotas", {"digikey": h.pool})
+    monkeypatch.setattr(server, "_digikey_client", h.client)
+    with caplog.at_level(logging.ERROR, logger="pcbparts_mcp.digikey"):
+        assert server._distributor_quota_status()["digikey"] == h.pool.status()
+        assert server._distributor_quota_status()["digikey"] == h.pool.status()
+        assert sum("extension's status" in m for m in caplog.messages) == 1  # once a minute
+        json.dumps(server._distributor_quota_status())  # the stats reply stays serializable
+        # The exception type only: no message text and no traceback, which could carry paths
+        assert "/srv/deployment" not in caplog.text and all(r.exc_info is None for r in caplog.records)
+        h.clock.advance(61)
+        assert h.client.ext_pause() is None
+        assert sum("extension's status" in m for m in caplog.messages) == 2
+    no_pool = DigiKeyClient("", "", ext=h.ext, store=h.store, address_daily=h.day)
+    try:
+        assert no_pool.ext_status() is None  # without an API pool: no entry, never an error
+    finally:
+        await no_pool.close()
+
+
+async def test_stats_quota_without_an_api_pool_keeps_the_ext_status(context, monkeypatch):
+    ext = FakeExt()
+    client = DigiKeyClient("", "", ext=ext, store=context.store, address_daily=context.address_daily)
+    monkeypatch.setattr(server, "_distributor_quotas", {})
+    monkeypatch.setattr(server, "_digikey_client", client)
+    try:
+        status = server._distributor_quota_status()["digikey"]
+        assert status["paused_until"] is None and "ext" not in status
+    finally:
+        await client.close()
+
+
 async def test_ext_hourly_lines_are_distinct_from_api_lines(hybrid, monkeypatch, caplog):
     h = hybrid(apps=1)
     monkeypatch.setattr(server, "_distributor_quotas", {"digikey": h.pool})
@@ -423,7 +501,11 @@ async def test_server_wires_both_paths_and_preserves_private_api_status(monkeypa
         assert not client.unmetered
         pool.acquire()
         assert client.unmetered and client.ext_status() is None
-        assert server._distributor_quota_status()["digikey"] == pool.status()
+        status = server._distributor_quota_status()["digikey"]
+        ext_state = status.pop("ext")
+        assert status == pool.status()
+        assert {**ext_state, "active_since": None} == {"paused_until": None, "active": True, "active_since": None}
+        assert re.fullmatch(r"\d{4}-\d\d-\d\d \d\d:\d\d UTC", ext_state["active_since"])
         assert client.callers in server._caller_tallies() and pool.callers in server._caller_tallies()
     assert ext.closed
 

@@ -20,7 +20,7 @@ UTC = datetime.timezone.utc
 NOW = datetime.datetime(2026, 11, 14, 21, 15, tzinfo=UTC).timestamp()
 MIDNIGHT = datetime.datetime(2026, 11, 15, tzinfo=UTC).timestamp()
 CREDS = ("first-client-id", "first-client-secret", "second-client-id", "second-client-secret")
-STATUS_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "resets_at", "kept_across_restarts"}
+STATUS_KEYS = {"used_today", "limit", "api_remaining", "paused_until", "resets_at", "kept_across_restarts", "budgets"}
 DAILY_HEADERS = {"x-ratelimit-remaining": "0", "x-ratelimit-resettime": "2026-11-15T00:00:00Z"}
 
 
@@ -293,14 +293,23 @@ async def test_private_active_app_and_public_health_shape(monkeypatch, clock, ca
             status = await quota_status()
             assert status == {"used_today": 1, "limit": 2, "api_remaining": 5,
                               "paused_until": None, "resets_at": "2026-11-15 00:00 UTC",
-                              "kept_across_restarts": False}
+                              "kept_across_restarts": False, "budgets": [
+                                  {"used_today": 1, "limit": 2, "api_remaining": 5, "paused_until": None, "in_use": True},
+                                  {"used_today": 0, "limit": 2, "api_remaining": None, "paused_until": None,
+                                   "in_use": False}]}
             quotas.quotas[0].pause(MIDNIGHT, "daily")
             quotas.acquire()
             status = await quota_status()
             assert status["used_today"] == 1 and status["paused_until"] is None
+            assert status["budgets"] == [  # each budget's own pause; the top level describes the one in use
+                {"used_today": 1, "limit": 2, "api_remaining": 5, "paused_until": "2026-11-15 00:00 UTC", "in_use": False},
+                {"used_today": 1, "limit": 2, "api_remaining": None, "paused_until": None, "in_use": True}]
             quotas.acquire()
             status = await quota_status()
-            assert status["used_today"] == 2 and status["paused_until"] == "2026-11-15 00:00 UTC"
+            # Every day spent, both ending at 00:00 UTC: the first app, which is used then, and the top
+            # level describes it
+            assert status["used_today"] == 1 and status["paused_until"] == "2026-11-15 00:00 UTC"
+            assert [b["in_use"] for b in status["budgets"]] == [True, False]
             public = json.dumps([status, stats.usage.summary(), quotas.acquire()[1]])
             assert all(secret not in public for secret in CREDS)
             assert "app 2" not in public and "DigiKey#2" not in public

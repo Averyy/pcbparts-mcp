@@ -144,6 +144,8 @@ DISTRIBUTOR_RETRY_EVENTS = ("retry_found", "retry_missed")
 # int from 0 to sent): no partial split. Versions before 0.10.11 drop the field, and the digikey_ext
 # upstream and upstream_status counts, from every stored day when they load and save the file, so copy
 # USAGE_STATS_PATH before rolling back below 0.10.11 or every day loses its split and ext's requests.
+# Versions before 0.10.12 likewise drop distributor_limits.digikey.ext_held_back and ext_refusals
+# (DISTRIBUTOR_LIMIT_PATHS) from every stored day; they keep starts and addresses as unknown day fields.
 DISTRIBUTOR_PATH_EVENTS = {"digikey": ("ext_sent",)}
 # Why a call counted as not_found or failed: one label a call, so a tool's labels add up to its not_found +
 # failed. Only these can be stored, which keeps what users typed out of the counts and bounds the file.
@@ -184,7 +186,9 @@ UPSTREAM_SOURCES = ("jlcpcb", "lcsc", "easyeda_products", "easyeda_components", 
 UPSTREAM_STATUS_SOURCES = (*UPSTREAM_SOURCES, "mouser")
 # sent: HTTP requests our code sent, one each (a request it repeats, such as CSE's second try, counts
 # again); retries: further attempts the HTTP client (wafer) made on its own for those, as it reports
-# them on the reply (a request that ends in a timeout or a connection failure reports none);
+# them on the reply (a request that ends in a timeout or a connection failure reports none); for cse,
+# from 0.10.12, the retries this server makes itself (a search or model download sent again after a
+# 5xx, a dropped connection or an unreadable reply; also in sent);
 # cached: answered without a request (a memory cache, the on-disk store or the seed); rate_limited: not
 # sent because this server's own budget or pause for that source said no; waited (from 0.10.4): sent
 # after waiting for a free slot under this server's cap on requests in flight
@@ -225,12 +229,39 @@ APP_LINK_MINUTES = 10
 DISTRIBUTOR_LIMIT_CAUSES = ("minute_cap", "daily_count", "address_daily", "address_blocked", "distributor_daily",
                             "distributor_minute", "distributor_refused", "other")
 DISTRIBUTOR_LIMIT_REFUSALS = ("daily", "minute", "refused")
+# From 0.10.12, per distributor in distributor_limits: the holds and refusals made on another path
+# than the API, also counted in held_back and refusals (which stay the totals): DigiKey's through
+# ext (extensions.DigiKeyExt), ext_held_back by DISTRIBUTOR_LIMIT_CAUSES and ext_refusals (the ext
+# path reports refused only). A hold or refusal is on the ext path when the code counting it says so
+# (count_distributor_limit's path) or it is counted inside a call into the extension
+# (distributor_path, which DigiKeyClient sets). Written when this version creates the day's counts
+# for that distributor, like DISTRIBUTOR_PATH_EVENTS: a day whose counts it found already there
+# without them (days before 0.10.12, the deploy day) keeps its holds and refusals unsplit. Versions
+# before 0.10.12 drop both from every stored day when they load and save the file.
+DISTRIBUTOR_LIMIT_PATHS = {"digikey": {"ext_held_back": DISTRIBUTOR_LIMIT_CAUSES, "ext_refusals": ("refused",)}}
+# From 0.10.12, per day: distinct addresses, counted through salted hashes held in memory for the
+# day (never written; a restart starts a new set, so an address can count twice on such a day):
+# rate_limited (refused by the per-IP limiter at least once; IPv6 by /64, except AI-platform
+# addresses, counted one by one), cap_reached (reached the
+# Mouser and DigiKey per-address daily cap) and blocked_tried (on the distributor block list, and
+# tried a live lookup). Absent on days saved before; versions before 0.10.12 keep
+# the field as it is (an unknown one), as they do starts.
+ADDRESS_EVENTS = ("rate_limited", "cap_reached", "blocked_tried")
+MAX_DISTINCT_ADDRESSES = 100_000  # distinct addresses counted a day per event; later ones aren't
+# From 0.10.12, per day: each server start's UTC time of day and version, the first MAX_STARTS of the
+# day (restarts counts all). Absent on days saved before.
+MAX_STARTS = 50
+_START_TIME = re.compile(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]\Z")
 DATASHEET_LINK_EVENTS = ("visits", "reused", "signed", "waited", "refused", "failed", "not_found")
 LIFECYCLE_INPUT_FORMS = ("bare_number", "with_manufacturer", "lcsc_code")
 
 
 # A fresh shared dict per call: copy_context() in db_worker carries it into offloaded tools.
 call_notes: contextvars.ContextVar[dict[str, Any] | None] = contextvars.ContextVar("usage_call_notes", default=None)
+# The path a distributor lookup is taking when it isn't the API ("ext"), set by DigiKeyClient around
+# its calls into the extension, so the holds and refusals the extension counts there with
+# count_distributor_limit() also land in DISTRIBUTOR_LIMIT_PATHS. None: the API.
+distributor_path: contextvars.ContextVar[str | None] = contextvars.ContextVar("distributor_path", default=None)
 
 
 def note(**facts: Any) -> None:
@@ -247,9 +278,42 @@ def _valid_bad_request_reason(label: str) -> bool:
     return label in BAD_REQUEST_REASONS or bool(_ARG_REASON.fullmatch(label))
 
 
-def _new_distributor_limits() -> dict[str, Any]:
+def _new_distributor_limits(name: str | None = None) -> dict[str, Any]:
+    """A distributor's empty distributor_limits; with its name, also its path counts
+    (DISTRIBUTOR_LIMIT_PATHS)."""
     return {"held_back": dict.fromkeys(DISTRIBUTOR_LIMIT_CAUSES, 0), "held_back_hours": [0] * 24,
-            "refusals": dict.fromkeys(DISTRIBUTOR_LIMIT_REFUSALS, 0)}
+            "refusals": dict.fromkeys(DISTRIBUTOR_LIMIT_REFUSALS, 0),
+            **{field: dict.fromkeys(labels, 0) for field, labels in DISTRIBUTOR_LIMIT_PATHS.get(name, {}).items()}}
+
+
+def _path_limits(counts: dict[str, Any], field: str, labels: tuple[str, ...], stored: Any) -> dict[str, int] | None:
+    """A path count of distributor_limits read from the file, kept only as stored: a dict whose
+    every label is an int from 0 to that label's total (missing labels are 0). Anything else is
+    None, leaving the day unsplit rather than split wrongly."""
+    if not isinstance(stored, dict):
+        return None
+    total = counts["held_back" if field.endswith("held_back") else "refusals"]
+    clean = {}
+    for label in labels:
+        value = stored.get(label, 0)
+        if type(value) is not int or not 0 <= value <= total[label]:
+            return None
+        clean[label] = value
+    return clean
+
+
+def _clean_starts(value: Any) -> list[dict[str, str]] | None:
+    """A day's starts read from the file: entries with a usable time and version, the first
+    MAX_STARTS; None (absent) for anything but a list."""
+    if not isinstance(value, list):
+        return None
+    return [{"at": entry["at"], "version": entry["version"]} for entry in value
+            if isinstance(entry, dict) and isinstance(entry.get("at"), str) and _START_TIME.match(entry["at"])
+            and isinstance(entry.get("version"), str) and _VERSION.fullmatch(entry["version"])][:MAX_STARTS]
+
+
+def _new_addresses() -> dict[str, int]:
+    return dict.fromkeys(ADDRESS_EVENTS, 0)
 
 
 def _new_db_waits(*, components: bool = True) -> dict[str, Any]:
@@ -285,7 +349,7 @@ def _new_day() -> dict[str, Any]:
             **{field: [0] * 24 for field in HOURLY_SINCE_0_10_1}, "lcsc_lookups": {}, "distributor_apps": {},
             "distributor_limits": {}, "datasheet_links": dict.fromkeys(DATASHEET_LINK_EVENTS, 0),
             "db_waits": _new_db_waits(), "lifecycle_inputs": dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0),
-            **{field: {} for field in SINCE_0_10_5}}
+            **{field: {} for field in SINCE_0_10_5}, "starts": [], "addresses": _new_addresses()}
 
 
 # The fields of a day this version writes; any other field in the file is a newer version's, kept as is
@@ -412,6 +476,16 @@ def _clean_day(day: dict) -> dict[str, Any]:
         "refusals": {label: _int(_dict(counts.get("refusals")).get(label)) for label in DISTRIBUTOR_LIMIT_REFUSALS}}
         for name, counts in limits.items() if name in PARTS_ASKED and isinstance(counts, dict)}
         if isinstance(limits, dict) else None)
+    # From 0.10.12: a path count only as stored (_path_limits); without it the day stays unsplit
+    for name, counts in (clean["distributor_limits"] or {}).items():
+        for field, labels in DISTRIBUTOR_LIMIT_PATHS.get(name, {}).items():
+            if (path_counts := _path_limits(counts, field, labels, limits[name].get(field))) is not None:
+                counts[field] = path_counts
+    # From 0.10.12; None: not recorded (a day saved before), left out of /mcp/stats
+    clean["starts"] = _clean_starts(day.get("starts"))
+    addresses = day.get("addresses")
+    clean["addresses"] = ({event: max(0, _int(addresses.get(event))) for event in ADDRESS_EVENTS}
+                          if isinstance(addresses, dict) else None)
     links = day.get("datasheet_links")
     clean["datasheet_links"] = ({event: _int(links.get(event)) for event in DATASHEET_LINK_EVENTS}
                                 if isinstance(links, dict) else None)
@@ -520,6 +594,7 @@ class UsageStats:
         self._closed_json: dict[str, str] = {}
         self._callers = _SeenToday(MAX_CALLERS)
         self._parts = {name: _SeenToday(MAX_DISTINCT_PARTS) for name in PARTS_ASKED}
+        self._addresses = {event: _SeenToday(MAX_DISTINCT_ADDRESSES) for event in ADDRESS_EVENTS}
         self._term_date = ""
         self._term_salt = b""
         self._term_base: dict[str, int] = {}
@@ -595,11 +670,15 @@ class UsageStats:
             logger.warning("Usage stats: couldn't prune corrupt backup (%s)", type(exc).__name__)
 
     def record_start(self) -> None:
-        """The server started: one more restart today (a restart resets the hashes behind callers
-        and parts_asked.distinct, so those can count a caller or part twice on such a day)."""
-        day = self._day()
+        """The server started: one more restart today (a restart resets the hashes behind callers,
+        parts_asked.distinct and addresses, so those can count a caller, part or address twice on
+        such a day), and from 0.10.12 its UTC time and version in starts (the first MAX_STARTS)."""
+        now = self._now()
+        day = self._day(now)
         day["restarts"] = (day["restarts"] or 0) + 1
         day["versions"][__version__] = day["versions"].get(__version__, 0) + 1
+        if len(day["starts"]) < MAX_STARTS:
+            day["starts"].append({"at": now.strftime("%H:%M"), "version": __version__})
 
     def _now(self) -> datetime.datetime:
         return datetime.datetime.fromtimestamp(self._clock(), datetime.timezone.utc)
@@ -653,6 +732,10 @@ class UsageStats:
             day["db_waits"] = _new_db_waits()
         if day["lifecycle_inputs"] is None:
             day["lifecycle_inputs"] = dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)
+        if day["starts"] is None:  # a day saved before 0.10.12: starts and addresses count from now on
+            day["starts"] = []
+        if day["addresses"] is None:
+            day["addresses"] = _new_addresses()
         for field in HOURLY_SINCE_0_10_1:
             if day[field] is None:  # a day saved before 0.10.1: the hours before this one are unknown
                 day[field] = [None] * now.hour + [0] * (24 - now.hour)
@@ -813,9 +896,12 @@ class UsageStats:
                 labels = ", ".join(f"{tool} {reason} {count}" for (tool, reason), count in sorted(counts.items()))
                 logger.warning("Failed tool calls %s UTC: %s", minute, labels)
 
-    def record_distributor_limit(self, name: str, kind: str, label: str | None) -> None:
+    def record_distributor_limit(self, name: str, kind: str, label: str | None, path: str | None = None) -> None:
         """One unsent lookup (held_back) or sent request refused by the distributor (refusals).
-        Only fixed labels are kept; unknown causes count as other. No credential details."""
+        Only fixed labels are kept; unknown causes count as other. No credential details.
+        path: "ext" for one on DigiKey's ext path (or counted inside a call into the extension,
+        distributor_path), also counted in ext_held_back or ext_refusals (DISTRIBUTOR_LIMIT_PATHS)
+        on a day whose counts this version created."""
         if name not in PARTS_ASKED or kind not in ("held_back", "refusals"):
             return
         if kind == "held_back":
@@ -823,10 +909,27 @@ class UsageStats:
         elif label not in DISTRIBUTOR_LIMIT_REFUSALS:
             return
         now = self._now()
-        counts = self._day(now)["distributor_limits"].setdefault(name, _new_distributor_limits())
+        limits = self._day(now)["distributor_limits"]
+        counts = limits.get(name)
+        if counts is None:
+            counts = limits[name] = _new_distributor_limits(name)
         counts[kind][label] += 1
         if kind == "held_back":
             counts["held_back_hours"][now.hour] += 1
+        if (path or distributor_path.get()) == "ext":
+            path_counts = counts.get("ext_held_back" if kind == "held_back" else "ext_refusals")
+            if path_counts is not None and label in path_counts:
+                path_counts[label] += 1
+
+    def record_address(self, event: str, address: str | None) -> None:
+        """An address, as the caller keys it (IPv6 by /64, except AI-platform addresses, counted one by
+        one), for one of ADDRESS_EVENTS:
+        counted once a day, through salted hashes held in memory; the address isn't kept."""
+        if event not in ADDRESS_EVENTS or not address:
+            return
+        now = self._now()
+        if self._addresses[event].add(now.date().isoformat(), address):
+            self._day(now)["addresses"][event] += 1
 
     def record_parts_asked(self, distributor: str, numbers: list[str]) -> None:
         """Part numbers a Mouser/DigiKey lookup asked for (distinct within the lookup), whether they
@@ -968,6 +1071,7 @@ class UsageStats:
         total_lookups: dict[str, dict[str, int]] = {}
         total_distributor_apps: dict[str, dict[str, dict[str, int]]] = {}
         total_distributor_limits: dict[str, dict[str, Any]] = {}
+        unsplit_limits: set[tuple[str, str]] = set()  # (distributor, path count) some listed day held or refused without
         total_datasheet_links = dict.fromkeys(DATASHEET_LINK_EVENTS, 0)
         total_db_waits = _new_db_waits()
         total_lifecycle_inputs = dict.fromkeys(LIFECYCLE_INPUT_FORMS, 0)
@@ -987,12 +1091,17 @@ class UsageStats:
             for event, count in (day["datasheet_links"] or {}).items():
                 total_datasheet_links[event] += count
             for name, counts in (day["distributor_limits"] or {}).items():
-                total = total_distributor_limits.setdefault(name, _new_distributor_limits())
-                for kind in ("held_back", "refusals"):
-                    for label, count in counts[kind].items():
+                total = total_distributor_limits.setdefault(name, _new_distributor_limits(name))
+                for kind in ("held_back", "refusals", *DISTRIBUTOR_LIMIT_PATHS.get(name, {})):
+                    for label, count in counts.get(kind, {}).items():
                         total[kind][label] += count
                 for hour, count in enumerate(counts["held_back_hours"]):
                     total["held_back_hours"][hour] += count
+                # held back or refused without its path counts: the totals can't split them
+                for field in DISTRIBUTOR_LIMIT_PATHS.get(name, {}):
+                    if field not in counts and any(counts["held_back" if field.endswith("held_back")
+                                                          else "refusals"].values()):
+                        unsplit_limits.add((name, field))
             for name, c in (day["lcsc_lookups"] or {}).items():
                 total = total_lookups.setdefault(name, dict.fromkeys(LCSC_LOOKUP_EVENTS, 0))
                 for key, value in c.items():
@@ -1049,6 +1158,9 @@ class UsageStats:
                 "parts_asked": dict(sorted(day["parts_asked"].items())),
                 "per_ip_refusals": _refusals_view(day["per_ip_refusals"]),
                 "restarts": day["restarts"],
+                # From 0.10.12, absent on days saved before
+                **({"starts": day["starts"]} if day["starts"] is not None else {}),
+                **({"addresses": day["addresses"]} if day["addresses"] is not None else {}),
                 "lcsc_lookups": _lookups_view(day["lcsc_lookups"]),
                 "distributor_apps": _distributor_apps_view(day["distributor_apps"]),
                 "distributor_limits": day["distributor_limits"],
@@ -1060,13 +1172,24 @@ class UsageStats:
             })
         for name, key in unsplit:  # a partial path count would put that day's other lookups under the API
             total_distributors[name].pop(key, None)
+        for name, field in unsplit_limits:  # likewise for holds and refusals
+            total_distributor_limits[name].pop(field, None)
         totals_tools = _tools_view(total_tools)
         return {
             "about": (f"Private counts per UTC day, default 30 days, up to {KEEP_DAYS}, newest first; totals adds up "
                       "the days listed (without callers, which can't be added across days). "
                       "distributor_quota (from 0.10.9): current state per distributor, independent of days and totals; "
                       "used_today, limit, api_remaining (null when unreported), paused_until (null when not paused), "
-                      "resets_at and kept_across_restarts where available. Quota times use YYYY-MM-DD HH:MM UTC. "
+                      "resets_at and kept_across_restarts where available; digikey also has ext (from 0.10.12): an optional "
+                      "deployment extension's own pause (paused_until), whether lookups are routed to it now (active) and "
+                      "since when (active_since, null when not active; after a restart, from its first check), "
+                      "when DigiKey has an API pool and an extension is installed and its status can be read. "
+                      "budgets (from 0.10.12): one entry per daily budget in the order they are used, each with its "
+                      "own used_today, limit, api_remaining and paused_until (that budget's own pause only, such as a "
+                      "daily refusal or a 403 or 429 it received; null when none), and in_use: true for exactly one, the "
+                      "budget the pool uses next (when every day is spent, the one whose day or pause ends first), "
+                      "which the top-level fields describe; the top-level paused_until covers every budget, the pool's "
+                      "shared pauses included. Quota times use YYYY-MM-DD HH:MM UTC. "
                       "hours: calls in each UTC hour, "
                       "00 to 23 (null: not recorded); in totals, each hour added up across the days. failed_hours (from "
                       "0.10.1): the calls whose outcome was failed, in each UTC hour; refused_hours (from 0.10.1): "
@@ -1098,7 +1221,8 @@ class UsageStats:
                       "total, so API lookups are sent - ext_sent. Absent, and that day's lookups not split, "
                       "on days before 0.10.11 and on a day whose DigiKey counts were already there without it "
                       "when 0.10.11 or later loaded them (the deploy day, if DigiKey had counts before the "
-                      "start); a rollback below 0.10.11 drops it, and the digikey_ext request counts, from every stored day. Totals omit it when any "
+                      "start); a rollback below 0.10.11 drops it, and the digikey_ext request counts, from every stored day (copy the file "
+                      "first). Totals omit it when any "
                       "listed day that sent DigiKey lookups lacks it. "
                       "From 0.10.0 (earlier days have none): upstream, for each service this server calls: jlcpcb "
                       "(parts search), lcsc (product data), easyeda_products (footprint checks), easyeda_components "
@@ -1108,7 +1232,10 @@ class UsageStats:
                       "deployment extension sends for DigiKey lookups, with their upstream_status; absent without "
                       "one); "
                       "sent is HTTP requests sent, one each, not tool calls; retries the further attempts the HTTP "
-                      "client made on its own for them, where it reports them (a timeout reports none); cached "
+                      "client made on its own for them, where it reports them (a timeout reports none), and for cse (from "
+                      "0.10.12) the retries this server makes itself: a search or model download sent again after a "
+                      "5xx, a dropped connection or an unreadable reply (also in sent; not the second ask after a status "
+                      "other than Success); cached "
                       "answers given without a request (memory cache, on-disk store or seed); rate_limited requests "
                       "this server's own budget or pause for that service kept back (for cse, also sent "
                       "model downloads SamacSys refused for quota); waited (from 0.10.4) requests sent after waiting "
@@ -1126,7 +1253,15 @@ class UsageStats:
                       "tracking as many addresses as it can); null on days before it was counted. "
                       "restarts (from 0.10.0; null before): how many times the server started that day; "
                       "callers and parts_asked distinct count a caller or part seen on both sides of a "
-                      "restart twice. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code "
+                      "restart twice. starts (from 0.10.12; absent before): each start's UTC time of day (at, HH:MM) "
+                      f"and version, the first {MAX_STARTS} of the day (restarts counts all; on the day 0.10.12 or later "
+                      "first started, only the starts from then on). addresses (from 0.10.12; absent before): distinct "
+                      "addresses that day, never the addresses: rate_limited (refused by the per-IP rate limit at least "
+                      "once, any group; IPv6 by /64, except AI-platform addresses, counted one by one), cap_reached (reached the Mouser and DigiKey per-address daily cap) "
+                      "and blocked_tried (on the server's block list, and tried a live Mouser or DigiKey lookup; IPv6 by /64, except "
+                      "AI-platform addresses, counted one by one); counted "
+                      "through salted hashes held in memory, so an address seen on both sides of a restart counts twice; "
+                      "on the day 0.10.12 or later first started, from then on; not in totals. lcsc_lookups (from 0.10.2; null before): how jlc_get_part's LCSC-code "
                       "lookups and jlc_stock_check's one-code queries were answered, one each: snapshot (the "
                       "daily snapshot, no request), live (answered from a live lookup, including its 1-hour "
                       "cache), fallback (JLCPCB didn't answer and the snapshot did: live_failed in the reply) "
@@ -1141,7 +1276,13 @@ class UsageStats:
                       "block list), distributor_daily, distributor_minute and distributor_refused (pauses "
                       "after the distributor refused), other; it adds up to distributors rate_limited. "
                       "held_back_hours: the same by UTC hour. refusals: sent requests the distributor refused "
-                      "(daily, minute, refused). "
+                      "(daily, minute, refused). digikey ext_held_back and ext_refusals (from 0.10.12): the same "
+                      "causes, and refused, for the lookups on the ext path only, also counted in held_back and "
+                      "refusals (which stay the totals, so the API's are held_back - ext_held_back). Absent, and "
+                      "that day's holds and refusals not split, on days before 0.10.12 and on a day whose DigiKey "
+                      "limits were already there without them when 0.10.12 or later loaded them; totals omit "
+                      "them when any listed day that held back or refused DigiKey lookups lacks them. A rollback below "
+                      "0.10.12 drops both from every stored day (copy the file first); starts and addresses survive it. "
                       "datasheet_links (from 0.10.3; null before): visits to datasheet_pdf links: reused (no "
                       "JLCPCB request), signed (one was made), waited (of those, after waiting for a slot), "
                       "refused (429), failed (502), not_found (404). "
@@ -1336,11 +1477,18 @@ def count_distributor(name: str, event: str, path: str | None = None) -> None:
         logger.exception("Usage stats: couldn't count a distributor lookup")
 
 
-def count_distributor_limit(name: str, kind: str, label: str | None) -> None:
+def count_distributor_limit(name: str, kind: str, label: str | None, path: str | None = None) -> None:
     try:
-        usage.record_distributor_limit(name, kind, label)
+        usage.record_distributor_limit(name, kind, label, path)
     except Exception:
         logger.exception("Usage stats: couldn't count a distributor limit")
+
+
+def count_address(event: str, address: str | None) -> None:
+    try:
+        usage.record_address(event, address)
+    except Exception:
+        logger.exception("Usage stats: couldn't count an address")
 
 
 def count_parts_asked(distributor: str, numbers: list[str]) -> None:

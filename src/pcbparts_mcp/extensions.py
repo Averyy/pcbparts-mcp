@@ -72,7 +72,10 @@ class DigiKeyExt(Protocol):
     requests and their outcomes under the digikey_ext upstream source (from 0.10.11;
     the API's stay under digikey). charge already counts a sent lookup (sent and
     distributors.digikey.ext_sent) and its address allowance; held counts an unsent
-    lookup as rate_limited and held back.
+    lookup as rate_limited and held back. From 0.10.12, holds and refusals counted with
+    stats.count_distributor_limit() while lookup/statuses run (in their task or tasks they
+    start) also land in distributor_limits.digikey.ext_held_back/ext_refusals
+    (stats.distributor_path); counting them anywhere else needs path="ext".
     """
 
     async def start(self) -> None: ...

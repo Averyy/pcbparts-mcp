@@ -9,7 +9,7 @@ export function mouserDayStartHour(health) {
 }
 
 export const OUTCOMES = ["ok", "similar_only", "not_found", "bad_request", "rate_limited", "failed", "unsorted"];
-// the outcomes that are problems; counted only inside the problems window (since the deploy)
+// the outcomes that are problems
 export const PROBLEM_OUTCOMES = ["bad_request", "rate_limited", "failed"];
 export const NOT_NAMED_APPS = new Set(["other", "unknown"]);
 
@@ -33,8 +33,9 @@ export const completeDay = (d) => d.complete && !d.partial_start && !d.partial_e
  */
 export const own = (o, k) => (o != null && Object.hasOwn(o, k) ? o[k] : undefined);
 
-// Record keys that describe the window rather than count something, and fields that can't be added.
-const META = new Set(["date", "start", "end", "hours_in_window", "complete", "approx", "problems", "callers"]);
+// Record keys that describe the window rather than count something, and fields that can't be added
+// (addresses are bounds: addressBound() adds them up where it can).
+const META = new Set(["date", "start", "end", "hours_in_window", "complete", "approx", "problems", "callers", "starts", "starts_complete", "addresses"]);
 function skip(path, k) {
   if (path.length === 0) return META.has(k) || k.startsWith("_");
   if (path.length === 2 && path[0] === "tools") return k === "avg_ms";
@@ -182,8 +183,8 @@ function datesBack(end, n) {
 
 /**
  * Everything one range shows. Multi-day ranges cover whole Eastern days ending yesterday, so no
- * number mixes a finished day with the one in progress. Problem numbers come only from each day's
- * `problems` part (the hours since the deploy), never from the whole day.
+ * number mixes a finished day with the one in progress. Every number covers the whole range;
+ * `problems` adds up each day's part since the latest deploy (problems_since), for "N since <version>".
  */
 export function buildView(payload, key) {
   const days = payload.edays || [];
@@ -228,7 +229,7 @@ export function buildView(payload, key) {
   if (compareRec) prevRecs = [compareRec];
   const prevAgg = prevRecs ? aggregate(prevRecs) : null;
 
-  // problems: only the parts of these days after the deploy
+  // the parts of these days since the latest deploy
   const since = payload.problems_since ? new Date(payload.problems_since) : null;
   const probRecs = recs.map((r) => r.problems).filter(Boolean);
   const problems = probRecs.length ? aggregate(probRecs) : null;
@@ -304,7 +305,7 @@ export function hoursInDay(date) { return Math.round((etMidnight(addDays(date, 1
 
 /**
  * One entry per hour of the given Eastern days: {ts, date, calls, failed, refused, future, current,
- * beforeSince}. failed/refused come from each day's problems part, so hours before the deploy have none.
+ * beforeSince}. failed/refused are the whole day's (null for hours not recorded, before 0.10.1).
  */
 export function hourly(view, dates) {
   const out = [];
@@ -314,19 +315,19 @@ export function hourly(view, dates) {
     const rec = view.byDate.get(date);
     const start = rec?.start ? Date.parse(rec.start) : etMidnight(date);
     const n = hoursInDay(date);
-    const p = rec?.problems;
-    const pStart = p?.start ? hourStart(p.start) : null;
     for (let i = 0; i < n; i++) {
       const ts = start + i * HOUR_MS;
       const future = ts >= asOfMs;
       const current = !future && ts + HOUR_MS > asOfMs;
-      const j = pStart == null ? -1 : Math.floor((ts - pStart) / HOUR_MS);
-      const inP = j >= 0 && !future;
       out.push({
-        ts, date, future, current, beforeSince: ts + HOUR_MS <= sinceMs,
+        ts, date, rec: rec || null, future, current, beforeSince: ts + HOUR_MS <= sinceMs,
         calls: future ? null : rec?.hours?.[i] ?? null,
-        failed: inP ? p.failed_hours?.[j] ?? null : null,
-        refused: inP ? p.refused_hours?.[j] ?? null : null,
+        failed: future ? null : rec?.failed_hours?.[i] ?? null,
+        refused: future ? null : rec?.refused_hours?.[i] ?? null,
+        // which tools failed or had arguments rejected (server 0.10.12's dashboard, from its hourly
+        // checks): null where none did or the day has no breakdown (byTool false: rebuilt from totals)
+        problems: future ? null : rec?.hour_problems?.[i] ?? null,
+        byTool: Array.isArray(rec?.hour_problems),
       });
     }
   }
@@ -337,29 +338,132 @@ export function hourly(view, dates) {
 export function daily(view) {
   return view.dates.map((d) => {
     const r = view.byDate.get(d) || null;
-    const p = r?.problems ? aggregate([r.problems]) : null;
+    const a = r ? aggregate([r]) : null;
     return {
       date: d, rec: r,
-      calls: r?.calls ?? (r ? totals(aggregate([r])).calls : null),
-      failed: p ? totals(p).failed : null,
-      refused: p ? p.per_ip_refusals?.total ?? 0 : null,
+      calls: r?.calls ?? (a ? totals(a).calls : null),
+      failed: a ? totals(a).failed : null,
+      refused: a ? a.per_ip_refusals?.total ?? 0 : null,
     };
   });
 }
 
 /**
- * Hourly points of one problems series over the range, each at its own time. A range's problems
- * are several days' parts added up, so the hours have to come from each day, not from the sum.
- * `pick`: the list's name, or a function from a day's problems part to the list.
+ * Hourly points of one series over the range, each at its own time. A range is several days added
+ * up, so the hours have to come from each day, not from the sum. `pick`: the list's name, or a
+ * function from a day record to the list.
  */
 export function problemHours(view, pick) {
   const out = [];
   for (const r of view.recs) {
-    const p = r.problems;
-    const list = p && (typeof pick === "function" ? pick(p) : p[pick]);
-    if (!Array.isArray(list) || !p.start) continue;
-    const start = hourStart(p.start);
+    const list = typeof pick === "function" ? pick(r) : r[pick];
+    if (!Array.isArray(list) || !r.start) continue;
+    const start = hourStart(r.start);
     list.forEach((v, i) => out.push({ ts: start + i * HOUR_MS, v: v || 0 }));
   }
   return out;
+}
+
+/** Lookups held back for one cause, over every distributor (both paths). */
+export function heldBackOf(r, cause) {
+  return Object.values(r?.distributor_limits || {}).reduce((a, lim) => a + (pathsOf(lim?.held_back, lim?.ext_held_back)[cause]?.all || 0), 0);
+}
+
+/**
+ * By cause: the API's and ext's counts (server 0.10.12: ext_held_back, ext_refusals). ext's are part
+ * of each cause's total, as ext_sent is of sent; an estimate can leave ext over its total, so it is
+ * never counted past it.
+ */
+export function pathsOf(total, ext) {
+  const t = total || {}, e = ext || {};
+  const num = (o, k) => { const v = own(o, k); return typeof v === "number" ? v : 0; };
+  const out = obj();
+  for (const k of Object.keys(t)) {
+    const all = num(t, k), x = Math.min(num(e, k), all);
+    out[k] = { all, ext: x, api: all - x };
+  }
+  return out;
+}
+
+/**
+ * Whether every record with a distributor's holds (field "held_back") or refusals ("refusals") also
+ * counts ext's apart (server 0.10.12): only then is total minus ext the API's. Like ext_sent, the
+ * ext counts are absent on days that didn't split them.
+ */
+export function limitSplit(recs, name, field) {
+  const ext = field === "held_back" ? "ext_held_back" : "ext_refusals";
+  return (recs || []).every((r) => {
+    const lim = own(r?.distributor_limits, name);
+    return !(sumObj(lim?.[field]) > 0) || (lim?.[ext] != null && typeof lim[ext] === "object");
+  });
+}
+
+/** The events each addresses count (server 0.10.12) took part in, in one record. */
+export const ADDRESS_EVENTS = {
+  rate_limited: (r) => r?.per_ip_refusals?.total || 0,
+  cap_reached: (r) => heldBackOf(r, "address_daily"),
+  blocked_tried: (r) => heldBackOf(r, "address_blocked"),
+};
+
+/**
+ * At most how many distinct addresses were behind one kind of event over some day records, or null
+ * when a record with such events doesn't say. Each day's figure is already an upper bound. A day
+ * with starts the server couldn't list began on an older server, whose events it never saw the
+ * addresses of (the backend leaves those unknown too).
+ */
+export function addressBound(recs, key) {
+  let sum = 0;
+  for (const r of recs || []) {
+    if (!(ADDRESS_EVENTS[key](r) > 0)) continue;
+    const v = own(r?.addresses, key);
+    if (typeof v !== "number" || r.starts_complete === false) return null;
+    sum += v;
+  }
+  return sum;
+}
+
+/** Every server start the stored days list (server 0.10.12), oldest first: [{at: ms, version}]. */
+export function allStarts(days) {
+  const out = [];
+  for (const d of days || []) for (const s of d?.starts || []) {
+    const at = Date.parse(s?.at);
+    if (Number.isFinite(at)) out.push({ at, version: typeof s.version === "string" ? s.version : null, date: d.date });
+  }
+  return out.sort((a, b) => a.at - b.at);
+}
+
+/**
+ * When a budget is paused until, if it is: its own pause or the pool's (a 403 or 429 pauses every
+ * budget: the top-level paused_until), whichever runs later. null when neither runs at `now`.
+ */
+export function budgetPause(b, q, now) {
+  const until = [b?.paused_until, q?.paused_until].filter((t) => pausedNow(t, now));
+  if (!until.length) return null;
+  return until.reduce((a, t) => ((parseQuotaTime(t)?.getTime() || Infinity) > (parseQuotaTime(a)?.getTime() || Infinity) ? t : a));
+}
+
+/** Whether a quota pause ("YYYY-MM-DD HH:MM UTC") is still running at `now`; unreadable counts as running. */
+export function pausedNow(text, now) {
+  if (!text) return false;
+  const t = parseQuotaTime(text);
+  return t && Number.isFinite(t.getTime()) ? t.getTime() > now : true;
+}
+
+/**
+ * A distributor's daily budgets: each budget in the list (budgets, server 0.10.12, in order), or the
+ * one in use alone from the top-level fields. used/limit/left add up the whole pool.
+ */
+export function budgetPool(q) {
+  const list = Array.isArray(q?.budgets) ? q.budgets.filter((b) => b && typeof b === "object" && typeof b.limit === "number") : [];
+  if (list.length) {
+    const used = list.reduce((a, b) => a + (typeof b.used_today === "number" ? b.used_today : 0), 0);
+    const limit = list.reduce((a, b) => a + b.limit, 0);
+    const left = list.reduce((a, b) => a + Math.max(0, b.limit - (b.used_today || 0)), 0);
+    return { used, limit, left, list, inUse: list.findIndex((b) => b.in_use === true) };
+  }
+  if (typeof q?.limit === "number" && q.limit > 0) {
+    const used = q.used_today || 0;
+    return { used, limit: q.limit, left: Math.max(0, q.limit - used), list: null, inUse: -1 };
+  }
+  return null;
 }
