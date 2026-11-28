@@ -486,7 +486,6 @@
 {"l":"C3014374","m":"K205001HF-08-PT","f":"XKB Connection","p":"-","t":"e","c":2608,"d":"-40℃~+85℃ 1 100V 2mm 3A 8P Automotive Connector Housing - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Rows","1"],["Type","Automotive Connector Housing"],["Rated Voltage (Max)","100V"],["Current Rating","3A"],["Number of PINs","8P"],["Hole/Pin Spacing","2mm"]],"x":0}
 {"l":"C3014377","m":"K205001WV-02-PTSN","f":"XKB Connection","p":"Plugin","t":"e","c":2608,"d":"-40℃~+85℃ 100V 2P 2mm 3A Phosphor bronze Tin 插件 Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Automotive Connector Socket"],["Rated Voltage (Max)","100V"],["Contact Plating","Tin"],["Current Rating","3A"],["Number of PINs","2P"],["Contact Material","Phosphor Bronze"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","2mm"]],"x":0}
 {"l":"C3014378","m":"K205001WV-03-PTSN","f":"XKB Connection","p":"Plugin","t":"e","c":2608,"d":"-40℃~+85℃ 100V 2mm 3A 3P Phosphor bronze Tin 插件 Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Automotive Connector Socket"],["Rated Voltage (Max)","100V"],["Contact Plating","Tin"],["Current Rating","3A"],["Number of PINs","3P"],["Contact Material","Phosphor Bronze"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","2mm"]],"x":0}
-{"l":"C3014379","m":"K205001WV-04-PTSN","f":"XKB Connection","p":"Plugin","t":"e","c":2608,"d":"-40℃~+85℃ 100V 2mm 3A 4P Phosphor bronze Tin 插件 Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Automotive Connector Socket"],["Rated Voltage (Max)","100V"],["Contact Plating","Tin"],["Current Rating","3A"],["Number of PINs","4P"],["Contact Material","Phosphor bronze"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","2mm"]],"x":0}
 {"l":"C3014380","m":"K205001WV-06-PTSN","f":"XKB Connection","p":"-","t":"e","c":2608,"d":"-40℃~+85℃ 100V 2mm 3A 6P Phosphor bronze Tin - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Automotive Connector Socket"],["Rated Voltage (Max)","100V"],["Contact Plating","Tin"],["Current Rating","3A"],["Number of PINs","6P"],["Contact Material","Phosphor bronze"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","2mm"]],"x":0}
 {"l":"C3014381","m":"K205001WV-08-PTSN","f":"XKB Connection","p":"Plugin","t":"e","c":2608,"d":"-40℃~+85℃ 100V 2 2mm 3A 8P Phosphor bronze Tin 插件 Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Rows","2"],["Type","Automotive Connector Socket"],["Rated Voltage (Max)","100V"],["Contact Plating","Tin"],["Current Rating","3A"],["Number of PINs","8P"],["Contact Material","Phosphor bronze"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","2mm"]],"x":0}
 {"l":"C3014382","m":"K282103TF-PSN-M","f":"XKB Connection","p":"-","t":"e","c":2608,"d":"-40℃~+125℃ 1.5mm 14A Automotive Connector Terminal Phosphor Bronze Tin - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Type","Automotive Connector Terminal"],["Contact Plating","Tin"],["Current Rating","14A"],["Contact Material","Phosphor Bronze"],["Hole/Pin Spacing","1.5mm"]],"x":0}
@@ -543,6 +542,7 @@
 {"l":"C5124580","m":"1011-344-0205","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0}
 {"l":"C5124609","m":"1-2219100-2","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Number of Rows","4"],["Type","Automotive Connector Socket"],["Number of PINs","121P"],["Mounting Type","Right Angle"]],"x":0}
 {"l":"C5124615","m":"1-2303812-4","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C5128280","m":"DT04-3P","f":"TE Connectivity","p":"P=8.7mm","t":"e","c":2608,"d":"-55℃~+125℃ 13A 2 250V 3P Automotive Connector Housing P=8.7mm Automobile Connectors ROHS","a":[["Operating Temperature","-55℃~+125℃"],["Type","Automotive Connector Housing"],["Number of Rows","2"],["Rated Voltage (Max)","250V"],["Current Rating","13A"],["Number of PINs","3P"],["Hole/Pin Spacing","-"]],"x":0}
 {"l":"C5128282","m":"12185008","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"Automotive Connector Terminal Tin - Automobile Connectors ROHS","a":[["Type","Automotive Connector Terminal"],["Contact Plating","Tin"]],"x":0}
 {"l":"C5128283","m":"PL182X-60-6","f":"Amphenol ICC","p":"-","t":"e","c":2608,"d":"-40℃~+125℃ 1 1kV 2P 60A Automotive Connector Housing - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Number of Rows","1"],["Type","Automotive Connector Housing"],["Rated Voltage (Max)","1kV"],["Current Rating","60A"],["Number of PINs","2P"]],"x":0}
 {"l":"C5137280","m":"MX34040UF2","f":"JAE Electronics","p":"Plugin","t":"e","c":2608,"d":"-40℃~+85℃ 2 3A Automotive Connector Socket Through Hole 插件 Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Number of Rows","2"],["Type","Automotive Connector Socket"],["Current Rating","3A"],["Mounting Type","Through Hole"]],"x":0}
@@ -801,7 +801,6 @@
 {"l":"C5359455","m":"MX84B020PF1","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"2 Automotive Connector Housing Copper alloy - Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Contact Material","Copper alloy"]],"x":0}
 {"l":"C5359457","m":"MX44002XR1","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"Automotive Connector Accessories - Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0}
 {"l":"C5359458","m":"M23S05K4F1","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"Automotive Connector Terminal - Automobile Connectors ROHS","a":[["Type","Automotive Connector Terminal"]],"x":0}
-{"l":"C5359461","m":"MX19002P52","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"Automotive Connector Housing - Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"]],"x":0}
 {"l":"C5359462","m":"MX84B016SF1","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"16P 2 2.2mm Automotive Connector Housing - Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","16P"],["Hole/Pin Spacing","2.2mm"]],"x":0}
 {"l":"C5359464","m":"MX84B040SF1","f":"JAE Electronics","p":"-","t":"e","c":2608,"d":"-40℃~+85℃ 2 2.2mm 40P Automotive Connector Housing - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+85℃"],["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","40P"],["Hole/Pin Spacing","2.2mm"]],"x":0}
 {"l":"C5359467","m":"MX84B012NF1","f":"JAE Electronics","p":"Push-Pull,P=2.2mm","t":"e","c":2608,"d":"12P 2 Automotive Connector Socket 弯插,P=2.2mm Automobile Connectors ROHS","a":[["Number of Rows","2"],["Type","Automotive Connector Socket"],["Number of PINs","12P"]],"x":0}
@@ -1311,12 +1310,14 @@
 {"l":"C25240823","m":"1-2301968-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0}
 {"l":"C25242789","m":"15327788","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25243263","m":"15538995","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C25254824","m":"2318400-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25254825","m":"2318600-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"]],"x":0,"n":1}
 {"l":"C25398657","m":"15326868","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25555694","m":"211PC062S1149","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25564284","m":"35072404","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25752819","m":"12065266","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25773472","m":"2392558-4","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0,"n":1}
+{"l":"C25842018","m":"10155470-A014LF","f":"Amphenol ICC","p":"-","t":"e","c":2608,"d":"- Automobile Connectors","a":[],"x":0,"n":1}
 {"l":"C25866334","m":"35126384","f":"APTIV(Delphi)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C25976123","m":"GT25-8DS-HU","f":"HRS(Hirose)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","8P"]],"x":0,"n":1}
 {"l":"C26127580","m":"1-2301969-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"1 1.27mm 8P Automotive Connector Housing - Automobile Connectors ROHS","a":[["Number of Rows","1"],["Type","Automotive Connector Housing"],["Number of PINs","8P"],["Hole/Pin Spacing","1.27mm"]],"x":0,"n":1}
@@ -1384,6 +1385,7 @@
 {"l":"C31581500","m":"1-2403751-4","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0}
 {"l":"C31764527","m":"6188-0779","f":"SUMITOMO","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C31904297","m":"2-2306868-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C32075197","m":"2326911-3","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C32326051","m":"6098-8435","f":"SUMITOMO","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C32573183","m":"6189-0890","f":"SUMITOMO","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C33144433","m":"7282-2763-30","f":"Yazaki (China) Investment","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","4P"]],"x":0,"n":1}
@@ -1409,6 +1411,7 @@
 {"l":"C34739023","m":"2382718-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C34878384","m":"7114-7387-02","f":"Yazaki (China) Investment","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C34932850","m":"7283-5831","f":"Yazaki (China) Investment","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C35090320","m":"2326914-3","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C35203611","m":"2405707-2","f":"TE Connectivity","p":"P=4mm","t":"e","c":2608,"d":"2 4P 4mm P=4mm Automobile Connectors ROHS","a":[["Number of Rows","2"],["Type","Automotive Connector Socket"],["Number of PINs","4P"],["Mounting Type","Right Angle"],["Hole/Pin Spacing","4mm"]],"x":0}
 {"l":"C35220797","m":"7287-1116-30","f":"Yazaki (China) Investment","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","6P"]],"x":0,"n":1}
 {"l":"C35303869","m":"1-1241408-3","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Terminal"],["Contact Plating","Silver"]],"x":0,"n":1}
@@ -1443,6 +1446,7 @@
 {"l":"C38565777","m":"6098-9611","f":"SUMITOMO","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C38640378","m":"2329592-2","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","20P"],["Hole/Pin Spacing","2.5mm"]],"x":0,"n":1}
 {"l":"C38649354","m":"6185-5493","f":"SUMITOMO","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C38716322","m":"1-2355515-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C38797561","m":"1-2299987-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C38805820","m":"2-2310537-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C38904046","m":"1-2375555-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","8P"]],"x":0}
@@ -1501,6 +1505,7 @@
 {"l":"C42313893","m":"1-2392850-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Number of Rows","3"],["Type","Automotive Connector Housing"],["Number of PINs","21P"]],"x":0,"n":1}
 {"l":"C42678137","m":"2357501-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Number of Rows","1"],["Type","Automotive Connector Socket"],["Number of PINs","2P"],["Mounting Type","Through Hole"],["Hole/Pin Spacing","4mm"]],"x":0,"n":1}
 {"l":"C42679138","m":"2377023-2","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
+{"l":"C42679550","m":"2380551-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C42681753","m":"2400920-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0}
 {"l":"C42682107","m":"2411042-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Terminal"]],"x":0,"n":1}
 {"l":"C42683097","m":"2445859-2","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"-40℃~+125℃ 25A 36P 7 Automotive Connector Housing - Automobile Connectors ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Number of Rows","7"],["Type","Automotive Connector Housing"],["Current Rating","25A"],["Number of PINs","36P"],["Hole/Pin Spacing","-"]],"x":0,"n":1}
@@ -1551,6 +1556,7 @@
 {"l":"C49640929","m":"2406467-2","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"]],"x":0}
 {"l":"C50105034","m":"2379006-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"]],"x":0,"n":1}
 {"l":"C50385583","m":"2322574-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Accessories"]],"x":0,"n":1}
+{"l":"C50385970","m":"1-2425607-1","f":"TE Connectivity","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C51888652","m":"DF62WZC-9EP-2.2C","f":"HRS(Hirose)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C51888912","m":"DF62WZ-2EP-2.2C","f":"HRS(Hirose)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[],"x":0,"n":1}
 {"l":"C51888952","m":"DF62WZ-6S-2.2C","f":"HRS(Hirose)","p":"-","t":"e","c":2608,"d":"- Automobile Connectors ROHS","a":[["Type","Automotive Connector Housing"],["Number of Rows","2"],["Number of PINs","6P"],["Hole/Pin Spacing","2.2mm"]],"x":0,"n":1}

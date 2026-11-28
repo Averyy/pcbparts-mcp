@@ -135,7 +135,6 @@
 {"l":"C3206081","m":"3549-2","f":"Keystone","p":"Plugin,P=10.2mm","t":"e","c":2961,"d":"1 20A 500V Blade Bracket type 插件,P=10.2mm Fuseholders ROHS","a":[["Fuseholder Type","Bracket type"],["Voltage Rating","500V"],["Current Rating","20A"],["Fuse Type","Blade"],["Number of Circuits","1"]],"x":0}
 {"l":"C3206108","m":"04980921GXM5","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"1 12mm 200A 41mm 58V 8.3mm Bracket type Screw Terminal - Fuseholders ROHS","a":[["Fuseholder Type","Bracket type"],["Fuse Height","8.3mm"],["Voltage Rating","58V"],["Current Rating","200A"],["Fuse Width","12mm"],["Fuse Type","Screw Terminal"],["Number of Circuits","1"],["Fuse Length","41mm"]],"x":0}
 {"l":"C3206180","m":"03453LF2HX040","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"1 20A 20mm 250V 5mm Cylindrical - Fuseholders ROHS","a":[["Fuse Diameter (φD)","5mm"],["Voltage Rating","250V"],["Current Rating","20A"],["Fuse Type","Cylindrical"],["Number of Circuits","1"],["Fuse Length","20mm"]],"x":0}
-{"l":"C3206187","m":"64600001223","f":"Littelfuse","p":"插件,P=22.7mm","t":"e","c":2961,"d":"1 20mm 250V 5mm 6.3A Bracket type Cylindrical 插件,P=22.7mm Fuseholders ROHS","a":[["Fuse Diameter (φD)","5mm"],["Fuseholder Type","Bracket type"],["Voltage Rating","250V"],["Current Rating","6.3A"],["Fuse Type","Cylindrical"],["Number of Circuits","1"],["Fuse Length","20mm"]],"x":0}
 {"l":"C3206200","m":"01000063Z","f":"Littelfuse","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C3206201","m":"3587","f":"Keystone","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
 {"l":"C3206251","m":"3101.0010","f":"SCHURTER","p":"-","t":"e","c":2961,"d":"- Fuseholders ROHS","a":[],"x":0}
@@ -246,6 +245,7 @@
 {"l":"C55141822","m":"JFH-BLX-A","f":"Shenzhen JDT Fuse","p":"Plugin","t":"e","c":2961,"d":"插件 Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C55141823","m":"JL-506A","f":"Shenzhen JDT Fuse","p":"Plugin","t":"e","c":2961,"d":"插件 Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C55141824","m":"01000063.J","f":"Shenzhen JDT Fuse","p":"-","t":"e","c":2961,"d":"插件 Fuseholders ROHS","a":[],"x":0,"n":1}
+{"l":"C55232906","m":"5x20 BLX-A","f":"EATS","p":"插件,P=22.3mm","t":"e","c":2961,"d":"插件,P=22.3mm Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C55251142","m":"01550900.JDR","f":"Shenzhen JDT Fuse","p":"SMD","t":"e","c":2961,"d":"SMD Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C55251143","m":"PTF50-J","f":"Shenzhen JDT Fuse","p":"Plugin","t":"e","c":2961,"d":"插件 Fuseholders ROHS","a":[],"x":0,"n":1}
 {"l":"C55251144","m":"PTF45-J","f":"Shenzhen JDT Fuse","p":"Plugin","t":"e","c":2961,"d":"插件 Fuseholders ROHS","a":[],"x":0,"n":1}

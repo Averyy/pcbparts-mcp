@@ -4,7 +4,6 @@
 {"l":"C233497","m":"MC14007UBDR2G","f":"onsemi","p":"SOIC-14","t":"e","c":2165,"d":"-55℃~+125℃ 3 3V~18V Complementary Pair and Inverter SOIC-14 Specialty Logic ROHS","a":[["Operating Temperature","-55℃~+125℃"],["Number of Channels","3"],["Voltage - Supply","3V~18V"],["Logic Type","Complementary Pair and Inverter"]],"x":0}
 {"l":"C324598","m":"MST2219KC","f":"MST","p":"SOP-8","t":"e","c":2165,"d":"SOP-8 Specialty Logic ROHS","a":[],"x":0}
 {"l":"C507247","m":"SN74LVC1GX04DBVR","f":"Texas Instruments","p":"SOT-23-6","t":"e","c":2165,"d":"-40℃~+125℃ 1 1.65V~5.5V SOT-23-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Number of Channels","1"],["Voltage - Supply","1.65V~5.5V"],["Logic Type","-"]],"x":0}
-{"l":"C516788","m":"MAX6817EUT+T","f":"Analog Devices Inc./Maxim Integrated","p":"SOT-23-6","t":"e","c":2165,"d":"-40℃~+125℃ 2.7V~5.5V 6uA Power-up/reset configuration SOT-23-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Voltage - Supply","2.7V~5.5V"],["Supply Current","6uA"],["Features","Power-up/reset configuration"]],"x":0}
 {"l":"C543032","m":"CD74HC283M96","f":"Texas Instruments","p":"SOIC-16","t":"e","c":2165,"d":"SOIC-16 Specialty Logic ROHS","a":[["Operating Temperature","-55℃~+125℃"],["Number of Channels","4"],["Voltage - Supply","2V~6V"],["Logic Type","Full Adder"]],"x":0}
 {"l":"C546005","m":"74AUP1Z04GW,125","f":"Nexperia","p":"SOT363-2","t":"e","c":2165,"d":"TSSOP-6 Specialty Logic ROHS","a":[],"x":0}
 {"l":"C548474","m":"74LVC1GX04GV,125","f":"Nexperia","p":"TSOP-6","t":"e","c":2165,"d":"-40℃~+125℃ 1.65V~5.5V TSOP-6 Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Voltage - Supply","1.65V~5.5V"]],"x":0}
@@ -42,5 +41,6 @@
 {"l":"C29721585","m":"NL7SZ58DFT2G-Q","f":"onsemi","p":"SC-88","t":"e","c":2165,"d":"SC-88 Specialty Logic ROHS","a":[],"x":0,"n":1}
 {"l":"C49196399","m":"LS3211","f":"Silicore","p":"SSOP-20","t":"e","c":2165,"d":"SSOP-20 Specialty Logic ROHS","a":[],"x":0}
 {"l":"C49305548","m":"D5015F","f":"Silicore","p":"SOP-20","t":"e","c":2165,"d":"SOP-20 Specialty Logic ROHS","a":[],"x":0}
+{"l":"C52140423","m":"74LVC1G97GV","f":"MDD(Microdiode Semiconductor)","p":"SOT-23-6L","t":"e","c":2165,"d":"-40℃~+125℃ 1 1.65V~5.5V Configurable Multi-Function Gate SOT-23-6L Specialty Logic ROHS","a":[["Operating Temperature","-40℃~+125℃"],["Number of Channels","1"],["Voltage - Supply","1.65V~5.5V"],["Logic Type","Configurable Multi-Function Gate"]],"x":0}
 {"l":"C55185850","m":"PT2240E(LX)","f":"lingxingic","p":"SOP-8","t":"e","c":2165,"d":"SOP-8 Specialty Logic ROHS","a":[],"x":0,"n":1}
 {"l":"C56347774","m":"JSM1527","f":"JSMSEMI","p":"SOP-8","t":"e","c":2165,"d":"SOP-8 Specialty Logic ROHS","a":[],"x":0,"n":1}
