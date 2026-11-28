@@ -52,6 +52,19 @@ _PAGE_SIZE = 10
 # A 5xx reply's Retry-After asking for longer than this means no retry (as DigiKey's)
 _RETRY_AFTER_MAX = 3.0
 
+# A 5xx whose own attempt took longer than this isn't sent again: a hung backend (SamacSys's took about
+# 20 s each on 2026-11-27), where a retry would double the wait. Healthy replies are often slower, so
+# the timeouts stay as they are.
+CSE_SLOW_ERROR_SECONDS = 10.0
+
+# Retries stay off after this many failed attempts in a row (timeouts included), until one is answered
+CSE_FAILURES_IN_A_ROW = 2
+
+
+def _failed(exc: httpx.HTTPError) -> bool:
+    """A failure for the failures-in-a-row rule: a transient error, or a timeout."""
+    return _transient_error(exc) or isinstance(exc, httpx.TimeoutException)
+
 
 def _transient_error(exc: httpx.HTTPError) -> bool:
     """A dropped or refused connection may pass; a timeout isn't sent again (as Mouser's and
@@ -183,13 +196,17 @@ class CSEClient:
     """
 
     def __init__(self, store_path: str | None = None, *, clock: Callable[[], float] | None = None,
-                 sleep: Callable[[float], Awaitable[Any]] | None = None):
+                 sleep: Callable[[float], Awaitable[Any]] | None = None,
+                 monotonic: Callable[[], float] | None = None):
         """sleep: the wait before a request goes out again (CSE_STATUS_RETRY_DELAY, or a 5xx's
-        Retry-After up to 3 s); tests pass a fake."""
+        Retry-After up to 3 s); monotonic: times each attempt (CSE_SLOW_ERROR_SECONDS); tests pass
+        fakes."""
         self._clock = clock or time.time
         self._sleep = sleep or asyncio.sleep
-        # No retries during an outage, as Mouser and DigiKey: every sent request's outcome counts
-        self._guard = RetryGuard("CSE", self._clock, logger)
+        self._monotonic = monotonic or time.monotonic
+        # No retries during an outage, as Mouser and DigiKey (every sent request's outcome counts),
+        # nor after CSE_FAILURES_IN_A_ROW failed attempts: SamacSys gets too few calls for the rate rule
+        self._guard = RetryGuard("CSE", self._clock, logger, consecutive=CSE_FAILURES_IN_A_ROW)
         self._quota_until = 0.0
         self._refused_since: float | None = None
         self._quota_probe: asyncio.Lock | None = None
@@ -260,11 +277,13 @@ class CSEClient:
                     if retrying:
                         stats.count_upstream("cse", "retries")
                         retrying = False
+                    started = self._monotonic()
                     response = await _sent("cse", self._get_http().get(_CSE_API_URL, params=params))
+                    elapsed = self._monotonic() - started
                     await asyncio.sleep(CSE_RATE_LIMIT)
             except httpx.HTTPError as exc:
                 transient = _transient_error(exc)
-                self._guard.record(transient=transient)
+                self._guard.record(transient=transient, failed=_failed(exc))
                 failure = "CSE API request failed (network/connection error)"
                 if transient and not last and await self._retry_wait(f"search: {type(exc).__name__}", None):
                     retrying = True
@@ -275,7 +294,8 @@ class CSEClient:
                 transient = response.status_code >= 500
                 self._guard.record(transient=transient)
                 failure = f"CSE API returned HTTP {response.status_code}"
-                if transient and not last and await self._retry_wait(f"search: HTTP {response.status_code}", response):
+                if transient and not last and await self._retry_wait(
+                        f"search: HTTP {response.status_code}", response, elapsed):
                     retrying = True
                     continue
                 raise ValueError(failure)
@@ -427,21 +447,26 @@ class CSEClient:
                          f"the KiCad model couldn't be downloaded. {retry} "
                          "KiCad files pcbparts already has stored still work."}
 
-    def _retry_delay(self, response: httpx.Response | None) -> float | None:
+    def _retry_delay(self, what: str, response: httpx.Response | None, elapsed: float | None) -> float | None:
         """Seconds to wait before a failed request goes out again; None for no retry: the retry
-        guard is on (an outage), or a 5xx's Retry-After asks for longer than _RETRY_AFTER_MAX."""
+        guard is on (an outage, or failures in a row), a 5xx took longer than CSE_SLOW_ERROR_SECONDS
+        (elapsed: that attempt's seconds), or its Retry-After asks for longer than _RETRY_AFTER_MAX."""
         if self._guard.disabled():
             return None
         if response is not None and response.status_code >= 500:
+            if elapsed is not None and elapsed > CSE_SLOW_ERROR_SECONDS:
+                logger.warning("CSE request failed (%s) after %.1f s; not sent again: a slow server error",
+                               what, elapsed)
+                return None
             after = retry_after_seconds(response.headers, self._clock())
             if after is not None:  # unusable: the usual delay
                 return after if after <= _RETRY_AFTER_MAX else None
         return CSE_STATUS_RETRY_DELAY
 
-    async def _retry_wait(self, what: str, response: httpx.Response | None) -> bool:
+    async def _retry_wait(self, what: str, response: httpx.Response | None, elapsed: float | None = None) -> bool:
         """Whether a request that failed transiently goes out once more, after waiting (_retry_delay);
         False without waiting when there's no retry, or after it when an outage began meanwhile."""
-        delay = self._retry_delay(response)
+        delay = self._retry_delay(what, response, elapsed)
         if delay is None:
             return False
         logger.warning("CSE request failed (%s); sending it again in %g s", what, delay)
@@ -462,18 +487,18 @@ class CSEClient:
                     if retrying:
                         stats.count_upstream("cse", "retries")
                         retrying = False
-                    started = self._clock()
+                    started = self._monotonic()
                     response = await _sent("cse", self._get_http().get(
                         _CSE_MODEL_URL,
                         params={"partID": str(resolved_part_id)},
                         auth=(CSE_USER, CSE_PASS),
                         timeout=30,
                     ))
-                    elapsed = self._clock() - started
+                    elapsed = self._monotonic() - started
                     await asyncio.sleep(CSE_RATE_LIMIT)
             except httpx.HTTPError as exc:
                 transient = _transient_error(exc)
-                self._guard.record(transient=transient)
+                self._guard.record(transient=transient, failed=_failed(exc))
                 if transient and not last and await self._retry_wait(f"model download: {type(exc).__name__}", None):
                     retrying = True
                     continue
@@ -493,7 +518,7 @@ class CSEClient:
                     isinstance(response.content, bytes) and "quota" in _body_text(response.content).lower()))
                 self._guard.record(transient=transient)
                 if transient and not last and await self._retry_wait(
-                        f"model download: HTTP {response.status_code}", response):
+                        f"model download: HTTP {response.status_code}", response, elapsed):
                     retrying = True
                     continue
                 return {"error": f"CSE model download failed (HTTP {response.status_code})"}

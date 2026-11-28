@@ -1,6 +1,6 @@
 """SamacSys searches and model downloads: one retry for a 5xx, a dropped connection or an
-unreadable reply, never during an outage (the retry guard). HTTP mock transports, a fake clock
-and fake sleeps only."""
+unreadable reply, never during an outage (the retry guard), after two failed attempts in a row or
+for a slow 5xx. HTTP mock transports, a fake clock and fake sleeps only."""
 
 import io
 import logging
@@ -10,7 +10,10 @@ import httpx
 import pytest
 
 from pcbparts_mcp import cse as cse_module, stats
+from pcbparts_mcp.cache import RetryGuard
 from pcbparts_mcp.cse import CSEClient
+from pcbparts_mcp.digikey import DigiKeyClient
+from pcbparts_mcp.mouser import MouserClient
 
 NOW = 1_793_546_220.0
 SUCCESS = {"status": "Success", "partCount": 1,
@@ -26,8 +29,8 @@ def kicad_zip() -> bytes:
 
 
 class Fake:
-    """A CSEClient answering from a list of replies (an httpx.Response, or an exception to raise),
-    with the fake clock its waits move."""
+    """A CSEClient answering from a list of replies (an httpx.Response, an exception to raise, or
+    (seconds, reply): a reply that takes that long), with the fake clock its waits move."""
 
     def __init__(self, *replies):
         self.replies = list(replies)
@@ -39,12 +42,15 @@ class Fake:
             self.waits.append(seconds)
             self.now += seconds
 
-        self.client = CSEClient(clock=lambda: self.now, sleep=sleep)
+        self.client = CSEClient(clock=lambda: self.now, sleep=sleep, monotonic=lambda: self.now)
         self.client._http = httpx.AsyncClient(transport=httpx.MockTransport(self.answer))
 
     def answer(self, request):
         self.requests.append(request)
         reply = self.replies.pop(0)
+        if isinstance(reply, tuple):
+            seconds, reply = reply
+            self.now += seconds
         if isinstance(reply, Exception):
             raise reply
         return reply
@@ -225,8 +231,10 @@ class TestDownload:
 
 class TestRetryGuard:
     async def test_no_retries_during_a_run_of_failures_until_it_clears(self, fake, caplog):
-        # Five searches failing twice each: 10 transient failures of 10 attempts turn retries off
+        # The rate rule alone (without the failures-in-a-row rule, tested below). Five searches
+        # failing twice each: 10 transient failures of 10 attempts turn retries off
         f = fake(*(httpx.Response(503) for _ in range(10)))
+        f.client._guard = RetryGuard("CSE", f.client._clock, cse_module.logger)
         with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cse"):
             for _ in range(5):
                 with pytest.raises(ValueError, match="HTTP 503"):
@@ -288,3 +296,110 @@ class TestRetryGuard:
         await f.client.get_kicad(part_id=7)
         outcomes = [row[1:] for row in f.client._guard.outcomes]
         assert outcomes == ([[1, 2]] if transient else [[0, 1]])
+
+
+class TestFailuresInARow:
+    @pytest.mark.parametrize("first", [lambda: httpx.ReadTimeout("slow"), lambda: httpx.Response(503, text="x")],
+                             ids=["timeout", "5xx"])
+    async def test_after_two_failed_calls_a_third_gets_no_retry(self, fake, first, caplog):
+        # Retry guard off for the rate rule: three calls are too few for it
+        f = fake(httpx.ReadTimeout("slow"), (12.0, first()), httpx.Response(503))
+        with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cse"):
+            for _ in range(3):
+                with pytest.raises(ValueError):
+                    await f.client.search("P1")
+        assert len(f.requests) == 3 and f.waits == [] and sent() == 3 and retries() == 0
+        assert caplog.text.count("CSE retries off after 2 failures in a row") == 1
+        assert "CSE retry guard entered" not in caplog.text
+
+    async def test_one_call_failing_twice_turns_retries_off_for_the_next(self, fake):
+        f = fake(httpx.Response(503), httpx.ConnectError("refused"), httpx.Response(502))
+        with pytest.raises(ValueError, match="network/connection error"):
+            await f.client.search("P1")
+        assert (await f.client.get_kicad(part_id=7)) == {"error": "CSE model download failed (HTTP 502)"}
+        assert len(f.requests) == 3 and f.waits == [3.0] and retries() == 1
+
+    async def test_a_success_clears_it(self, fake, caplog):
+        f = fake(httpx.ReadTimeout("slow"), httpx.ReadTimeout("slow"), ok(), httpx.Response(503), ok())
+        with caplog.at_level(logging.INFO, logger="pcbparts_mcp.cse"):
+            for _ in range(2):
+                with pytest.raises(ValueError):
+                    await f.client.search("P1")
+            assert f.client._guard.disabled()
+            assert (await f.client.search("P2"))["total"] == 1
+            assert not f.client._guard.disabled()
+            assert "CSE retries on again: a request was answered after 2 failures in a row" in caplog.text
+            assert (await f.client.search("P3"))["total"] == 1  # a failure is retried again
+        assert len(f.requests) == 5 and f.waits == [3.0] and retries() == 1
+
+    async def test_a_4xx_answer_clears_it_too(self, fake):
+        f = fake(httpx.Response(503), httpx.Response(503), httpx.Response(404), httpx.Response(503), ok())
+        for status in (503, 404):
+            with pytest.raises(ValueError, match=f"HTTP {status}"):
+                await f.client.search("P1")
+        assert (await f.client.search("P2"))["total"] == 1
+        assert len(f.requests) == 5 and retries() == 2
+
+    async def test_an_answer_between_failures_resets_the_count(self, fake):
+        f = fake(httpx.ReadTimeout("slow"), model(), httpx.Response(503), ok())
+        with pytest.raises(ValueError):
+            await f.client.search("P1")
+        assert "error" not in await f.client.get_kicad(part_id=7)  # searches and downloads share it
+        assert (await f.client.search("P2"))["total"] == 1  # one failure in a row: retried
+        assert len(f.requests) == 4 and f.waits == [3.0] and f.client._guard.failures_in_a_row == 0
+
+
+class TestSlowErrors:
+    @pytest.mark.parametrize("seconds,retried", [(10.5, False), (10.0, True), (2.0, True)],
+                             ids=["slow", "limit", "fast"])
+    async def test_search(self, fake, seconds, retried, caplog):
+        f = fake((seconds, httpx.Response(503)), ok())
+        with caplog.at_level(logging.WARNING, logger="pcbparts_mcp.cse"):
+            if retried:
+                assert (await f.client.search("P1"))["total"] == 1
+            else:
+                with pytest.raises(ValueError, match="CSE API returned HTTP 503"):
+                    await f.client.search("P1")
+        assert len(f.requests) == 1 + retried and f.waits == ([3.0] if retried else []) and retries() == retried
+        assert ("not sent again: a slow server error" in caplog.text) is not retried
+
+    @pytest.mark.parametrize("seconds,retried", [(20.0, False), (1.0, True)], ids=["slow", "fast"])
+    async def test_download(self, fake, seconds, retried):
+        f = fake((seconds, httpx.Response(503)), model())
+        reply = await f.client.get_kicad(part_id=7)
+        assert ("error" not in reply) is retried
+        assert len(f.requests) == 1 + retried and retries() == retried
+
+    async def test_the_threshold_can_be_patched(self, fake, monkeypatch):
+        monkeypatch.setattr(cse_module, "CSE_SLOW_ERROR_SECONDS", 1.0)
+        f = fake((2.0, httpx.Response(503)))
+        with pytest.raises(ValueError, match="HTTP 503"):
+            await f.client.search("P1")
+        assert len(f.requests) == 1
+
+    async def test_a_slow_connection_error_is_still_retried(self, fake):
+        f = fake((15.0, httpx.ConnectError("refused")), ok())
+        assert (await f.client.search("P1"))["total"] == 1
+        assert len(f.requests) == 2
+
+
+class TestOtherGuardsUnchanged:
+    def test_mouser_and_digikey_have_no_failures_in_a_row_rule(self):
+        clients = [MouserClient(api_key="k"), DigiKeyClient(client_id="id", client_secret="secret")]
+        assert [client._guard._consecutive for client in clients] == [None, None]
+
+    @pytest.mark.parametrize("name", ["Mouser", "DigiKey"])
+    def test_only_the_rate_rule_turns_retries_off(self, name):
+        guard = RetryGuard(name, lambda: NOW)
+        for _ in range(9):  # nine failures in a row: under the rate rule's 10
+            guard.record(transient=True)
+        assert not guard.disabled()
+        guard.record(transient=True)
+        assert guard.disabled()
+
+    def test_failed_alone_changes_nothing_without_the_rule(self):
+        guard = RetryGuard("Mouser", lambda: NOW)
+        for _ in range(20):
+            guard.record(transient=False, failed=True)
+        assert not guard.disabled() and guard.failures_in_a_row == 0
+        assert [row[1:] for row in guard.outcomes] == [[0, 20]]

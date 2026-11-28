@@ -114,20 +114,44 @@ class RetryGuard:
     five minutes failed transiently, and 90% or more of them did. A bounded window of ten-second
     buckets (start, transient, total), keeping the one overlapping the cutoff. Record every sent
     attempt's outcome (cancelled ones have none; refusals and errors that aren't retried count in the
-    total), and check after outcomes and before a retry's send, so an idle guard expires too."""
+    total), and check after outcomes and before a retry's send, so an idle guard expires too.
 
-    def __init__(self, name: str, clock: Callable[[], float] = time.time, log: logging.Logger = logger):
+    consecutive (off by default; CSE's is 2): retries are also off once that many recorded attempts
+    in a row failed, until one that didn't fail (any answer, a 4xx too) is recorded. A failure is a
+    transient outcome, or one recorded with failed=True (a timeout: not retried, but a hung service)."""
+
+    def __init__(self, name: str, clock: Callable[[], float] = time.time, log: logging.Logger = logger,
+                 *, consecutive: int | None = None):
         self._name, self._clock, self._log = name, clock, log
         self.outcomes: collections.deque[list[int]] = collections.deque(maxlen=31)
         self._active = False
+        self._consecutive = consecutive
+        self.failures_in_a_row = 0
+        self._streak_active = False
 
-    def record(self, *, transient: bool) -> None:
+    def record(self, *, transient: bool, failed: bool | None = None) -> None:
         start = int(self._clock() // 10) * 10
         if not self.outcomes or self.outcomes[-1][0] != start:
             self.outcomes.append([start, 0, 0])
         self.outcomes[-1][1] += int(transient)
         self.outcomes[-1][2] += 1
+        if self._consecutive is not None:
+            self._record_streak(transient if failed is None else failed)
         self.disabled()
+
+    def _record_streak(self, failed: bool) -> None:
+        assert self._consecutive is not None
+        if failed:
+            self.failures_in_a_row += 1
+            if not self._streak_active and self.failures_in_a_row >= self._consecutive:
+                self._streak_active = True
+                self._log.warning("%s retries off after %d failures in a row", self._name, self.failures_in_a_row)
+            return
+        if self._streak_active:
+            self._log.info("%s retries on again: a request was answered after %d failures in a row",
+                           self._name, self.failures_in_a_row)
+            self._streak_active = False
+        self.failures_in_a_row = 0
 
     def disabled(self) -> bool:
         """Whether retries are off now; logs each change once."""
@@ -143,7 +167,7 @@ class RetryGuard:
                 self._name, "entered" if disabled else "cleared", failures, attempts,
                 "disabled" if disabled else "enabled")
             self._active = disabled
-        return disabled
+        return disabled or self._streak_active
 
 
 def _daily_reset(headers: Any, now: float) -> float:

@@ -4,6 +4,13 @@ Notable changes to PCB Parts MCP, newest first.
 
 Versions follow semver. While the project is in beta (0.x), a minor release such as 0.7.0 can change replies; its **Breaking** section lists what to check. Patch releases don't change tool names, arguments or reply fields, except where noted. Entries before 0.6.0 are brief; the commit history has the details. Each version is tagged `vX.Y.Z`; from 0.10.5 only minor and major versions are GitHub releases, with every entry since the last one as the notes (0.8.21 to 0.10.4: every version).
 
+## 0.10.13 (2026-11-27)
+
+### Fixed
+
+- **`cse_search`, `cse_get_kicad`**: while SamacSys keeps failing, or when its error took over 10 s, calls fail at once instead of waiting for a retry.
+- **Usage dashboard**: hourly updates no longer fail on DigiKey's new counts; a limit notice no longer shows another cause's hours.
+
 ## 0.10.12 (2026-11-27)
 
 ### Added
