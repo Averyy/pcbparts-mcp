@@ -266,7 +266,7 @@ async def model_client(tmp_path, monkeypatch):
     async def sleep(seconds):  # a retry's wait: the fake clock
         now[0] += seconds
 
-    client = CSEClient(str(tmp_path / "cse.db"), clock=lambda: now[0], sleep=sleep)
+    client = CSEClient(str(tmp_path / "cse.db"), clock=lambda: now[0], sleep=sleep, monotonic=lambda: now[0])
 
     def answer(request):
         if "model.php" in request.url.path:
@@ -457,10 +457,11 @@ class TestDownloadRefusals:
         answers.extend([body, body])
         assert (await client.get_kicad(part_id=1))["error"] == error
         assert client._store.wanted()[0]["reason"] == reason
-        # A refusal is final; an invalid reply is downloaded once more: each logged, and the retry
+        # A refusal is final; an invalid reply is downloaded once more: each logged, the retry, and
+        # retries off after those two failures in a row
         retried = reason == "invalid_zip"
         assert len(downloads) == 1 + retried
-        assert len([r for r in caplog.records if r.levelno == logging.WARNING]) == (3 if retried else 1)
+        assert len([r for r in caplog.records if r.levelno == logging.WARNING]) == (4 if retried else 1)
         assert "test-login" not in caplog.text and "s3cr3t" not in caplog.text and "other@example.org" not in caplog.text
         assert "<html>" not in caplog.text
 

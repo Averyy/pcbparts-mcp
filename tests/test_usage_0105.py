@@ -657,7 +657,7 @@ async def test_cse_status_search_and_model(monkeypatch, error, label):
     async def no_wait(seconds):
         pass
 
-    client = cse.CSEClient(sleep=no_wait)
+    client = cse.CSEClient(sleep=no_wait, monotonic=lambda: 0.0)
     client._http = httpx.AsyncClient(transport=httpx.MockTransport(reply))
     try:
         with pytest.raises(ValueError):
@@ -666,7 +666,9 @@ async def test_cse_status_search_and_model(monkeypatch, error, label):
         assert result["error"].startswith("CSE model download failed")
     finally:
         await client.close()
-    sent = 2 if label == "timeout" else 4  # a dropped connection or a 5xx is sent once more, a timeout isn't
+    # A dropped connection or a 5xx is sent once more, a timeout isn't; after the search's two failures
+    # in a row the download isn't retried
+    sent = 2 if label == "timeout" else 3
     assert day()["upstream_status"] == {"cse": {label: sent}}
     assert day()["upstream"]["cse"]["sent"] == sent
 

@@ -42,7 +42,8 @@ def _validate_field(value, path: tuple) -> None:
         (len(path) == 1 and root in COUNT_MAPS)
         or (len(path) == 2 and root in NESTED_COUNT_MAPS)
         or (len(path) == 3 and root in ("tool_apps", "distributor_apps"))
-        or (root == "distributor_limits" and len(path) == 3 and key in ("held_back", "refusals"))
+        or (root == "distributor_limits" and len(path) == 3
+            and key in ("held_back", "refusals", "ext_held_back", "ext_refusals"))
         or path == ("db_waits", "components")
     )
     is_list = (

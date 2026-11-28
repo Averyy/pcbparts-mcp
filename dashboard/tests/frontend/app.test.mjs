@@ -430,6 +430,25 @@ test("held-back labels keep address and DigiKey resets separate from Mouser's bu
   }
 });
 
+for (const name of ["digikey", "mouser"]) test(`a ${name} limit notice shows only its own cause's hours`, () => {
+  // held_back_hours counts every cause: 274 address_daily holds at 6-7 PM, 3 blocked-address holds at 2-4 AM
+  const who = name === "digikey" ? "DigiKey" : "Mouser";
+  const hours = (at) => Array.from({ length: 24 }, (_, i) => at[i] || 0);
+  const notice = (held_back, held_back_hours) => {
+    const problems = { distributor_limits: { [name]: { held_back, held_back_hours } } };
+    const app = setup(payload({ edays: [day("2026-11-23", whole(problems))] }));
+    return app.attentionItems(app.view(), app.scope(app.view())).find((it) => it.key === `held_back:${name}:address_daily`);
+  };
+  assert.equal(notice({ address_daily: 274, address_blocked: 3 }, hours({ 2: 2, 3: 1, 18: 274 })).what,
+    `274 ${who} lookups turned away by our limits.`);
+  // another limit's holds share the series too
+  assert.equal(notice({ address_daily: 274, minute_cap: 2 }, hours({ 2: 2, 18: 274 })).what,
+    `274 ${who} lookups turned away by our limits.`);
+  // the only cause: every held hour is its own
+  assert.equal(notice({ address_daily: 274, address_blocked: 0 }, hours({ 18: 274 })).what,
+    `274 ${who} lookups turned away by our limits (6 PM to 7 PM).`);
+});
+
 test("Mouser HTTP errors and retries use the selected problems range and counting coverage", () => {
   const usage = (retries) => ({ distributors: { mouser: { sent: 100, retries } }, upstream_status: { mouser: { "2xx": 90, "5xx": 10 } } });
   const app = setup(payload({ problems_since: "2026-11-21T18:00:00Z", problems_version: "0.10.5", edays: [

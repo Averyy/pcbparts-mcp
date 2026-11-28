@@ -430,3 +430,33 @@ def test_import_can_upgrade_approximate_eastern_days_without_moving_success(stor
     assert not store.all_eastern_days()["2026-11-20"]["approx"]
     assert store.all_eastern_days()["2026-11-20"]["calls"] == 240
     assert store.get_meta("last_success_at") is None
+
+
+def test_a_0_10_12_day_with_every_new_field_validates():
+    # Shapes from prod's reply on 2026-11-28 (UTC): the first day split by path
+    causes = {"minute_cap": 0, "daily_count": 0, "address_daily": 0, "address_blocked": 0,
+              "distributor_daily": 0, "distributor_minute": 0, "distributor_refused": 0, "other": 0}
+    day = {
+        "date": "2026-11-28", "calls": 5,
+        "starts": [{"at": "23:13", "version": "0.10.12"}],
+        "addresses": {"rate_limited": 0, "cap_reached": 0, "blocked_tried": 0},
+        "distributors": {"digikey": {"sent": 7, "cached": 3, "rate_limited": 0, "ext_sent": 0}},
+        "distributor_limits": {"digikey": {
+            "held_back": dict(causes), "held_back_hours": [0] * 24,
+            "refusals": {"daily": 0, "minute": 0, "refused": 0},
+            "ext_held_back": dict(causes), "ext_refusals": {"refused": 0}}},
+    }
+    quota = {"digikey": {"used_today": 7, "limit": 1000, "api_remaining": None, "paused_until": None,
+                         "budgets": [{"used_today": 7, "limit": 1000, "api_remaining": None,
+                                      "paused_until": None, "in_use": True}],
+                         "ext": {"paused_until": None, "active": False, "active_since": None}}}
+    assert _validate_stats({"days": [day], "distributor_quota": quota})["days"][0] is day
+
+
+@pytest.mark.parametrize("field, value", [("ext_held_back", {"address_daily": -1}), ("ext_held_back", 3),
+                                          ("ext_refusals", {"refused": "1"}), ("ext_refusals", [1])],
+                         ids=["held-negative", "held-number", "refused-text", "refused-list"])
+def test_ext_limit_counts_are_still_checked(field, value):
+    day = {"date": "2026-11-28", "distributor_limits": {"digikey": {field: value}}}
+    with pytest.raises(ValueError, match="Invalid nested field distributor_limits.digikey.ext_"):
+        _validate_stats({"days": [day]})

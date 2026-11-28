@@ -590,13 +590,17 @@ function attentionItems(view, sc) {
     const pl = own(p?.distributor_limits, name);
     const pcauses = pathsOf(pl?.held_back, pl?.ext_held_back);
     const held = Object.entries(causes).filter(([c, n]) => n.all > 0 && c !== "address_blocked").sort((x, y) => y[1].all - x[1].all);
-    const when = held.length ? whenText(problemHours(view, (r) => own(r.distributor_limits, name)?.held_back_hours), !view.single) : "";
+    // held_back_hours counts every cause, the block list's too: its hours are one notice's only when
+    // that notice's cause is every hold
+    const heldAll = Object.values(causes).reduce((x, n) => x + n.all, 0);
+    const when = held.length === 1 && held[0][1].all === heldAll
+      ? whenText(problemHours(view, (r) => own(r.distributor_limits, name)?.held_back_hours), !view.single) : "";
     const reset = resetHour(view.asOf, name === "mouser" ? mouserDayStartHour(payload?.health) : 0);
     for (const [cause, n] of held) {
       const bound = cause === "address_daily" ? addressBound(view.recs, "cap_reached") : null;
       items.push({
         key: `held_back:${name}:${cause}`, count: n.all, level: "warning",
-        what: `${plural(n.all, `${who} lookup`)}${fromAddresses(bound, n.all)} turned away by our limits${when && held.length === 1 ? ` (${when})` : ""}.`,
+        what: `${plural(n.all, `${who} lookup`)}${fromAddresses(bound, n.all)} turned away by our limits${when ? ` (${when})` : ""}.`,
         detail: `Why: ${heldBackLabel(cause, who, resetHour(view.asOf), reset)}.${n.ext ? ` ${n.api ? `${full(n.ext)} of them through ext.` : "All through ext."}` : ""}`,
         since: since(pcauses[cause]?.all),
       });
